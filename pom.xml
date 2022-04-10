@@ -28,7 +28,20 @@
 	</properties>
 
 	<dependencies>
+		
+		<dependency>
+		    <groupId>org.jsoup</groupId>
+		    <artifactId>jsoup</artifactId>
+		    <version>1.14.3</version>
+		</dependency>
 
+		<dependency>
+			<groupId>com.helger</groupId>
+			<artifactId>ph-schematron</artifactId>
+			<version>5.6.5</version>
+		</dependency>
+		
+		
 		<!-- WEB -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
