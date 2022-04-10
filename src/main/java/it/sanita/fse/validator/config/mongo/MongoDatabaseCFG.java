@@ -17,6 +17,8 @@ import org.springframework.data.mongodb.core.convert.DefaultMongoTypeMapper;
 import org.springframework.data.mongodb.core.convert.MappingMongoConverter;
 import org.springframework.data.mongodb.core.mapping.MongoMappingContext;
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
+
+import it.sanita.fse.validator.config.Constants;
  
 
 /**
@@ -26,7 +28,7 @@ import org.springframework.data.mongodb.repository.config.EnableMongoRepositorie
  *	Configuration for MongoDB.
  */
 @Configuration
-@EnableMongoRepositories(basePackages = "it.sanita.fse.validator.config.mongo")
+@EnableMongoRepositories(basePackages = Constants.ComponentScan.CONFIG_MONGO)
 public class MongoDatabaseCFG {
 
 	@Autowired
