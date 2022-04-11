@@ -15,25 +15,22 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class JsonUtility {
 
-
 	/**
-	 * Il costruttore è privato perchè la classe non va istanziata
+	 * Private constructor to avoid instantiation.
 	 * 
-	 * @return void
 	 * @throws IllegalStateException
 	 */
 	private JsonUtility() {
-//		throw new IllegalStateException("Questa è una classe di utilità non va istanziata!!!");
+		// Empty constructor.
 	}
 
-	private static ObjectMapper mapper = new ObjectMapper(); 
+	private static ObjectMapper mapper = new ObjectMapper();
 
 	/**
-	 * Il metodo converte un oggetto in una stringa JSON
+	 * Methods that converts an Object to a JSON string.
 	 * 
-	 * @param oggetto
-	 *            generico
-	 * @return una stringa rappresentante l'oggetto in formato JSON
+	 * @param oggetto Object to convert.
+	 * @return JSON String representation of the Object.
 	 */
 	public static <T> String objectToJson(T obj) {
 		String jsonString = "";
@@ -46,12 +43,13 @@ public class JsonUtility {
 
 		return jsonString;
 	}
-	
+
 	/**
-	 * Il metodo converte una stringa JSON in un oggetto java
+	 * Methods that converts a JSON String to a Class of a defined type.
 	 * 
-	 * @param stringa in formato JSON
-	 * @return un oggetto della classe specificata dal segnaposto
+	 * @param stringa JSON String representation of the Object.
+	 * @return Object created from the JSON String or {@code null} if the conversion
+	 *         fails.
 	 */
 	public static <T> T jsonToObject(String jsonString, Class<T> clazz) {
 		T obj = null;
@@ -63,12 +61,13 @@ public class JsonUtility {
 
 		return obj;
 	}
-	
+
 	/**
-	 * Il metodo converte una stringa JSON in una struttura a nodi
+	 * Methods that converts a JSON String to a Node structure.
 	 * 
-	 * @param stringa in formato JSON
-	 * @return ObjectNode type
+	 * @param stringa JSON String representation of the Object.
+	 * @return ObjectNode created from the JSON String or {@code null} if the
+	 *         conversion fails.
 	 */
 	public static ObjectNode getNodeFromJson(String jsonString) {
 		ObjectNode obj = null;
@@ -77,7 +76,7 @@ public class JsonUtility {
 		} catch (Exception e) {
 			log.error("Errore durante la conversione da stringa json a struttura a nodi: {}", e);
 		}
-		
+
 		return obj;
 	}
 

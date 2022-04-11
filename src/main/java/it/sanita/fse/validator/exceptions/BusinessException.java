@@ -6,7 +6,7 @@ package it.sanita.fse.validator.exceptions;
 /**
  * @author AndreaPerquoti
  * 
- * Eccezione di business.
+ * Generic business exception.
  *
  */
 public class BusinessException extends RuntimeException {
@@ -17,28 +17,28 @@ public class BusinessException extends RuntimeException {
 	private static final long serialVersionUID = 4420700371354323215L;
 
 	/**
-	 * Costruttore.
+	 * Message constructor.
 	 * 
-	 * @param msg	messaggio
+	 * @param msg Message to be shown.
 	 */
 	public BusinessException(final String msg) {
 		super(msg);
 	}
 	
 	/**
-	 * Costruttore.
+	 * Complete constructor.
 	 * 
-	 * @param msg	messaggio
-	 * @param e		eccezione
+	 * @param msg	Message to be shown.
+	 * @param e		Exception to be shown.
 	 */
 	public BusinessException(final String msg, final Exception e) {
 		super(msg, e);
 	}
 	
 	/**
-	 * Costruttore.
+	 * Exception constructor.
 	 * 
-	 * @param e	eccezione
+	 * @param e	Exception to be shown.
 	 */
 	public BusinessException(final Exception e) {
 		super(e);

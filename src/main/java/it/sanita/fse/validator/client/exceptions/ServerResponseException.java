@@ -12,7 +12,7 @@ import lombok.Setter;
 /**
  * @author AndreaPerquoti
  * 
- * Eccezione generica per gli errori restituiti dai server.
+ * Generic Exception to handle server-side errors.
  *
  */
 @Getter

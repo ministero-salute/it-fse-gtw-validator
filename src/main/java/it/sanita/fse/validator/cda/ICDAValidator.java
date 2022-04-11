@@ -3,7 +3,7 @@ package it.sanita.fse.validator.cda;
 import java.io.InputStream;
 
 /**
- * Interfaccia per la validazione di un documento HL7 CDA.
+ * Interface for the validation of a HL7 CDA Document.
  */
 public interface ICDAValidator {
 	public ValidationResult validate(InputStream inputStream) throws Exception;
