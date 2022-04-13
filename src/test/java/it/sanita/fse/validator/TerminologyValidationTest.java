@@ -117,7 +117,7 @@ class TerminologyValidationTest {
 
         @ParameterizedTest
         @DisplayName("No keys missed from Redis")
-        @CsvSource({ "10, 1000"})
+        @CsvSource({ "10, 100", "10, 1000"})
         void t1(final int numSystems, final int numCodesEachSystem) {
 
             // Test validation on REDIS

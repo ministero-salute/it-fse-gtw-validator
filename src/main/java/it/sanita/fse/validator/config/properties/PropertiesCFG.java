@@ -12,13 +12,13 @@ public class PropertiesCFG {
     /**
      * Vocabulary validation ttl.
      */
-    @Value("${redis.vocabulary-ttl}")
+    @Value("${redis.vocabulary-ttl-seconds}")
     private Long validationTTL;
 
     /**
      * Vocabulary validation ttl.
      */
-    @Value("${redis.enabled}")
+    @Value("${redis.vocabulary-enabled}")
     private boolean redisEnabled;
 
 }
