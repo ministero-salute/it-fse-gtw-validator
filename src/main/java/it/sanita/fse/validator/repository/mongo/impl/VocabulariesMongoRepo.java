@@ -22,7 +22,7 @@ public class VocabulariesMongoRepo implements IVocabulariesMongoRepo {
 
     @Override
     public boolean allCodesExists(String system, List<String> codes) {
-
+        
         boolean validationSuccess = true;
         try {
             Query query = new Query();
@@ -35,8 +35,7 @@ public class VocabulariesMongoRepo implements IVocabulariesMongoRepo {
             }
         } catch (Exception e) {
             log.error(String.format("Error while executing validation on vocabularies for system %s", system), e);
-            throw new BusinessException(
-                    String.format("Error while executing validation on vocabularies for system %s", system), e);
+            throw new BusinessException(String.format("Error while executing validation on vocabularies for system %s", system), e);
         }
 
         return validationSuccess;

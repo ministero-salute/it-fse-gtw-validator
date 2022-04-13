@@ -29,11 +29,17 @@ public class ValidationCTL extends AbstractCTL implements IValidationCTL {
 	@Override
 	public ValidationResDTO validation(ValidationReqDTO requestBody, HttpServletRequest request) {
 		Validation.notNull(requestBody.getCda());
+		
+		RawValidationEnum outcome = RawValidationEnum.OK;
 		//TODO: check sintattico
 		//TODO: check semantico (sch)
 		
-		validationSRV.validateVocabularies(CDAHelper.extractTerminology(requestBody.getCda()));
-		return new ValidationResDTO(getLogTraceInfo(), RawValidationEnum.OK);
+		if(validationSRV.validateVocabularies(requestBody.getCda())) {
+			log.info("Validation completed successfully!");
+		} else {
+			outcome = RawValidationEnum.VOCABULARY_ERROR;
+		}
+		return new ValidationResDTO(getLogTraceInfo(), outcome);
 	}
 	
 }
