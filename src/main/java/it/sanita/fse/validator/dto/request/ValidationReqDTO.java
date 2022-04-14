@@ -19,7 +19,18 @@ import lombok.Setter;
 @AllArgsConstructor
 public class ValidationReqDTO extends AbstractDTO {
 
-    @Schema(description = "CDA")
+    /**
+	 * Serial version uid.
+	 */
+	private static final long serialVersionUID = -3399427632028837223L;
+
+	@Schema(description = "cda")
     private String cda;
+    
+    @Schema(description = "version_schema")
+    private String versionSchema;
+    
+    @Schema(description = "version_schematron")
+    private String versionSchematron;
 
 }

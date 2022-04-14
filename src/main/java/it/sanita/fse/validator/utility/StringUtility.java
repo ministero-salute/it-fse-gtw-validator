@@ -1,5 +1,7 @@
 package it.sanita.fse.validator.utility;
 
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.security.MessageDigest;
 import java.util.Base64;
 
@@ -85,5 +87,22 @@ public final class StringUtility {
 	public static String encodeHex(final byte[] input) {
 		return Hex.encodeHexString(input);
 	}
-
-}
+	
+	/**
+	 * Get filename from complete path.
+	 * 
+	 * @param completePath	path
+	 * @return				filename
+	 */
+	public static String getFilename(final String completePath) {
+		String output = "";
+		try {
+			Path path = Paths.get(completePath);
+			output = path.getFileName().toString(); 
+		} catch(Exception ex) {
+			log.error("Error to get filename from complete path " , ex);
+			throw new BusinessException("Error to get filename from complete path " , ex);
+		}
+		return output;
+	}
+ }

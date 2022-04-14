@@ -1,4 +1,4 @@
-package it.sanita.fse.validator.controller.impl;
+package it.sanita.fse.validator.controller;
 
 import javax.validation.ValidationException;
 

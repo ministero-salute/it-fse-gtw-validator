@@ -14,9 +14,9 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import com.helger.schematron.ISchematronResource;
+import com.helger.schematron.pure.SchematronResourcePure;
 import com.helger.schematron.svrl.jaxb.FailedAssert;
 import com.helger.schematron.svrl.jaxb.SchematronOutputType;
-import com.helger.schematron.xslt.SchematronResourceSCH;
 
 import it.sanita.fse.validator.dto.CDAValidationDTO;
 import it.sanita.fse.validator.dto.SchematronFailedAssertionDTO;
@@ -44,22 +44,23 @@ public class CDAHelper {
         return terminology;
 	}
 	
-	public static CDAValidationDTO validate(String content) throws Exception {
-		CDAValidationDTO out = new CDAValidationDTO(CDAValidationStatusEnum.NOT_VALID);
-		if(content != null && content.length() >= 20) {
-			ICDAValidator validator = new CDAValidator();
-			ValidationResult result = validator.validate(content.getBytes());
-			if (!result.isSuccess()) {
-				out = new CDAValidationDTO(CDAValidationStatusEnum.VALID);
-			} else {
-				out = new CDAValidationDTO(result);
-			}
-		}
-		return out;
-	}
+//	public static CDAValidationDTO validate(String content) throws Exception {
+//		CDAValidationDTO out = new CDAValidationDTO(CDAValidationStatusEnum.NOT_VALID);
+//		if(content != null && content.length() >= 20) {
+//			ICDAValidator validator = new CDAValidator();
+//			ValidationResult result = validator.validate(content.getBytes());
+//			if (!result.isSuccess()) {
+//				out = new CDAValidationDTO(CDAValidationStatusEnum.VALID);
+//			} else {
+//				out = new CDAValidationDTO(result);
+//			}
+//		}
+//		return out;
+//	}
 
-	public static SchematronValidationResultDTO validateXMLViaXSLTSchematronFull(final String schematronInternalPath, final byte[] xml) throws Exception{
-		final ISchematronResource aResSCH = SchematronResourceSCH.fromClassPath(schematronInternalPath);
+	public static SchematronValidationResultDTO validateXMLViaXSLTSchematronFull(ISchematronResource aResSCH , final byte[] xml) throws Exception{
+//		final ISchematronResource aResSCH = SchematronResourceSCH.fromClassPath(schematronInternalPath);
+//		final ISchematronResource aResSCH = SchematronResourcePure.fromByteArray(buf);
 		boolean validST = aResSCH.isValidSchematron();
 		boolean validXML = true;
 		List<SchematronFailedAssertionDTO> failedAssertions = new ArrayList<>();
@@ -85,4 +86,5 @@ public class CDAHelper {
 		}
 		return SchematronValidationResultDTO.builder().validSchematron(validST).validXML(validXML).failedAssertions(failedAssertions).build();
 	}
+
 }
