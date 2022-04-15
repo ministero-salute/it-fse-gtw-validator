@@ -91,11 +91,11 @@ public class ValidationSRV implements IValidationSRV {
 	}
 
 	@Override
-	public SchematronValidationResultDTO validateSemantic(final String cda,final SchematronETY schematronETY) {
+	public SchematronValidationResultDTO validateSemantic(final String cdaToValidate,final SchematronETY schematronETY) {
 		SchematronValidationResultDTO output = null;
 		try { 
 			SchematronValidatorSingleton schematron = SchematronValidatorSingleton.getInstance(schematronETY);
-			output = CDAHelper.validateXMLViaXSLTSchematronFull(schematron.getSchematronResource(), cda.getBytes());
+			output = CDAHelper.validateXMLViaXSLTSchematronFull(schematron.getSchematronResource(), cdaToValidate.getBytes());
 		} catch(Exception ex) {
 			log.error("Error while executing validation on schematron", ex);
 			throw new BusinessException("Error while executing validation on schematron", ex);

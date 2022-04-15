@@ -3,6 +3,7 @@ package it.sanita.fse.validator;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.io.File;
 import java.util.Arrays;
 
 import org.junit.jupiter.api.DisplayName;
@@ -11,6 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -22,9 +25,14 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
+import io.vavr.collection.List;
 import it.sanita.fse.validator.config.Constants;
+import it.sanita.fse.validator.dto.SchematronValidationResultDTO;
 import it.sanita.fse.validator.dto.request.ValidationReqDTO;
 import it.sanita.fse.validator.dto.response.ValidationResDTO;
+import it.sanita.fse.validator.repository.entity.SchematronETY;
+import it.sanita.fse.validator.service.facade.IValidationFacadeSRV;
+import it.sanita.fse.validator.utility.FileUtility;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -38,11 +46,14 @@ public class ValidationTest {
 
 	@Autowired
     private ServletWebServerApplicationContext webServerAppCtxt;
+	
+	@Autowired
+	private IValidationFacadeSRV validationSRV;
 
     @Test
     @DisplayName("No error and 200 OK")
     void noErrorAnd200OK() {
-    	
+    	byte[] cda = FileUtility.getFileFromInternalResources("Files" + File.separator + "cda1.xml");
 		ObjectMapper objectMapper = new ObjectMapper(); 
 		objectMapper.registerModule(new JavaTimeModule());
 		objectMapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
@@ -52,7 +63,7 @@ public class ValidationTest {
 	    headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
 
 	    ValidationReqDTO requestBody = new ValidationReqDTO();
-	    requestBody.setCda("cda");
+	    requestBody.setCda(new String(cda));
 	    
 		String requestString = "";
 		try {
@@ -77,4 +88,23 @@ public class ValidationTest {
 		assertNull(result.getError(), "Non deve essere presente alcun errore.");
     }
 
+    @Autowired
+    private MongoTemplate mongoTemplate;
+    @Test
+    void validateSchematron() {
+    	try {
+    		byte[] cda = FileUtility.getFileFromInternalResources("Files" + File.separator + "cda1.xml");
+    		SchematronETY schematron = getSchematron();
+    		SchematronValidationResultDTO reuslt = validationSRV.validateSemantic(new String(cda), schematron);
+    		reuslt.getFailedAssertions();
+    	} catch(Exception ex) {
+    		System.out.println(ex);
+    	}
+    }
+   
+    private SchematronETY getSchematron() {
+    	Query query = new Query();
+    	return mongoTemplate.find(query, SchematronETY.class).get(0);
+    			
+    }
 }

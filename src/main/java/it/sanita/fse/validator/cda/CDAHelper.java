@@ -14,15 +14,12 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import com.helger.schematron.ISchematronResource;
-import com.helger.schematron.pure.SchematronResourcePure;
 import com.helger.schematron.svrl.jaxb.FailedAssert;
 import com.helger.schematron.svrl.jaxb.SchematronOutputType;
 
-import it.sanita.fse.validator.dto.CDAValidationDTO;
 import it.sanita.fse.validator.dto.SchematronFailedAssertionDTO;
 import it.sanita.fse.validator.dto.SchematronInfoDTO;
 import it.sanita.fse.validator.dto.SchematronValidationResultDTO;
-import it.sanita.fse.validator.enums.CDAValidationStatusEnum;
 import it.sanita.fse.validator.exceptions.BusinessException;
 import lombok.extern.slf4j.Slf4j;
 
@@ -64,34 +61,17 @@ public class CDAHelper {
 		}
 		return out;
 	}
-	
-//	public static CDAValidationDTO validate(String content) throws Exception {
-//		CDAValidationDTO out = new CDAValidationDTO(CDAValidationStatusEnum.NOT_VALID);
-//		if(content != null && content.length() >= 20) {
-//			ICDAValidator validator = new CDAValidator();
-//			ValidationResult result = validator.validate(content.getBytes());
-//			if (!result.isSuccess()) {
-//				out = new CDAValidationDTO(CDAValidationStatusEnum.VALID);
-//			} else {
-//				out = new CDAValidationDTO(result);
-//			}
-//		}
-//		return out;
-//	}
-
+	 
 	public static SchematronValidationResultDTO validateXMLViaXSLTSchematronFull(ISchematronResource aResSCH , final byte[] xml) throws Exception{
 		boolean validST = aResSCH.isValidSchematron();
 		boolean validXML = true;
 		List<SchematronFailedAssertionDTO> failedAssertions = new ArrayList<>();
 		if (validST) {
-
 			Long start = new Date().getTime();
 			SchematronOutputType type = aResSCH.applySchematronValidationToSVRL(new StreamSource(new ByteArrayInputStream(xml)));
 			List<Object> failedAsserts = type.getActivePatternAndFiredRuleAndFailedAssert();
-
 			Long delta = new Date().getTime() - start;
-			System.out.println("TIME" + delta);        
-
+			log.info("TIME : " + delta);        
 			for (Object object : failedAsserts) {
 				if (object instanceof FailedAssert) {
 					validXML = false;

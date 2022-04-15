@@ -13,6 +13,7 @@ import it.sanita.fse.validator.controller.IValidationCTL;
 import it.sanita.fse.validator.controller.Validation;
 import it.sanita.fse.validator.dto.CDAValidationDTO;
 import it.sanita.fse.validator.dto.SchematronInfoDTO;
+import it.sanita.fse.validator.dto.SchematronValidationResultDTO;
 import it.sanita.fse.validator.dto.request.ValidationReqDTO;
 import it.sanita.fse.validator.dto.response.RawValidationEnum;
 import it.sanita.fse.validator.dto.response.ValidationResDTO;
@@ -46,7 +47,6 @@ public class ValidationCTL extends AbstractCTL implements IValidationCTL {
 		
 		RawValidationEnum outcome = RawValidationEnum.OK;
 		
-		
 		SchematronInfoDTO schematronInfoDTO = CDAHelper.extractSchematronInfo(requestBody.getCda());
 		
 		SchematronETY schematronETY = validationSRV.findSchematron(schematronInfoDTO);
@@ -59,7 +59,10 @@ public class ValidationCTL extends AbstractCTL implements IValidationCTL {
 			outcome = RawValidationEnum.SYNTAX_ERROR;
 		}	
 		
-		validationSRV.validateSemantic(requestBody.getCda(),schematronETY);
+		SchematronValidationResultDTO semanticValidation = validationSRV.validateSemantic(requestBody.getCda(),schematronETY);
+		if(!semanticValidation.getValidXML()) {
+			outcome = RawValidationEnum.SEMANTIC_ERROR;
+		}
 		
 		if(validationSRV.validateVocabularies(requestBody.getCda())) {
 			log.info("Validation completed successfully!");
