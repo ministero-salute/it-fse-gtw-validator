@@ -14,16 +14,11 @@ public interface ISchematronRepo extends Serializable {
 	/**
 	 * Returns a Schematron identified by its {@code version}.
 	 * 
-	 * @param Version of the Schematron to return.
+	 * @param code of the Schematron to return.
+	 * @param system of the Schematron to return.
+	 * @param templateIdExtension of the Schematron to return.
 	 * @return Schematron identified by its {@code version}.
 	 */
-	SchematronETY findByVersion(String version);
-	 
-	/**
-	 * Returns last version schematron.
-	 * 
-	 * @return Last schematron.
-	 */
-	SchematronETY findLastVersion();
-
+	SchematronETY findByCodeAndSystemAndExtension(String code, String system, String templateIdExtension);
+	  
 }

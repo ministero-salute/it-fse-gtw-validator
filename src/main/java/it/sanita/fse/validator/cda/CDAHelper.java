@@ -22,7 +22,10 @@ import it.sanita.fse.validator.dto.CDAValidationDTO;
 import it.sanita.fse.validator.dto.SchematronFailedAssertionDTO;
 import it.sanita.fse.validator.dto.SchematronValidationResultDTO;
 import it.sanita.fse.validator.enums.CDAValidationStatusEnum;
+import it.sanita.fse.validator.exceptions.BusinessException;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 public class CDAHelper {
 
 	public static Map<String, List<String>> extractTerminology(String cda) {
@@ -44,6 +47,24 @@ public class CDAHelper {
         return terminology;
 	}
 	
+	public static Map<String,String> extractSchematronInfo(final String cda) {
+		Map<String, String> terminology = new HashMap<>();
+		try {
+			org.jsoup.nodes.Document docT = Jsoup.parse(cda);
+			Element systemIdentifier = docT.select("code").get(0);
+			String code = systemIdentifier.attr("code");
+			terminology.put("code", code);
+			String codesystem = systemIdentifier.attr("codesystem");
+			terminology.put("codesystem", codesystem);
+			String templateIdExtension = docT.select("templateid").get(0).attr("extension");
+			terminology.put("template_id_extension", templateIdExtension);
+		} catch(Exception ex) {
+			log.error("Error while extracting info for schematron ", ex);
+			throw new BusinessException("Error while extracting info for schematron ", ex);
+		}
+		return terminology;
+	}
+	
 //	public static CDAValidationDTO validate(String content) throws Exception {
 //		CDAValidationDTO out = new CDAValidationDTO(CDAValidationStatusEnum.NOT_VALID);
 //		if(content != null && content.length() >= 20) {
@@ -59,16 +80,12 @@ public class CDAHelper {
 //	}
 
 	public static SchematronValidationResultDTO validateXMLViaXSLTSchematronFull(ISchematronResource aResSCH , final byte[] xml) throws Exception{
-//		final ISchematronResource aResSCH = SchematronResourceSCH.fromClassPath(schematronInternalPath);
-//		final ISchematronResource aResSCH = SchematronResourcePure.fromByteArray(buf);
 		boolean validST = aResSCH.isValidSchematron();
 		boolean validXML = true;
 		List<SchematronFailedAssertionDTO> failedAssertions = new ArrayList<>();
 		if (validST) {
 
 			Long start = new Date().getTime();
-
-
 			SchematronOutputType type = aResSCH.applySchematronValidationToSVRL(new StreamSource(new ByteArrayInputStream(xml)));
 			List<Object> failedAsserts = type.getActivePatternAndFiredRuleAndFailedAssert();
 

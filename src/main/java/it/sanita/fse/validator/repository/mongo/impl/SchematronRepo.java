@@ -31,11 +31,12 @@ public class SchematronRepo extends AbstractMongoRepo<SchematronETY, String> imp
 	private MongoTemplate mongoTemplate;
 	
 	@Override
-	public SchematronETY findByVersion(final String version) {
+	public SchematronETY findByCodeAndSystemAndExtension(final String code, final String system, final String templateIdExtension) {
 		SchematronETY output = null;
 		try {
 			Query query = new Query();
-			query.addCriteria(Criteria.where("version").is(version));
+			query.addCriteria(Criteria.where("cda_code").is(code).and("cda_code_system").is(system).
+					and("template_id_extension").is(templateIdExtension));
 			output = mongoTemplate.findOne(query, SchematronETY.class);
 		} catch(Exception ex) {
 			log.error("Error while executing find by version on schematron ETY", ex);
@@ -43,21 +44,5 @@ public class SchematronRepo extends AbstractMongoRepo<SchematronETY, String> imp
 		}
 		return output;
 	}
-
-	@Override
-	public SchematronETY findLastVersion() {
-		SchematronETY output = null;
-		try {
-			Query query = new Query();
-			query.with(Sort.by(Sort.Direction.DESC, "version"));
-			output = mongoTemplate.findOne(query, SchematronETY.class);
-		} catch(Exception ex) {
-			log.error("Error while executing find by last version on schematron ETY", ex);
-			throw new BusinessException("Error while executing find by last version on schematron ETY", ex);
-		}
-		return output;
-	}
-
-	
-	
+ 
 }
