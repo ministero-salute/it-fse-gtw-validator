@@ -61,20 +61,30 @@ public class ValidationSRV implements IValidationSRV {
 	@Override
 	public CDAValidationDTO validateSyntactic(final String cda, final String version) {
 		CDAValidationDTO out = new CDAValidationDTO(CDAValidationStatusEnum.VALID);
+		SchemaETY schema = null;
+		
 		try {
-			SchemaETY schema = null;
 			if(StringUtility.isNullOrEmpty(version)) {
 				schema = schemaRepo.findFatherLastVersionXsd();
 			} else {
 				schema = schemaRepo.findFatherXsd(version);
 			}
+
+			if (schema == null) {
+				throw new BusinessException(String.format("Schema with version %s not found on database.", version));
+			}
 			
 			SchemaValidatorSingleton instance = SchemaValidatorSingleton.getInstance(version, schema, schemaRepo);
 			ValidationResult validationResult = schemaSRV.validateXsd(instance.getValidator(), cda);
 			if(validationResult!=null && !validationResult.isSuccess()) {
-				out  = new CDAValidationDTO(validationResult); 
+				out  = new CDAValidationDTO(validationResult);
 			}
 		} catch(Exception ex) {
+
+			if (schema == null) {
+				log.error(String.format("Schema with version %s not found on database.", version), ex);
+				throw new BusinessException(String.format("Schema with version %s not found on database.", version), ex);
+			}
 			log.error("Error while executing validation on xsd schema", ex);
 			throw new BusinessException("Error while executing validation on xsd schema", ex);
 		}
