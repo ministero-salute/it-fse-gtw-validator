@@ -51,7 +51,8 @@ public class ValidationCTL extends AbstractCTL implements IValidationCTL {
 		
 		SchematronETY schematronETY = validationSRV.findSchematron(schematronInfoDTO);
 		if(schematronETY==null) {
-			throw new NoRecordFoundException("Attention, no schematron found ");
+			throw new NoRecordFoundException("Attention, no schematron found for code : " + schematronInfoDTO.getCode()  + " system : " 
+					+schematronInfoDTO.getCodeSystem()  + " template id extension : " + schematronInfoDTO.getTemplateIdExtension());
 		}
 		
 		CDAValidationDTO validationResult = validationSRV.validateSyntactic(requestBody.getCda(), schematronETY.getXsdSchemaVersion());
@@ -59,16 +60,21 @@ public class ValidationCTL extends AbstractCTL implements IValidationCTL {
 			outcome = RawValidationEnum.SYNTAX_ERROR;
 		}	
 		
-		SchematronValidationResultDTO semanticValidation = validationSRV.validateSemantic(requestBody.getCda(),schematronETY);
-		if(!semanticValidation.getValidXML()) {
-			outcome = RawValidationEnum.SEMANTIC_ERROR;
+		if(RawValidationEnum.OK.equals(outcome)) {
+			SchematronValidationResultDTO semanticValidation = validationSRV.validateSemantic(requestBody.getCda(),schematronETY);
+			if(!semanticValidation.getValidXML()) {
+				outcome = RawValidationEnum.SEMANTIC_ERROR;
+			}
+
+			if(RawValidationEnum.OK.equals(outcome)) {
+				if(validationSRV.validateVocabularies(requestBody.getCda())) {
+					log.info("Validation completed successfully!");
+				} else {
+					outcome = RawValidationEnum.VOCABULARY_ERROR;
+				}
+			}
 		}
 		
-		if(validationSRV.validateVocabularies(requestBody.getCda())) {
-			log.info("Validation completed successfully!");
-		} else {
-			outcome = RawValidationEnum.VOCABULARY_ERROR;
-		}
 		return new ValidationResDTO(getLogTraceInfo(), outcome);
 	}
 	 

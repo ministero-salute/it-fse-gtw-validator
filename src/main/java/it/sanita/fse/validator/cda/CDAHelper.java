@@ -28,7 +28,7 @@ public class CDAHelper {
 
 	public static Map<String, List<String>> extractTerminology(String cda) {
         org.jsoup.nodes.Document docT = Jsoup.parse(cda);
-        Elements terms = docT.select("[codeSystem]");
+        Elements terms = docT.select("code[code]");
 
         Map<String, List<String>> terminology = new HashMap<>();
         
