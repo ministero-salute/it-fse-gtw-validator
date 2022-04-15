@@ -1,10 +1,14 @@
 package it.sanita.fse.validator.controller.impl;
 
+import java.util.List;
+import java.util.Map;
+
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RestController;
 
+import it.sanita.fse.validator.cda.CDAHelper;
 import it.sanita.fse.validator.controller.IValidationCTL;
 import it.sanita.fse.validator.controller.Validation;
 import it.sanita.fse.validator.dto.CDAValidationDTO;
@@ -12,6 +16,8 @@ import it.sanita.fse.validator.dto.request.ValidationReqDTO;
 import it.sanita.fse.validator.dto.response.RawValidationEnum;
 import it.sanita.fse.validator.dto.response.ValidationResDTO;
 import it.sanita.fse.validator.enums.CDAValidationStatusEnum;
+import it.sanita.fse.validator.exceptions.NoRecordFoundException;
+import it.sanita.fse.validator.repository.entity.SchematronETY;
 import it.sanita.fse.validator.service.facade.IValidationFacadeSRV;
 import lombok.extern.slf4j.Slf4j;
 
@@ -39,13 +45,23 @@ public class ValidationCTL extends AbstractCTL implements IValidationCTL {
 		
 		RawValidationEnum outcome = RawValidationEnum.OK;
 		
-		CDAValidationDTO validationResult = validationSRV.validateSyntactic(requestBody.getCda(), requestBody.getVersionSchema());
+		
+		Map<String,String> terminologySchematron = CDAHelper.extractSchematronInfo(requestBody.getCda());
+		String cdaCode = terminologySchematron.get("code");
+		String cdaSystem = terminologySchematron.get("codesystem");
+		String templateExtension = terminologySchematron.get("template_id_extension");
+		
+		SchematronETY schematronETY = validationSRV.findSchematron(cdaCode, cdaSystem, templateExtension);
+		if(schematronETY==null) {
+			throw new NoRecordFoundException("Attention, no schematron found ");
+		}
+		
+		CDAValidationDTO validationResult = validationSRV.validateSyntactic(requestBody.getCda(), schematronETY.getXsdSchemaVersion());
 		if(CDAValidationStatusEnum.NOT_VALID.equals(validationResult.getStatus())) {
 			outcome = RawValidationEnum.SYNTAX_ERROR;
 		}	
 		
-		//TODO: check semantico (sch)
-		validationSRV.validateSemantic(requestBody.getCda(), requestBody.getVersionSchematron());
+		validationSRV.validateSemantic(requestBody.getCda(),schematronETY);
 		
 		if(validationSRV.validateVocabularies(requestBody.getCda())) {
 			log.info("Validation completed successfully!");
@@ -54,5 +70,6 @@ public class ValidationCTL extends AbstractCTL implements IValidationCTL {
 		}
 		return new ValidationResDTO(getLogTraceInfo(), outcome);
 	}
+	 
 	
 }

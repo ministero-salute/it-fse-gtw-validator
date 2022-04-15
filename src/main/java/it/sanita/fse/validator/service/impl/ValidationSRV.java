@@ -6,8 +6,6 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.helger.schematron.ISchematronResource;
-
 import it.sanita.fse.validator.cda.CDAHelper;
 import it.sanita.fse.validator.cda.ValidationResult;
 import it.sanita.fse.validator.dto.CDAValidationDTO;
@@ -82,20 +80,11 @@ public class ValidationSRV implements IValidationSRV {
 	}
 
 	@Override
-	public boolean validateSemantic(final String cda, final String version) {
-		boolean output = false;
-		try {
-			SchematronETY schematronETY = null;
-			if(StringUtility.isNullOrEmpty(version)) {
-				schematronETY = schematronRepo.findLastVersion();
-			} else {
-				schematronETY = schematronRepo.findByVersion(version);
-			}
-			
-			SchematronValidatorSingleton schematron = SchematronValidatorSingleton.getInstance(version, schematronETY);
-			ISchematronResource resource = schematron.getSchematronResource();
-			SchematronValidationResultDTO result = CDAHelper.validateXMLViaXSLTSchematronFull(resource, cda.getBytes());
-			System.out.println("Stop");
+	public SchematronValidationResultDTO validateSemantic(final String cda,final SchematronETY schematronETY) {
+		SchematronValidationResultDTO output = null;
+		try { 
+			SchematronValidatorSingleton schematron = SchematronValidatorSingleton.getInstance(schematronETY);
+			output = CDAHelper.validateXMLViaXSLTSchematronFull(schematron.getSchematronResource(), cda.getBytes());
 		} catch(Exception ex) {
 			log.error("Error while executing validation on schematron", ex);
 			throw new BusinessException("Error while executing validation on schematron", ex);
@@ -103,4 +92,15 @@ public class ValidationSRV implements IValidationSRV {
 		return output;
 	}
     
+	@Override
+	public SchematronETY findSchematron(final String cdaCode , final String cdaSystem, final String templateExtension) {
+		SchematronETY schematronETY = null;
+		try {
+			schematronETY = schematronRepo.findByCodeAndSystemAndExtension(cdaCode, cdaSystem, templateExtension);
+		} catch(Exception ex) {
+			log.error("Error while executing find schematron ", ex);
+			throw new BusinessException("Error while executing find schematron ", ex);
+		}
+		return schematronETY;
+	}
 }

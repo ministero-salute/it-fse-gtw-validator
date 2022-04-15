@@ -19,16 +19,22 @@ public class SchematronETY {
 	@Id
 	private String id;
 	
-	@Field(name = "cda_type")
-	private String cdaType;
-	
-	@Field(name = "name_schematron")
-	private String nameSchematron;
-	
 	@Field(name = "content_schematron")
 	private Binary contentSchematron;
+
+	@Field(name = "name_schematron")
+	private String nameSchematron;
+
+	@Field(name = "cda_code")
+	private String cdaCode;
+
+	@Field(name = "cda_code_system")
+	private String cdaCodeSystem;
+
+	@Field(name = "template_id_extension")
+	private String templateIdExtension;
 	
-	@Field(name = "version")
-	private String version;
+	@Field(name = "xsd_schema_version")
+	private String xsdSchemaVersion;
 	 
 }

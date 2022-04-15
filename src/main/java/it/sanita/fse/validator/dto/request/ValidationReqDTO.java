@@ -26,11 +26,6 @@ public class ValidationReqDTO extends AbstractDTO {
 
 	@Schema(description = "cda")
     private String cda;
-    
-    @Schema(description = "version_schema")
-    private String versionSchema;
-    
-    @Schema(description = "version_schematron")
-    private String versionSchematron;
-
+     
+     
 }

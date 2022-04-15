@@ -14,19 +14,15 @@ public final class SchematronValidatorSingleton {
 	
 	private static ISchematronResource schematronResource;
 	
-	public static SchematronValidatorSingleton getInstance(final String inVersion ,final SchematronETY inSchematronETY) {
-		if(instance==null) {
+	public static SchematronValidatorSingleton getInstance(final SchematronETY inSchematronETY) {
+		if(instance==null || !instance.getVersion().equals(inSchematronETY.getTemplateIdExtension())) {
 			schematronResource = SchematronResourcePure.fromByteArray(inSchematronETY.getContentSchematron().getData());
-			instance = new SchematronValidatorSingleton(inVersion,schematronResource);
-		} else if(!instance.getVersion().equals(inVersion)) {
-			schematronResource = SchematronResourcePure.fromByteArray(inSchematronETY.getContentSchematron().getData());
-			instance = new SchematronValidatorSingleton(inVersion,schematronResource);
-		}
+			instance = new SchematronValidatorSingleton(schematronResource);
+		}  
 		return instance;
 	}
 	
-	private SchematronValidatorSingleton(final String inVersion, final ISchematronResource inSchematronResource) {
-		version = inVersion;
+	private SchematronValidatorSingleton(final ISchematronResource inSchematronResource) {
 		schematronResource = inSchematronResource;
 	}
 	
