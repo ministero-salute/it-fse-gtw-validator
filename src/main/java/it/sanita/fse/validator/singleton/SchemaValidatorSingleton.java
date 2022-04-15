@@ -32,7 +32,7 @@ public final class SchemaValidatorSingleton {
 		validator = inValidator;
 	}
 
-	public static SchemaValidatorSingleton getInstance(final String inVersion , final SchemaETY inSchema, final ISchemaRepo schemaRepo) {
+	public static SchemaValidatorSingleton getInstance(final String inVersion, final SchemaETY inSchema, final ISchemaRepo schemaRepo) {
 		if(instance==null || !instance.getVersion().equals(inVersion)) {
 			try {
 				ValidationResult result = new ValidationResult();
@@ -48,8 +48,8 @@ public final class SchemaValidatorSingleton {
 				
 				instance = new SchemaValidatorSingleton(inVersion, validator);
 			} catch(Exception ex) {
-				log.error("Error");
-				throw new BusinessException("Ex");
+				log.error("Error while retrieving and updating Singleton for Schema Validation", ex);
+				throw new BusinessException("Error while retrieving and updating Singleton for Schema Validation", ex);
 			}
 		}   
 
