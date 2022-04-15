@@ -12,6 +12,8 @@ import it.sanita.fse.validator.cda.CDAHelper;
 import it.sanita.fse.validator.controller.IValidationCTL;
 import it.sanita.fse.validator.controller.Validation;
 import it.sanita.fse.validator.dto.CDAValidationDTO;
+import it.sanita.fse.validator.dto.SchematronInfoDTO;
+import it.sanita.fse.validator.dto.SchematronValidationResultDTO;
 import it.sanita.fse.validator.dto.request.ValidationReqDTO;
 import it.sanita.fse.validator.dto.response.RawValidationEnum;
 import it.sanita.fse.validator.dto.response.ValidationResDTO;
@@ -45,13 +47,9 @@ public class ValidationCTL extends AbstractCTL implements IValidationCTL {
 		
 		RawValidationEnum outcome = RawValidationEnum.OK;
 		
+		SchematronInfoDTO schematronInfoDTO = CDAHelper.extractSchematronInfo(requestBody.getCda());
 		
-		Map<String,String> terminologySchematron = CDAHelper.extractSchematronInfo(requestBody.getCda());
-		String cdaCode = terminologySchematron.get("code");
-		String cdaSystem = terminologySchematron.get("codesystem");
-		String templateExtension = terminologySchematron.get("template_id_extension");
-		
-		SchematronETY schematronETY = validationSRV.findSchematron(cdaCode, cdaSystem, templateExtension);
+		SchematronETY schematronETY = validationSRV.findSchematron(schematronInfoDTO);
 		if(schematronETY==null) {
 			throw new NoRecordFoundException("Attention, no schematron found ");
 		}
@@ -61,7 +59,10 @@ public class ValidationCTL extends AbstractCTL implements IValidationCTL {
 			outcome = RawValidationEnum.SYNTAX_ERROR;
 		}	
 		
-		validationSRV.validateSemantic(requestBody.getCda(),schematronETY);
+		SchematronValidationResultDTO semanticValidation = validationSRV.validateSemantic(requestBody.getCda(),schematronETY);
+		if(!semanticValidation.getValidXML()) {
+			outcome = RawValidationEnum.SEMANTIC_ERROR;
+		}
 		
 		if(validationSRV.validateVocabularies(requestBody.getCda())) {
 			log.info("Validation completed successfully!");

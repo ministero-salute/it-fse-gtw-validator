@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import it.sanita.fse.validator.cda.CDAHelper;
 import it.sanita.fse.validator.cda.ValidationResult;
 import it.sanita.fse.validator.dto.CDAValidationDTO;
+import it.sanita.fse.validator.dto.SchematronInfoDTO;
 import it.sanita.fse.validator.dto.SchematronValidationResultDTO;
 import it.sanita.fse.validator.enums.CDAValidationStatusEnum;
 import it.sanita.fse.validator.exceptions.BusinessException;
@@ -90,11 +91,11 @@ public class ValidationSRV implements IValidationSRV {
 	}
 
 	@Override
-	public SchematronValidationResultDTO validateSemantic(final String cda,final SchematronETY schematronETY) {
+	public SchematronValidationResultDTO validateSemantic(final String cdaToValidate,final SchematronETY schematronETY) {
 		SchematronValidationResultDTO output = null;
 		try { 
 			SchematronValidatorSingleton schematron = SchematronValidatorSingleton.getInstance(schematronETY);
-			output = CDAHelper.validateXMLViaXSLTSchematronFull(schematron.getSchematronResource(), cda.getBytes());
+			output = CDAHelper.validateXMLViaXSLTSchematronFull(schematron.getSchematronResource(), cdaToValidate.getBytes());
 		} catch(Exception ex) {
 			log.error("Error while executing validation on schematron", ex);
 			throw new BusinessException("Error while executing validation on schematron", ex);
@@ -103,10 +104,11 @@ public class ValidationSRV implements IValidationSRV {
 	}
     
 	@Override
-	public SchematronETY findSchematron(final String cdaCode , final String cdaSystem, final String templateExtension) {
+	public SchematronETY findSchematron(final SchematronInfoDTO schematronInfoDTO) {
 		SchematronETY schematronETY = null;
 		try {
-			schematronETY = schematronRepo.findByCodeAndSystemAndExtension(cdaCode, cdaSystem, templateExtension);
+			schematronETY = schematronRepo.findByCodeAndSystemAndExtension(schematronInfoDTO.getCode() , 
+					schematronInfoDTO.getCodeSystem(), schematronInfoDTO.getTemplateIdExtension());
 		} catch(Exception ex) {
 			log.error("Error while executing find schematron ", ex);
 			throw new BusinessException("Error while executing find schematron ", ex);

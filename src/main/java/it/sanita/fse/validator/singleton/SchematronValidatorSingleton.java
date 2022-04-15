@@ -9,57 +9,49 @@ import it.sanita.fse.validator.repository.entity.SchematronETY;
 public final class SchematronValidatorSingleton {
 
 	private static SchematronValidatorSingleton instance;
-	
-	private String version;
-	
+
 	private static ISchematronResource schematronResource;
+
+	private String cdaCode;
+	
+	private String cdaCodeSystem;
+	
+	private String templateIdExtension;
 	
 	public static SchematronValidatorSingleton getInstance(final SchematronETY inSchematronETY) {
-		if(instance==null || !instance.getVersion().equals(inSchematronETY.getTemplateIdExtension())) {
+		if(instance==null || !instance.getCdaCode().equals(inSchematronETY.getCdaCode()) || 
+				!instance.getCdaCodeSystem().equals(inSchematronETY.getCdaCodeSystem()) || 
+				!instance.getTemplateIdExtension().equals(inSchematronETY.getTemplateIdExtension())) {
+			
 			schematronResource = SchematronResourcePure.fromByteArray(inSchematronETY.getContentSchematron().getData());
-			instance = new SchematronValidatorSingleton(schematronResource);
+			instance = new SchematronValidatorSingleton(inSchematronETY.getCdaCode(),
+					inSchematronETY.getCdaCodeSystem(),inSchematronETY.getTemplateIdExtension(), schematronResource);
 		}  
 		return instance;
 	}
-	
-	private SchematronValidatorSingleton(final ISchematronResource inSchematronResource) {
+
+	private SchematronValidatorSingleton(final String inCdaCode, final String inCdaCodeSystem ,
+			final String inTemplateIdExtension , final ISchematronResource inSchematronResource) {
+		cdaCode = inCdaCode;
+		cdaCodeSystem = inCdaCodeSystem;
+		templateIdExtension = inTemplateIdExtension;
 		schematronResource = inSchematronResource;
 	}
-	
-	public String getVersion() {
-		return version;
-	}
-	
+
+
 	public ISchematronResource getSchematronResource() {
 		return schematronResource;
 	}
+
+	private String getCdaCode() {
+		return cdaCode;
+	}
+
+	private String getCdaCodeSystem() {
+		return cdaCodeSystem;
+	}
+
+	private String getTemplateIdExtension() {
+		return templateIdExtension;
+	}
 }
-
-//
-//public static SchematronValidationResultDTO validateXMLViaXSLTSchematronFull(byte[] buf/*final String schematronInternalPath*/, final byte[] xml) throws Exception{
-
-//	boolean validST = aResSCH.isValidSchematron();
-//	boolean validXML = true;
-//	List<SchematronFailedAssertionDTO> failedAssertions = new ArrayList<>();
-//	if (validST) {
-//
-//		Long start = new Date().getTime();
-//
-//
-//		SchematronOutputType type = aResSCH.applySchematronValidationToSVRL(new StreamSource(new ByteArrayInputStream(xml)));
-//		List<Object> failedAsserts = type.getActivePatternAndFiredRuleAndFailedAssert();
-//
-//		Long delta = new Date().getTime() - start;
-//		System.out.println("TIME" + delta);        
-//
-//		for (Object object : failedAsserts) {
-//			if (object instanceof FailedAssert) {
-//				validXML = false;
-//				FailedAssert failedAssert = (FailedAssert) object;
-//				SchematronFailedAssertionDTO failedAssertion = SchematronFailedAssertionDTO.builder().location(failedAssert.getLocation()).test(failedAssert.getTest()).text(failedAssert.getText().getContent().toString()).build();
-//				failedAssertions.add(failedAssertion);
-//			}
-//		}
-//	}
-//	return SchematronValidationResultDTO.builder().validSchematron(validST).validXML(validXML).failedAssertions(failedAssertions).build();
-//}
