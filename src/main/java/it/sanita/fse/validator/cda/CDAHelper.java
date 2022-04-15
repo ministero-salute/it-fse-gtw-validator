@@ -20,6 +20,7 @@ import com.helger.schematron.svrl.jaxb.SchematronOutputType;
 
 import it.sanita.fse.validator.dto.CDAValidationDTO;
 import it.sanita.fse.validator.dto.SchematronFailedAssertionDTO;
+import it.sanita.fse.validator.dto.SchematronInfoDTO;
 import it.sanita.fse.validator.dto.SchematronValidationResultDTO;
 import it.sanita.fse.validator.enums.CDAValidationStatusEnum;
 import it.sanita.fse.validator.exceptions.BusinessException;
@@ -47,22 +48,21 @@ public class CDAHelper {
         return terminology;
 	}
 	
-	public static Map<String,String> extractSchematronInfo(final String cda) {
-		Map<String, String> terminology = new HashMap<>();
+	public static SchematronInfoDTO extractSchematronInfo(final String cda) {
+		SchematronInfoDTO out = null;
 		try {
 			org.jsoup.nodes.Document docT = Jsoup.parse(cda);
 			Element systemIdentifier = docT.select("code").get(0);
 			String code = systemIdentifier.attr("code");
-			terminology.put("code", code);
 			String codesystem = systemIdentifier.attr("codesystem");
-			terminology.put("codesystem", codesystem);
 			String templateIdExtension = docT.select("templateid").get(0).attr("extension");
-			terminology.put("template_id_extension", templateIdExtension);
+			
+			out = new SchematronInfoDTO(code, codesystem , templateIdExtension);
 		} catch(Exception ex) {
 			log.error("Error while extracting info for schematron ", ex);
 			throw new BusinessException("Error while extracting info for schematron ", ex);
 		}
-		return terminology;
+		return out;
 	}
 	
 //	public static CDAValidationDTO validate(String content) throws Exception {

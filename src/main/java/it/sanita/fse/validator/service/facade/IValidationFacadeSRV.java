@@ -1,6 +1,7 @@
 package it.sanita.fse.validator.service.facade;
 
 import it.sanita.fse.validator.dto.CDAValidationDTO;
+import it.sanita.fse.validator.dto.SchematronInfoDTO;
 import it.sanita.fse.validator.dto.SchematronValidationResultDTO;
 import it.sanita.fse.validator.repository.entity.SchematronETY;
 
@@ -37,5 +38,5 @@ public interface IValidationFacadeSRV {
      */
     SchematronValidationResultDTO validateSemantic(String cda,SchematronETY schematronETY);
     
-    SchematronETY findSchematron(String cdaCode , String cdaSystem, String templateExtension) ;
+    SchematronETY findSchematron(SchematronInfoDTO schematronInfoDTO) ;
 }
