@@ -7,10 +7,10 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.validation.Validator;
 
+import com.helger.commons.io.stream.StringInputStream;
+
 import org.springframework.stereotype.Service;
 import org.w3c.dom.Document;
-
-import com.helger.commons.io.stream.StringInputStream;
 
 import it.sanita.fse.validator.cda.ValidationResult;
 import it.sanita.fse.validator.exceptions.BusinessException;
@@ -34,19 +34,20 @@ public class SchemaSRV implements ISchemaSRV {
 	@Override
 	public ValidationResult validateXsd(final Validator validator, final String objToValidate) {
 		ValidationResult result = new ValidationResult();
+		Document document = null;
 		try {
 			DocumentBuilderFactory builderFactory = DocumentBuilderFactory.newInstance();
 			builderFactory.setNamespaceAware(true);
 			
 			DocumentBuilder parser = builderFactory.newDocumentBuilder();
-			
+	
 			// parse the XML into a document object
-			Document document = parser.parse(new StringInputStream(objToValidate, Charset.defaultCharset()));
-			
+			document = parser.parse(new StringInputStream(objToValidate, Charset.defaultCharset()));
+			validator.setErrorHandler(result);
 			validator.validate(new DOMSource(document));
 		} catch(Exception ex) {
-			log.error("Error while validating xsd " , ex);
-			throw new BusinessException("Error while validating xsd " , ex);
+			log.error("Generic error while validating document.", ex);
+			throw new BusinessException("Generic error while validating document.", ex);
 		}
 	    return result;
 	}
