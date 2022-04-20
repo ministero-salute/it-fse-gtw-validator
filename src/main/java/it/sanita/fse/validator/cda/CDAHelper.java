@@ -16,6 +16,7 @@ import org.jsoup.select.Elements;
 import com.helger.schematron.ISchematronResource;
 import com.helger.schematron.svrl.jaxb.FailedAssert;
 import com.helger.schematron.svrl.jaxb.SchematronOutputType;
+import com.helger.schematron.xslt.SchematronResourceXSLT;
 
 import it.sanita.fse.validator.dto.SchematronFailedAssertionDTO;
 import it.sanita.fse.validator.dto.SchematronInfoDTO;
@@ -28,8 +29,8 @@ public class CDAHelper {
 
 	public static Map<String, List<String>> extractTerminology(String cda) {
         org.jsoup.nodes.Document docT = Jsoup.parse(cda);
-        Elements terms = docT.select("code[code]");
-
+        Elements terms = docT.select("[codeSystem]"); 
+        
         Map<String, List<String>> terminology = new HashMap<>();
         
         for (Element t:terms) {
@@ -84,4 +85,32 @@ public class CDAHelper {
 		return SchematronValidationResultDTO.builder().validSchematron(validST).validXML(validXML).failedAssertions(failedAssertions).build();
 	}
 
+//	
+//	public static void main(String[] args) throws Exception {
+//		byte[] xml = FileUtility.getFileFromInternalResources("Esempio CDA2_Referto Medicina di Laboratorio v6_OK.xml");
+//		byte[] schematron = FileUtility.getFileFromInternalResources("schematronFSE.sch.xsl");
+//		validateXMLViaXSLTSchematronFull(schematron, xml);
+//	}
+	
+	public static SchematronValidationResultDTO validateXMLViaXSLTSchematronFull(SchematronResourceXSLT schematronResourceXslt , final byte[] xml) throws Exception{
+ 		boolean validST = schematronResourceXslt.isValidSchematron();
+		boolean validXML = true;
+		List<SchematronFailedAssertionDTO> failedAssertions = new ArrayList<>();
+		if (validST) {
+			Long start = new Date().getTime();
+			SchematronOutputType type = schematronResourceXslt.applySchematronValidationToSVRL(new StreamSource(new ByteArrayInputStream(xml)));
+			List<Object> failedAsserts = type.getActivePatternAndFiredRuleAndFailedAssert();
+			Long delta = new Date().getTime() - start;
+			log.info("TIME : " + delta);        
+			for (Object object : failedAsserts) {
+				if (object instanceof FailedAssert) {
+					validXML = false;
+					FailedAssert failedAssert = (FailedAssert) object;
+					SchematronFailedAssertionDTO failedAssertion = SchematronFailedAssertionDTO.builder().location(failedAssert.getLocation()).test(failedAssert.getTest()).text(failedAssert.getText().getContent().toString()).build();
+					failedAssertions.add(failedAssertion);
+				}
+			}
+		}
+		return SchematronValidationResultDTO.builder().validSchematron(validST).validXML(validXML).failedAssertions(failedAssertions).build();
+	}
 }

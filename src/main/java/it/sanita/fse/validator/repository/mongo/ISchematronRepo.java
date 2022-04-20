@@ -20,5 +20,7 @@ public interface ISchematronRepo extends Serializable {
 	 * @return Schematron identified by its {@code version}.
 	 */
 	SchematronETY findByCodeAndSystemAndExtension(String code, String system, String templateIdExtension);
+	
+	SchematronETY findByName(String name);
 	  
 }

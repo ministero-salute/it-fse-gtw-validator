@@ -1,7 +1,6 @@
 package it.sanita.fse.validator.repository.mongo.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -41,6 +40,20 @@ public class SchematronRepo extends AbstractMongoRepo<SchematronETY, String> imp
 		} catch(Exception ex) {
 			log.error("Error while executing find by version on schematron ETY", ex);
 			throw new BusinessException("Error while executing find by version on schematron ETY", ex);
+		}
+		return output;
+	}
+
+	@Override
+	public SchematronETY findByName(final String name) {
+		SchematronETY output = null;
+		try {
+			Query query = new Query();
+			query.addCriteria(Criteria.where("name_schematron").is(name));
+			output = mongoTemplate.findOne(query, SchematronETY.class);
+		} catch(Exception ex) {
+			log.error("Error while executing find by name on schematron ETY", ex);
+			throw new BusinessException("Error while executing find by name on schematron ETY", ex);
 		}
 		return output;
 	}
