@@ -1,5 +1,6 @@
-package it.sanita.fse.validator.dto.response;
+package it.sanita.fse.validator.controller.response;
 
+import it.sanita.fse.validator.enums.RawValidationEnum;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -11,7 +12,7 @@ import lombok.Setter;
  */
 @Getter
 @Setter
-public class ValidationResDTO extends ResponseDTO {
+public class ValidationResponseDTO extends ResponseDTO {
 
 	/**
 	 * Serial version uid.
@@ -20,12 +21,12 @@ public class ValidationResDTO extends ResponseDTO {
 	
 	private final RawValidationEnum result;
 	
-	public ValidationResDTO() {
+	public ValidationResponseDTO() {
 		super();
 		result = null;
 	}
 
-	public ValidationResDTO(final LogTraceInfoDTO traceInfo, final RawValidationEnum inResult) {
+	public ValidationResponseDTO(final LogTraceInfoDTO traceInfo, final RawValidationEnum inResult) {
 		super(traceInfo);
 		result = inResult;
 	}

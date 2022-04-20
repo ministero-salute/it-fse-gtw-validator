@@ -9,7 +9,6 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Repository;
 
-import it.sanita.fse.validator.controller.impl.AbstractMongoRepo;
 import it.sanita.fse.validator.exceptions.BusinessException;
 import it.sanita.fse.validator.repository.entity.SchemaETY;
 import it.sanita.fse.validator.repository.mongo.ISchemaRepo;

@@ -1,4 +1,4 @@
-package it.sanita.fse.validator.dto.request;
+package it.sanita.fse.validator.controller.request;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import it.sanita.fse.validator.dto.AbstractDTO;
@@ -17,7 +17,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class ValidationReqDTO extends AbstractDTO {
+public class ValidationRequestDTO extends AbstractDTO {
 
     /**
 	 * Serial version uid.

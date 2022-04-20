@@ -10,8 +10,8 @@ import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import brave.Tracer;
-import it.sanita.fse.validator.dto.response.LogTraceInfoDTO;
-import it.sanita.fse.validator.dto.response.ResponseDTO;
+import it.sanita.fse.validator.controller.response.LogTraceInfoDTO;
+import it.sanita.fse.validator.controller.response.ResponseDTO;
 import it.sanita.fse.validator.exceptions.NoRecordFoundException;
 import lombok.extern.slf4j.Slf4j;
 

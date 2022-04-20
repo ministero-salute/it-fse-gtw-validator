@@ -1,4 +1,4 @@
-package it.sanita.fse.validator.dto.response;
+package it.sanita.fse.validator.controller.response;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import it.sanita.fse.validator.dto.AbstractDTO;

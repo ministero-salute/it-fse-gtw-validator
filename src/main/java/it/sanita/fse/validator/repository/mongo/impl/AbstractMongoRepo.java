@@ -1,4 +1,4 @@
-package it.sanita.fse.validator.controller.impl;
+package it.sanita.fse.validator.repository.mongo.impl;
 
 import java.lang.reflect.ParameterizedType;
 import java.util.List;

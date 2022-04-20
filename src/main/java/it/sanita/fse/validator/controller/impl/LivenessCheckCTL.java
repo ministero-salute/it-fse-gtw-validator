@@ -17,7 +17,7 @@ import org.springframework.stereotype.Component;
  */
 @Component
 @Endpoint(id = "live")
-public class LivenessCheckController implements Serializable {
+public class LivenessCheckCTL implements Serializable {
 
 	/**
 	 * 

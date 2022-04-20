@@ -1,4 +1,4 @@
-package it.sanita.fse.validator.dto.response;
+package it.sanita.fse.validator.controller.response;
 
 import it.sanita.fse.validator.dto.AbstractDTO;
 import lombok.Data;

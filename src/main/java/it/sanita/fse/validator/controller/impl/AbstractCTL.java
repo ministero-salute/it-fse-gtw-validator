@@ -5,7 +5,7 @@ import java.io.Serializable;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import brave.Tracer;
-import it.sanita.fse.validator.dto.response.LogTraceInfoDTO;
+import it.sanita.fse.validator.controller.response.LogTraceInfoDTO;
 
 /**
  * 

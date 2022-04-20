@@ -1,4 +1,4 @@
-package it.sanita.fse.validator.dto.response;
+package it.sanita.fse.validator.enums;
 
 public enum RawValidationEnum {
 
