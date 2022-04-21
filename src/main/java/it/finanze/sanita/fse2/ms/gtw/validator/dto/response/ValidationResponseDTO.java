@@ -1,4 +1,4 @@
-package it.finanze.sanita.fse2.ms.gtw.validator.controller.response;
+package it.finanze.sanita.fse2.ms.gtw.validator.dto.response;
 
 import it.finanze.sanita.fse2.ms.gtw.validator.enums.RawValidationEnum;
 import lombok.Getter;

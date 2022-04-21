@@ -13,8 +13,8 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import it.finanze.sanita.fse2.ms.gtw.validator.controller.request.ValidationRequestDTO;
-import it.finanze.sanita.fse2.ms.gtw.validator.controller.response.ValidationResponseDTO;
+import it.finanze.sanita.fse2.ms.gtw.validator.dto.request.ValidationRequestDTO;
+import it.finanze.sanita.fse2.ms.gtw.validator.dto.response.ValidationResponseDTO;
 
 /**
  * 
