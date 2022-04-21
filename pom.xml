@@ -3,10 +3,10 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>it.sanita</groupId>
+	<groupId>it.finanze.sanita.fse2</groupId>
+	<artifactId>gtw-validator-ms</artifactId>
+	<name>gtw-validator-ms</name>
 	<version>0.0.1-SNAPSHOT</version>
-	<artifactId>fse</artifactId>
-	<name>validator</name>
 	<description>Gateway Validator FSE</description>
 
 	<parent>
@@ -28,24 +28,7 @@
 	</properties>
 
 	<dependencies>
-		<dependency>
-			<groupId>org.springframework.cloud</groupId>
-			<artifactId>spring-cloud-starter-sleuth</artifactId>
-		</dependency>
-		
-		<dependency>
-		    <groupId>org.jsoup</groupId>
-		    <artifactId>jsoup</artifactId>
-		    <version>1.14.3</version>
-		</dependency>
 
-		<dependency>
-			<groupId>com.helger</groupId>
-			<artifactId>ph-schematron</artifactId>
-			<version>5.6.5</version>
-		</dependency>
-		
-		
 		<!-- WEB -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -124,13 +107,11 @@
 		</dependency>
 
 		<!-- REDIS -->
-
 		<!-- https://mvnrepository.com/artifact/redis.clients/jedis -->
 		<dependency>
 			<groupId>redis.clients</groupId>
 			<artifactId>jedis</artifactId>
 		</dependency>
-
 		<!-- https://mvnrepository.com/artifact/org.apache.commons/commons-pool2 -->
 		<dependency>
 			<groupId>org.apache.commons</groupId>
@@ -143,14 +124,31 @@
 			<artifactId>shedlock-spring</artifactId>
 			<version>4.34.0</version>
 		</dependency>
-
 		<dependency>
 			<groupId>net.javacrumbs.shedlock</groupId>
 			<artifactId>shedlock-provider-redis-spring</artifactId>
 			<version>4.34.0</version>
 		</dependency>
 
- </dependencies>
+		<!-- TRACING -->
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-starter-sleuth</artifactId>
+		</dependency>
+		
+		<!-- SCHEMATRON -->
+		<dependency>
+		    <groupId>org.jsoup</groupId>
+		    <artifactId>jsoup</artifactId>
+		    <version>1.14.3</version>
+		</dependency>
+		<dependency>
+			<groupId>com.helger</groupId>
+			<artifactId>ph-schematron</artifactId>
+			<version>5.6.5</version>
+		</dependency>
+ 
+ 	</dependencies>
 
 	<dependencyManagement>
 		<dependencies>
