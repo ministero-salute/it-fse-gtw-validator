@@ -1,6 +1,6 @@
 package it.finanze.sanita.fse2.ms.gtw.validator.dto.response;
 
-import it.finanze.sanita.fse2.ms.gtw.validator.enums.RawValidationEnum;
+import it.finanze.sanita.fse2.ms.gtw.validator.dto.ValidationInfoDTO;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -19,14 +19,14 @@ public class ValidationResponseDTO extends ResponseDTO {
 	 */
 	private static final long serialVersionUID = -2144353497297675698L;
 	
-	private final RawValidationEnum result;
+	private final ValidationInfoDTO result;
 	
 	public ValidationResponseDTO() {
 		super();
 		result = null;
 	}
 
-	public ValidationResponseDTO(final LogTraceInfoDTO traceInfo, final RawValidationEnum inResult) {
+	public ValidationResponseDTO(final LogTraceInfoDTO traceInfo, final ValidationInfoDTO inResult) {
 		super(traceInfo);
 		result = inResult;
 	}

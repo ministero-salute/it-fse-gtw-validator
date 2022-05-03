@@ -3,6 +3,7 @@ package it.finanze.sanita.fse2.ms.gtw.validator.service.facade;
 import it.finanze.sanita.fse2.ms.gtw.validator.dto.CDAValidationDTO;
 import it.finanze.sanita.fse2.ms.gtw.validator.dto.SchematronInfoDTO;
 import it.finanze.sanita.fse2.ms.gtw.validator.dto.SchematronValidationResultDTO;
+import it.finanze.sanita.fse2.ms.gtw.validator.dto.VocabularyResultDTO;
 import it.finanze.sanita.fse2.ms.gtw.validator.repository.entity.SchematronETY;
 
 /**
@@ -18,7 +19,7 @@ public interface IValidationFacadeSRV {
      * @param cda CDA to validate.
      * @return The result of the validation.
      */
-    boolean validateVocabularies(String cda);
+    VocabularyResultDTO validateVocabularies(String cda);
     
     /**
      * Execute validation on the given terminology and version.

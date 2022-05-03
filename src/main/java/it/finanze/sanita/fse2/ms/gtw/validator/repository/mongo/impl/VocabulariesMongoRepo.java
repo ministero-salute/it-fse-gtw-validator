@@ -29,12 +29,7 @@ public class VocabulariesMongoRepo implements IVocabulariesMongoRepo {
             query.addCriteria(Criteria.where("system").is(system).and("code").in(codes));
 
             validationSuccess = mongoTemplate.exists(query, VocabularyETY.class);
-//            final long numExistingPairs = mongoTemplate.count(query, VocabularyETY.class);
-//            if (numExistingPairs != codes.size()) {
-//                log.info("System {} has {} terminology, but {} terminology are present in the database", system, codes.size(), numExistingPairs);
-//                validationSuccess = false;
-//            }
-        } catch (Exception e) {
+         } catch (Exception e) {
             log.error(String.format("Error while executing validation on vocabularies for system %s", system), e);
             throw new BusinessException(String.format("Error while executing validation on vocabularies for system %s", system), e);
         }

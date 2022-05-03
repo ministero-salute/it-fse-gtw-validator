@@ -1,12 +1,15 @@
 package it.finanze.sanita.fse2.ms.gtw.validator.service.impl;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import it.finanze.sanita.fse2.ms.gtw.validator.config.properties.PropertiesCFG;
+import it.finanze.sanita.fse2.ms.gtw.validator.dto.VocabularyResultDTO;
 import it.finanze.sanita.fse2.ms.gtw.validator.exceptions.BusinessException;
 import it.finanze.sanita.fse2.ms.gtw.validator.repository.mongo.IVocabulariesMongoRepo;
 import it.finanze.sanita.fse2.ms.gtw.validator.repository.redis.IVocabulariesRedisRepo;
@@ -32,10 +35,11 @@ public class VocabulariesSRV implements IVocabulariesSRV {
     private PropertiesCFG propsCFG;
 
     @Override
-    public boolean vocabulariesExists(Map<String, List<String>> terminology) {
+    public VocabularyResultDTO vocabulariesExists(Map<String, List<String>> terminology) {
 
         boolean exists = false;
 
+        String vocaboliInesistenti = "";
         try {
 
             if (propsCFG.isRedisEnabled()) {
@@ -47,12 +51,11 @@ public class VocabulariesSRV implements IVocabulariesSRV {
                 log.info("Searching terminology on Mongo...");
 
                 exists = true;
-                
                 for (String system : terminology.keySet()) {
-
                     log.info("Checking existence of {} codes for system {}", terminology.get(system).size(), system);
                     if (!vocabulariesMongoRepo.allCodesExists(system, terminology.get(system))) {
                         log.info("Not all codes for system {} are present on Mongo", system);
+                        vocaboliInesistenti = terminology.get(system).stream().collect(Collectors.joining(","));
                         exists = false;
                         break;
                     }
@@ -74,7 +77,7 @@ public class VocabulariesSRV implements IVocabulariesSRV {
             throw new BusinessException("Error while checking terminology existence on database", e);
         }
 
-        return exists;
+        return new VocabularyResultDTO(exists, vocaboliInesistenti);
     }
 
 }

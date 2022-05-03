@@ -11,6 +11,7 @@ import it.finanze.sanita.fse2.ms.gtw.validator.cda.ValidationResult;
 import it.finanze.sanita.fse2.ms.gtw.validator.dto.CDAValidationDTO;
 import it.finanze.sanita.fse2.ms.gtw.validator.dto.SchematronInfoDTO;
 import it.finanze.sanita.fse2.ms.gtw.validator.dto.SchematronValidationResultDTO;
+import it.finanze.sanita.fse2.ms.gtw.validator.dto.VocabularyResultDTO;
 import it.finanze.sanita.fse2.ms.gtw.validator.enums.CDAValidationStatusEnum;
 import it.finanze.sanita.fse2.ms.gtw.validator.exceptions.BusinessException;
 import it.finanze.sanita.fse2.ms.gtw.validator.repository.entity.SchemaETY;
@@ -42,19 +43,19 @@ public class ValidationSRV implements IValidationSRV {
     private ISchemaSRV schemaSRV;
     
     @Override
-    public boolean validateVocabularies(final String cda) {
-        boolean validationSuccess = true;
+    public VocabularyResultDTO validateVocabularies(final String cda) {
+    	VocabularyResultDTO output = null;
         
         try {
             Map<String, List<String>> vocabularies = CDAHelper.extractTerminology(cda);
             log.info("Validating {} systems...", vocabularies.size());
-            validationSuccess = vocabulariesRV.vocabulariesExists(vocabularies);
+            output = vocabulariesRV.vocabulariesExists(vocabularies);
         } catch (Exception e) {
             log.error("Error while executing validation on vocabularies", e);
             throw new BusinessException("Error while executing validation on vocabularies", e);
         }
 
-        return validationSuccess;
+        return output;
     }
 
 	@Override
