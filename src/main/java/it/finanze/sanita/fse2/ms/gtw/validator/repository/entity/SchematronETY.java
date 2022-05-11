@@ -35,9 +35,12 @@ public class SchematronETY {
 
 	@Field(name = "template_id_extension")
 	private String templateIdExtension;
-	
+
 	@Field(name = "xsd_schema_version")
 	private String xsdSchemaVersion;
+	
+	@Field(name = "root_schematron")
+	private Boolean rootSchematron;
 	
 	@Field(name = "data_ultimo_aggiornamento")
 	private Date dataUltimoAggiornamento;

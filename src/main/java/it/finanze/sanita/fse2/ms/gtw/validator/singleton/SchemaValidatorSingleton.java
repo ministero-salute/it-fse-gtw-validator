@@ -68,4 +68,8 @@ public final class SchemaValidatorSingleton {
 		return instance;
 	}
 
+	public static Map<String,SchemaValidatorSingleton> getMapInstance() {
+		return mapInstance;
+	}
+
 }

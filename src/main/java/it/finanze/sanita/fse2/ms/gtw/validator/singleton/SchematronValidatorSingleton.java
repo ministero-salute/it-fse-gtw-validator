@@ -89,4 +89,8 @@ public final class SchematronValidatorSingleton {
 	private String getTemplateIdExtension() {
 		return templateIdExtension;
 	}
+
+	public static Map<String,SchematronValidatorSingleton> getMapInstance() {
+		return mapInstance;
+	}
 }
