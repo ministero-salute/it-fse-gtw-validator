@@ -1,6 +1,7 @@
 package it.finanze.sanita.fse2.ms.gtw.validator.singleton;
 
 import java.io.ByteArrayInputStream;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -31,9 +32,13 @@ public final class SchemaValidatorSingleton {
 
 	private Validator validator;
 
-	private SchemaValidatorSingleton(String inVersion , Validator inValidator) {
+	private Date dataUltimoAggiornamento;
+	
+
+	private SchemaValidatorSingleton(String inVersion , Validator inValidator, Date inDataUltimoAggiornamento) {
 		version = inVersion;
 		validator = inValidator;
+		dataUltimoAggiornamento = inDataUltimoAggiornamento;
 	}
 
 	public static SchemaValidatorSingleton getInstance(final String inVersion, final SchemaETY inSchema, final ISchemaRepo schemaRepo) {
@@ -55,7 +60,7 @@ public final class SchemaValidatorSingleton {
 						Schema schema = factory.newSchema(schemaFile);
 						Validator validator = schema.newValidator();
 						validator.setErrorHandler(result);
-						instance = new SchemaValidatorSingleton(inVersion, validator);
+						instance = new SchemaValidatorSingleton(inVersion, validator, inSchema.getDataUltimoAggiornamento());
 						mapInstance.put(instance.getVersion(), instance);
 					} catch(Exception ex) {
 						log.error("Error while retrieving and updating Singleton for Schema Validation", ex);
@@ -66,6 +71,14 @@ public final class SchemaValidatorSingleton {
 		}
 
 		return instance;
+	}
+
+	public String getVersion() {
+		return version;
+	}
+
+	public Date getDataUltimoAggiornamento() {
+		return dataUltimoAggiornamento;
 	}
 
 	public static Map<String,SchemaValidatorSingleton> getMapInstance() {

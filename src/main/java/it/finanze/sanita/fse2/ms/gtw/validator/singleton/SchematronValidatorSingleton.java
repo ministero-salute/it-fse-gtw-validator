@@ -74,7 +74,7 @@ public final class SchematronValidatorSingleton {
 		return schematronResource;
 	}
 
-	private Date getDataUltimoAggiornamento() {
+	public Date getDataUltimoAggiornamento() {
 		return dataUltimoAggiornamento;
 	}
 	
@@ -86,7 +86,7 @@ public final class SchematronValidatorSingleton {
 		return cdaCodeSystem;
 	}
 
-	private String getTemplateIdExtension() {
+	public String getTemplateIdExtension() {
 		return templateIdExtension;
 	}
 
