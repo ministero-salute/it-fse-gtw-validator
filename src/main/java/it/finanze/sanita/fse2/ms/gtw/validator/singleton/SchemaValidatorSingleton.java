@@ -48,7 +48,7 @@ public final class SchemaValidatorSingleton {
 			mapInstance = new HashMap<>();
 		}
 		
-		boolean getInstanceCondition = instance==null || !instance.getVersion().equals(inVersion);
+		boolean getInstanceCondition = instance==null || !instance.getVersion().equals(inVersion) || !instance.getDataUltimoAggiornamento().equals(inSchema.getDataUltimoAggiornamento());
 		if(getInstanceCondition) {
 			synchronized(SchematronValidatorSingleton.class) {
 				if (getInstanceCondition) {

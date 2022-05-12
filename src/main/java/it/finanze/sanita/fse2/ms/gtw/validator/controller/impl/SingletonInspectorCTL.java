@@ -25,7 +25,12 @@ import lombok.extern.slf4j.Slf4j;
 @RestController
 public class SingletonInspectorCTL extends AbstractCTL implements ISingletonInspectorCTL {
     
-    @Override
+    /**
+	 * Serial version uid.
+	 */
+	private static final long serialVersionUID = 5923354311703725437L;
+
+	@Override
     public SingletonInspectorResponseDTO getSingletons(HttpServletRequest request) {
 
         Map<String, SchemaValidatorSingleton> schemaInstance = SchemaValidatorSingleton.getMapInstance();
