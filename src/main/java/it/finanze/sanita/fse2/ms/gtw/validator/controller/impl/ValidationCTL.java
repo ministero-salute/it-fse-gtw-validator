@@ -23,7 +23,6 @@ import it.finanze.sanita.fse2.ms.gtw.validator.dto.response.ValidationResponseDT
 import it.finanze.sanita.fse2.ms.gtw.validator.enums.CDASeverityViolationEnum;
 import it.finanze.sanita.fse2.ms.gtw.validator.enums.CDAValidationStatusEnum;
 import it.finanze.sanita.fse2.ms.gtw.validator.enums.RawValidationEnum;
-import it.finanze.sanita.fse2.ms.gtw.validator.exceptions.NoRecordFoundException;
 import it.finanze.sanita.fse2.ms.gtw.validator.repository.entity.SchematronETY;
 import it.finanze.sanita.fse2.ms.gtw.validator.service.facade.IValidationFacadeSRV;
 import lombok.extern.slf4j.Slf4j;
@@ -58,38 +57,41 @@ public class ValidationCTL extends AbstractCTL implements IValidationCTL {
 		
 		SchematronETY schematronETY = validationSRV.findSchematron(schematronInfoDTO);
 		if(schematronETY==null) {
-			throw new NoRecordFoundException("Attention, no schematron found for code : " + schematronInfoDTO.getCode()  + " system : " 
+			outcome = RawValidationEnum.SCHEMATRON_NOT_FOUND;
+			messages.add("Attention, no schematron found for code " + schematronInfoDTO.getCode()  + " system : " 
 					+schematronInfoDTO.getCodeSystem()  + " template id extension : " + schematronInfoDTO.getTemplateIdExtension());
 		}
 		
-		CDAValidationDTO validationResult = validationSRV.validateSyntactic(requestBody.getCda(), schematronETY.getXsdSchemaVersion());
-		if(CDAValidationStatusEnum.NOT_VALID.equals(validationResult.getStatus())) {
-			for(Entry<CDASeverityViolationEnum, List<String>> violations : validationResult.getViolations().entrySet()) {
-				String severity = violations.getKey().toString();
-				for(String violation : violations.getValue()) {
-					messages.add(severity + ": " + violation);
-				}
-			}
-			outcome = RawValidationEnum.SYNTAX_ERROR;
-		}	
-		
 		if(RawValidationEnum.OK.equals(outcome)) {
-			SchematronValidationResultDTO semanticValidation = validationSRV.validateSemantic(requestBody.getCda(),schematronETY);
-			if(!semanticValidation.getValidXML()) {
-				for(SchematronFailedAssertionDTO violation : semanticValidation.getFailedAssertions()) {
-					messages.add(violation.getText());
-					
+			CDAValidationDTO validationResult = validationSRV.validateSyntactic(requestBody.getCda(), schematronETY.getXsdSchemaVersion());
+			if(CDAValidationStatusEnum.NOT_VALID.equals(validationResult.getStatus())) {
+				for(Entry<CDASeverityViolationEnum, List<String>> violations : validationResult.getViolations().entrySet()) {
+					String severity = violations.getKey().toString();
+					for(String violation : violations.getValue()) {
+						messages.add(severity + ": " + violation);
+					}
 				}
-				outcome = RawValidationEnum.SEMANTIC_ERROR;
-			}
-
+				outcome = RawValidationEnum.SYNTAX_ERROR;
+			}	
+			
 			if(RawValidationEnum.OK.equals(outcome)) {
-				VocabularyResultDTO result =  validationSRV.validateVocabularies(requestBody.getCda());
-				if(Boolean.TRUE.equals(result.getValid())) {
-					log.info("Validation completed successfully!");
-				} else {
-					outcome = RawValidationEnum.VOCABULARY_ERROR;
-					messages.add("Almeno uno dei seguenti vocaboli non sono censiti : : " + result.getMessage());
+				SchematronValidationResultDTO semanticValidation = validationSRV.validateSemantic(requestBody.getCda(),schematronETY);
+				if(!semanticValidation.getValidXML()) {
+					for(SchematronFailedAssertionDTO violation : semanticValidation.getFailedAssertions()) {
+						messages.add(violation.getText());
+						
+					}
+					outcome = RawValidationEnum.SEMANTIC_ERROR;
+				}
+				
+				if(RawValidationEnum.OK.equals(outcome)) {
+					VocabularyResultDTO result =  validationSRV.validateVocabularies(requestBody.getCda());
+					if(Boolean.TRUE.equals(result.getValid())) {
+						log.info("Validation completed successfully!");
+					} else {
+						outcome = RawValidationEnum.VOCABULARY_ERROR;
+						messages.add("Almeno uno dei seguenti vocaboli non sono censiti : : " + result.getMessage());
+					}
 				}
 			}
 		}
