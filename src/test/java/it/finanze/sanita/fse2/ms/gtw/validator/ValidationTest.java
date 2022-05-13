@@ -42,11 +42,9 @@ public class ValidationTest {
 		CDAValidationDTO secondResult = validationSRV.validateSyntactic(cda, version);
 		assertEquals(firstResult.getStatus(), secondResult.getStatus(), "Repeating validation should have not changed the result");
 
-		version = "2.0.0";
 		
 		log.info("Testing with version {}", version);
-		CDAValidationDTO thirdResult = validationSRV.validateSyntactic(cda, version);
-		assertEquals(CDAValidationStatusEnum.VALID, thirdResult.getStatus(), "The validation should have been completed correctly");
+		assertThrows(BusinessException.class, () ->  validationSRV.validateSyntactic(cda, "2.0.0")); 
 	}
 
 	@Test

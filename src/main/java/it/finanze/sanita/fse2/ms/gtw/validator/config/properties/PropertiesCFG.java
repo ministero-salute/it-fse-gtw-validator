@@ -20,5 +20,12 @@ public class PropertiesCFG {
      */
     @Value("${redis.vocabulary-enabled}")
     private boolean redisEnabled;
+    
+    /**
+     * Vocabulary find specific error.
+     */
+    @Value("${vocabulary.find-specific-error}")
+    private boolean findSpecificErrorVocabulary;
+    
 
 }

@@ -28,7 +28,9 @@ import org.springframework.test.context.ActiveProfiles;
 import it.finanze.sanita.fse2.ms.gtw.validator.config.Constants;
 import it.finanze.sanita.fse2.ms.gtw.validator.repository.entity.SchemaETY;
 import it.finanze.sanita.fse2.ms.gtw.validator.service.IValidationSRV;
+import it.finanze.sanita.fse2.ms.gtw.validator.singleton.ResetSingleton;
 import it.finanze.sanita.fse2.ms.gtw.validator.singleton.SchemaValidatorSingleton;
+import it.finanze.sanita.fse2.ms.gtw.validator.singleton.SchematronValidatorSingleton;
 import it.finanze.sanita.fse2.ms.gtw.validator.utility.FileUtility;
 import lombok.extern.slf4j.Slf4j;
 
@@ -88,6 +90,7 @@ public class SchemaTest {
     @Test
 	@DisplayName("Multithread Schema Validator Singleton")
 	void multithreadSingletonTest() throws Exception {
+    	ResetSingleton.setPrivateField(SchemaValidatorSingleton.class, null,null, "mapInstance","instance");
 		final int numberThreads = 4;
 
 		final String cda = new String(FileUtility.getFileFromInternalResources("Files" + File.separator + "cda_ok" + File.separator + "Esempio CDA2_Referto Medicina di Laboratorio v6_OK.xml"), StandardCharsets.UTF_8);

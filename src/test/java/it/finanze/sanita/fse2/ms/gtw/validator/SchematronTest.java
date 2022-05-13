@@ -35,6 +35,7 @@ import it.finanze.sanita.fse2.ms.gtw.validator.dto.SchematronValidationResultDTO
 import it.finanze.sanita.fse2.ms.gtw.validator.repository.entity.SchematronETY;
 import it.finanze.sanita.fse2.ms.gtw.validator.repository.mongo.ISchematronRepo;
 import it.finanze.sanita.fse2.ms.gtw.validator.service.IValidationSRV;
+import it.finanze.sanita.fse2.ms.gtw.validator.singleton.ResetSingleton;
 import it.finanze.sanita.fse2.ms.gtw.validator.singleton.SchematronValidatorSingleton;
 import it.finanze.sanita.fse2.ms.gtw.validator.utility.FileUtility;
 import it.finanze.sanita.fse2.ms.gtw.validator.xmlresolver.ClasspathResourceURIResolver;
@@ -133,7 +134,7 @@ public class SchematronTest {
 	@Test
 	@DisplayName("Multithread Schematron Validator Singleton")
 	void multithreadSingletonTest() throws Exception {
-
+		ResetSingleton.setPrivateField(SchematronValidatorSingleton.class, null,null, "mapInstance","instance");
 		dbSetup();
 		final int numberThreads = 4;
 
