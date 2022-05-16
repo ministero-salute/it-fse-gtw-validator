@@ -36,8 +36,8 @@ public class SchematronETY {
 	@Field(name = "template_id_extension")
 	private String templateIdExtension;
 
-	@Field(name = "xsd_schema_version")
-	private String xsdSchemaVersion;
+//	@Field(name = "xsd_schema_version")
+//	private String xsdSchemaVersion;
 	
 	@Field(name = "root_schematron")
 	private Boolean rootSchematron;

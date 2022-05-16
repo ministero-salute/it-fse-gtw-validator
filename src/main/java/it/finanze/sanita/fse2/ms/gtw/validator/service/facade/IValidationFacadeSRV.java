@@ -1,7 +1,7 @@
 package it.finanze.sanita.fse2.ms.gtw.validator.service.facade;
 
 import it.finanze.sanita.fse2.ms.gtw.validator.dto.CDAValidationDTO;
-import it.finanze.sanita.fse2.ms.gtw.validator.dto.SchematronInfoDTO;
+import it.finanze.sanita.fse2.ms.gtw.validator.dto.ExtractedInfoDTO;
 import it.finanze.sanita.fse2.ms.gtw.validator.dto.SchematronValidationResultDTO;
 import it.finanze.sanita.fse2.ms.gtw.validator.dto.VocabularyResultDTO;
 import it.finanze.sanita.fse2.ms.gtw.validator.repository.entity.SchematronETY;
@@ -37,7 +37,6 @@ public interface IValidationFacadeSRV {
      * @param version Schematron version.
      * @return The result of the validation.
      */
-    SchematronValidationResultDTO validateSemantic(String cda,SchematronETY schematronETY);
+    SchematronValidationResultDTO validateSemantic(String cdaToValidate,ExtractedInfoDTO extractedInfoDTO);
     
-    SchematronETY findSchematron(SchematronInfoDTO schematronInfoDTO) ;
 }

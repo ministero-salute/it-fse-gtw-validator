@@ -19,7 +19,7 @@ import com.helger.schematron.svrl.jaxb.SchematronOutputType;
 import com.helger.schematron.xslt.SchematronResourceXSLT;
 
 import it.finanze.sanita.fse2.ms.gtw.validator.dto.SchematronFailedAssertionDTO;
-import it.finanze.sanita.fse2.ms.gtw.validator.dto.SchematronInfoDTO;
+import it.finanze.sanita.fse2.ms.gtw.validator.dto.ExtractedInfoDTO;
 import it.finanze.sanita.fse2.ms.gtw.validator.dto.SchematronValidationResultDTO;
 import it.finanze.sanita.fse2.ms.gtw.validator.exceptions.BusinessException;
 import lombok.extern.slf4j.Slf4j;
@@ -46,8 +46,8 @@ public class CDAHelper {
         return terminology;
 	}
 	
-	public static SchematronInfoDTO extractSchematronInfo(final String cda) {
-		SchematronInfoDTO out = null;
+	public static ExtractedInfoDTO extractInfo(final String cda) {
+		ExtractedInfoDTO out = null;
 		try {
 			org.jsoup.nodes.Document docT = Jsoup.parse(cda);
 			Element systemIdentifier = docT.select("code").get(0);
@@ -55,7 +55,7 @@ public class CDAHelper {
 			String codesystem = systemIdentifier.attr("codesystem");
 			String templateIdExtension = docT.select("templateid").get(0).attr("extension");
 			
-			out = new SchematronInfoDTO(code, codesystem , templateIdExtension);
+			out = new ExtractedInfoDTO(code, codesystem , templateIdExtension);
 		} catch(Exception ex) {
 			log.error("Error while extracting info for schematron ", ex);
 			throw new BusinessException("Error while extracting info for schematron ", ex);

@@ -53,7 +53,7 @@ public final class SchematronValidatorSingleton {
 							inSchematronETY.getCdaCodeSystem(),inSchematronETY.getTemplateIdExtension(),
 							inSchematronETY.getDataUltimoAggiornamento(), schematronResourceXslt);
 					
-					mapInstance.put(instance.getTemplateIdExtension(), instance);
+					mapInstance.put(instance.getCdaCodeSystem(), instance);
 				}
 			}
 		}  
