@@ -80,10 +80,11 @@ public class ValidationSRV implements IValidationSRV {
     				throw new NoRecordFoundException(String.format("Schema with version %s not found on database.", version));
     			}
 
-    			SchemaValidatorSingleton instance = SchemaValidatorSingleton.getInstance(version, schema, schemaRepo);
+    			SchemaValidatorSingleton instance = SchemaValidatorSingleton.getInstance(false, schema, schemaRepo);
     			validator = instance.getValidator();
     		} 	
 
+    		System.out.println("VALIDATOR IS NULL : " + validator==null);
     		ValidationResult validationResult = schemaSRV.validateXsd(validator, cda);
     		if(validationResult!=null && !validationResult.isSuccess()) {
     			out  = new CDAValidationDTO(validationResult);
@@ -115,7 +116,7 @@ public class ValidationSRV implements IValidationSRV {
 			
 			if(schematronResource==null) {
 				SchematronETY schematronETY = schematronRepo.findBySystem(extractedInfoDTO.getCodeSystem());
-				SchematronValidatorSingleton schematron = SchematronValidatorSingleton.getInstance(schematronETY,schematronRepo);
+				SchematronValidatorSingleton schematron = SchematronValidatorSingleton.getInstance(false,schematronETY,schematronRepo);
 				schematronResource = schematron.getSchematronResource();
 			}
 			

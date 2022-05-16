@@ -31,17 +31,16 @@ public final class SchematronValidatorSingleton {
 	
 	private Date dataUltimoAggiornamento;
 
-	public static SchematronValidatorSingleton getInstance(final SchematronETY inSchematronETY,final ISchematronRepo schematronRepo) {
+	private boolean forceUpdate;
+	
+	public static SchematronValidatorSingleton getInstance(final boolean forceUpdate,final SchematronETY inSchematronETY,final ISchematronRepo schematronRepo) {
 		if(mapInstance!=null) {
 			instance = mapInstance.get(inSchematronETY.getTemplateIdExtension());
 		} else {
 			mapInstance = new HashMap<>();
 		}
 		
-		boolean getInstanceCondition = instance==null || !instance.getCdaCode().equals(inSchematronETY.getCdaCode()) || 
-				!instance.getCdaCodeSystem().equals(inSchematronETY.getCdaCodeSystem()) || 
-				!instance.getTemplateIdExtension().equals(inSchematronETY.getTemplateIdExtension()) || 
-				!instance.getDataUltimoAggiornamento().equals(inSchematronETY.getDataUltimoAggiornamento());
+		boolean getInstanceCondition = instance==null || Boolean.TRUE.equals(forceUpdate);
 
 		if(getInstanceCondition) {
 			synchronized(SchematronValidatorSingleton.class) {

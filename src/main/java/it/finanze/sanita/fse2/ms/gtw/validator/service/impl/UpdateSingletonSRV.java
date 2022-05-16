@@ -54,7 +54,7 @@ public class UpdateSingletonSRV implements IUpdateSingletonSRV {
 				}
 				
 				if(Boolean.TRUE.equals(isDifferent)) {
-					 SchemaValidatorSingleton.getInstance(map.getKey(), father, schemaRepo);
+					 SchemaValidatorSingleton.getInstance(true, father, schemaRepo);
 				}
 			}
 		}
@@ -77,7 +77,7 @@ public class UpdateSingletonSRV implements IUpdateSingletonSRV {
 				}
 				
 				if(Boolean.TRUE.equals(isDifferent)) {
-					SchematronValidatorSingleton.getInstance(father, schematronRepo);
+					SchematronValidatorSingleton.getInstance(true,father, schematronRepo);
 				}
 			}
 		}

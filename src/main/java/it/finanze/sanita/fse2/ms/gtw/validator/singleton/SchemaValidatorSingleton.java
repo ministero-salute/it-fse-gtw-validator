@@ -34,6 +34,7 @@ public final class SchemaValidatorSingleton {
 
 	private Date dataUltimoAggiornamento;
 	
+	
 
 	private SchemaValidatorSingleton(String inVersion , Validator inValidator, Date inDataUltimoAggiornamento) {
 		version = inVersion;
@@ -41,26 +42,26 @@ public final class SchemaValidatorSingleton {
 		dataUltimoAggiornamento = inDataUltimoAggiornamento;
 	}
 
-	public static SchemaValidatorSingleton getInstance(final String inVersion, final SchemaETY inSchema, final ISchemaRepo schemaRepo) {
+	public static SchemaValidatorSingleton getInstance(final boolean forceUpdate, final SchemaETY inSchema, final ISchemaRepo schemaRepo) {
 		if(mapInstance!=null) {
 			instance = mapInstance.get(inSchema.getVersion());
 		} else {
 			mapInstance = new HashMap<>();
 		}
 		
-		boolean getInstanceCondition = instance==null || !instance.getVersion().equals(inVersion) || !instance.getDataUltimoAggiornamento().equals(inSchema.getDataUltimoAggiornamento());
+		boolean getInstanceCondition = instance==null || Boolean.TRUE.equals(forceUpdate);
 		if(getInstanceCondition) {
 			synchronized(SchematronValidatorSingleton.class) {
 				if (getInstanceCondition) {
 					try {
 						ValidationResult result = new ValidationResult();
 						SchemaFactory factory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
-						factory.setResourceResolver(new ResourceResolver(inVersion, schemaRepo));
+						factory.setResourceResolver(new ResourceResolver(inSchema.getVersion(), schemaRepo));
 						Source schemaFile = new StreamSource(new ByteArrayInputStream(inSchema.getContentSchema().getData()));
 						Schema schema = factory.newSchema(schemaFile);
 						Validator validator = schema.newValidator();
 						validator.setErrorHandler(result);
-						instance = new SchemaValidatorSingleton(inVersion, validator, inSchema.getDataUltimoAggiornamento());
+						instance = new SchemaValidatorSingleton(inSchema.getVersion(), validator, inSchema.getDataUltimoAggiornamento());
 						mapInstance.put(instance.getVersion(), instance);
 					} catch(Exception ex) {
 						log.error("Error while retrieving and updating Singleton for Schema Validation", ex);
