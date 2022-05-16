@@ -1,5 +1,6 @@
 package it.finanze.sanita.fse2.ms.gtw.validator.repository.mongo.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,7 +38,7 @@ public class SchemaRepo extends AbstractMongoRepo<SchemaETY, String> implements 
 		List<SchemaETY> output = null;
 		try {
 			Query query = new Query();
-			query.addCriteria(Criteria.where("name_schema").ne("Files\\schema\\CDA.xsd").and("version").is(version));
+			query.addCriteria(Criteria.where("root_schema").is(false).and("version").is(version));
 			output = mongoTemplate.find(query, SchemaETY.class);
 		} catch(Exception ex) {
 			log.error("Error while searching for child schemes" , ex);
@@ -85,6 +86,20 @@ public class SchemaRepo extends AbstractMongoRepo<SchemaETY, String> implements 
 		} catch(Exception ex) {
 			log.error("Error while searching for find by name and version" , ex);
 			throw new BusinessException("Error while searching for find by name and version" , ex);
+		}
+		return output;
+	}
+
+	@Override
+	public List<SchemaETY> findByVersion(final String version) {
+		List<SchemaETY> output = new ArrayList<>();
+		try {
+			Query query = new Query();
+			query.addCriteria(Criteria.where("version").is(version));
+			output = mongoTemplate.find(query, SchemaETY.class);
+		} catch(Exception ex) {
+			log.info("Error while running find by version : " , ex);
+			throw new BusinessException("Error while running find by version : " , ex);
 		}
 		return output;
 	}

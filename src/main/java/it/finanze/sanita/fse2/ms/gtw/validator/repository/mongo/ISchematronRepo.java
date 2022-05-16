@@ -1,6 +1,7 @@
 package it.finanze.sanita.fse2.ms.gtw.validator.repository.mongo;
 
 import java.io.Serializable;
+import java.util.List;
 
 import it.finanze.sanita.fse2.ms.gtw.validator.repository.entity.SchematronETY;
 
@@ -20,5 +21,7 @@ public interface ISchematronRepo extends Serializable {
 	SchematronETY findBySystem(String system);
 	
 	SchematronETY findByName(String name);
+	
+	List<SchematronETY> findChildrenBySystem(String system);
 	  
 }

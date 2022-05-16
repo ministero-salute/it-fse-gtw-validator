@@ -1,5 +1,8 @@
 package it.finanze.sanita.fse2.ms.gtw.validator.repository.mongo.impl;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -38,6 +41,22 @@ public class SchematronRepo extends AbstractMongoRepo<SchematronETY, String> imp
 					and("root_schematron").is(true));
 			query.with(Sort.by(Sort.Direction.DESC, "template_id_extension"));
 			output = mongoTemplate.findOne(query, SchematronETY.class);
+		} catch(Exception ex) {
+			log.error("Error while executing find by version on schematron ETY", ex);
+			throw new BusinessException("Error while executing find by version on schematron ETY", ex);
+		}
+		return output;
+	}
+	
+	@Override
+	public List<SchematronETY> findChildrenBySystem(final String system) {
+		List<SchematronETY> output = new ArrayList<>();
+		try {
+			Query query = new Query();
+			query.addCriteria(Criteria.where("cda_code_system").is(system).
+					and("root_schematron").is(false));
+			query.with(Sort.by(Sort.Direction.DESC, "template_id_extension"));
+			output = mongoTemplate.find(query, SchematronETY.class);
 		} catch(Exception ex) {
 			log.error("Error while executing find by version on schematron ETY", ex);
 			throw new BusinessException("Error while executing find by version on schematron ETY", ex);
