@@ -30,7 +30,6 @@ import it.finanze.sanita.fse2.ms.gtw.validator.repository.entity.SchemaETY;
 import it.finanze.sanita.fse2.ms.gtw.validator.service.IValidationSRV;
 import it.finanze.sanita.fse2.ms.gtw.validator.singleton.ResetSingleton;
 import it.finanze.sanita.fse2.ms.gtw.validator.singleton.SchemaValidatorSingleton;
-import it.finanze.sanita.fse2.ms.gtw.validator.singleton.SchematronValidatorSingleton;
 import it.finanze.sanita.fse2.ms.gtw.validator.utility.FileUtility;
 import lombok.extern.slf4j.Slf4j;
 
@@ -65,15 +64,14 @@ public class SchemaTest {
 
 		final String cda = new String(FileUtility.getFileFromInternalResources("Files" + File.separator + "cda_ok" + File.separator + "Esempio CDA2_Referto Medicina di Laboratorio v6_OK.xml"), StandardCharsets.UTF_8);
 
-        validationSRV.validateSyntactic(cda, "1.0.0");
-        validationSRV.validateSyntactic(cda, "1.0.0");
+        validationSRV.validateSyntactic(cda, "1.3");
+        validationSRV.validateSyntactic(cda, "1.3");
 
 		Map<String,SchemaValidatorSingleton> mapInstance = SchemaValidatorSingleton.getMapInstance();
 		assertEquals(1, mapInstance.size());
 
         // load new version
-        
-        validationSRV.validateSyntactic(cda, "2.0.0");
+        validationSRV.validateSyntactic(cda, "1.4");
 
         mapInstance = SchemaValidatorSingleton.getMapInstance();
         assertEquals(2, mapInstance.size());
@@ -81,7 +79,7 @@ public class SchemaTest {
         // update data ultimo aggiornamento
 		updateSchemaLastUpdateDate();
 
-        validationSRV.validateSyntactic(cda, "2.0.0");
+        validationSRV.validateSyntactic(cda, "1.4");
         mapInstance = SchemaValidatorSingleton.getMapInstance();
         assertEquals(2, mapInstance.size());
 
@@ -94,7 +92,7 @@ public class SchemaTest {
 		final int numberThreads = 4;
 
 		final String cda = new String(FileUtility.getFileFromInternalResources("Files" + File.separator + "cda_ok" + File.separator + "Esempio CDA2_Referto Medicina di Laboratorio v6_OK.xml"), StandardCharsets.UTF_8);
-        String version = "1.0.0";
+        String version = "1.3";
 
         try {
 			List<SingletonThread> threads = new ArrayList<>();
@@ -118,7 +116,7 @@ public class SchemaTest {
 
         // ------ load new version
 
-        version = "2.0.0";
+        version = "1.4";
 
         try {
 			List<SingletonThread> threads = new ArrayList<>();
@@ -140,34 +138,25 @@ public class SchemaTest {
         mapInstance = SchemaValidatorSingleton.getMapInstance();
         assertEquals(2, mapInstance.size());
 
-        // ------- change last update date
-        updateSchemaLastUpdateDate();
-
         try {
-			List<SingletonThread> threads = new ArrayList<>();
-			for (int i=0; i<numberThreads; i++) {
-				SingletonThread thread = new SingletonThread(i, cda, version);
-				threads.add(thread);
-				
-				thread.start();
-			}
-			
-			// Waiting for threads to stop
-			for (SingletonThread thread : threads) {
-				thread.join();
-			}
-		} catch (Exception e) {
-			log.error("Error while executing Jam Session", e);
-		}
+     			List<SingletonThread> threads = new ArrayList<>();
+     			for (int i=0; i<numberThreads; i++) {
+     				SingletonThread thread = new SingletonThread(i, cda, version);
+     				threads.add(thread);
+     				
+     				thread.start();
+     			}
+     			
+     			// Waiting for threads to stop
+     			for (SingletonThread thread : threads) {
+     				thread.join();
+     			}
+     		} catch (Exception e) {
+     			log.error("Error while executing Jam Session", e);
+     		}
 
-        mapInstance = SchemaValidatorSingleton.getMapInstance();
-        assertEquals(2, mapInstance.size());
-
-
-
-
-
-
+             mapInstance = SchemaValidatorSingleton.getMapInstance();
+             assertEquals(2, mapInstance.size());
     }
 
 
@@ -177,7 +166,7 @@ public class SchemaTest {
 
         for(SchemaETY schema : schemas){
             schema.setId(null);
-            schema.setVersion("2.0.0");
+            schema.setVersion("1.4");
         }
 
         mongoTemplate.insertAll(schemas);
@@ -190,7 +179,7 @@ public class SchemaTest {
         Date newDate = sdf.parse("01/01/2022");
 
 		Query query = new Query();
-        query.addCriteria(Criteria.where("version").is("2.0.0"));
+        query.addCriteria(Criteria.where("version").is("1.4"));
 
         Update update = new Update();
         update.set("data_ultimo_aggiornamento", newDate);
@@ -200,7 +189,7 @@ public class SchemaTest {
 
     void cleanDatabase() {
         Query query = new Query();
-        query.addCriteria(Criteria.where("version").is("2.0.0"));
+        query.addCriteria(Criteria.where("version").is("1.4"));
 		mongoTemplate.remove(query, SchemaETY.class);
     }
 
@@ -218,6 +207,7 @@ public class SchemaTest {
 		@Override
 		public void run() {
 			log.info("[THREAD - " + id + "] STARTING ACTION");
+			System.out.println("Version : " + version);
 			validationSRV.validateSyntactic(cda, version);
 			log.info("[THREAD - " + id + "] STOP ACTION");
 
