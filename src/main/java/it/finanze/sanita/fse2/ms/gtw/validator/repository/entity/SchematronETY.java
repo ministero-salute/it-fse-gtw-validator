@@ -1,5 +1,7 @@
 package it.finanze.sanita.fse2.ms.gtw.validator.repository.entity;
 
+import java.util.Date;
+
 import org.bson.types.Binary;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -31,10 +33,16 @@ public class SchematronETY {
 	@Field(name = "cda_code_system")
 	private String cdaCodeSystem;
 
+	@Field(name = "template_id_root")
+	private String templateIdRoot;
+	
 	@Field(name = "template_id_extension")
 	private String templateIdExtension;
 	
-	@Field(name = "xsd_schema_version")
-	private String xsdSchemaVersion;
+	@Field(name = "root_schematron")
+	private Boolean rootSchematron;
+	
+	@Field(name = "data_ultimo_aggiornamento")
+	private Date dataUltimoAggiornamento;
 	 
 }

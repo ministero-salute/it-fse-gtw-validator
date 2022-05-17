@@ -8,11 +8,16 @@ import it.finanze.sanita.fse2.ms.gtw.validator.cda.ValidationResult;
 import it.finanze.sanita.fse2.ms.gtw.validator.enums.CDASeverityViolationEnum;
 import it.finanze.sanita.fse2.ms.gtw.validator.enums.CDAValidationStatusEnum;
 import lombok.Getter;
+import lombok.Setter;
 
 @Getter
+@Setter
 public class CDAValidationDTO {
 	
+	private String noRecordFound;
+	
 	private CDAValidationStatusEnum status;
+	
 	private Map<CDASeverityViolationEnum, List<String>> violations;
 	
 	public CDAValidationDTO(CDAValidationStatusEnum inStatus) {

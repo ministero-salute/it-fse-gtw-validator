@@ -29,4 +29,6 @@ public interface ISchemaRepo extends Serializable {
 	List<SchemaETY> findChildrenXsd(String version);
 	
 	SchemaETY findByNameAndVersion(String schemaName, String version);
+	
+	List<SchemaETY> findByVersion(String version);
 }

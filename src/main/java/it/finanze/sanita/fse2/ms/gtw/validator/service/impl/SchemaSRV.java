@@ -1,5 +1,6 @@
 package it.finanze.sanita.fse2.ms.gtw.validator.service.impl;
 
+import java.io.ByteArrayInputStream;
 import java.nio.charset.Charset;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -32,25 +33,34 @@ public class SchemaSRV implements ISchemaSRV {
 	 */
 	private static final long serialVersionUID = 1491502156280529977L;
 	
+	
 	@Override
 	public ValidationResult validateXsd(final Validator validator, final String objToValidate) {
 		ValidationResult result = new ValidationResult();
 		Document document = null;
+		StringInputStream si = null;
 		try {
 			DocumentBuilderFactory builderFactory = DocumentBuilderFactory.newInstance();
 			builderFactory.setNamespaceAware(true);
-			
+
 			DocumentBuilder parser = builderFactory.newDocumentBuilder();
-	
+
 			// parse the XML into a document object
-			document = parser.parse(new StringInputStream(objToValidate, Charset.defaultCharset()));
+			si = new StringInputStream(objToValidate, Charset.defaultCharset());
+			document = parser.parse(si);
 			validator.setErrorHandler(result);
-			validator.validate(new DOMSource(document));
+
+			synchronized (validator) {
+				validator.validate(new DOMSource(document));
+			}
+
 		} catch(Exception ex) {
 			log.error("Generic error while validating document.", ex);
 			throw new BusinessException("Generic error while validating document.", ex);
+		} finally {
+			si.close();
 		}
-	    return result;
+		return result;
 	}
  
 }

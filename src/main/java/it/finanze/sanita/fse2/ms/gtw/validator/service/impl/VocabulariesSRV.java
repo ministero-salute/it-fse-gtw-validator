@@ -1,6 +1,6 @@
 package it.finanze.sanita.fse2.ms.gtw.validator.service.impl;
 
-import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -51,15 +51,38 @@ public class VocabulariesSRV implements IVocabulariesSRV {
                 log.info("Searching terminology on Mongo...");
 
                 exists = true;
+                
+                log.info("TERMINOLOGY KEYSET SIZE : " + terminology.keySet().size()); 
+                Integer elementInQuery = 0;
+                Long startTime = new Date().getTime();
                 for (String system : terminology.keySet()) {
-                    log.info("Checking existence of {} codes for system {}", terminology.get(system).size(), system);
-                    if (!vocabulariesMongoRepo.allCodesExists(system, terminology.get(system))) {
-                        log.info("Not all codes for system {} are present on Mongo", system);
-                        vocaboliInesistenti = terminology.get(system).stream().collect(Collectors.joining(","));
-                        exists = false;
-                        break;
-                    }
+        			List<String> terminologyList = terminology.get(system);
+        			elementInQuery = elementInQuery + terminologyList.size(); 
+        			if(terminologyList!=null && !terminologyList.isEmpty()) {
+        				log.info("Checking existence of {} codes for system {}", terminologyList.size(), system);
+        				
+        				if(propsCFG.isFindSpecificErrorVocabulary()) {
+        					List<String> findedCodes = vocabulariesMongoRepo.findAllCodesExists(system, terminologyList);
+            				List<String> differences = terminologyList.stream().filter(element -> !findedCodes.contains(element)).collect(Collectors.toList());
+            				if(!differences.isEmpty()) {
+            					log.info("Not all codes for system {} are present on Mongo", system);
+            					vocaboliInesistenti = differences.stream().collect(Collectors.joining(","));
+            					exists = false;
+            					break;
+            				}
+        				} else {
+        					if (!vocabulariesMongoRepo.allCodesExists(system, terminology.get(system))) {
+        						log.info("Not all codes for system {} are present on Mongo", system);
+        						vocaboliInesistenti = terminology.get(system).stream().collect(Collectors.joining(","));
+        						exists = false;
+        						break;
+        					}
+        				 
+        				}
+        			}
                 }
+                Long endDate = new Date().getTime() - startTime;
+				log.info("END DATE VOCABULARY QUERY OF TOTAL ELEMENT" + elementInQuery + " TIME : " + endDate + " ms");
 
                 if (exists) {
                     if (propsCFG.isRedisEnabled()) {
