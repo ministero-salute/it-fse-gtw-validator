@@ -84,7 +84,6 @@ public class ValidationSRV implements IValidationSRV {
     			validator = instance.getValidator();
     		} 	
 
-    		System.out.println("VALIDATOR IS NULL : " + validator==null);
     		ValidationResult validationResult = schemaSRV.validateXsd(validator, cda);
     		if(validationResult!=null && !validationResult.isSuccess()) {
     			out  = new CDAValidationDTO(validationResult);
@@ -108,14 +107,18 @@ public class ValidationSRV implements IValidationSRV {
 			ISchematronResource schematronResource = null;
 			
 			if(SchematronValidatorSingleton.getMapInstance()!=null && !SchematronValidatorSingleton.getMapInstance().isEmpty()) {
-				SchematronValidatorSingleton singleton = SchematronValidatorSingleton.getMapInstance().get(extractedInfoDTO.getCodeSystem());
+				SchematronValidatorSingleton singleton = SchematronValidatorSingleton.getMapInstance().get(extractedInfoDTO.getTemplateIdSchematron());
 				if(singleton!=null) {
+					SchematronETY majorVersion = schematronRepo.findBySystemAndVersion(singleton.getTemplateIdRoot(), singleton.getTemplateIdExtension());
+					if(majorVersion!=null) {
+						singleton = SchematronValidatorSingleton.getInstance(true, majorVersion, schematronRepo);
+					}
 					schematronResource = singleton.getSchematronResource();
 				}
 			}
 			
 			if(schematronResource==null) {
-				SchematronETY schematronETY = schematronRepo.findBySystem(extractedInfoDTO.getCodeSystem());
+				SchematronETY schematronETY = schematronRepo.findByTemplateIdRoot(extractedInfoDTO.getTemplateIdSchematron());
 				SchematronValidatorSingleton schematron = SchematronValidatorSingleton.getInstance(false,schematronETY,schematronRepo);
 				schematronResource = schematron.getSchematronResource();
 			}

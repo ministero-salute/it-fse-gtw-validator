@@ -31,13 +31,5 @@ public interface ISingletonInspectorCTL {
 			@ApiResponse(responseCode = "500", description = "Internal Server Error") })
 	SingletonInspectorResponseDTO getSingletons(HttpServletRequest request);
     
-    @GetMapping("/reset-singletons")
-	@Operation(summary = "Reset dei singleton in memoria", description = "Servizio che permette di resettare i singleton in memoria")
-	@ApiResponse(content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = void.class)))
-	@ApiResponses(value = { 
-			@ApiResponse(responseCode = "200", description = "Success"),
-			@ApiResponse(responseCode = "400", description = "Bad Request"),
-			@ApiResponse(responseCode = "500", description = "Internal Server Error") })
-	void resetSingletons(HttpServletRequest request);
     
 }

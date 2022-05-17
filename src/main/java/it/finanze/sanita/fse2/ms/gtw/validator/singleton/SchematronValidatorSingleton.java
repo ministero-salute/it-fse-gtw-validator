@@ -23,19 +23,15 @@ public final class SchematronValidatorSingleton {
 
 	private SchematronResourceXSLT schematronResource;
 
-	private String cdaCode;
-
-	private String cdaCodeSystem;
-
+	private String templateIdRoot;
+	
 	private String templateIdExtension;
 	
 	private Date dataUltimoAggiornamento;
-
-	private boolean forceUpdate;
 	
 	public static SchematronValidatorSingleton getInstance(final boolean forceUpdate,final SchematronETY inSchematronETY,final ISchematronRepo schematronRepo) {
 		if(mapInstance!=null) {
-			instance = mapInstance.get(inSchematronETY.getTemplateIdExtension());
+			instance = mapInstance.get(inSchematronETY.getTemplateIdRoot());
 		} else {
 			mapInstance = new HashMap<>();
 		}
@@ -48,24 +44,22 @@ public final class SchematronValidatorSingleton {
 					IReadableResource readableResource = new ReadableResourceInputStream(new ByteArrayInputStream(inSchematronETY.getContentSchematron().getData()));
 					SchematronResourceXSLT schematronResourceXslt = new SchematronResourceXSLT(readableResource);
 					schematronResourceXslt.setURIResolver(new ClasspathResourceURIResolver(schematronRepo));
-					instance = new SchematronValidatorSingleton(inSchematronETY.getCdaCode(),
-							inSchematronETY.getCdaCodeSystem(),inSchematronETY.getTemplateIdExtension(),
+					instance = new SchematronValidatorSingleton(inSchematronETY.getTemplateIdRoot(),inSchematronETY.getTemplateIdExtension(),
 							inSchematronETY.getDataUltimoAggiornamento(), schematronResourceXslt);
 					
-					mapInstance.put(instance.getCdaCodeSystem(), instance);
+					mapInstance.put(instance.getTemplateIdRoot(), instance);
 				}
 			}
 		}  
 		return instance;
 	}
 
-	private SchematronValidatorSingleton(final String inCdaCode, final String inCdaCodeSystem ,
-			final String inTemplateIdExtension ,final Date inDataUltimoAggiornamento, final SchematronResourceXSLT inSchematronResource) {
-		cdaCode = inCdaCode;
-		cdaCodeSystem = inCdaCodeSystem;
-		templateIdExtension = inTemplateIdExtension;
+	private SchematronValidatorSingleton(final String inTemplateIdRoot,final String inTemplateIdExtension,
+			final Date inDataUltimoAggiornamento,final SchematronResourceXSLT inSchematronResource) {
+		templateIdRoot = inTemplateIdRoot;
 		dataUltimoAggiornamento = inDataUltimoAggiornamento;
 		schematronResource = inSchematronResource;
+		templateIdExtension = inTemplateIdExtension;
 	}
 
 
@@ -77,14 +71,10 @@ public final class SchematronValidatorSingleton {
 		return dataUltimoAggiornamento;
 	}
 	
-	private String getCdaCode() {
-		return cdaCode;
+	public String getTemplateIdRoot() {
+		return templateIdRoot;
 	}
-
-	private String getCdaCodeSystem() {
-		return cdaCodeSystem;
-	}
-
+	
 	public String getTemplateIdExtension() {
 		return templateIdExtension;
 	}

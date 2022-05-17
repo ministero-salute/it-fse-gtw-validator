@@ -6,10 +6,8 @@ import lombok.Data;
 @Data
 @AllArgsConstructor
 public class ExtractedInfoDTO {
-
-	private String code;
 	
-	private String codeSystem;
+	private String templateIdSchematron;
 	
 	private String schemaVersion;
 }

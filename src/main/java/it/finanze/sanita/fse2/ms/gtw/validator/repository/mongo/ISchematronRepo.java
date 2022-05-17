@@ -18,10 +18,11 @@ public interface ISchematronRepo extends Serializable {
 	 * @param system of the Schematron to return.
 	 * @return Schematron identified by its {@code version}.
 	 */
-	SchematronETY findBySystem(String system);
+	SchematronETY findByTemplateIdRoot(String templateIdRoot);
 	
 	SchematronETY findByName(String name);
 	
 	List<SchematronETY> findChildrenBySystem(String system);
 	  
+	SchematronETY findBySystemAndVersion(String system, String version);
 }

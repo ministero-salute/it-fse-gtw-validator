@@ -13,6 +13,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class SchematronSingletonInfo {
 
+	private String templateIdRoot;
+	
     private String templateIdExtension;
 
     private Date dataUltimoAggiornamento;

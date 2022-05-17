@@ -33,11 +33,11 @@ public class SchematronRepo extends AbstractMongoRepo<SchematronETY, String> imp
 	private MongoTemplate mongoTemplate;
 	
 	@Override
-	public SchematronETY findBySystem(final String system) {
+	public SchematronETY findByTemplateIdRoot(final String templateIdRoot) {
 		SchematronETY output = null;
 		try {
 			Query query = new Query();
-			query.addCriteria(Criteria.where("cda_code_system").is(system).
+			query.addCriteria(Criteria.where("template_id_root").is(templateIdRoot).
 					and("root_schematron").is(true));
 			query.with(Sort.by(Sort.Direction.DESC, "template_id_extension"));
 			output = mongoTemplate.findOne(query, SchematronETY.class);
@@ -75,6 +75,23 @@ public class SchematronRepo extends AbstractMongoRepo<SchematronETY, String> imp
 		} catch(Exception ex) {
 			log.error("Error while executing find by name on schematron ETY", ex);
 			throw new BusinessException("Error while executing find by name on schematron ETY", ex);
+		}
+		return output;
+	}
+	
+	
+	@Override
+	public SchematronETY findBySystemAndVersion(final String system, final String version) {
+		SchematronETY output = null;
+		try {
+			Query query = new Query();
+			query.addCriteria(Criteria.where("template_id_root").is(system).
+					and("template_id_extension").gt(version));
+			query.with(Sort.by(Sort.Direction.DESC, "template_id_extension"));
+			output = mongoTemplate.findOne(query, SchematronETY.class);
+		} catch(Exception ex) {
+			log.error("Error while executing find by version on schematron ETY", ex);
+			throw new BusinessException("Error while executing find by version on schematron ETY", ex);
 		}
 		return output;
 	}

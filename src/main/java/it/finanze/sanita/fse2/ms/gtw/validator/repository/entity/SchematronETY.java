@@ -33,11 +33,11 @@ public class SchematronETY {
 	@Field(name = "cda_code_system")
 	private String cdaCodeSystem;
 
+	@Field(name = "template_id_root")
+	private String templateIdRoot;
+	
 	@Field(name = "template_id_extension")
 	private String templateIdExtension;
-
-//	@Field(name = "xsd_schema_version")
-//	private String xsdSchemaVersion;
 	
 	@Field(name = "root_schematron")
 	private Boolean rootSchematron;

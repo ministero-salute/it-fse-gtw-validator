@@ -13,8 +13,6 @@ import it.finanze.sanita.fse2.ms.gtw.validator.dto.SchemaSingletonInfo;
 import it.finanze.sanita.fse2.ms.gtw.validator.dto.SchematronSingletonInfo;
 import it.finanze.sanita.fse2.ms.gtw.validator.dto.SingletonInfoDTO;
 import it.finanze.sanita.fse2.ms.gtw.validator.dto.response.SingletonInspectorResponseDTO;
-import it.finanze.sanita.fse2.ms.gtw.validator.exceptions.BusinessException;
-import it.finanze.sanita.fse2.ms.gtw.validator.singleton.ResetSingleton;
 import it.finanze.sanita.fse2.ms.gtw.validator.singleton.SchemaValidatorSingleton;
 import it.finanze.sanita.fse2.ms.gtw.validator.singleton.SchematronValidatorSingleton;
 import lombok.extern.slf4j.Slf4j;
@@ -53,6 +51,7 @@ public class SingletonInspectorCTL extends AbstractCTL implements ISingletonInsp
         if (schematronInstance != null) {
             for (Map.Entry<String, SchematronValidatorSingleton> entry : schematronInstance.entrySet()) {
                 schematrons.add(SchematronSingletonInfo.builder()
+                		.templateIdRoot(entry.getValue().getTemplateIdRoot())
                         .templateIdExtension(entry.getValue().getTemplateIdExtension())
                         .dataUltimoAggiornamento(entry.getValue().getDataUltimoAggiornamento())
                         .build());
@@ -64,17 +63,5 @@ public class SingletonInspectorCTL extends AbstractCTL implements ISingletonInsp
         return new SingletonInspectorResponseDTO(getLogTraceInfo(), out);
 
     }
-
-	@Override
-	public void resetSingletons(HttpServletRequest request) {
-		try {
-			ResetSingleton.setPrivateField(SchematronValidatorSingleton.class, null,null, "mapInstance","instance");
-			ResetSingleton.setPrivateField(SchemaValidatorSingleton.class, null,null, "mapInstance","instance");
-		} catch(Exception ex) {
-			log.error("Error while running reset of singletons : " ,ex);
-			throw new BusinessException("Error while running reset of singletons : " ,ex);
-		}
-	}
-    
-    
+ 
 }

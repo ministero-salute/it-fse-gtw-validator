@@ -50,12 +50,12 @@ public class CDAHelper {
 		ExtractedInfoDTO out = null;
 		try {
 			org.jsoup.nodes.Document docT = Jsoup.parse(cda);
-			Element systemIdentifier = docT.select("code").get(0);
-			String code = systemIdentifier.attr("code");
-			String codesystem = systemIdentifier.attr("codesystem");
-			String templateIdExtension = docT.select("templateid").get(0).attr("extension");
 			
-			out = new ExtractedInfoDTO(code, codesystem , templateIdExtension);
+			//Schematron = root
+			String templateIdSchematron = docT.select("templateid").get(0).attr("root");
+			//Schemaversion = extension 
+			String schemaVersion = docT.select("templateid").get(0).attr("extension");
+			out = new ExtractedInfoDTO(templateIdSchematron, schemaVersion);
 		} catch(Exception ex) {
 			log.error("Error while extracting info for schematron ", ex);
 			throw new BusinessException("Error while extracting info for schematron ", ex);
