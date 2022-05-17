@@ -12,4 +12,7 @@ public interface IVocabulariesMongoRepo {
      * @return {@code true} if all the codes are present in the database, {@code false} otherwise.
      */
     boolean allCodesExists(String system, List<String> codes);
+    
+    List<String> findAllCodesExists(String system, List<String> codes);
+    
 }

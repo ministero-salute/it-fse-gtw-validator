@@ -1,6 +1,8 @@
 package it.finanze.sanita.fse2.ms.gtw.validator.repository.mongo.impl;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -35,5 +37,25 @@ public class VocabulariesMongoRepo implements IVocabulariesMongoRepo {
         }
 
         return validationSuccess;
+    }
+
+    @Override
+    public List<String> findAllCodesExists(String system, List<String> codes) {
+        
+    	List<String> output = new ArrayList<>();
+        try {
+            Query query = new Query();
+            query.addCriteria(Criteria.where("system").is(system).and("code").in(codes));
+
+            List<VocabularyETY> etys = mongoTemplate.find(query, VocabularyETY.class);
+            if(!etys.isEmpty()) {
+            	output = etys.stream().map(e-> e.getCode()).collect(Collectors.toList());
+            }
+         } catch (Exception e) {
+            log.error(String.format("Error while executing validation on vocabularies for system %s", system), e);
+            throw new BusinessException(String.format("Error while executing validation on vocabularies for system %s", system), e);
+        }
+
+        return output;
     }
 }

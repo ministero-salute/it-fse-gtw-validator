@@ -1,5 +1,7 @@
 package it.finanze.sanita.fse2.ms.gtw.validator.repository.entity;
 
+import java.util.Date;
+
 import org.bson.types.Binary;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -31,5 +33,11 @@ public class SchemaETY {
 	
 	@Field(name = "version")
 	private String version;
+	
+	@Field(name = "root_schema")
+	private Boolean rootSchema;
+	
+	@Field(name = "data_ultimo_aggiornamento")
+	private Date dataUltimoAggiornamento;
 	 
 }

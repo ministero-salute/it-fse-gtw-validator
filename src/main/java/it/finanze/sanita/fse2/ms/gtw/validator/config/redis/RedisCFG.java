@@ -20,39 +20,39 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 public class RedisCFG {
 
 	/**
-	 * Host access list.
+	 * Host.
 	 */
-	@Value("${redis_access_list.hostname}")
+	@Value("${redis.hostname}")
 	private String host;
 
 	/**
-	 * Port access list.
+	 * Port.
 	 */
-	@Value("${redis_access_list.port}")
+	@Value("${redis.port}")
 	private Integer port;
 
 	/**
-	 * Password access list.
+	 * Password.
 	 */
-	@Value("${redis_access_list.password}")
+	@Value("${redis.password}")
 	private transient char[] password;
 
 	/**
-	 * Pool max access list.
+	 * Pool max.
 	 */
-	@Value("${redis_access_list.jedis.pool.max-total}")
+	@Value("${redis.jedis.pool.max-total}")
 	private Integer poolMaxTotal;
 
 	/**
-	 * Idle min access list.
+	 * Idle min.
 	 */
-	@Value("${redis_access_list.jedis.pool.min-idle}")
+	@Value("${redis.jedis.pool.min-idle}")
 	private Integer idleMin;
 
 	/**
-	 * Idle max access list.
+	 * Idle max.
 	 */
-	@Value("${redis_access_list.jedis.pool.max-idle}")
+	@Value("${redis.jedis.pool.max-idle}")
 	private Integer idleMax;
 
 	/**
