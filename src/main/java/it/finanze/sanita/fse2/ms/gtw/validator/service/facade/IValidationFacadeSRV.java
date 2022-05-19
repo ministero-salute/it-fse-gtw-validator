@@ -4,7 +4,6 @@ import it.finanze.sanita.fse2.ms.gtw.validator.dto.CDAValidationDTO;
 import it.finanze.sanita.fse2.ms.gtw.validator.dto.ExtractedInfoDTO;
 import it.finanze.sanita.fse2.ms.gtw.validator.dto.SchematronValidationResultDTO;
 import it.finanze.sanita.fse2.ms.gtw.validator.dto.VocabularyResultDTO;
-import it.finanze.sanita.fse2.ms.gtw.validator.repository.entity.SchematronETY;
 
 /**
  * Interface of Validation Service.

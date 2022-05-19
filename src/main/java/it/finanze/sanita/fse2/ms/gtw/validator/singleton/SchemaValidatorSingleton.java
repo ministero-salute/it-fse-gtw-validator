@@ -26,7 +26,7 @@ public final class SchemaValidatorSingleton {
 
 	private static Map<String,SchemaValidatorSingleton> mapInstance;
 	
-	private static volatile SchemaValidatorSingleton instance;
+	private static SchemaValidatorSingleton instance;
 
 	private String version;
 

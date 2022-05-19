@@ -19,7 +19,7 @@ public final class SchematronValidatorSingleton {
 
 	private static Map<String,SchematronValidatorSingleton> mapInstance;
 	
-	private static volatile SchematronValidatorSingleton instance;
+	private static SchematronValidatorSingleton instance;
 
 	private SchematronResourceXSLT schematronResource;
 

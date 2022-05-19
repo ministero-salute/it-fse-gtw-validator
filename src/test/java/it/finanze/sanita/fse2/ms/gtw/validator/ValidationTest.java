@@ -18,7 +18,6 @@ import it.finanze.sanita.fse2.ms.gtw.validator.config.Constants;
 import it.finanze.sanita.fse2.ms.gtw.validator.dto.CDAValidationDTO;
 import it.finanze.sanita.fse2.ms.gtw.validator.enums.CDAValidationStatusEnum;
 import it.finanze.sanita.fse2.ms.gtw.validator.exceptions.BusinessException;
-import it.finanze.sanita.fse2.ms.gtw.validator.exceptions.NoRecordFoundException;
 import it.finanze.sanita.fse2.ms.gtw.validator.service.facade.IValidationFacadeSRV;
 import it.finanze.sanita.fse2.ms.gtw.validator.utility.FileUtility;
 import lombok.extern.slf4j.Slf4j;
@@ -27,7 +26,7 @@ import lombok.extern.slf4j.Slf4j;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ComponentScan(basePackages = { Constants.ComponentScan.BASE })
 @ActiveProfiles(Constants.Profile.TEST)
-public class ValidationTest {
+class ValidationTest {
 
 	@Autowired
 	private IValidationFacadeSRV validationSRV;

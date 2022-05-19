@@ -27,6 +27,8 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class CDAHelper {
 
+	private CDAHelper(){}
+
 	public static Map<String, List<String>> extractTerminology(String cda) {
         org.jsoup.nodes.Document docT = Jsoup.parse(cda);
         Elements terms = docT.select("[codeSystem]"); 
@@ -84,13 +86,6 @@ public class CDAHelper {
 		}
 		return SchematronValidationResultDTO.builder().validSchematron(validST).validXML(validXML).failedAssertions(failedAssertions).build();
 	}
-
-//	
-//	public static void main(String[] args) throws Exception {
-//		byte[] xml = FileUtility.getFileFromInternalResources("Esempio CDA2_Referto Medicina di Laboratorio v6_OK.xml");
-//		byte[] schematron = FileUtility.getFileFromInternalResources("schematronFSE.sch.xsl");
-//		validateXMLViaXSLTSchematronFull(schematron, xml);
-//	}
 	
 	public static SchematronValidationResultDTO validateXMLViaXSLTSchematronFull(SchematronResourceXSLT schematronResourceXslt , final byte[] xml) throws Exception{
  		boolean validST = schematronResourceXslt.isValidSchematron();
