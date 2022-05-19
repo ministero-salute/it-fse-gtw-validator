@@ -15,13 +15,11 @@ import it.finanze.sanita.fse2.ms.gtw.validator.dto.SingletonInfoDTO;
 import it.finanze.sanita.fse2.ms.gtw.validator.dto.response.SingletonInspectorResponseDTO;
 import it.finanze.sanita.fse2.ms.gtw.validator.singleton.SchemaValidatorSingleton;
 import it.finanze.sanita.fse2.ms.gtw.validator.singleton.SchematronValidatorSingleton;
-import lombok.extern.slf4j.Slf4j;
 
 /**
  *
  *	Singleton Inspector controller.
  */
-@Slf4j
 @RestController
 public class SingletonInspectorCTL extends AbstractCTL implements ISingletonInspectorCTL {
     

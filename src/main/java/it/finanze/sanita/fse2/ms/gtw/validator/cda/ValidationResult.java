@@ -14,15 +14,15 @@ class ValidationResult implements Serializable, ErrorHandler
 {
   private static final long serialVersionUID = 697233768272944314L;
   
-  protected List<String> warnings;
-  protected List<String> errors;
-  protected List<String> fatals;
+  private List<String> warnings;
+  private List<String> errors;
+  private List<String> fatals;
   
   public ValidationResult()
   {
-    warnings = new ArrayList<String>();
-    errors   = new ArrayList<String>();
-    fatals   = new ArrayList<String>();
+    warnings = new ArrayList<>();
+    errors   = new ArrayList<>();
+    fatals   = new ArrayList<>();
   }
   
   public List<String> getWarnings() {
@@ -40,8 +40,8 @@ class ValidationResult implements Serializable, ErrorHandler
   public 
   boolean isSuccess() 
   {
-    if(errors != null && errors.size() > 0) return false;
-    if(fatals != null && fatals.size() > 0) return false;
+    if(errors != null && !errors.isEmpty()) return false;
+    if(fatals != null && !fatals.isEmpty()) return false;
     return true;
   }
   

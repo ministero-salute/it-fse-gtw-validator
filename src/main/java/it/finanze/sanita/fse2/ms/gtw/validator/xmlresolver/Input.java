@@ -7,6 +7,9 @@ import java.io.Reader;
 
 import org.w3c.dom.ls.LSInput;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 public class Input implements LSInput {
 
 	private String publicId;
@@ -45,12 +48,15 @@ public class Input implements LSInput {
 		synchronized (inputStream) {
 			try {
 				byte[] input = new byte[inputStream.available()];
-				inputStream.read(input);
-				String contents = new String(input);
-				return contents;
+				
+				//inputStream.read(input);
+				while (inputStream.read(input) > 0) {
+					// ...
+				}
+
+				return new String(input);
 			} catch (IOException e) {
-				e.printStackTrace();
-				System.out.println("Exception " + e);
+				log.error("Exception in Input getStringData", e);
 				return null;
 			}
 		}

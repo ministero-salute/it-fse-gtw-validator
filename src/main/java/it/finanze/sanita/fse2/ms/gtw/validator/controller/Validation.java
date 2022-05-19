@@ -24,7 +24,7 @@ public final class Validation {
 	 * @param objs	List of objects to validate.
 	 */
 	public static void notNull(final Object... objs) {
-		Boolean notValid = false;
+		boolean notValid = false;
 		for (final Object obj:objs) {
 			if (obj == null) {
 				notValid = true;

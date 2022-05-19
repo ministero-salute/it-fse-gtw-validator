@@ -39,7 +39,7 @@ import lombok.extern.slf4j.Slf4j;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ComponentScan(basePackages = { Constants.ComponentScan.BASE })
 @ActiveProfiles(Constants.Profile.TEST)
-public class SchemaTest {
+class SchemaTest {
 
 	@Autowired
 	private IValidationSRV validationSRV;

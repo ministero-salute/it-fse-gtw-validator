@@ -1,8 +1,8 @@
 package it.finanze.sanita.fse2.ms.gtw.validator.service.impl;
 
-import java.io.ByteArrayInputStream;
 import java.nio.charset.Charset;
 
+import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.dom.DOMSource;
@@ -10,13 +10,12 @@ import javax.xml.validation.Validator;
 
 import com.helger.commons.io.stream.StringInputStream;
 
-import it.finanze.sanita.fse2.ms.gtw.validator.cda.ValidationResult;
-import it.finanze.sanita.fse2.ms.gtw.validator.exceptions.BusinessException;
-import it.finanze.sanita.fse2.ms.gtw.validator.service.ISchemaSRV;
-
 import org.springframework.stereotype.Service;
 import org.w3c.dom.Document;
 
+import it.finanze.sanita.fse2.ms.gtw.validator.cda.ValidationResult;
+import it.finanze.sanita.fse2.ms.gtw.validator.exceptions.BusinessException;
+import it.finanze.sanita.fse2.ms.gtw.validator.service.ISchemaSRV;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -38,27 +37,23 @@ public class SchemaSRV implements ISchemaSRV {
 	public ValidationResult validateXsd(final Validator validator, final String objToValidate) {
 		ValidationResult result = new ValidationResult();
 		Document document = null;
-		StringInputStream si = null;
-		try {
+		try (StringInputStream si = new StringInputStream(objToValidate, Charset.defaultCharset())){
 			DocumentBuilderFactory builderFactory = DocumentBuilderFactory.newInstance();
 			builderFactory.setNamespaceAware(true);
+			builderFactory.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, "");
+			builderFactory.setAttribute(XMLConstants.ACCESS_EXTERNAL_SCHEMA, "");
 
 			DocumentBuilder parser = builderFactory.newDocumentBuilder();
 
 			// parse the XML into a document object
-			si = new StringInputStream(objToValidate, Charset.defaultCharset());
 			document = parser.parse(si);
 			validator.setErrorHandler(result);
 
-			synchronized (validator) {
-				validator.validate(new DOMSource(document));
-			}
+			validator.validate(new DOMSource(document));
 
 		} catch(Exception ex) {
 			log.error("Generic error while validating document.", ex);
 			throw new BusinessException("Generic error while validating document.", ex);
-		} finally {
-			si.close();
 		}
 		return result;
 	}
