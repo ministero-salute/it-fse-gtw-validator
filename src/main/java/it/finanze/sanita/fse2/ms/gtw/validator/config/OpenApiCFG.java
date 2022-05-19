@@ -5,7 +5,11 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
+import io.swagger.v3.oas.annotations.extensions.Extension;
+import io.swagger.v3.oas.annotations.extensions.ExtensionProperty;
+import io.swagger.v3.oas.annotations.info.Contact;
 import io.swagger.v3.oas.annotations.info.Info;
+import io.swagger.v3.oas.annotations.servers.Server;
 import io.swagger.v3.oas.models.media.Content;
 import io.swagger.v3.oas.models.media.MediaType;
 import io.swagger.v3.oas.models.media.Schema;
@@ -13,7 +17,30 @@ import io.swagger.v3.oas.models.responses.ApiResponse;
 import io.swagger.v3.oas.models.responses.ApiResponses;
 
 @Configuration
-@OpenAPIDefinition(info = @Info(title = "Gateway Validator", version = "v1"))
+@OpenAPIDefinition(
+	info = @Info(
+			extensions = {
+				@Extension(properties = {
+					@ExtensionProperty(name = "x-api-id", value = "1"),
+					@ExtensionProperty(name = "x-summary", value = "Validate the CDA's received")
+				})
+			},
+			title = "Gateway Validator", 
+			version = "1.0.0", 
+			description = "Validate the CDA's received",
+			termsOfService = "${docs.info.termsOfService}", 
+			contact = @Contact(name = "${docs.info.contact.name}", url = "${docs.info.contact.url}", email = "${docs.info.contact.mail}")),
+	servers = {
+		@Server(
+			description = "Gateway Validator Development URL",
+			url = "http://localhost:8012",
+			extensions = {
+				@Extension(properties = {
+					@ExtensionProperty(name = "x-sandbox", parseValue = true, value = "true")
+				})
+			}
+		)
+	})
 public class OpenApiCFG {
 
 
