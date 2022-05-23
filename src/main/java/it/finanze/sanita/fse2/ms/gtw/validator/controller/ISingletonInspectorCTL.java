@@ -18,7 +18,7 @@ import it.finanze.sanita.fse2.ms.gtw.validator.dto.response.SingletonInspectorRe
  *
  *	Controller singleton inspector.
  */
-@RequestMapping(path = "/v1")
+@RequestMapping(path = "/v1.0.0")
 @Tag(name = "Servizio ispezione singleton in memoria")
 public interface ISingletonInspectorCTL {
 
@@ -26,10 +26,9 @@ public interface ISingletonInspectorCTL {
 	@Operation(summary = "Ritorna i singleton presenti in memoria", description = "Servizio che permette di ispezionare i singleton di Schema e Schematron attualmente caricati in memoria")
 	@ApiResponse(content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = SingletonInspectorResponseDTO.class)))
 	@ApiResponses(value = { 
-			@ApiResponse(responseCode = "200", description = "Success"),
-			@ApiResponse(responseCode = "400", description = "Bad Request"),
-			@ApiResponse(responseCode = "500", description = "Internal Server Error") })
+			@ApiResponse(responseCode = "200", description = "Success", content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE)),
+			@ApiResponse(responseCode = "400", description = "Bad Request", content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE)),
+			@ApiResponse(responseCode = "500", description = "Internal Server Error", content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE)) })
 	SingletonInspectorResponseDTO getSingletons(HttpServletRequest request);
-    
     
 }

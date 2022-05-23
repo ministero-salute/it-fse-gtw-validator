@@ -22,16 +22,16 @@ import it.finanze.sanita.fse2.ms.gtw.validator.dto.response.ValidationResponseDT
  *
  *	Controller validation.
  */
-@RequestMapping(path = "/v1")
+@RequestMapping(path = "/v1.0.0")
 @Tag(name = "Servizio validazione documenti")
 public interface IValidationCTL {
 
 	@PostMapping("/validate")
 	@Operation(summary = "Validazione documenti", description = "Valida il CDA fornito in input.")
 	@ApiResponse(content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = ValidationResponseDTO.class)))
-	@ApiResponses(value = { @ApiResponse(responseCode = "200", description = "Validazione eseguita"),
-							@ApiResponse(responseCode = "400", description = "Bad Request"),
-							@ApiResponse(responseCode = "500", description = "Internal Server Error") })
+	@ApiResponses(value = { @ApiResponse(responseCode = "200", description = "Validazione eseguita", content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE)),
+							@ApiResponse(responseCode = "400", description = "Bad Request", content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE)),
+							@ApiResponse(responseCode = "500", description = "Internal Server Error", content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE)) })
 	ValidationResponseDTO validation(@RequestBody ValidationRequestDTO requestBody, HttpServletRequest request);
 
 }
