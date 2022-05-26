@@ -8,6 +8,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import java.io.File;
 import java.nio.charset.StandardCharsets;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -26,10 +27,17 @@ import lombok.extern.slf4j.Slf4j;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ComponentScan(basePackages = { Constants.ComponentScan.BASE })
 @ActiveProfiles(Constants.Profile.TEST)
-class ValidationTest {
+class ValidationTest extends AbstractTest {
 
 	@Autowired
-	private IValidationFacadeSRV validationSRV;
+	IValidationFacadeSRV validationSRV;
+
+	@BeforeEach
+	void setup() {
+		clearConfigurationItems();
+		insertSchema();
+		insertSchematron();
+	}
 
 	@Test
 	void shouldReturnValidWhenCDAIsValid() {

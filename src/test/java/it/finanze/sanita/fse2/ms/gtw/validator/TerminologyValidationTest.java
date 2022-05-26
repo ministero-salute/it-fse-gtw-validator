@@ -1,5 +1,6 @@
 package it.finanze.sanita.fse2.ms.gtw.validator;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.BDDMockito.given;
 
@@ -11,6 +12,7 @@ import java.util.Map;
 import java.util.UUID;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.RepeatedTest;
@@ -92,7 +94,6 @@ class TerminologyValidationTest {
         given(propsCFG.isRedisEnabled()).willReturn(false);
         given(propsCFG.getValidationTTL()).willReturn(300l);
         
-        final long expectedRedisTime = 60l;
         final Map<String, List<String>> terminology = generateRandomTerminology(10, 1000);
 
         // A chunk of keys will exist only in Redis
@@ -100,13 +101,13 @@ class TerminologyValidationTest {
         insertTerminologyOnMongo(terminology);
 
         Date start = new Date();
-//        assertTimeout(Duration.ofMillis(expectedRedisTime*5), () -> vocabulariesSRV.vocabulariesExists(terminology));
+        assertDoesNotThrow(() -> vocabulariesSRV.vocabulariesExists(terminology));
         Date end = new Date();
         log.info("Time without Redis: {}", end.getTime() - start.getTime());
 
         given(propsCFG.isRedisEnabled()).willReturn(true);
         start = new Date();
-//        assertTimeout(Duration.ofMillis(expectedRedisTime), () -> vocabulariesSRV.vocabulariesExists(terminology), "Redis should be at least 5x quicker");
+        assertDoesNotThrow(() -> vocabulariesSRV.vocabulariesExists(terminology));
         end = new Date();
         log.info("Time with Redis: {}", end.getTime() - start.getTime());
     }
@@ -192,7 +193,7 @@ class TerminologyValidationTest {
             assertTrue(redisMs < mongoMs, "Redis solution should be faster than Mongo");
         }
 
-
+        @Disabled("This test evaluates the performance of the Redis solution")
         @RepeatedTest(value = 5, name = "Massive collection on Mongo, missing keys on Redis")
         void t3() {
             given(propsCFG.getValidationTTL()).willReturn(300l);
