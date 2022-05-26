@@ -12,14 +12,12 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.ComponentScan;
-import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
@@ -39,28 +37,22 @@ import lombok.extern.slf4j.Slf4j;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ComponentScan(basePackages = { Constants.ComponentScan.BASE })
 @ActiveProfiles(Constants.Profile.TEST)
-class SchemaTest {
+class SchemaTest extends AbstractTest {
 
 	@Autowired
-	private IValidationSRV validationSRV;
-
-	@Autowired
-	private MongoTemplate mongoTemplate;
+	IValidationSRV validationSRV;
 
     @BeforeEach
     void setup() {
-        cleanDatabase();
-        addSchemaVersion();
-    }
-
-    @AfterEach
-    void clean() {
-        cleanDatabase();
+		deleteSchema();
     }
 
     @Test
 	@DisplayName("Schema Validator Singleton")
 	void singletonTest() throws Exception {
+
+		insertSchema();
+        addSchemaVersion();
 
 		final String cda = new String(FileUtility.getFileFromInternalResources("Files" + File.separator + "cda_ok" + File.separator + "Esempio CDA2_Referto Medicina di Laboratorio v6_OK.xml"), StandardCharsets.UTF_8);
 
@@ -85,10 +77,15 @@ class SchemaTest {
 
 	}
 
-    @Test
+
+	@Test
 	@DisplayName("Multithread Schema Validator Singleton")
 	void multithreadSingletonTest() throws Exception {
-    	ResetSingleton.setPrivateField(SchemaValidatorSingleton.class, null,null, "mapInstance","instance");
+    	
+		insertSchema();
+        addSchemaVersion();
+		
+		ResetSingleton.setPrivateField(SchemaValidatorSingleton.class, null,null, "mapInstance","instance");
 		final int numberThreads = 4;
 
 		final String cda = new String(FileUtility.getFileFromInternalResources("Files" + File.separator + "cda_ok" + File.separator + "Esempio CDA2_Referto Medicina di Laboratorio v6_OK.xml"), StandardCharsets.UTF_8);
@@ -187,10 +184,8 @@ class SchemaTest {
 
 	}
 
-    void cleanDatabase() {
-        Query query = new Query();
-        query.addCriteria(Criteria.where("version").is("1.4"));
-		mongoTemplate.remove(query, SchemaETY.class);
+    void deleteSchema() {
+		mongoTemplate.remove(new Query(), SchemaETY.class);
     }
 
     class SingletonThread extends Thread {

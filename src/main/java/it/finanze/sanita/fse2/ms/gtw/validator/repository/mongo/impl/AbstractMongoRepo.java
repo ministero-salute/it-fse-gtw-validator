@@ -104,6 +104,7 @@ public abstract class AbstractMongoRepo<T, K> {
 		return mongoTemplate.findAll(getCls());
 	}
 
+	@SuppressWarnings("unchecked")
 	private Class<T> getCls() {
 		ParameterizedType pt = (ParameterizedType) getClass().getGenericSuperclass();
 		return ((Class<T>) pt.getActualTypeArguments()[0]);

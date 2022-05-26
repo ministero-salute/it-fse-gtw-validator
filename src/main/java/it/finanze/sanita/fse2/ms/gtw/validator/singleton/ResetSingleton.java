@@ -4,6 +4,7 @@ public final class ResetSingleton {
 
 	private ResetSingleton() {}
 
+	@SuppressWarnings("rawtypes")
 	public static void setPrivateField(Class clazz, Object inst, Object value, String... fields) throws Exception {
 		for(String field : fields) {
 			java.lang.reflect.Field f = clazz.getDeclaredField(field);
