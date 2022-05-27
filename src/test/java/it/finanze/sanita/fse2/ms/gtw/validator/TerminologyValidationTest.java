@@ -20,12 +20,10 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.test.context.ActiveProfiles;
 
 import it.finanze.sanita.fse2.ms.gtw.validator.config.Constants;
@@ -60,7 +58,7 @@ class TerminologyValidationTest {
 
     @BeforeEach
     void setup() {
-        given(propsCFG.getValidationTTL()).willReturn(300l);
+        given(propsCFG.getValidationTTL()).willReturn(120l);
         given(propsCFG.isRedisEnabled()).willReturn(true);
     }
 
@@ -92,7 +90,7 @@ class TerminologyValidationTest {
     void redisOnOff() {
 
         given(propsCFG.isRedisEnabled()).willReturn(false);
-        given(propsCFG.getValidationTTL()).willReturn(300l);
+        given(propsCFG.getValidationTTL()).willReturn(120l);
         
         final Map<String, List<String>> terminology = generateRandomTerminology(10, 1000);
 
@@ -115,9 +113,15 @@ class TerminologyValidationTest {
     @Nested
     class Performance {
 
+        @BeforeEach
+        void setup() {
+            given(propsCFG.getValidationTTL()).willReturn(120l);
+            given(propsCFG.isRedisEnabled()).willReturn(true);
+        }
+
         @ParameterizedTest
         @DisplayName("No keys missed from Redis")
-        @CsvSource({ "10, 100", "10, 1000"})
+        @CsvSource({ "10, 100"})
         void t1(final int numSystems, final int numCodesEachSystem) {
 
             // Test validation on REDIS
@@ -154,7 +158,7 @@ class TerminologyValidationTest {
 
         @ParameterizedTest
         @DisplayName("Massive collection on Mongo, all keys present on Redis")
-        @CsvSource({ "10, 100", "10, 1000"})
+        @CsvSource({ "10, 100"})
         void t2(final int numSystems, final int numCodesEachSystem) {
 
             // Test validation on REDIS
@@ -196,7 +200,7 @@ class TerminologyValidationTest {
         @Disabled("This test evaluates the performance of the Redis solution")
         @RepeatedTest(value = 5, name = "Massive collection on Mongo, missing keys on Redis")
         void t3() {
-            given(propsCFG.getValidationTTL()).willReturn(300l);
+            given(propsCFG.getValidationTTL()).willReturn(120l);
 
             final int numSystems = 10;
             final int numCodesEachSystem = 1000;
@@ -236,20 +240,9 @@ class TerminologyValidationTest {
     boolean validateWithRedis(Map<String, List<String>> terminology) {
         return vocabulariesRedisRepo.allKeysExists(terminology);
     }
-    
-    @Autowired
-	@Qualifier("stringRedisTemplate")
-	private StringRedisTemplate redisTemplate;
 
     void insertTerminologyOnRedis(Map<String, List<String>> terminology) {
-        Map<String, String> redisMap = new HashMap<>();
-
-        for (String key : terminology.keySet()) {
-            for (String code : terminology.get(key)) {
-                redisMap.put(key + "_" + code, "");
-            }
-        }
-        redisTemplate.opsForValue().multiSetIfAbsent(redisMap);
+        vocabulariesRedisRepo.insertAll(terminology, propsCFG.getValidationTTL());
     }
 
     void insertTerminologyOnMongo(Map<String, List<String>> terminology) {
