@@ -1,6 +1,5 @@
 package it.finanze.sanita.fse2.ms.gtw.validator.service.impl;
 
-import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 
 import javax.xml.XMLConstants;
@@ -11,7 +10,6 @@ import javax.xml.validation.Validator;
 
 import com.helger.commons.io.stream.StringInputStream;
 
-import org.apache.commons.codec.Charsets;
 import org.springframework.stereotype.Service;
 import org.w3c.dom.Document;
 
@@ -41,6 +39,9 @@ public class SchemaSRV implements ISchemaSRV {
 		Document document = null;
 		try (StringInputStream si = new StringInputStream(objToValidate, StandardCharsets.UTF_8)){
 			DocumentBuilderFactory builderFactory = DocumentBuilderFactory.newInstance();
+			builderFactory.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, "");
+			builderFactory.setAttribute(XMLConstants.ACCESS_EXTERNAL_SCHEMA, "");
+
 			builderFactory.setNamespaceAware(true);
 
 			DocumentBuilder parser = builderFactory.newDocumentBuilder();
