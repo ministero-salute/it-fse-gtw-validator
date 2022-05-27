@@ -79,6 +79,19 @@
 			<version>0.1.5</version>
 		</dependency>
 
+		<!-- LOGSTASH LOGBACK ENCODER -->
+		<dependency>
+		    <groupId>net.logstash.logback</groupId>
+		    <artifactId>logstash-logback-encoder</artifactId>
+		    <version>7.2</version>
+		</dependency> 
+		
+		<dependency>
+            <groupId>org.codehaus.janino</groupId>
+            <artifactId>janino</artifactId>
+            <version>3.0.6</version>
+        </dependency>
+
 		<!-- DEVTOOL -->
 		<dependency>
 			<groupId>org.projectlombok</groupId>
