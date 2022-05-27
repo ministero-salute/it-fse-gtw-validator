@@ -6,6 +6,7 @@ import java.util.Date;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import it.finanze.sanita.fse2.ms.gtw.validator.enums.CurrentApplicationLogEnum;
@@ -20,8 +21,11 @@ import net.logstash.logback.argument.StructuredArguments;
 @Service
 public class ElasticLoggerHelper {
     
+    
 	Logger log = LoggerFactory.getLogger("elastic-logger"); 
 	
+	@Value("${spring.application.name}")
+	private String loggingApplication; 
 	
 	/* 
 	 * Specify here the format for the dates 
@@ -33,57 +37,57 @@ public class ElasticLoggerHelper {
 	/* 
 	 * Implements structured logs, at all logging levels
 	 */
-	public void trace(String message, CurrentApplicationLogEnum loggingApplication, ILogEnum operation, Date date, 
+	public void trace(String message, ILogEnum operation, 
 			   ResultLogEnum result, Date startDateOperation, Date endDateOperation) {
 		
-		log.trace(message, StructuredArguments.kv("application", loggingApplication.getCode()), 
+		log.trace(message, StructuredArguments.kv("application", loggingApplication), 
 				 StructuredArguments.kv("operation", operation.getCode()), 
-				 StructuredArguments.kv("op-log-timestamp", dateFormat.format(date)),
+				 StructuredArguments.kv("op-log-timestamp", dateFormat.format(new Date())),
 				 StructuredArguments.kv("op-result", result.getCode()),
 				 StructuredArguments.kv("op-timestamp-start", dateFormat.format(startDateOperation)),
 				 StructuredArguments.kv("op-timestamp-end", dateFormat.format(endDateOperation))); 
 	} 
 	
-	public void debug(String message, CurrentApplicationLogEnum loggingApplication, ILogEnum operation, Date date, 
+	public void debug(String message,  ILogEnum operation,  
 			   ResultLogEnum result, Date startDateOperation, Date endDateOperation) {
 		
-		log.debug(message, StructuredArguments.kv("application", loggingApplication.getCode()), 
+		log.debug(message, StructuredArguments.kv("application", loggingApplication), 
 				 StructuredArguments.kv("operation", operation.getCode()), 
-				 StructuredArguments.kv("op-log-timestamp", dateFormat.format(date)),
+				 StructuredArguments.kv("op-log-timestamp", dateFormat.format(new Date())),
 				 StructuredArguments.kv("op-result", result.getCode()),
 				 StructuredArguments.kv("op-timestamp-start", dateFormat.format(startDateOperation)),
 				 StructuredArguments.kv("op-timestamp-end", dateFormat.format(endDateOperation))); 
 	} 
 	 
-	public void info(String message, CurrentApplicationLogEnum loggingApplication, ILogEnum operation, Date date, 
+	public void info(String message, ILogEnum operation,  
 			ResultLogEnum result, Date startDateOperation, Date endDateOperation) {
 		
-		log.info(message, StructuredArguments.kv("application", loggingApplication.getCode()), 
+		log.info(message, StructuredArguments.kv("application", loggingApplication), 
 				 StructuredArguments.kv("operation", operation.getCode()), 
-				 StructuredArguments.kv("op-log-timestamp", dateFormat.format(date)),
+				 StructuredArguments.kv("op-log-timestamp", dateFormat.format(new Date())),
 				 StructuredArguments.kv("op-result", result.getCode()),
 				 StructuredArguments.kv("op-timestamp-start", dateFormat.format(startDateOperation)),
 				 StructuredArguments.kv("op-timestamp-end", dateFormat.format(endDateOperation))); 
 	} 
 	
-	public void warn(String message, CurrentApplicationLogEnum loggingApplication, ILogEnum operation, Date date, 
+	public void warn(String message, ILogEnum operation,  
 			   ResultLogEnum result, Date startDateOperation, Date endDateOperation) {
 		
-		log.warn(message, StructuredArguments.kv("application", loggingApplication.getCode()), 
+		log.warn(message, StructuredArguments.kv("application", loggingApplication), 
 				 StructuredArguments.kv("operation", operation.getCode()), 
-				 StructuredArguments.kv("op-log-timestamp", dateFormat.format(date)),
+				 StructuredArguments.kv("op-log-timestamp", dateFormat.format(new Date())),
 				 StructuredArguments.kv("op-result", result.getCode()),
 				 StructuredArguments.kv("op-timestamp-start", dateFormat.format(startDateOperation)),
 				 StructuredArguments.kv("op-timestamp-end", dateFormat.format(endDateOperation))); 
 	} 
 	
-	public void error(String message, CurrentApplicationLogEnum loggingApplication, ILogEnum operation, Date date, 
+	public void error(String message, ILogEnum operation,  
 			   ResultLogEnum result, Date startDateOperation, Date endDateOperation,
 			   ILogEnum error) {
 		
-		log.error(message, StructuredArguments.kv("application", loggingApplication.getCode()), 
+		log.error(message, StructuredArguments.kv("application", loggingApplication), 
 				 StructuredArguments.kv("operation", operation.getCode()), 
-				 StructuredArguments.kv("op-log-timestamp", dateFormat.format(date)),
+				 StructuredArguments.kv("op-log-timestamp", dateFormat.format(new Date())),
 				 StructuredArguments.kv("op-result", result.getCode()),
 				 StructuredArguments.kv("op-timestamp-start", dateFormat.format(startDateOperation)),
 				 StructuredArguments.kv("op-timestamp-end", dateFormat.format(endDateOperation)),
