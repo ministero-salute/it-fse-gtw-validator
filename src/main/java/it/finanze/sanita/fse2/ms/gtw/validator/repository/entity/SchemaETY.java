@@ -22,9 +22,6 @@ public class SchemaETY {
 	@Id
 	private String id;
 	
-	@Field(name = "cda_type")
-	private String cdaType;
-	
 	@Field(name = "name_schema")
 	private String nameSchema;
 	
