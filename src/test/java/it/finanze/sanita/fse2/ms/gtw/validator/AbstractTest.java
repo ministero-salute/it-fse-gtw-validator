@@ -14,7 +14,7 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import it.finanze.sanita.fse2.ms.gtw.validator.exceptions.BusinessException;
 import it.finanze.sanita.fse2.ms.gtw.validator.repository.entity.SchemaETY;
 import it.finanze.sanita.fse2.ms.gtw.validator.repository.entity.SchematronETY;
-import it.finanze.sanita.fse2.ms.gtw.validator.repository.entity.VocabularyETY;
+import it.finanze.sanita.fse2.ms.gtw.validator.repository.entity.TerminologyETY;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -29,7 +29,7 @@ public abstract class AbstractTest {
     protected void clearConfigurationItems() {
         mongoTemplate.dropCollection(SchemaETY.class);
         mongoTemplate.dropCollection(SchematronETY.class);
-        mongoTemplate.dropCollection(VocabularyETY.class);
+        mongoTemplate.dropCollection(TerminologyETY.class);
     }
 
     protected void insertSchema() {

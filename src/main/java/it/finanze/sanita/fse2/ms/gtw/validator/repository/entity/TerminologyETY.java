@@ -8,12 +8,12 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 /**
- * Model of vocabulary.
+ * Model of terminology.
  */
 @Data
 @NoArgsConstructor
-@Document(collection = "vocabulary")
-public class VocabularyETY {
+@Document(collection = "terminology")
+public class TerminologyETY {
 
 	@Id
 	private String id;
@@ -35,7 +35,7 @@ public class VocabularyETY {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		VocabularyETY other = (VocabularyETY) obj;
+		TerminologyETY other = (TerminologyETY) obj;
 		if (code == null) {
 			if (other.code != null)
 				return false;
