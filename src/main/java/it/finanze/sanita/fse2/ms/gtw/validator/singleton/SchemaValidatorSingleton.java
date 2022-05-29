@@ -61,7 +61,7 @@ public final class SchemaValidatorSingleton {
 						Schema schema = factory.newSchema(schemaFile);
 						Validator validator = schema.newValidator();
 						validator.setErrorHandler(result);
-						instance = new SchemaValidatorSingleton(inSchema.getVersion(), validator, inSchema.getDataUltimoAggiornamento());
+						instance = new SchemaValidatorSingleton(inSchema.getVersion(), validator, inSchema.getLastUpdateDate());
 						mapInstance.put(instance.getVersion(), instance);
 					} catch(Exception ex) {
 						log.error("Error while retrieving and updating Singleton for Schema Validation", ex);

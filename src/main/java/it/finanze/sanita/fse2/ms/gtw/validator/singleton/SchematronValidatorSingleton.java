@@ -45,7 +45,7 @@ public final class SchematronValidatorSingleton {
 					SchematronResourceXSLT schematronResourceXslt = new SchematronResourceXSLT(readableResource);
 					schematronResourceXslt.setURIResolver(new ClasspathResourceURIResolver(schematronRepo));
 					instance = new SchematronValidatorSingleton(inSchematronETY.getTemplateIdRoot(),inSchematronETY.getTemplateIdExtension(),
-							inSchematronETY.getDataUltimoAggiornamento(), schematronResourceXslt);
+							inSchematronETY.getLastUpdateDate(), schematronResourceXslt);
 					
 					mapInstance.put(instance.getTemplateIdRoot(), instance);
 				}

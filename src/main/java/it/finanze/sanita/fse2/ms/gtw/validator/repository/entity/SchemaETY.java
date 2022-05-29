@@ -37,7 +37,7 @@ public class SchemaETY {
 	@Field(name = "root_schema")
 	private Boolean rootSchema;
 	
-	@Field(name = "data_ultimo_aggiornamento")
-	private Date dataUltimoAggiornamento;
+	@Field(name = "last_update_date")
+	private Date lastUpdateDate;
 	 
 }

@@ -42,11 +42,11 @@ public class UpdateSingletonSRV implements IUpdateSingletonSRV {
 		if(mapSchema!=null && !mapSchema.isEmpty()) {
 			for(Entry<String, SchemaValidatorSingleton> map : mapSchema.entrySet()) {
 				SchemaETY father = schemaRepo.findFatherXsd(map.getKey());
-				boolean isDifferent = checkDataUltimoAggiornamento(map.getValue().getDataUltimoAggiornamento(), father.getDataUltimoAggiornamento());
+				boolean isDifferent = checkDataUltimoAggiornamento(map.getValue().getDataUltimoAggiornamento(), father.getLastUpdateDate());
 				if(Boolean.FALSE.equals(isDifferent)) {
 					List<SchemaETY> children = schemaRepo.findChildrenXsd(map.getKey());
 					for(SchemaETY ety : children) {
-						isDifferent = checkDataUltimoAggiornamento(map.getValue().getDataUltimoAggiornamento(), ety.getDataUltimoAggiornamento());
+						isDifferent = checkDataUltimoAggiornamento(map.getValue().getDataUltimoAggiornamento(), ety.getLastUpdateDate());
 						if(Boolean.TRUE.equals(isDifferent)) {
 							break;
 						}
@@ -65,11 +65,11 @@ public class UpdateSingletonSRV implements IUpdateSingletonSRV {
 		if(mapSchema!=null && !mapSchema.isEmpty()) {
 			for(Entry<String, SchematronValidatorSingleton> map : mapSchema.entrySet()) {
 				SchematronETY father = schematronRepo.findByTemplateIdRoot(map.getKey());
-				boolean isDifferent = checkDataUltimoAggiornamento(map.getValue().getDataUltimoAggiornamento(), father.getDataUltimoAggiornamento());
+				boolean isDifferent = checkDataUltimoAggiornamento(map.getValue().getDataUltimoAggiornamento(), father.getLastUpdateDate());
 				if(Boolean.FALSE.equals(isDifferent)) {
 					List<SchematronETY> children = schematronRepo.findChildrenBySystem(map.getKey());
 					for(SchematronETY child : children) {
-						isDifferent = checkDataUltimoAggiornamento(map.getValue().getDataUltimoAggiornamento(), child.getDataUltimoAggiornamento());
+						isDifferent = checkDataUltimoAggiornamento(map.getValue().getDataUltimoAggiornamento(), child.getLastUpdateDate());
 						if(Boolean.TRUE.equals(isDifferent)) {
 							break;
 						}
