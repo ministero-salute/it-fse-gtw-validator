@@ -31,6 +31,7 @@ import it.finanze.sanita.fse2.ms.gtw.validator.config.Constants;
 import it.finanze.sanita.fse2.ms.gtw.validator.dto.ExtractedInfoDTO;
 import it.finanze.sanita.fse2.ms.gtw.validator.dto.SchematronValidationResultDTO;
 import it.finanze.sanita.fse2.ms.gtw.validator.repository.entity.SchematronETY;
+import it.finanze.sanita.fse2.ms.gtw.validator.repository.mongo.IDictionaryRepo;
 import it.finanze.sanita.fse2.ms.gtw.validator.repository.mongo.ISchematronRepo;
 import it.finanze.sanita.fse2.ms.gtw.validator.service.IValidationSRV;
 import it.finanze.sanita.fse2.ms.gtw.validator.singleton.ResetSingleton;
@@ -47,6 +48,9 @@ class SchematronTest extends AbstractTest {
 
 	@Autowired
 	ISchematronRepo schematronRepo;
+	
+	@Autowired
+	IDictionaryRepo dictionaryRepo;
 
 	@Autowired
 	IValidationSRV validationSRV;
@@ -64,7 +68,7 @@ class SchematronTest extends AbstractTest {
 		byte[] schematron = FileUtility.getFileFromInternalResources("Files" + File.separator + "schematronData" + File.separator + "schematronFSE.sch.xsl");
 		IReadableResource readableResource = new ReadableResourceInputStream(new ByteArrayInputStream(schematron));
 		SchematronResourceXSLT schematronResourceXslt = new SchematronResourceXSLT(readableResource);
-		schematronResourceXslt.setURIResolver(new ClasspathResourceURIResolver(schematronRepo));
+		schematronResourceXslt.setURIResolver(new ClasspathResourceURIResolver(dictionaryRepo));
 		
 		byte[] cdaOK = FileUtility.getFileFromInternalResources("Files" + File.separator + "cda_ok" + File.separator + "Esempio CDA2_Referto Medicina di Laboratorio v6_OK.xml");
 		SchematronValidationResultDTO resultDTO = CDAHelper.validateXMLViaXSLTSchematronFull(schematronResourceXslt, cdaOK);
@@ -82,7 +86,7 @@ class SchematronTest extends AbstractTest {
 		byte[] schematron = FileUtility.getFileFromInternalResources("Files" + File.separator + "schematronData" + File.separator + "schematronFSE.sch.xsl");
 		IReadableResource readableResource = new ReadableResourceInputStream(new ByteArrayInputStream(schematron));
 		SchematronResourceXSLT schematronResourceXslt = new SchematronResourceXSLT(readableResource);
-		schematronResourceXslt.setURIResolver(new ClasspathResourceURIResolver(schematronRepo));
+		schematronResourceXslt.setURIResolver(new ClasspathResourceURIResolver(dictionaryRepo));
 		
 		byte[] cdaOK = FileUtility.getFileFromInternalResources("Files" + File.separator + "cda_ko" + File.separator + "CDA2_Referto Medicina di Laboratorio Errore 6.xml");
 		SchematronValidationResultDTO resultDTO = CDAHelper.validateXMLViaXSLTSchematronFull(schematronResourceXslt, cdaOK);

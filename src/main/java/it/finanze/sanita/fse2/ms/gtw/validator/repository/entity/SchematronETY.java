@@ -33,9 +33,6 @@ public class SchematronETY {
 	@Field(name = "template_id_extension")
 	private String templateIdExtension;
 	
-	@Field(name = "root_schematron")
-	private Boolean rootSchematron;
-	
 	@Field(name = "last_update_date")
 	private Date lastUpdateDate;
 	 

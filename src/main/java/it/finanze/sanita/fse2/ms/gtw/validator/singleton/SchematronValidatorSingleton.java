@@ -8,10 +8,10 @@ import java.util.Map;
 import com.helger.commons.io.resource.IReadableResource;
 import com.helger.commons.io.resource.inmemory.ReadableResourceInputStream;
 import com.helger.schematron.ISchematronResource;
-import com.helger.schematron.xslt.SchematronResourceXSLT;
+import com.helger.schematron.xslt.SchematronResourceSCH;
 
 import it.finanze.sanita.fse2.ms.gtw.validator.repository.entity.SchematronETY;
-import it.finanze.sanita.fse2.ms.gtw.validator.repository.mongo.ISchematronRepo;
+import it.finanze.sanita.fse2.ms.gtw.validator.repository.mongo.IDictionaryRepo;
 import it.finanze.sanita.fse2.ms.gtw.validator.xmlresolver.ClasspathResourceURIResolver;
 
 
@@ -21,7 +21,7 @@ public final class SchematronValidatorSingleton {
 	
 	private static SchematronValidatorSingleton instance;
 
-	private SchematronResourceXSLT schematronResource;
+	private SchematronResourceSCH schematronResource;
 
 	private String templateIdRoot;
 	
@@ -29,7 +29,7 @@ public final class SchematronValidatorSingleton {
 	
 	private Date dataUltimoAggiornamento;
 	
-	public static SchematronValidatorSingleton getInstance(final boolean forceUpdate,final SchematronETY inSchematronETY,final ISchematronRepo schematronRepo) {
+	public static SchematronValidatorSingleton getInstance(final boolean forceUpdate,final SchematronETY inSchematronETY,final IDictionaryRepo dictionaryRepo) {
 		if(mapInstance!=null) {
 			instance = mapInstance.get(inSchematronETY.getTemplateIdRoot());
 		} else {
@@ -42,8 +42,8 @@ public final class SchematronValidatorSingleton {
 			synchronized(SchematronValidatorSingleton.class) {
 				if (getInstanceCondition) {
 					IReadableResource readableResource = new ReadableResourceInputStream(new ByteArrayInputStream(inSchematronETY.getContentSchematron().getData()));
-					SchematronResourceXSLT schematronResourceXslt = new SchematronResourceXSLT(readableResource);
-					schematronResourceXslt.setURIResolver(new ClasspathResourceURIResolver(schematronRepo));
+					SchematronResourceSCH schematronResourceXslt = new SchematronResourceSCH(readableResource);
+					schematronResourceXslt.setURIResolver(new ClasspathResourceURIResolver(dictionaryRepo));
 					instance = new SchematronValidatorSingleton(inSchematronETY.getTemplateIdRoot(),inSchematronETY.getTemplateIdExtension(),
 							inSchematronETY.getLastUpdateDate(), schematronResourceXslt);
 					
@@ -55,7 +55,7 @@ public final class SchematronValidatorSingleton {
 	}
 
 	private SchematronValidatorSingleton(final String inTemplateIdRoot,final String inTemplateIdExtension,
-			final Date inDataUltimoAggiornamento,final SchematronResourceXSLT inSchematronResource) {
+			final Date inDataUltimoAggiornamento,final SchematronResourceSCH inSchematronResource) {
 		templateIdRoot = inTemplateIdRoot;
 		dataUltimoAggiornamento = inDataUltimoAggiornamento;
 		schematronResource = inSchematronResource;

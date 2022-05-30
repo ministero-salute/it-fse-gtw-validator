@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import it.finanze.sanita.fse2.ms.gtw.validator.repository.entity.SchemaETY;
 import it.finanze.sanita.fse2.ms.gtw.validator.repository.entity.SchematronETY;
+import it.finanze.sanita.fse2.ms.gtw.validator.repository.mongo.IDictionaryRepo;
 import it.finanze.sanita.fse2.ms.gtw.validator.repository.mongo.ISchemaRepo;
 import it.finanze.sanita.fse2.ms.gtw.validator.repository.mongo.ISchematronRepo;
 import it.finanze.sanita.fse2.ms.gtw.validator.service.IUpdateSingletonSRV;
@@ -29,6 +30,9 @@ public class UpdateSingletonSRV implements IUpdateSingletonSRV {
 	
 	@Autowired
 	private ISchematronRepo schematronRepo;
+	
+	@Autowired
+	private IDictionaryRepo dictionaryRepo;
 	
 	@Override
 	public void updateSingletonInstance() {
@@ -77,7 +81,7 @@ public class UpdateSingletonSRV implements IUpdateSingletonSRV {
 				}
 				
 				if(Boolean.TRUE.equals(isDifferent)) {
-					SchematronValidatorSingleton.getInstance(true,father, schematronRepo);
+					SchematronValidatorSingleton.getInstance(true,father, dictionaryRepo);
 				}
 			}
 		}

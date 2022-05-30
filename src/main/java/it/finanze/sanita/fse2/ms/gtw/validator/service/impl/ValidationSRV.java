@@ -21,6 +21,7 @@ import it.finanze.sanita.fse2.ms.gtw.validator.exceptions.BusinessException;
 import it.finanze.sanita.fse2.ms.gtw.validator.exceptions.NoRecordFoundException;
 import it.finanze.sanita.fse2.ms.gtw.validator.repository.entity.SchemaETY;
 import it.finanze.sanita.fse2.ms.gtw.validator.repository.entity.SchematronETY;
+import it.finanze.sanita.fse2.ms.gtw.validator.repository.mongo.IDictionaryRepo;
 import it.finanze.sanita.fse2.ms.gtw.validator.repository.mongo.ISchemaRepo;
 import it.finanze.sanita.fse2.ms.gtw.validator.repository.mongo.ISchematronRepo;
 import it.finanze.sanita.fse2.ms.gtw.validator.service.ISchemaSRV;
@@ -45,6 +46,9 @@ public class ValidationSRV implements IValidationSRV {
     
     @Autowired
     private ISchemaSRV schemaSRV;
+    
+    @Autowired
+    private IDictionaryRepo dictionaryRepo;
     
     @Override
     public VocabularyResultDTO validateVocabularies(final String cda) {
@@ -111,7 +115,7 @@ public class ValidationSRV implements IValidationSRV {
 				if(singleton!=null) {
 					SchematronETY majorVersion = schematronRepo.findBySystemAndVersion(singleton.getTemplateIdRoot(), singleton.getTemplateIdExtension());
 					if(majorVersion!=null) {
-						singleton = SchematronValidatorSingleton.getInstance(true, majorVersion, schematronRepo);
+						singleton = SchematronValidatorSingleton.getInstance(true, majorVersion, dictionaryRepo);
 					}
 					schematronResource = singleton.getSchematronResource();
 				}
@@ -119,7 +123,7 @@ public class ValidationSRV implements IValidationSRV {
 			
 			if(schematronResource==null) {
 				SchematronETY schematronETY = schematronRepo.findByTemplateIdRoot(extractedInfoDTO.getTemplateIdSchematron());
-				SchematronValidatorSingleton schematron = SchematronValidatorSingleton.getInstance(false,schematronETY,schematronRepo);
+				SchematronValidatorSingleton schematron = SchematronValidatorSingleton.getInstance(false,schematronETY,dictionaryRepo);
 				schematronResource = schematron.getSchematronResource();
 			}
 			
