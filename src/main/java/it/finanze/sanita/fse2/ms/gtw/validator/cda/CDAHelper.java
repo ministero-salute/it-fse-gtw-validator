@@ -65,7 +65,7 @@ public class CDAHelper {
 		return out;
 	}
 	 
-	public static SchematronValidationResultDTO validateXMLViaXSLTSchematronFull(ISchematronResource aResSCH , final byte[] xml) throws Exception{
+	public static SchematronValidationResultDTO validateXMLViaSchematronFull(ISchematronResource aResSCH , final byte[] xml) throws Exception{
 		boolean validST = aResSCH.isValidSchematron();
 		boolean validXML = true;
 		List<SchematronFailedAssertionDTO> failedAssertions = new ArrayList<>();
@@ -86,26 +86,5 @@ public class CDAHelper {
 		}
 		return SchematronValidationResultDTO.builder().validSchematron(validST).validXML(validXML).failedAssertions(failedAssertions).build();
 	}
-	
-	public static SchematronValidationResultDTO validateXMLViaXSLTSchematronFull(SchematronResourceXSLT schematronResourceXslt , final byte[] xml) throws Exception{
- 		boolean validST = schematronResourceXslt.isValidSchematron();
-		boolean validXML = true;
-		List<SchematronFailedAssertionDTO> failedAssertions = new ArrayList<>();
-		if (validST) {
-			Long start = new Date().getTime();
-			SchematronOutputType type = schematronResourceXslt.applySchematronValidationToSVRL(new StreamSource(new ByteArrayInputStream(xml)));
-			List<Object> failedAsserts = type.getActivePatternAndFiredRuleAndFailedAssert();
-			Long delta = new Date().getTime() - start;
-			log.info("TIME : " + delta);        
-			for (Object object : failedAsserts) {
-				if (object instanceof FailedAssert) {
-					validXML = false;
-					FailedAssert failedAssert = (FailedAssert) object;
-					SchematronFailedAssertionDTO failedAssertion = SchematronFailedAssertionDTO.builder().location(failedAssert.getLocation()).test(failedAssert.getTest()).text(failedAssert.getText().getContent().toString()).build();
-					failedAssertions.add(failedAssertion);
-				}
-			}
-		}
-		return SchematronValidationResultDTO.builder().validSchematron(validST).validXML(validXML).failedAssertions(failedAssertions).build();
-	}
+	 
 }
