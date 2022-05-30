@@ -27,12 +27,6 @@ public class SchematronETY {
 	@Field(name = "name_schematron")
 	private String nameSchematron;
 
-	@Field(name = "cda_code")
-	private String cdaCode;
-
-	@Field(name = "cda_code_system")
-	private String cdaCodeSystem;
-
 	@Field(name = "template_id_root")
 	private String templateIdRoot;
 	
