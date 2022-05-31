@@ -28,7 +28,7 @@ public final class SchemaValidatorSingleton {
 	
 	private static SchemaValidatorSingleton instance;
 
-	private String version;
+	private String typeIdExtension;
 
 	private Validator validator;
 
@@ -36,15 +36,15 @@ public final class SchemaValidatorSingleton {
 	
 	
 
-	private SchemaValidatorSingleton(String inVersion , Validator inValidator, Date inDataUltimoAggiornamento) {
-		version = inVersion;
+	private SchemaValidatorSingleton(String inTypeIdExtension, Validator inValidator, Date inDataUltimoAggiornamento) {
+		typeIdExtension = inTypeIdExtension;
 		validator = inValidator;
 		dataUltimoAggiornamento = inDataUltimoAggiornamento;
 	}
 
 	public static SchemaValidatorSingleton getInstance(final boolean forceUpdate, final SchemaETY inSchema, final ISchemaRepo schemaRepo) {
 		if(mapInstance!=null) {
-			instance = mapInstance.get(inSchema.getVersion());
+			instance = mapInstance.get(inSchema.getTypeIdExtension());
 		} else {
 			mapInstance = new HashMap<>();
 		}
@@ -56,13 +56,13 @@ public final class SchemaValidatorSingleton {
 					try {
 						ValidationResult result = new ValidationResult();
 						SchemaFactory factory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
-						factory.setResourceResolver(new ResourceResolver(inSchema.getVersion(), schemaRepo));
+						factory.setResourceResolver(new ResourceResolver(inSchema.getTypeIdExtension(), schemaRepo));
 						Source schemaFile = new StreamSource(new ByteArrayInputStream(inSchema.getContentSchema().getData()));
 						Schema schema = factory.newSchema(schemaFile);
 						Validator validator = schema.newValidator();
 						validator.setErrorHandler(result);
-						instance = new SchemaValidatorSingleton(inSchema.getVersion(), validator, inSchema.getLastUpdateDate());
-						mapInstance.put(instance.getVersion(), instance);
+						instance = new SchemaValidatorSingleton(inSchema.getTypeIdExtension(), validator, inSchema.getLastUpdateDate());
+						mapInstance.put(instance.getTypeIdExtension(), instance);
 					} catch(Exception ex) {
 						log.error("Error while retrieving and updating Singleton for Schema Validation", ex);
 						throw new BusinessException("Error while retrieving and updating Singleton for Schema Validation", ex);
@@ -74,8 +74,8 @@ public final class SchemaValidatorSingleton {
 		return instance;
 	}
 
-	public String getVersion() {
-		return version;
+	public String getTypeIdExtension() {
+		return typeIdExtension;
 	}
 
 	public Date getDataUltimoAggiornamento() {

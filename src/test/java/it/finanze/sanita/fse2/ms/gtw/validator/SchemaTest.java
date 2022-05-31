@@ -163,7 +163,7 @@ class SchemaTest extends AbstractTest {
 
         for(SchemaETY schema : schemas){
             schema.setId(null);
-            schema.setVersion("1.4");
+            schema.setTypeIdExtension("1.4");
         }
 
         mongoTemplate.insertAll(schemas);

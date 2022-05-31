@@ -67,21 +67,21 @@ public class ValidationSRV implements IValidationSRV {
     }
 
     @Override
-    public CDAValidationDTO validateSyntactic(final String cda, final String version) {
+    public CDAValidationDTO validateSyntactic(final String cda, final String typeIdExtension) {
     	CDAValidationDTO out = new CDAValidationDTO(CDAValidationStatusEnum.VALID);
     	try {
     		Validator validator = null;
     		if(SchemaValidatorSingleton.getMapInstance()!=null && !SchemaValidatorSingleton.getMapInstance().isEmpty()) {
-    			SchemaValidatorSingleton singleton = SchemaValidatorSingleton.getMapInstance().get(version);
+    			SchemaValidatorSingleton singleton = SchemaValidatorSingleton.getMapInstance().get(typeIdExtension);
     			if(singleton!=null) {
     				validator = singleton.getValidator();
     			}
     		}
 
     		if(validator==null) {
-    			SchemaETY schema = schemaRepo.findFatherXsd(version);
+    			SchemaETY schema = schemaRepo.findFatherXsd(typeIdExtension);
     			if (schema == null) {
-    				throw new NoRecordFoundException(String.format("Schema with version %s not found on database.", version));
+    				throw new NoRecordFoundException(String.format("Schema with version %s not found on database.", typeIdExtension));
     			}
 
     			SchemaValidatorSingleton instance = SchemaValidatorSingleton.getInstance(false, schema, schemaRepo);
@@ -94,8 +94,8 @@ public class ValidationSRV implements IValidationSRV {
     		}
 
     	} catch(NoRecordFoundException nEx) {
-    		log.error(String.format("Schema with version %s not found on database.", version));
-    		out.setNoRecordFound(String.format("Schema with version %s not found on database.", version));
+    		log.error(String.format("Schema with version %s not found on database.", typeIdExtension));
+    		out.setNoRecordFound(String.format("Schema with version %s not found on database.", typeIdExtension));
     		out.setStatus(CDAValidationStatusEnum.NOT_VALID);
     	} catch(Exception ex) {
     		log.error("Error while executing validation on xsd schema", ex);

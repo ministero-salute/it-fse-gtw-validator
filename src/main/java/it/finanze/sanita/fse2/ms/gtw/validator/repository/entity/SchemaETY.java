@@ -27,9 +27,9 @@ public class SchemaETY {
 	
 	@Field(name = "content_schema")
 	private Binary contentSchema;
-	
-	@Field(name = "version")
-	private String version;
+
+	@Field(name = "type_id_extension")
+	private String typeIdExtension;
 	
 	@Field(name = "root_schema")
 	private Boolean rootSchema;

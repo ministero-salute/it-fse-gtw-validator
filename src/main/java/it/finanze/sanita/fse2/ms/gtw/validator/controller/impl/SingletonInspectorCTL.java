@@ -40,7 +40,7 @@ public class SingletonInspectorCTL extends AbstractCTL implements ISingletonInsp
         if (schemaInstance != null) {
             for (Map.Entry<String, SchemaValidatorSingleton> entry : schemaInstance.entrySet()) {
                 schemas.add(SchemaSingletonInfo.builder()
-                        .version(entry.getValue().getVersion())
+                        .version(entry.getValue().getTypeIdExtension())
                         .dataUltimoAggiornamento(entry.getValue().getDataUltimoAggiornamento())
                         .build());
             }

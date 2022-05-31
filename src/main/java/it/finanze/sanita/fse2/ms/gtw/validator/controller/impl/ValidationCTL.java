@@ -55,7 +55,7 @@ public class ValidationCTL extends AbstractCTL implements IValidationCTL {
 
 		ExtractedInfoDTO infoDTO = CDAHelper.extractInfo(requestBody.getCda());
 
-		CDAValidationDTO validationResult = validationSRV.validateSyntactic(requestBody.getCda(), infoDTO.getSchemaVersion());
+		CDAValidationDTO validationResult = validationSRV.validateSyntactic(requestBody.getCda(), infoDTO.getTypeIdExtension());
 		if(CDAValidationStatusEnum.NOT_VALID.equals(validationResult.getStatus())) {
 			if(StringUtility.isNullOrEmpty(validationResult.getNoRecordFound())){
 				for(Entry<CDASeverityViolationEnum, List<String>> violations : validationResult.getViolations().entrySet()) {

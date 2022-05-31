@@ -55,7 +55,7 @@ public class CDAHelper {
 			//Schematron = root
 			String templateIdSchematron = docT.select("templateid").get(0).attr("root");
 			//Schemaversion = extension 
-			String schemaVersion = docT.select("templateid").get(0).attr("extension");
+			String schemaVersion = docT.select("typeid").get(0).attr("extension");
 			out = new ExtractedInfoDTO(templateIdSchematron, schemaVersion);
 		} catch(Exception ex) {
 			log.error("Error while extracting info for schematron ", ex);

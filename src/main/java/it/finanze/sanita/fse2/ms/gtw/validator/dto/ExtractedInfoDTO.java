@@ -7,7 +7,7 @@ import lombok.Data;
 @AllArgsConstructor
 public class ExtractedInfoDTO {
 	
-	private String templateIdSchematron;
+	private String templateIdSchematron; //Schematron
 	
-	private String schemaVersion;
+	private String typeIdExtension; //Schema
 }
