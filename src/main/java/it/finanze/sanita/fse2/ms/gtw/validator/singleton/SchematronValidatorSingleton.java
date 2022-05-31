@@ -41,7 +41,8 @@ public final class SchematronValidatorSingleton {
 		if(getInstanceCondition) {
 			synchronized(SchematronValidatorSingleton.class) {
 				if (getInstanceCondition) {
-					IReadableResource readableResource = new ReadableResourceInputStream(new ByteArrayInputStream(inSchematronETY.getContentSchematron().getData()));
+					IReadableResource readableResource = new ReadableResourceInputStream(inSchematronETY.getTemplateIdRoot()+"_"+inSchematronETY.getTemplateIdExtension(), 
+							new ByteArrayInputStream(inSchematronETY.getContentSchematron().getData()));
 					SchematronResourceSCH schematronResourceXslt = new SchematronResourceSCH(readableResource);
 					schematronResourceXslt.setURIResolver(new ClasspathResourceURIResolver(dictionaryRepo));
 					instance = new SchematronValidatorSingleton(inSchematronETY.getTemplateIdRoot(),inSchematronETY.getTemplateIdExtension(),

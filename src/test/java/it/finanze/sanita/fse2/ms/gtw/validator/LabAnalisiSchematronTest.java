@@ -56,7 +56,7 @@ class LabAnalisiSchematronTest extends AbstractTest {
 	@DisplayName("CDA OK")
 	void cdaOK() throws Exception {
 		byte[] schematron = FileUtility.getFileFromInternalResources("Files" + File.separator + "schematronFSE" + File.separator + "schematronFSEv9.sch");
-		IReadableResource readableResource = new ReadableResourceInputStream(new ByteArrayInputStream(schematron));
+		IReadableResource readableResource = new ReadableResourceInputStream("schematronFSEv9.sch",new ByteArrayInputStream(schematron));
 		SchematronResourceSCH schematronResource = new SchematronResourceSCH(readableResource);
 		schematronResource.setURIResolver(new ClasspathResourceURIResolver(dictionaryRepo));
 		
@@ -74,7 +74,7 @@ class LabAnalisiSchematronTest extends AbstractTest {
 	@DisplayName("CDA KO")
 	void cdaKO() throws Exception {
 		byte[] schematron = FileUtility.getFileFromInternalResources("Files" + File.separator + "schematronFSE" + File.separator + "schematronFSEv9.sch");
-		IReadableResource readableResource = new ReadableResourceInputStream(new ByteArrayInputStream(schematron));
+		IReadableResource readableResource = new ReadableResourceInputStream("schematronFSEv9.sch",new ByteArrayInputStream(schematron));
 		SchematronResourceSCH schematronResource = new SchematronResourceSCH(readableResource);
 		schematronResource.setURIResolver(new ClasspathResourceURIResolver(dictionaryRepo));
 		

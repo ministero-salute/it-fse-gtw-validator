@@ -56,7 +56,7 @@ class RSASchematronTest extends AbstractTest {
 	@DisplayName("CDA OK")
 	void cdaOK() throws Exception {
 		byte[] schematron = FileUtility.getFileFromInternalResources("Files" + File.separator + "schematronRSA" + File.separator + "schematron_RSA_v3.4.sch");
-		IReadableResource readableResource = new ReadableResourceInputStream(new ByteArrayInputStream(schematron));
+		IReadableResource readableResource = new ReadableResourceInputStream("schematron_RSA_v3.4.sch",new ByteArrayInputStream(schematron));
 		SchematronResourceSCH schematronResource = new SchematronResourceSCH(readableResource);
 		schematronResource.setURIResolver(new ClasspathResourceURIResolver(dictionaryRepo));
 		
@@ -74,7 +74,7 @@ class RSASchematronTest extends AbstractTest {
 	@DisplayName("CDA KO")
 	void cdaKO() throws Exception {
 		byte[] schematron = FileUtility.getFileFromInternalResources("Files" + File.separator + "schematronRSA" + File.separator + "schematron_RSA_v3.4.sch");
-		IReadableResource readableResource = new ReadableResourceInputStream(new ByteArrayInputStream(schematron));
+		IReadableResource readableResource = new ReadableResourceInputStream("schematron_RSA_v3.4.sch",new ByteArrayInputStream(schematron));
 		SchematronResourceSCH schematronResource = new SchematronResourceSCH(readableResource);
 		schematronResource.setURIResolver(new ClasspathResourceURIResolver(dictionaryRepo));
 		

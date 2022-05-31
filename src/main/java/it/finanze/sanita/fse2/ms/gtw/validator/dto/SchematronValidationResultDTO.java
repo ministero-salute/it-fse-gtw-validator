@@ -2,11 +2,11 @@ package it.finanze.sanita.fse2.ms.gtw.validator.dto;
 
 import java.util.List;
 
-import lombok.Builder;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 @Getter
-@Builder
+@AllArgsConstructor
 public class SchematronValidationResultDTO {
 
 	private Boolean validSchematron;

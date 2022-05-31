@@ -56,7 +56,7 @@ class LDOSchematronTest extends AbstractTest {
 	@DisplayName("CDA OK")
 	void cdaOK() throws Exception {
 		byte[] schematron = FileUtility.getFileFromInternalResources("Files" + File.separator + "schematronLDO" + File.separator + "schematronFSE_LDO_V3.2.sch");
-		IReadableResource readableResource = new ReadableResourceInputStream(new ByteArrayInputStream(schematron));
+		IReadableResource readableResource = new ReadableResourceInputStream("schematronFSE_LDO_V3.2.sch",new ByteArrayInputStream(schematron));
 		SchematronResourceSCH schematronResource = new SchematronResourceSCH(readableResource);
 		schematronResource.setURIResolver(new ClasspathResourceURIResolver(dictionaryRepo));
 
@@ -74,7 +74,7 @@ class LDOSchematronTest extends AbstractTest {
 	@DisplayName("CDA KO")
 	void cdaKO() throws Exception {
 		byte[] schematron = FileUtility.getFileFromInternalResources("Files" + File.separator + "schematronLDO" + File.separator + "schematronFSE_LDO_V3.2.sch");
-		IReadableResource readableResource = new ReadableResourceInputStream(new ByteArrayInputStream(schematron));
+		IReadableResource readableResource = new ReadableResourceInputStream("schematronFSE_LDO_V3.2.sch",new ByteArrayInputStream(schematron));
 		SchematronResourceSCH schematronResource = new SchematronResourceSCH(readableResource);
 		schematronResource.setURIResolver(new ClasspathResourceURIResolver(dictionaryRepo));
 
