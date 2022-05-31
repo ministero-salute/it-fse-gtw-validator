@@ -68,20 +68,11 @@ public class UpdateSingletonSRV implements IUpdateSingletonSRV {
 		Map<String,SchematronValidatorSingleton> mapSchema = SchematronValidatorSingleton.getMapInstance();
 		if(mapSchema!=null && !mapSchema.isEmpty()) {
 			for(Entry<String, SchematronValidatorSingleton> map : mapSchema.entrySet()) {
-				SchematronETY father = schematronRepo.findByTemplateIdRoot(map.getKey());
-				boolean isDifferent = checkDataUltimoAggiornamento(map.getValue().getDataUltimoAggiornamento(), father.getLastUpdateDate());
-				if(Boolean.FALSE.equals(isDifferent)) {
-					List<SchematronETY> children = schematronRepo.findChildrenBySystem(map.getKey());
-					for(SchematronETY child : children) {
-						isDifferent = checkDataUltimoAggiornamento(map.getValue().getDataUltimoAggiornamento(), child.getLastUpdateDate());
-						if(Boolean.TRUE.equals(isDifferent)) {
-							break;
-						}
-					}
-				}
+				SchematronETY schematron = schematronRepo.findByTemplateIdRoot(map.getKey());
+				boolean isDifferent = checkDataUltimoAggiornamento(map.getValue().getDataUltimoAggiornamento(), schematron.getLastUpdateDate()); 
 				
 				if(Boolean.TRUE.equals(isDifferent)) {
-					SchematronValidatorSingleton.getInstance(true,father, dictionaryRepo);
+					SchematronValidatorSingleton.getInstance(true,schematron, dictionaryRepo);
 				}
 			}
 		}
