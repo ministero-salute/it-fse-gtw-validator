@@ -1,12 +1,14 @@
 package it.finanze.sanita.fse2.ms.gtw.validator;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -82,10 +84,39 @@ class LabAnalisiSchematronTest extends AbstractTest {
 		for(Entry<String, byte[]> cdaKO : cdasKO.entrySet()) {
 			log.info("File analyzed :" + cdaKO.getKey());
 			SchematronValidationResultDTO resultDTO = CDAHelper.validateXMLViaSchematronFull(schematronResource, cdaKO.getValue());
+			String failedAssertion = resultDTO.getFailedAssertions().stream().map(e->e.getText()).collect(Collectors.joining(",")).toUpperCase();
+			String[] errors = cdaKO.getKey().split(" ")[5].split("\\.")[0].split("_");
+			for(String error : errors) {
+				String pattern = "ERRORE-"+error;
+				boolean assertCont = failedAssertion.contains(pattern);
+				if(!assertCont) {
+					System.out.println("Stop");
+				}
+				assertTrue(assertCont);
+			}
+			assertEquals(errors.length, resultDTO.getFailedAssertions().size());
 			assertEquals(true, resultDTO.getValidSchematron());
 			assertEquals(false, resultDTO.getValidXML());
 		}
 	}
  
+	@Test
+	@DisplayName("CDA ERROR")
+	void cdaError() throws Exception {
+		byte[] schematron = FileUtility.getFileFromInternalResources("Files" + File.separator + "schematronFSE" + File.separator + "schematronFSEv9.sch");
+		IReadableResource readableResource = new ReadableResourceInputStream("schematronFSEv9.sch",new ByteArrayInputStream(schematron));
+		SchematronResourceSCH schematronResource = new SchematronResourceSCH(readableResource);
+		schematronResource.setURIResolver(new ClasspathResourceURIResolver(dictionaryRepo));
+		
+		Map<String,byte[]> cdasKO = getSchematronFiles("src\\test\\resources\\Files\\schematronFSE\\ERROR");
+		for(Entry<String, byte[]> cdaKO : cdasKO.entrySet()) {
+			
+			SchematronValidationResultDTO resultDTO = CDAHelper.validateXMLViaSchematronFull(schematronResource, cdaKO.getValue());
+			String failedAssertion = resultDTO.getFailedAssertions().stream().map(e->e.getText()).collect(Collectors.joining(",")).toUpperCase();
+			
+			log.info("File analyzed : " + cdaKO.getKey() + " Failed assertion : " + failedAssertion);
+		 
+		}
+	}
 	 
 }
