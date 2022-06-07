@@ -55,7 +55,7 @@ public abstract class AbstractTest {
 
 			for (File file : folder.listFiles()) {
 				final String schemaJson = new String(Files.readAllBytes(Paths.get(file.getCanonicalPath())), StandardCharsets.UTF_8);
-				final Document schema = Document.parse(schemaJson);
+				final Document schema = Document.parse(schemaJson); 
 				mongoTemplate.insert(schema, item);
 
 			}
