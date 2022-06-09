@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class SchemaSingletonInfo {
 
-    private String version;
+    private String typeIdExtension;
 
     private Date dataUltimoAggiornamento;
     

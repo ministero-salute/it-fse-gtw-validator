@@ -21,6 +21,7 @@ import it.finanze.sanita.fse2.ms.gtw.validator.exceptions.BusinessException;
 import it.finanze.sanita.fse2.ms.gtw.validator.exceptions.NoRecordFoundException;
 import it.finanze.sanita.fse2.ms.gtw.validator.repository.entity.SchemaETY;
 import it.finanze.sanita.fse2.ms.gtw.validator.repository.entity.SchematronETY;
+import it.finanze.sanita.fse2.ms.gtw.validator.repository.mongo.IDictionaryRepo;
 import it.finanze.sanita.fse2.ms.gtw.validator.repository.mongo.ISchemaRepo;
 import it.finanze.sanita.fse2.ms.gtw.validator.repository.mongo.ISchematronRepo;
 import it.finanze.sanita.fse2.ms.gtw.validator.service.ISchemaSRV;
@@ -46,6 +47,9 @@ public class ValidationSRV implements IValidationSRV {
     @Autowired
     private ISchemaSRV schemaSRV;
     
+    @Autowired
+    private IDictionaryRepo dictionaryRepo;
+    
     @Override
     public VocabularyResultDTO validateVocabularies(final String cda) {
     	VocabularyResultDTO output = null;
@@ -63,21 +67,21 @@ public class ValidationSRV implements IValidationSRV {
     }
 
     @Override
-    public CDAValidationDTO validateSyntactic(final String cda, final String version) {
+    public CDAValidationDTO validateSyntactic(final String cda, final String typeIdExtension) {
     	CDAValidationDTO out = new CDAValidationDTO(CDAValidationStatusEnum.VALID);
     	try {
     		Validator validator = null;
     		if(SchemaValidatorSingleton.getMapInstance()!=null && !SchemaValidatorSingleton.getMapInstance().isEmpty()) {
-    			SchemaValidatorSingleton singleton = SchemaValidatorSingleton.getMapInstance().get(version);
+    			SchemaValidatorSingleton singleton = SchemaValidatorSingleton.getMapInstance().get(typeIdExtension);
     			if(singleton!=null) {
     				validator = singleton.getValidator();
     			}
     		}
 
     		if(validator==null) {
-    			SchemaETY schema = schemaRepo.findFatherXsd(version);
+    			SchemaETY schema = schemaRepo.findFatherXsd(typeIdExtension);
     			if (schema == null) {
-    				throw new NoRecordFoundException(String.format("Schema with version %s not found on database.", version));
+    				throw new NoRecordFoundException(String.format("Schema with version %s not found on database.", typeIdExtension));
     			}
 
     			SchemaValidatorSingleton instance = SchemaValidatorSingleton.getInstance(false, schema, schemaRepo);
@@ -90,8 +94,8 @@ public class ValidationSRV implements IValidationSRV {
     		}
 
     	} catch(NoRecordFoundException nEx) {
-    		log.error(String.format("Schema with version %s not found on database.", version));
-    		out.setNoRecordFound(String.format("Schema with version %s not found on database.", version));
+    		log.error(String.format("Schema with version %s not found on database.", typeIdExtension));
+    		out.setNoRecordFound(String.format("Schema with version %s not found on database.", typeIdExtension));
     		out.setStatus(CDAValidationStatusEnum.NOT_VALID);
     	} catch(Exception ex) {
     		log.error("Error while executing validation on xsd schema", ex);
@@ -111,7 +115,7 @@ public class ValidationSRV implements IValidationSRV {
 				if(singleton!=null) {
 					SchematronETY majorVersion = schematronRepo.findBySystemAndVersion(singleton.getTemplateIdRoot(), singleton.getTemplateIdExtension());
 					if(majorVersion!=null) {
-						singleton = SchematronValidatorSingleton.getInstance(true, majorVersion, schematronRepo);
+						singleton = SchematronValidatorSingleton.getInstance(true, majorVersion, dictionaryRepo);
 					}
 					schematronResource = singleton.getSchematronResource();
 				}
@@ -119,11 +123,11 @@ public class ValidationSRV implements IValidationSRV {
 			
 			if(schematronResource==null) {
 				SchematronETY schematronETY = schematronRepo.findByTemplateIdRoot(extractedInfoDTO.getTemplateIdSchematron());
-				SchematronValidatorSingleton schematron = SchematronValidatorSingleton.getInstance(false,schematronETY,schematronRepo);
+				SchematronValidatorSingleton schematron = SchematronValidatorSingleton.getInstance(false,schematronETY,dictionaryRepo);
 				schematronResource = schematron.getSchematronResource();
 			}
 			
-			output = CDAHelper.validateXMLViaXSLTSchematronFull(schematronResource, cdaToValidate.getBytes());
+			output = CDAHelper.validateXMLViaSchematronFull(schematronResource, cdaToValidate.getBytes());
 		} catch(Exception ex) {
 			log.error("Error while executing validation on schematron", ex);
 			throw new BusinessException("Error while executing validation on schematron", ex);

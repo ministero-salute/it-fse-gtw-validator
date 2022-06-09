@@ -37,8 +37,7 @@ public class SchematronRepo extends AbstractMongoRepo<SchematronETY, String> imp
 		SchematronETY output = null;
 		try {
 			Query query = new Query();
-			query.addCriteria(Criteria.where("template_id_root").is(templateIdRoot).
-					and("root_schematron").is(true));
+			query.addCriteria(Criteria.where("template_id_root").is(templateIdRoot));
 			query.with(Sort.by(Sort.Direction.DESC, "template_id_extension"));
 			output = mongoTemplate.findOne(query, SchematronETY.class);
 		} catch(Exception ex) {

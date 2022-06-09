@@ -27,22 +27,13 @@ public class SchematronETY {
 	@Field(name = "name_schematron")
 	private String nameSchematron;
 
-	@Field(name = "cda_code")
-	private String cdaCode;
-
-	@Field(name = "cda_code_system")
-	private String cdaCodeSystem;
-
 	@Field(name = "template_id_root")
 	private String templateIdRoot;
 	
 	@Field(name = "template_id_extension")
 	private String templateIdExtension;
 	
-	@Field(name = "root_schematron")
-	private Boolean rootSchematron;
-	
-	@Field(name = "data_ultimo_aggiornamento")
-	private Date dataUltimoAggiornamento;
+	@Field(name = "last_update_date")
+	private Date lastUpdateDate;
 	 
 }

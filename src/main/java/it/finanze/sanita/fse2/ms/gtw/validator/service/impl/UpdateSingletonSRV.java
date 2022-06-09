@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import it.finanze.sanita.fse2.ms.gtw.validator.repository.entity.SchemaETY;
 import it.finanze.sanita.fse2.ms.gtw.validator.repository.entity.SchematronETY;
+import it.finanze.sanita.fse2.ms.gtw.validator.repository.mongo.IDictionaryRepo;
 import it.finanze.sanita.fse2.ms.gtw.validator.repository.mongo.ISchemaRepo;
 import it.finanze.sanita.fse2.ms.gtw.validator.repository.mongo.ISchematronRepo;
 import it.finanze.sanita.fse2.ms.gtw.validator.service.IUpdateSingletonSRV;
@@ -30,6 +31,9 @@ public class UpdateSingletonSRV implements IUpdateSingletonSRV {
 	@Autowired
 	private ISchematronRepo schematronRepo;
 	
+	@Autowired
+	private IDictionaryRepo dictionaryRepo;
+	
 	@Override
 	public void updateSingletonInstance() {
 		updateSchemaSingleton();
@@ -42,11 +46,11 @@ public class UpdateSingletonSRV implements IUpdateSingletonSRV {
 		if(mapSchema!=null && !mapSchema.isEmpty()) {
 			for(Entry<String, SchemaValidatorSingleton> map : mapSchema.entrySet()) {
 				SchemaETY father = schemaRepo.findFatherXsd(map.getKey());
-				boolean isDifferent = checkDataUltimoAggiornamento(map.getValue().getDataUltimoAggiornamento(), father.getDataUltimoAggiornamento());
+				boolean isDifferent = checkDataUltimoAggiornamento(map.getValue().getDataUltimoAggiornamento(), father.getLastUpdateDate());
 				if(Boolean.FALSE.equals(isDifferent)) {
 					List<SchemaETY> children = schemaRepo.findChildrenXsd(map.getKey());
 					for(SchemaETY ety : children) {
-						isDifferent = checkDataUltimoAggiornamento(map.getValue().getDataUltimoAggiornamento(), ety.getDataUltimoAggiornamento());
+						isDifferent = checkDataUltimoAggiornamento(map.getValue().getDataUltimoAggiornamento(), ety.getLastUpdateDate());
 						if(Boolean.TRUE.equals(isDifferent)) {
 							break;
 						}
@@ -64,20 +68,11 @@ public class UpdateSingletonSRV implements IUpdateSingletonSRV {
 		Map<String,SchematronValidatorSingleton> mapSchema = SchematronValidatorSingleton.getMapInstance();
 		if(mapSchema!=null && !mapSchema.isEmpty()) {
 			for(Entry<String, SchematronValidatorSingleton> map : mapSchema.entrySet()) {
-				SchematronETY father = schematronRepo.findByTemplateIdRoot(map.getKey());
-				boolean isDifferent = checkDataUltimoAggiornamento(map.getValue().getDataUltimoAggiornamento(), father.getDataUltimoAggiornamento());
-				if(Boolean.FALSE.equals(isDifferent)) {
-					List<SchematronETY> children = schematronRepo.findChildrenBySystem(map.getKey());
-					for(SchematronETY child : children) {
-						isDifferent = checkDataUltimoAggiornamento(map.getValue().getDataUltimoAggiornamento(), child.getDataUltimoAggiornamento());
-						if(Boolean.TRUE.equals(isDifferent)) {
-							break;
-						}
-					}
-				}
+				SchematronETY schematron = schematronRepo.findByTemplateIdRoot(map.getKey());
+				boolean isDifferent = checkDataUltimoAggiornamento(map.getValue().getDataUltimoAggiornamento(), schematron.getLastUpdateDate()); 
 				
 				if(Boolean.TRUE.equals(isDifferent)) {
-					SchematronValidatorSingleton.getInstance(true,father, schematronRepo);
+					SchematronValidatorSingleton.getInstance(true,schematron, dictionaryRepo);
 				}
 			}
 		}

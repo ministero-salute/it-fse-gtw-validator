@@ -163,7 +163,7 @@ class SchemaTest extends AbstractTest {
 
         for(SchemaETY schema : schemas){
             schema.setId(null);
-            schema.setVersion("1.4");
+            schema.setTypeIdExtension("1.4");
         }
 
         mongoTemplate.insertAll(schemas);
@@ -179,10 +179,11 @@ class SchemaTest extends AbstractTest {
         query.addCriteria(Criteria.where("version").is("1.4"));
 
         Update update = new Update();
-        update.set("data_ultimo_aggiornamento", newDate);
+        update.set("last_update_date", newDate);
         mongoTemplate.updateFirst(query, update, SchemaETY.class);
 
 	}
+    
 
     void deleteSchema() {
 		mongoTemplate.remove(new Query(), SchemaETY.class);

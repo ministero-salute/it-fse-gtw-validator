@@ -7,17 +7,17 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.URIResolver;
 import javax.xml.transform.stream.StreamSource;
 
-import it.finanze.sanita.fse2.ms.gtw.validator.repository.entity.SchematronETY;
-import it.finanze.sanita.fse2.ms.gtw.validator.repository.mongo.ISchematronRepo;
+import it.finanze.sanita.fse2.ms.gtw.validator.repository.entity.DictionaryETY;
+import it.finanze.sanita.fse2.ms.gtw.validator.repository.mongo.IDictionaryRepo;
 import it.finanze.sanita.fse2.ms.gtw.validator.utility.StringUtility;
 
 public class ClasspathResourceURIResolver implements URIResolver {
 
-	private ISchematronRepo schematronRepo;
+	private IDictionaryRepo dictionaryRepo;
 	
-	public ClasspathResourceURIResolver(final ISchematronRepo inSchematronRepo) {
-		if(schematronRepo==null) {
-			schematronRepo = inSchematronRepo;
+	public ClasspathResourceURIResolver(final IDictionaryRepo inDictionaryRepo) {
+		if(dictionaryRepo==null) {
+			dictionaryRepo = inDictionaryRepo;
 		}
 	}
 	
@@ -25,9 +25,9 @@ public class ClasspathResourceURIResolver implements URIResolver {
 	public Source resolve(String href, String base) throws TransformerException {
 		Source source = null;
 		String nameFile = StringUtility.getFilename(href);
-		SchematronETY schematronETY = schematronRepo.findByName(nameFile);
-		if(schematronETY!=null) {
-			source = new StreamSource(new ByteArrayInputStream(schematronETY.getContentSchematron().getData()), nameFile); 
+		DictionaryETY dictionaryETY = dictionaryRepo.findByFilename(nameFile);
+		if(dictionaryETY!=null) {
+			source = new StreamSource(new ByteArrayInputStream(dictionaryETY.getContentFile().getData()), nameFile); 
 		}
 		return source;
 	}    

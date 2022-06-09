@@ -11,7 +11,7 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Repository;
 
 import it.finanze.sanita.fse2.ms.gtw.validator.exceptions.BusinessException;
-import it.finanze.sanita.fse2.ms.gtw.validator.repository.entity.VocabularyETY;
+import it.finanze.sanita.fse2.ms.gtw.validator.repository.entity.TerminologyETY;
 import it.finanze.sanita.fse2.ms.gtw.validator.repository.mongo.IVocabulariesMongoRepo;
 import lombok.extern.slf4j.Slf4j;
 
@@ -30,7 +30,7 @@ public class VocabulariesMongoRepo implements IVocabulariesMongoRepo {
             Query query = new Query();
             query.addCriteria(Criteria.where("system").is(system).and("code").in(codes));
 
-            validationSuccess = mongoTemplate.exists(query, VocabularyETY.class);
+            validationSuccess = mongoTemplate.exists(query, TerminologyETY.class);
          } catch (Exception e) {
             log.error(String.format("Error while executing validation on vocabularies for system %s", system), e);
             throw new BusinessException(String.format("Error while executing validation on vocabularies for system %s", system), e);
@@ -47,7 +47,7 @@ public class VocabulariesMongoRepo implements IVocabulariesMongoRepo {
             Query query = new Query();
             query.addCriteria(Criteria.where("system").is(system).and("code").in(codes));
 
-            List<VocabularyETY> etys = mongoTemplate.find(query, VocabularyETY.class);
+            List<TerminologyETY> etys = mongoTemplate.find(query, TerminologyETY.class);
             if(!etys.isEmpty()) {
             	output = etys.stream().map(e-> e.getCode()).collect(Collectors.toList());
             }

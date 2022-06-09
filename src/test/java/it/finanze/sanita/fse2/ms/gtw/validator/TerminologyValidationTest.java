@@ -29,7 +29,7 @@ import org.springframework.test.context.ActiveProfiles;
 import it.finanze.sanita.fse2.ms.gtw.validator.config.Constants;
 import it.finanze.sanita.fse2.ms.gtw.validator.config.properties.PropertiesCFG;
 import it.finanze.sanita.fse2.ms.gtw.validator.dto.VocabularyResultDTO;
-import it.finanze.sanita.fse2.ms.gtw.validator.repository.entity.VocabularyETY;
+import it.finanze.sanita.fse2.ms.gtw.validator.repository.entity.TerminologyETY;
 import it.finanze.sanita.fse2.ms.gtw.validator.repository.mongo.IVocabulariesMongoRepo;
 import it.finanze.sanita.fse2.ms.gtw.validator.repository.redis.IVocabulariesRedisRepo;
 import it.finanze.sanita.fse2.ms.gtw.validator.service.IVocabulariesSRV;
@@ -247,11 +247,11 @@ class TerminologyValidationTest {
 
     void insertTerminologyOnMongo(Map<String, List<String>> terminology) {
 
-        List<VocabularyETY> vocabularies = new ArrayList<>();
+        List<TerminologyETY> vocabularies = new ArrayList<>();
         for (String system : terminology.keySet()) {
             log.info("Inserting {} codes in system {}", terminology.get(system).size(), system);
             for (String code : terminology.get(system)) {
-                VocabularyETY vocabularyETY = new VocabularyETY();
+                TerminologyETY vocabularyETY = new TerminologyETY();
                 vocabularyETY.setCode(code);
                 vocabularyETY.setSystem(system);
                 vocabularies.add(vocabularyETY);

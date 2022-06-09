@@ -55,7 +55,7 @@ public class ValidationCTL extends AbstractCTL implements IValidationCTL {
 
 		ExtractedInfoDTO infoDTO = CDAHelper.extractInfo(requestBody.getCda());
 
-		CDAValidationDTO validationResult = validationSRV.validateSyntactic(requestBody.getCda(), infoDTO.getSchemaVersion());
+		CDAValidationDTO validationResult = validationSRV.validateSyntactic(requestBody.getCda(), infoDTO.getTypeIdExtension());
 		if(CDAValidationStatusEnum.NOT_VALID.equals(validationResult.getStatus())) {
 			if(StringUtility.isNullOrEmpty(validationResult.getNoRecordFound())){
 				for(Entry<CDASeverityViolationEnum, List<String>> violations : validationResult.getViolations().entrySet()) {
@@ -86,7 +86,7 @@ public class ValidationCTL extends AbstractCTL implements IValidationCTL {
 					log.info("Validation completed successfully!");
 				} else {
 					outcome = RawValidationEnum.VOCABULARY_ERROR;
-					messages.add("Almeno uno dei seguenti vocaboli non sono censiti : : " + result.getMessage());
+					messages.add("Almeno uno dei seguenti vocaboli non sono censiti : " + result.getMessage());
 				}
 			}
 		}

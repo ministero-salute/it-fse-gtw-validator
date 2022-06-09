@@ -38,7 +38,7 @@ public class SchemaRepo extends AbstractMongoRepo<SchemaETY, String> implements 
 		List<SchemaETY> output = null;
 		try {
 			Query query = new Query();
-			query.addCriteria(Criteria.where("root_schema").is(false).and("version").is(version));
+			query.addCriteria(Criteria.where("root_schema").is(false).and("type_id_extension").is(version));
 			output = mongoTemplate.find(query, SchemaETY.class);
 		} catch(Exception ex) {
 			log.error("Error while searching for child schemes" , ex);
@@ -52,7 +52,7 @@ public class SchemaRepo extends AbstractMongoRepo<SchemaETY, String> implements 
 		SchemaETY output = null;
 		try {
 			Query query = new Query();
-			query.addCriteria(Criteria.where("root_schema").is(true).and("version").is(version));
+			query.addCriteria(Criteria.where("root_schema").is(true).and("type_id_extension").is(version));
 			output = mongoTemplate.findOne(query, SchemaETY.class);
 		} catch(Exception ex) {
 			log.error("Error while searching for father schema" , ex);
@@ -67,7 +67,6 @@ public class SchemaRepo extends AbstractMongoRepo<SchemaETY, String> implements 
 		try {
 			Query query = new Query();
 			query.addCriteria(Criteria.where("root_schema").is(true));
-			query.with(Sort.by(Sort.Direction.DESC, "version"));
 			output = mongoTemplate.findOne(query, SchemaETY.class);
 		} catch(Exception ex) {
 			log.error("Error while searching for father schema" , ex);
@@ -81,7 +80,7 @@ public class SchemaRepo extends AbstractMongoRepo<SchemaETY, String> implements 
 		SchemaETY output = null;
 		try {
 			Query query = new Query();
-			query.addCriteria(Criteria.where("name_schema").is(nameSchema).and("version").is(version));
+			query.addCriteria(Criteria.where("name_schema").is(nameSchema).and("type_id_extension").is(version));
 			output = mongoTemplate.findOne(query, SchemaETY.class);
 		} catch(Exception ex) {
 			log.error("Error while searching for find by name and version" , ex);

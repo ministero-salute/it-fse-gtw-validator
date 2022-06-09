@@ -16,10 +16,9 @@ import org.jsoup.select.Elements;
 import com.helger.schematron.ISchematronResource;
 import com.helger.schematron.svrl.jaxb.FailedAssert;
 import com.helger.schematron.svrl.jaxb.SchematronOutputType;
-import com.helger.schematron.xslt.SchematronResourceXSLT;
 
-import it.finanze.sanita.fse2.ms.gtw.validator.dto.SchematronFailedAssertionDTO;
 import it.finanze.sanita.fse2.ms.gtw.validator.dto.ExtractedInfoDTO;
+import it.finanze.sanita.fse2.ms.gtw.validator.dto.SchematronFailedAssertionDTO;
 import it.finanze.sanita.fse2.ms.gtw.validator.dto.SchematronValidationResultDTO;
 import it.finanze.sanita.fse2.ms.gtw.validator.exceptions.BusinessException;
 import lombok.extern.slf4j.Slf4j;
@@ -56,7 +55,7 @@ public class CDAHelper {
 			//Schematron = root
 			String templateIdSchematron = docT.select("templateid").get(0).attr("root");
 			//Schemaversion = extension 
-			String schemaVersion = docT.select("templateid").get(0).attr("extension");
+			String schemaVersion = docT.select("typeid").get(0).attr("extension");
 			out = new ExtractedInfoDTO(templateIdSchematron, schemaVersion);
 		} catch(Exception ex) {
 			log.error("Error while extracting info for schematron ", ex);
@@ -65,13 +64,17 @@ public class CDAHelper {
 		return out;
 	}
 	 
-	public static SchematronValidationResultDTO validateXMLViaXSLTSchematronFull(ISchematronResource aResSCH , final byte[] xml) throws Exception{
+	public static SchematronValidationResultDTO validateXMLViaSchematronFull(ISchematronResource aResSCH , final byte[] xml) throws Exception{
+		List<SchematronFailedAssertionDTO> failedAssertions = new ArrayList<>();
 		boolean validST = aResSCH.isValidSchematron();
 		boolean validXML = true;
-		List<SchematronFailedAssertionDTO> failedAssertions = new ArrayList<>();
 		if (validST) {
 			Long start = new Date().getTime();
-			SchematronOutputType type = aResSCH.applySchematronValidationToSVRL(new StreamSource(new ByteArrayInputStream(xml)));
+			
+			SchematronOutputType type = null;
+			try (ByteArrayInputStream iStream = new ByteArrayInputStream(xml)){
+				type = aResSCH.applySchematronValidationToSVRL(new StreamSource(iStream));
+			}
 			List<Object> failedAsserts = type.getActivePatternAndFiredRuleAndFailedAssert();
 			Long delta = new Date().getTime() - start;
 			log.info("TIME : " + delta);        
@@ -84,28 +87,8 @@ public class CDAHelper {
 				}
 			}
 		}
-		return SchematronValidationResultDTO.builder().validSchematron(validST).validXML(validXML).failedAssertions(failedAssertions).build();
+		
+		return new SchematronValidationResultDTO(validST,validXML,failedAssertions);
 	}
-	
-	public static SchematronValidationResultDTO validateXMLViaXSLTSchematronFull(SchematronResourceXSLT schematronResourceXslt , final byte[] xml) throws Exception{
- 		boolean validST = schematronResourceXslt.isValidSchematron();
-		boolean validXML = true;
-		List<SchematronFailedAssertionDTO> failedAssertions = new ArrayList<>();
-		if (validST) {
-			Long start = new Date().getTime();
-			SchematronOutputType type = schematronResourceXslt.applySchematronValidationToSVRL(new StreamSource(new ByteArrayInputStream(xml)));
-			List<Object> failedAsserts = type.getActivePatternAndFiredRuleAndFailedAssert();
-			Long delta = new Date().getTime() - start;
-			log.info("TIME : " + delta);        
-			for (Object object : failedAsserts) {
-				if (object instanceof FailedAssert) {
-					validXML = false;
-					FailedAssert failedAssert = (FailedAssert) object;
-					SchematronFailedAssertionDTO failedAssertion = SchematronFailedAssertionDTO.builder().location(failedAssert.getLocation()).test(failedAssert.getTest()).text(failedAssert.getText().getContent().toString()).build();
-					failedAssertions.add(failedAssertion);
-				}
-			}
-		}
-		return SchematronValidationResultDTO.builder().validSchematron(validST).validXML(validXML).failedAssertions(failedAssertions).build();
-	}
+	 
 }

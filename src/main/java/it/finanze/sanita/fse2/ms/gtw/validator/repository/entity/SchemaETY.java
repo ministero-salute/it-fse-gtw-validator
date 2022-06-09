@@ -22,22 +22,19 @@ public class SchemaETY {
 	@Id
 	private String id;
 	
-	@Field(name = "cda_type")
-	private String cdaType;
-	
 	@Field(name = "name_schema")
 	private String nameSchema;
 	
 	@Field(name = "content_schema")
 	private Binary contentSchema;
-	
-	@Field(name = "version")
-	private String version;
+
+	@Field(name = "type_id_extension")
+	private String typeIdExtension;
 	
 	@Field(name = "root_schema")
 	private Boolean rootSchema;
 	
-	@Field(name = "data_ultimo_aggiornamento")
-	private Date dataUltimoAggiornamento;
+	@Field(name = "last_update_date")
+	private Date lastUpdateDate;
 	 
 }
