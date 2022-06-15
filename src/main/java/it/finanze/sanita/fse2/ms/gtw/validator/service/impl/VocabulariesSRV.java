@@ -66,7 +66,7 @@ public class VocabulariesSRV implements IVocabulariesSRV {
             				List<String> differences = terminologyList.stream().filter(element -> !findedCodes.contains(element)).collect(Collectors.toList());
             				if(!differences.isEmpty()) {
             					log.info("Not all codes for system {} are present on Mongo", system);
-            					vocaboliInesistenti = "[Dizionario : " + system + " ,Vocaboli:" + differences.stream().collect(Collectors.joining(",")) + "]";
+            					vocaboliInesistenti = differences.stream().collect(Collectors.joining(","));
             					exists = false;
             					break;
             				}
