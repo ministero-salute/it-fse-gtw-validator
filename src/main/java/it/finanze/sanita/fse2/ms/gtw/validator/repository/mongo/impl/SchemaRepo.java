@@ -94,7 +94,7 @@ public class SchemaRepo extends AbstractMongoRepo<SchemaETY, String> implements 
 		List<SchemaETY> output = new ArrayList<>();
 		try {
 			Query query = new Query();
-			query.addCriteria(Criteria.where("version").is(version));
+			query.addCriteria(Criteria.where("type_id_extension").is(version));
 			output = mongoTemplate.find(query, SchemaETY.class);
 		} catch(Exception ex) {
 			log.info("Error while running find by version : " , ex);
