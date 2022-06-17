@@ -1,5 +1,6 @@
-package it.finanze.sanita.fse2.ms.gtw.validator;
+package it.finanze.sanita.fse2.ms.gtw.validator.repository;
 
+import it.finanze.sanita.fse2.ms.gtw.validator.AbstractTest;
 import it.finanze.sanita.fse2.ms.gtw.validator.config.Constants;
 import it.finanze.sanita.fse2.ms.gtw.validator.repository.entity.SchemaETY;
 import it.finanze.sanita.fse2.ms.gtw.validator.repository.entity.SchematronETY;
