@@ -1,5 +1,4 @@
 {
-	"cda_type": "CDA_TYPE",
 	"name_schema": "labExtension_1.2_gen.xsd",
 	"content_schema": {
 		"$binary": {

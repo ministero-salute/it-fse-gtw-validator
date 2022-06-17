@@ -1,5 +1,4 @@
 {
-	"cda_type": "CDA_TYPE",
 	"name_schema": "datatypes-rX-cs.xsd",
 	"content_schema": {
 		"$binary": {

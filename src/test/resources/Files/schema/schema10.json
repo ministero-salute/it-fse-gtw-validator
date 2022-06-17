@@ -1,5 +1,4 @@
 {
-	"cda_type": "CDA_TYPE",
 	"name_schema": "voc.xsd",
 	"content_schema": {
 		"$binary": {
