@@ -12,12 +12,12 @@ import org.springframework.stereotype.Repository;
 
 import it.finanze.sanita.fse2.ms.gtw.validator.exceptions.BusinessException;
 import it.finanze.sanita.fse2.ms.gtw.validator.repository.entity.TerminologyETY;
-import it.finanze.sanita.fse2.ms.gtw.validator.repository.mongo.IVocabulariesMongoRepo;
+import it.finanze.sanita.fse2.ms.gtw.validator.repository.mongo.ITerminologyRepo;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Repository
-public class VocabulariesMongoRepo implements IVocabulariesMongoRepo {
+public class TerminologyRepo implements ITerminologyRepo {
 
     @Autowired
     private MongoTemplate mongoTemplate;

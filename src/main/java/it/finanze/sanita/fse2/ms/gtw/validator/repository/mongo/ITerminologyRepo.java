@@ -2,7 +2,7 @@ package it.finanze.sanita.fse2.ms.gtw.validator.repository.mongo;
 
 import java.util.List;
 
-public interface IVocabulariesMongoRepo {
+public interface ITerminologyRepo {
 
     /**
      * Returns {@code true} if all the codes are present in the database, {@code false} otherwise.
