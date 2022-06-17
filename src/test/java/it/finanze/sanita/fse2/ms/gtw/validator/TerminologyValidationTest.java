@@ -30,7 +30,7 @@ import it.finanze.sanita.fse2.ms.gtw.validator.config.Constants;
 import it.finanze.sanita.fse2.ms.gtw.validator.config.properties.PropertiesCFG;
 import it.finanze.sanita.fse2.ms.gtw.validator.dto.VocabularyResultDTO;
 import it.finanze.sanita.fse2.ms.gtw.validator.repository.entity.TerminologyETY;
-import it.finanze.sanita.fse2.ms.gtw.validator.repository.mongo.IVocabulariesMongoRepo;
+import it.finanze.sanita.fse2.ms.gtw.validator.repository.mongo.ITerminologyRepo;
 import it.finanze.sanita.fse2.ms.gtw.validator.repository.redis.IVocabulariesRedisRepo;
 import it.finanze.sanita.fse2.ms.gtw.validator.service.IVocabulariesSRV;
 import lombok.extern.slf4j.Slf4j;
@@ -48,7 +48,7 @@ class TerminologyValidationTest {
     IVocabulariesRedisRepo vocabulariesRedisRepo;
 
     @Autowired
-    IVocabulariesMongoRepo vocabulariesMongoRepo;
+    ITerminologyRepo vocabulariesMongoRepo;
 
     @MockBean
     PropertiesCFG propsCFG;
