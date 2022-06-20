@@ -1,17 +1,19 @@
 package it.finanze.sanita.fse2.ms.gtw.validator.repository;
 
+import com.mongodb.MongoException;
 import it.finanze.sanita.fse2.ms.gtw.validator.AbstractTest;
 import it.finanze.sanita.fse2.ms.gtw.validator.config.Constants;
+import it.finanze.sanita.fse2.ms.gtw.validator.exceptions.BusinessException;
 import it.finanze.sanita.fse2.ms.gtw.validator.repository.entity.SchemaETY;
-import it.finanze.sanita.fse2.ms.gtw.validator.repository.entity.SchematronETY;
 import it.finanze.sanita.fse2.ms.gtw.validator.repository.mongo.ISchemaRepo;
-import it.finanze.sanita.fse2.ms.gtw.validator.repository.mongo.ISchematronRepo;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.util.List;
@@ -19,6 +21,8 @@ import java.util.List;
 import static com.mongodb.assertions.Assertions.assertFalse;
 import static com.mongodb.assertions.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.when;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles(Constants.Profile.TEST)
@@ -32,6 +36,9 @@ public class SchemaRepoTest extends AbstractTest {
 
     @Autowired
     private ISchemaRepo repository;
+
+    @SpyBean
+    private MongoTemplate mongo;
 
     @BeforeAll
     void setup() {
@@ -47,6 +54,9 @@ public class SchemaRepoTest extends AbstractTest {
         assertTrue(res.getRootSchema());
         assertEquals(TEST_ROOT_NAME_FILE, res.getNameSchema());
         assertEquals(TEST_TYPE_ID_EXTENSION, res.getTypeIdExtension());
+        // Exceptions
+        when(mongo).thenThrow(new MongoException("Test"));
+        assertThrows(BusinessException.class, () -> repository.findFatherXsd(TEST_TYPE_ID_EXTENSION));
     }
 
     @Test
@@ -57,6 +67,9 @@ public class SchemaRepoTest extends AbstractTest {
         assertFalse(res.isEmpty());
         assertEquals(TEST_FILES_SIZE - 1, res.size());
         assertEquals(TEST_TYPE_ID_EXTENSION, res.get(0).getTypeIdExtension());
+        // Exceptions
+        when(mongo).thenThrow(new MongoException("Test"));
+        assertThrows(BusinessException.class, () -> repository.findChildrenXsd(TEST_TYPE_ID_EXTENSION));
     }
 
     @Test
@@ -67,6 +80,9 @@ public class SchemaRepoTest extends AbstractTest {
         assertTrue(res.getRootSchema());
         assertEquals(TEST_ROOT_NAME_FILE, res.getNameSchema());
         assertEquals(TEST_TYPE_ID_EXTENSION, res.getTypeIdExtension());
+        // Exceptions
+        when(mongo).thenThrow(new MongoException("Test"));
+        assertThrows(BusinessException.class, () -> repository.findFatherLastVersionXsd());
     }
 
     @Test
@@ -77,6 +93,9 @@ public class SchemaRepoTest extends AbstractTest {
         assertFalse(res.isEmpty());
         assertEquals(TEST_FILES_SIZE, res.size());
         assertEquals(TEST_TYPE_ID_EXTENSION, res.get(0).getTypeIdExtension());
+        // Exceptions
+        when(mongo).thenThrow(new MongoException("Test"));
+        assertThrows(BusinessException.class, () -> repository.findByVersion(TEST_TYPE_ID_EXTENSION));
     }
 
 }
