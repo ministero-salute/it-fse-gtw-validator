@@ -1,19 +1,18 @@
 package it.finanze.sanita.fse2.ms.gtw.validator.repository.mongo.impl;
 
+import it.finanze.sanita.fse2.ms.gtw.validator.exceptions.BusinessException;
+import it.finanze.sanita.fse2.ms.gtw.validator.repository.entity.DictionaryETY;
+import it.finanze.sanita.fse2.ms.gtw.validator.repository.mongo.IDictionaryRepo;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Repository;
 
-import it.finanze.sanita.fse2.ms.gtw.validator.exceptions.BusinessException;
-import it.finanze.sanita.fse2.ms.gtw.validator.repository.entity.DictionaryETY;
-import it.finanze.sanita.fse2.ms.gtw.validator.repository.mongo.IDictionaryRepo;
-import lombok.extern.slf4j.Slf4j;
-
 @Slf4j
 @Repository
-public class DictionaryRepo extends AbstractMongoRepo<DictionaryETY, String> implements IDictionaryRepo {
+public class DictionaryRepo implements IDictionaryRepo {
 
 	
 	/**
@@ -26,7 +25,7 @@ public class DictionaryRepo extends AbstractMongoRepo<DictionaryETY, String> imp
 	
 	@Override
 	public DictionaryETY findByFilename(String filename) {
-		DictionaryETY out = null;
+		DictionaryETY out;
 		try {
 			Query query = new Query();
 			query.addCriteria(Criteria.where("filename").is(filename));
