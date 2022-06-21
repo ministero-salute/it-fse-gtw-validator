@@ -18,7 +18,7 @@ import it.finanze.sanita.fse2.ms.gtw.validator.dto.response.SingletonInspectorRe
  *
  *	Controller singleton inspector.
  */
-@RequestMapping(path = "/v1.0.0")
+@RequestMapping(path = "/v1")
 @Tag(name = "Servizio ispezione singleton in memoria")
 public interface ISingletonInspectorCTL {
 
