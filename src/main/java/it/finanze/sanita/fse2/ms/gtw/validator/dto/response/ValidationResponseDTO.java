@@ -20,11 +20,6 @@ public class ValidationResponseDTO extends ResponseDTO {
 	private static final long serialVersionUID = -2144353497297675698L;
 	
 	private final ValidationInfoDTO result;
-	
-	public ValidationResponseDTO() {
-		super();
-		result = null;
-	}
 
 	public ValidationResponseDTO(final LogTraceInfoDTO traceInfo, final ValidationInfoDTO inResult) {
 		super(traceInfo);

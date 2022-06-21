@@ -18,11 +18,6 @@ public class SingletonInspectorResponseDTO extends ResponseDTO {
 	private static final long serialVersionUID = -2144353495597675698L;
 	
 	private final SingletonInfoDTO result;
-	
-	public SingletonInspectorResponseDTO() {
-		super();
-		result = null;
-	}
 
 	public SingletonInspectorResponseDTO(final LogTraceInfoDTO traceInfo, final SingletonInfoDTO inResult) {
 		super(traceInfo);
