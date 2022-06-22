@@ -40,7 +40,7 @@ public class TerminologyRepoTest {
         // Retrieve
         List<String> res = repository.findAllCodesExists(TEST_SYSTEM_ID, TEST_SYS_CODES);
         // Assertions
-        assertFalse(res.isEmpty());
+        assertFalse(!res.isEmpty());
         // Exceptions
         when(mongo).thenThrow(new MongoException("Test"));
         assertThrows(BusinessException.class, () -> repository.findAllCodesExists(TEST_SYSTEM_ID, TEST_SYS_CODES));

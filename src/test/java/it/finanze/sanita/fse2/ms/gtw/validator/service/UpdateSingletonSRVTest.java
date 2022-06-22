@@ -50,26 +50,23 @@ public class UpdateSingletonSRVTest extends AbstractTest {
 
     @Test
     void oneRunScheduleTest() {
-        assertDoesNotThrow(() -> {
-            String version = "1.3";
-            SchemaETY ety = schema.findFatherXsd(version);
+        String version = "1.3";
+        SchemaETY ety = schema.findFatherXsd(version);
 
-            if (ety == null) {
-                throw new NoRecordFoundException(String.format("Schema with version %s not found on database.", version));
-            }
-            ety.setLastUpdateDate(new Date());
-            SchemaValidatorSingleton.getInstance(false, ety , schema);
+        if (ety == null) {
+            throw new NoRecordFoundException(String.format("Schema with version %s not found on database.", version));
+        }
+        ety.setLastUpdateDate(new Date());
+        SchemaValidatorSingleton.getInstance(false, ety , schema);
 
-            SchematronETY ety0 = schematron.findByTemplateIdRoot(TEST_TEMPLATE_ROOT);
+        SchematronETY ety0 = schematron.findByTemplateIdRoot(TEST_TEMPLATE_ROOT);
 
-            if (ety0 == null) {
-                throw new NoRecordFoundException(String.format("Schematron with template root %s not found on database.", TEST_TEMPLATE_ROOT));
-            }
-            ety0.setLastUpdateDate(new Date());
-            SchematronValidatorSingleton.getInstance(false, ety0, dictionary);
-
-            service.updateSingletonInstance();
-        });
+        if (ety0 == null) {
+            throw new NoRecordFoundException(String.format("Schematron with template root %s not found on database.", TEST_TEMPLATE_ROOT));
+        }
+        ety0.setLastUpdateDate(new Date());
+        SchematronValidatorSingleton.getInstance(false, ety0, dictionary);
+        assertDoesNotThrow(() -> service.updateSingletonInstance());
     }
 
 }
