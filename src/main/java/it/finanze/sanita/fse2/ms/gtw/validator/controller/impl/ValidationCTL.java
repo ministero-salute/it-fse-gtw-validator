@@ -72,12 +72,15 @@ public class ValidationCTL extends AbstractCTL implements IValidationCTL {
 
 		if(RawValidationEnum.OK.equals(outcome)) {
 			SchematronValidationResultDTO semanticValidation = validationSRV.validateSemantic(requestBody.getCda(),infoDTO);
-			if(!semanticValidation.getValidXML()) {
+			if(semanticValidation.getFailedAssertions()!= null && !semanticValidation.getFailedAssertions().isEmpty()) {
 				for(SchematronFailedAssertionDTO violation : semanticValidation.getFailedAssertions()) {
 					messages.add(violation.getText());
-
+					outcome = RawValidationEnum.SEMANTIC_WARNING;
 				}
-				outcome = RawValidationEnum.SEMANTIC_ERROR;
+				
+				if(Boolean.FALSE.equals(semanticValidation.getValidXML())){
+					outcome = RawValidationEnum.SEMANTIC_ERROR;
+				}
 			}
 
 			if(RawValidationEnum.OK.equals(outcome)) {

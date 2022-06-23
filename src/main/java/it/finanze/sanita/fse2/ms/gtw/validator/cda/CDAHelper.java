@@ -16,6 +16,7 @@ import org.jsoup.select.Elements;
 import com.helger.schematron.ISchematronResource;
 import com.helger.schematron.svrl.jaxb.FailedAssert;
 import com.helger.schematron.svrl.jaxb.SchematronOutputType;
+import com.helger.schematron.svrl.jaxb.SuccessfulReport;
 
 import it.finanze.sanita.fse2.ms.gtw.validator.dto.ExtractedInfoDTO;
 import it.finanze.sanita.fse2.ms.gtw.validator.dto.SchematronFailedAssertionDTO;
@@ -65,7 +66,7 @@ public class CDAHelper {
 	}
 	 
 	public static SchematronValidationResultDTO validateXMLViaSchematronFull(ISchematronResource aResSCH , final byte[] xml) throws Exception{
-		List<SchematronFailedAssertionDTO> failedAssertions = new ArrayList<>();
+		List<SchematronFailedAssertionDTO> assertions = new ArrayList<>();
 		boolean validST = aResSCH.isValidSchematron();
 		boolean validXML = true;
 		if (validST) {
@@ -75,20 +76,25 @@ public class CDAHelper {
 			try (ByteArrayInputStream iStream = new ByteArrayInputStream(xml)){
 				type = aResSCH.applySchematronValidationToSVRL(new StreamSource(iStream));
 			}
-			List<Object> failedAsserts = type.getActivePatternAndFiredRuleAndFailedAssert();
+			List<Object> asserts = type.getActivePatternAndFiredRuleAndFailedAssert();
 			Long delta = new Date().getTime() - start;
 			log.info("TIME : " + delta);        
-			for (Object object : failedAsserts) {
+			for (Object object : asserts) {
 				if (object instanceof FailedAssert) {
 					validXML = false;
 					FailedAssert failedAssert = (FailedAssert) object;
 					SchematronFailedAssertionDTO failedAssertion = SchematronFailedAssertionDTO.builder().location(failedAssert.getLocation()).test(failedAssert.getTest()).text(failedAssert.getText().getContent().toString()).build();
-					failedAssertions.add(failedAssertion);
+					assertions.add(failedAssertion);
+				} else if(object instanceof SuccessfulReport) {
+					SuccessfulReport warningAssert = (SuccessfulReport) object;
+					SchematronFailedAssertionDTO warningAssertion = SchematronFailedAssertionDTO.builder().location(warningAssert.getLocation()).test(warningAssert.getTest()).text(warningAssert.getText().getContent().toString()).build();
+					assertions.add(warningAssertion);
 				}
+				
 			}
 		}
 		
-		return new SchematronValidationResultDTO(validST,validXML,failedAssertions);
+		return new SchematronValidationResultDTO(validST,validXML,assertions);
 	}
 	 
 }
