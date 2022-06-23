@@ -89,7 +89,7 @@ public class ValidationCTL extends AbstractCTL implements IValidationCTL {
 					log.info("Validation completed successfully!");
 				} else {
 					outcome = RawValidationEnum.VOCABULARY_ERROR;
-					messages.add("Almeno uno dei seguenti vocaboli non sono censiti : : " + result.getMessage());
+					messages.add("Almeno uno dei seguenti vocaboli non sono censiti : " + result.getMessage());
 				}
 			}
 		}
