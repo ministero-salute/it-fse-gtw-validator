@@ -3,6 +3,7 @@ package it.finanze.sanita.fse2.ms.gtw.validator.utility;
 import lombok.extern.slf4j.Slf4j;
 
 import java.nio.file.Paths;
+import java.util.UUID;
 
 @Slf4j
 public final class StringUtility {
@@ -23,7 +24,7 @@ public final class StringUtility {
 	public static boolean isNullOrEmpty(final String str) {
 		return str == null || str.isEmpty();
 	}
-	
+
 	/**
 	 * Get filename from complete path.
 	 * 
@@ -33,4 +34,8 @@ public final class StringUtility {
 	public static String getFilename(final String completePath) {
 		return Paths.get(completePath).getFileName().toString();
 	}
- }
+
+	public static String generateUUID() {
+		return UUID.randomUUID().toString();
+	}
+}

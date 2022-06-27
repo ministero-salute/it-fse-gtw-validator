@@ -12,6 +12,7 @@ import com.helger.schematron.xslt.SchematronResourceSCH;
 
 import it.finanze.sanita.fse2.ms.gtw.validator.repository.entity.SchematronETY;
 import it.finanze.sanita.fse2.ms.gtw.validator.repository.mongo.IDictionaryRepo;
+import it.finanze.sanita.fse2.ms.gtw.validator.utility.StringUtility;
 import it.finanze.sanita.fse2.ms.gtw.validator.xmlresolver.ClasspathResourceURIResolver;
 
 
@@ -41,7 +42,7 @@ public final class SchematronValidatorSingleton {
 		if(getInstanceCondition) {
 			synchronized(SchematronValidatorSingleton.class) {
 				if (getInstanceCondition) {
-					IReadableResource readableResource = new ReadableResourceInputStream(inSchematronETY.getTemplateIdRoot()+"_"+inSchematronETY.getTemplateIdExtension(), 
+					IReadableResource readableResource = new ReadableResourceInputStream(StringUtility.generateUUID() , 
 							new ByteArrayInputStream(inSchematronETY.getContentSchematron().getData()));
 					SchematronResourceSCH schematronResourceXslt = new SchematronResourceSCH(readableResource);
 					schematronResourceXslt.setURIResolver(new ClasspathResourceURIResolver(dictionaryRepo));
