@@ -1,6 +1,7 @@
 package it.finanze.sanita.fse2.ms.gtw.validator.controller.impl;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map.Entry;
 
@@ -55,7 +56,11 @@ public class ValidationCTL extends AbstractCTL implements IValidationCTL {
 
 		ExtractedInfoDTO infoDTO = CDAHelper.extractInfo(requestBody.getCda());
 
+		Date startDateSyntatic = new Date();
+		log.info("INIZIO VALIDAZIONE SINTATTICA : " + startDateSyntatic);
 		CDAValidationDTO validationResult = validationSRV.validateSyntactic(requestBody.getCda(), infoDTO.getTypeIdExtension());
+		Long endDateSyntatic = new Date().getTime() - startDateSyntatic.getTime();
+		log.info("FINE VALIDAZIONE SINTATTICA : " + endDateSyntatic);
 		if(CDAValidationStatusEnum.NOT_VALID.equals(validationResult.getStatus())) {
 			if(StringUtility.isNullOrEmpty(validationResult.getNoRecordFound())){
 				for(Entry<CDASeverityViolationEnum, List<String>> violations : validationResult.getViolations().entrySet()) {
@@ -71,7 +76,11 @@ public class ValidationCTL extends AbstractCTL implements IValidationCTL {
 		}	
 
 		if(RawValidationEnum.OK.equals(outcome)) {
+			Date startDateSemantic = new Date();
+			log.info("INIZIO VALIDAZIONE SEMANTICA: " + startDateSemantic);
 			SchematronValidationResultDTO semanticValidation = validationSRV.validateSemantic(requestBody.getCda(),infoDTO);
+			Long endDateSemantic = new Date().getTime() - startDateSemantic.getTime();
+			log.info("END VALIDAZIONE SEMANTICA: " + endDateSemantic);
 			if(semanticValidation.getFailedAssertions()!= null && !semanticValidation.getFailedAssertions().isEmpty()) {
 				for(SchematronFailedAssertionDTO violation : semanticValidation.getFailedAssertions()) {
 					messages.add(violation.getText());
@@ -84,7 +93,11 @@ public class ValidationCTL extends AbstractCTL implements IValidationCTL {
 			}
 
 			if(RawValidationEnum.OK.equals(outcome)) {
+				Date startDateVoc = new Date();
+				log.info("INIZIO VALIDAZIONE VOC: " + startDateVoc);
 				VocabularyResultDTO result =  validationSRV.validateVocabularies(requestBody.getCda());
+				Long endDateVoc = new Date().getTime() - startDateVoc.getTime();
+				log.info("END VALIDAZIONE VOC: " + endDateVoc);
 				if(Boolean.TRUE.equals(result.getValid())) {
 					log.info("Validation completed successfully!");
 				} else {
