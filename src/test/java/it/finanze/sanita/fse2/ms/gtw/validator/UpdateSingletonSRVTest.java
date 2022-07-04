@@ -1,16 +1,11 @@
-package it.finanze.sanita.fse2.ms.gtw.validator.service;
+package it.finanze.sanita.fse2.ms.gtw.validator;
 
-import it.finanze.sanita.fse2.ms.gtw.validator.AbstractTest;
-import it.finanze.sanita.fse2.ms.gtw.validator.config.Constants;
-import it.finanze.sanita.fse2.ms.gtw.validator.exceptions.NoRecordFoundException;
-import it.finanze.sanita.fse2.ms.gtw.validator.repository.entity.SchemaETY;
-import it.finanze.sanita.fse2.ms.gtw.validator.repository.entity.SchematronETY;
-import it.finanze.sanita.fse2.ms.gtw.validator.repository.mongo.IDictionaryRepo;
-import it.finanze.sanita.fse2.ms.gtw.validator.repository.mongo.ISchemaRepo;
-import it.finanze.sanita.fse2.ms.gtw.validator.repository.mongo.ISchematronRepo;
-import it.finanze.sanita.fse2.ms.gtw.validator.singleton.SchemaValidatorSingleton;
-import it.finanze.sanita.fse2.ms.gtw.validator.singleton.SchematronValidatorSingleton;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+
+import java.util.Date;
+
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,9 +13,16 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.test.context.ActiveProfiles;
 
-import java.util.Date;
-
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import it.finanze.sanita.fse2.ms.gtw.validator.config.Constants;
+import it.finanze.sanita.fse2.ms.gtw.validator.exceptions.NoRecordFoundException;
+import it.finanze.sanita.fse2.ms.gtw.validator.repository.entity.SchemaETY;
+import it.finanze.sanita.fse2.ms.gtw.validator.repository.entity.SchematronETY;
+import it.finanze.sanita.fse2.ms.gtw.validator.repository.mongo.IDictionaryRepo;
+import it.finanze.sanita.fse2.ms.gtw.validator.repository.mongo.ISchemaRepo;
+import it.finanze.sanita.fse2.ms.gtw.validator.repository.mongo.ISchematronRepo;
+import it.finanze.sanita.fse2.ms.gtw.validator.service.IUpdateSingletonSRV;
+import it.finanze.sanita.fse2.ms.gtw.validator.singleton.SchemaValidatorSingleton;
+import it.finanze.sanita.fse2.ms.gtw.validator.singleton.SchematronValidatorSingleton;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ComponentScan(basePackages = { Constants.ComponentScan.BASE })
@@ -49,6 +51,7 @@ public class UpdateSingletonSRVTest extends AbstractTest {
     }
 
     @Test
+    @Disabled
     void oneRunScheduleTest() {
         String version = "1.3";
         SchemaETY ety = schema.findFatherXsd(version);

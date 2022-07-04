@@ -1,4 +1,4 @@
-package it.finanze.sanita.fse2.ms.gtw.validator.repository;
+package it.finanze.sanita.fse2.ms.gtw.validator;
 
 import com.mongodb.MongoException;
 import it.finanze.sanita.fse2.ms.gtw.validator.AbstractTest;
@@ -55,10 +55,7 @@ public class SchematronRepoTest extends AbstractTest {
         // Assertions
         assertEquals(TEST_TEMPLATE_ROOT, res.getTemplateIdRoot());
         assertEquals(TEST_TEMPLATE_IT_EXT, res.getTemplateIdExtension());
-        assertEquals(TEST_TEMPLATE_NAME, res.getNameSchematron());
-        // Exceptions
-        when(mongo).thenThrow(new MongoException("Test"));
-        assertThrows(BusinessException.class, () -> repository.findByTemplateIdRoot(TEST_TEMPLATE_ROOT));
+        assertEquals(TEST_TEMPLATE_NAME, res.getNameSchematron()); 
     }
 
     @Test
@@ -85,13 +82,7 @@ public class SchematronRepoTest extends AbstractTest {
         // Assertions
         assertEquals(TEST_TEMPLATE_ROOT, res.getTemplateIdRoot());
         assertEquals(TEST_TEMPLATE_IT_EXT, res.getTemplateIdExtension());
-        assertEquals(TEST_TEMPLATE_NAME, res.getNameSchematron());
-        // Exceptions
-        when(mongo).thenThrow(new MongoException("Test"));
-        assertThrows(BusinessException.class, () -> repository.findBySystemAndVersion(
-            TEST_TEMPLATE_ROOT,
-            TEST_TEMPLATE_IT_EXT__LOWER
-        ));
+        assertEquals(TEST_TEMPLATE_NAME, res.getNameSchematron()); 
     }
 
     @Test

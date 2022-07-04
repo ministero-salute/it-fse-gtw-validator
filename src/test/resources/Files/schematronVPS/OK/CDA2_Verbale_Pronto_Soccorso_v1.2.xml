@@ -15,7 +15,7 @@
 	<versionNumber value="1"/>
 	<recordTarget>
 		<patientRole>
-			<id root="2.16.840.1.113883.2.9.2.4.3.2" extension="RSSGDU80H23C467G" assigningAuthorityName="MEF"/>
+			<id root="2.16.840.1.113883.2.9.2.4.3.2" extension="RSSMRA22A01A399Z" assigningAuthorityName="MEF"/>
 			<addr use="H"> 
 				<country>100</country>
 				<state>120</state>
@@ -1008,7 +1008,7 @@
 									<code code="86678-0" codeSystem="2.16.840.1.113883.6.1" codeSystemName="LOINC" displayName="Weight gain of 5% or more in the last month or gain of 10% or more in last 6 months"/>
 									<statusCode code="completed"/>
 									<repeatNumber value="3"/>
-									<value xsi:type="PQ" value="10" unit="Kg"/>
+									<value xsi:type="PQ" value="10" unit="kg"/>
 									<interpretationCode code="B" codeSystem="2.16.840.1.113883.5.83" codeSystemName="HL7 ObservationInterpretation" displayName="Better"/>
 									<methodCode code="70962-6" codeSystem="2.16.840.1.113883.6.1" codeSystemName="LOINC" displayName="Body weight Measured"/>
 									<!--targetSiteCode code="[TRG_CODE]" codeSystem="[OID_CODESYSTEM]" codeSystemName="[DESC_CODESYSTEM]" displayName="[DESC_TARGET]"/-->

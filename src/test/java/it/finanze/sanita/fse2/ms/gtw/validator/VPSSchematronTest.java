@@ -55,8 +55,8 @@ class VPSSchematronTest extends AbstractTest {
 	@Test
 	@DisplayName("CDA OK")
 	void cdaOK() throws Exception {
-		byte[] schematron = FileUtility.getFileFromInternalResources("Files" + File.separator + "schematronVPS" + File.separator + "schematron_VPS_v 2.1.sch");
-		IReadableResource readableResource = new ReadableResourceInputStream("schematron_VPS_v 2.1.sch",new ByteArrayInputStream(schematron));
+		byte[] schematron = FileUtility.getFileFromInternalResources("Files" + File.separator + "schematronVPS" + File.separator + "schematron_VPS_v 2.4.sch");
+		IReadableResource readableResource = new ReadableResourceInputStream("schematron_VPS_v 2.4.sch",new ByteArrayInputStream(schematron));
 		SchematronResourceSCH schematronResource = new SchematronResourceSCH(readableResource);
 		schematronResource.setURIResolver(new ClasspathResourceURIResolver(dictionaryRepo));
 		
@@ -73,8 +73,8 @@ class VPSSchematronTest extends AbstractTest {
 	@Test
 	@DisplayName("CDA KO")
 	void cdaKO() throws Exception {
-		byte[] schematron = FileUtility.getFileFromInternalResources("Files" + File.separator + "schematronVPS" + File.separator + "schematron_VPS_v 2.1.sch");
-		IReadableResource readableResource = new ReadableResourceInputStream("schematron_VPS_v 2.1.sch",new ByteArrayInputStream(schematron));
+		byte[] schematron = FileUtility.getFileFromInternalResources("Files" + File.separator + "schematronVPS" + File.separator + "schematron_VPS_v 2.4.sch");
+		IReadableResource readableResource = new ReadableResourceInputStream("schematron_VPS_v 2.4.sch",new ByteArrayInputStream(schematron));
 		SchematronResourceSCH schematronResource = new SchematronResourceSCH(readableResource);
 		schematronResource.setURIResolver(new ClasspathResourceURIResolver(dictionaryRepo));
 		

@@ -1,9 +1,12 @@
-package it.finanze.sanita.fse2.ms.gtw.validator.controller;
+package it.finanze.sanita.fse2.ms.gtw.validator;
 
-import it.finanze.sanita.fse2.ms.gtw.validator.config.Constants;
-import it.finanze.sanita.fse2.ms.gtw.validator.dto.request.ValidationRequestDTO;
-import it.finanze.sanita.fse2.ms.gtw.validator.dto.response.ValidationResponseDTO;
-import it.finanze.sanita.fse2.ms.gtw.validator.enums.RawValidationEnum;
+import static it.finanze.sanita.fse2.ms.gtw.validator.utility.FileUtility.getFileFromInternalResources;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -11,12 +14,11 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.test.context.ActiveProfiles;
 
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-
-import static it.finanze.sanita.fse2.ms.gtw.validator.utility.FileUtility.getFileFromInternalResources;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import it.finanze.sanita.fse2.ms.gtw.validator.config.Constants;
+import it.finanze.sanita.fse2.ms.gtw.validator.controller.IValidationCTL;
+import it.finanze.sanita.fse2.ms.gtw.validator.dto.request.ValidationRequestDTO;
+import it.finanze.sanita.fse2.ms.gtw.validator.dto.response.ValidationResponseDTO;
+import it.finanze.sanita.fse2.ms.gtw.validator.enums.RawValidationEnum;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ComponentScan(basePackages = { Constants.ComponentScan.BASE })

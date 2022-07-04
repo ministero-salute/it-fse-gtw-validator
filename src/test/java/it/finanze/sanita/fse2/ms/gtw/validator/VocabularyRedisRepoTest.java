@@ -1,4 +1,4 @@
-package it.finanze.sanita.fse2.ms.gtw.validator.repository;
+package it.finanze.sanita.fse2.ms.gtw.validator;
 
 import it.finanze.sanita.fse2.ms.gtw.validator.config.Constants;
 import it.finanze.sanita.fse2.ms.gtw.validator.exceptions.BusinessException;
@@ -11,6 +11,7 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.test.context.ActiveProfiles;
 
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.anyString;
@@ -28,7 +29,7 @@ public class VocabularyRedisRepoTest {
 
     @Test
     void getTest() {
-        assertTrue(repository.get("test0").isEmpty());
+        assertNull(repository.get("test0"));
     }
 
     @Test

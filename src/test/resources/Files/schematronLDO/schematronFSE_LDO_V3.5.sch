@@ -4,7 +4,7 @@
         xmlns:iso="http://purl.oclc.org/dsdl/schematron"
         xmlns:sch="http://www.ascc.net/xml/schematron"
         queryBinding="xslt2">
-	<title>Schematron Lettera Dimissione Ospedaliera V 1.0 </title>
+	<title>Schematron Lettera Dimissione Ospedaliera V 1.2</title>
 	<ns prefix="hl7" uri="urn:hl7-org:v3"/>
 	<ns prefix="xsi" uri="http://www.w3.org/2001/XMLSchema-instance"/>
 	
@@ -30,10 +30,9 @@
 			<assert test="count(hl7:code[@code='34105-7'][@codeSystem='2.16.840.1.113883.6.1']) = 1"
 			>ERRORE-5| L'elemento <name/>/code deve essere valorizzato con l'attributo @code='34105-7' e il @codeSystem='2.16.840.1.113883.6.1'</assert>
 	
-			<let name="code_codeSystemName" value="hl7:code/@codeSystemName"/>
-			<let name="code_displayName" value="hl7:code/@displayName"/>
-			<report test="($code_codeSystemName !='LOINC') or ($code_displayName!= 'Lettera di dimissione ospedaliera')"
-			>W001| Si raccomanda di valorizzare gli attributi dell'elemento <name/>/code nel seguente modo: @codeSystemName ='LOINC' e @displayName ='Lettera di dimissione ospedaliera'</report>
+			<report test="not(count(hl7:code[@codeSystemName='LOINC'])=1) or not(count(hl7:code[@displayName='Lettera di dimissione ospedaliera'])=1 or
+			count(hl7:code[@displayName='LETTERA DI DIMISSIONE OSPEDALIERA'])=1)"
+			>W001| Si raccomanda di valorizzare gli attributi dell'elemento <name/>/code nel seguente modo: @codeSystemName ='LOINC' e @displayName ='Lettera di dimissione ospedaliera'.--> </report>
 						
 			<!--Controllo confidentialityCode-->
 			<assert test="(count(hl7:confidentialityCode[@code='N'][@codeSystem='2.16.840.1.113883.5.25'])= 1) or 
@@ -54,18 +53,20 @@
 						  (($versionNumber &gt;1) and count(hl7:relatedDocument)=1)"
 			>ERRORE-8| Se l'attributo <name/>/versionNumber/@value è maggiore di 1, l'elemento <name/>  deve contenere un elemento di tipo 'relatedDocument'</assert>
 
-            <!--Controllo recordTarget/patientRole/id-->
-			<report test="(count(hl7:recordTarget/hl7:patientRole/hl7:id) &gt;0) or (count(hl7:recordTarget/hl7:patientRole/hl7:id[@root='2.16.840.1.113883.2.9.4.3.2']) &gt; 1) or 
-			(count(hl7:recordTarget/hl7:patientRole/hl7:id[@root='2.16.840.1.113883.2.9.4.3.7'])&gt;1) or (count(hl7:recordTarget/hl7:patientRole/hl7:id[@root='2.16.840.1.113883.2.9.4.3.3'])&gt;1) or 
-			(count(hl7:recordTarget/hl7:patientRole/hl7:id[@root='2.16.840.1.113883.2.9.4.3.18']) &gt; 1)or (count(hl7:recordTarget/hl7:patientRole/hl7:id[@root='2.16.840.1.113883.2.9.4.3.17'])&gt;1)or
-			(count(hl7:recordTarget/hl7:patientRole/hl7:id[@root='2.16.840.1.113883.2.9.4.3.15'])&gt;1)"
-			>W002| Si consiglia di valorizzare l'elemento recordTarget/patientRole/id  con una  delle seguenti informazioni:
-			CF:2.16.840.1.113883.2.9.4.3.2
-			TEAM: 2.16.840.1.113883.2.9.4.3.7 o 2.16.840.1.113883.2.9.4.3.3
-			ENI:2.16.840.1.113883.2.9.4.3.18
-			STP:2.16.840.1.113883.2.9.4.3.17
-			ANA: 2.16.840.1.113883.2.9.4.3.15
-			</report>
+            <!--Controllo recordTarget/patientRole/id-->	
+			<!--report test="not(count(hl7:recordTarget/hl7:patientRole/hl7:id[@root='2.16.840.1.113883.2.9.4.3.2'])=1) and
+			not(count(hl7:recordTarget/hl7:patientRole/hl7:id[@root='2.16.840.1.113883.2.9.4.3.7'])=1) and 
+			not(count(hl7:recordTarget/hl7:patientRole/hl7:id[@root='2.16.840.1.113883.2.9.4.3.3'])=1) and 
+			not(count(hl7:recordTarget/hl7:patientRole/hl7:id[@root='2.16.840.1.113883.2.9.4.3.18'])=1) and
+			not(count(hl7:recordTarget/hl7:patientRole/hl7:id[@root='2.16.840.1.113883.2.9.4.3.17'])=1) and
+			not(count(hl7:recordTarget/hl7:patientRole/hl7:id[@root='2.16.840.1.113883.2.9.4.3.15'])=1)"
+			>W002| Si si consiglia di valorizzare l'elemento recordTarget/patientRole/id  con una  delle seguenti informazioni:
+			CF 2.16.840.1.113883.2.9.4.3.2
+			TEAM 2.16.840.1.113883.2.9.4.3.7 o 2.16.840.1.113883.2.9.4.3.3
+			ENI 2.16.840.1.113883.2.9.4.3.18
+			STP 2.16.840.1.113883.2.9.4.3.17
+			ANA 2.16.840.1.113883.2.9.4.3.15. 
+			</report-->
 			
 			<!--Controllo addr-->
 			<let name="num_addr" value="count(hl7:recordTarget/hl7:patientRole/hl7:addr)"/>
@@ -136,15 +137,15 @@
 		
 		    <!--Controllo ClinicalDocument/legalAuthenticator-->
 			<!--let name='statusCode' value='hl7:sdtc:statusCode'/-->
-			<assert test = "(hl7:statusCode='active') or count(hl7:legalAuthenticator)= 1" 
+			<assert test = "count(hl7:legalAuthenticator)= 1" 
 			>ERRORE-27| L'elemento legalAuthenticator è obbligatorio </assert>
-			<assert test = "(hl7:statusCode='active') or count(hl7:legalAuthenticator/hl7:signatureCode[@code='S'])= 1" 
+			<assert test = "count(hl7:legalAuthenticator/hl7:signatureCode[@code='S'])= 1" 
 			>ERRORE-28| L'elemento legalAuthenticator/signatureCode deve essere valorizzato con il codice "S" </assert>
-			<assert test = "(hl7:statusCode='active') or count(hl7:legalAuthenticator/hl7:assignedEntity/hl7:id[@root='2.16.840.1.113883.2.9.4.3.2'])= 1"
+			<assert test = "count(hl7:legalAuthenticator/hl7:assignedEntity/hl7:id[@root='2.16.840.1.113883.2.9.4.3.2'])= 1"
 			>ERRORE-29| L'elemento legalAuthenticator/assignedEntity DEVE contenere almeno un elemento id valorizzato con l'attributo @root='2.16.840.1.113883.2.9.4.3.2'</assert>
-			<assert test = "(hl7:statusCode='active') or count(hl7:legalAuthenticator/hl7:assignedEntity/hl7:assignedPerson/hl7:name)=1"
+			<assert test = "count(hl7:legalAuthenticator/hl7:assignedEntity/hl7:assignedPerson/hl7:name)=1"
 			>ERRORE-30| ClinicalDocument/legalAuthenticator/assignedEntity/assignedPerson DEVE contenere l'elemento 'name'</assert>
-			<assert test = "(hl7:statusCode='active') or count(hl7:legalAuthenticator/hl7:assignedEntity/hl7:assignedPerson/hl7:name/hl7:family)=1 and count(hl7:legalAuthenticator/hl7:assignedEntity/hl7:assignedPerson/hl7:name/hl7:given)=1"
+			<assert test = "count(hl7:legalAuthenticator/hl7:assignedEntity/hl7:assignedPerson/hl7:name/hl7:family)=1 and count(hl7:legalAuthenticator/hl7:assignedEntity/hl7:assignedPerson/hl7:name/hl7:given)=1"
 			>ERRORE-31| ClinicalDocument/legalAuthenticator/assignedEntity/assignedPerson/name DEVE riportare gli elementi 'given' e 'family'</assert>
 			
 		    <!--Controllo ClinicalDocument/inFulfillmentOf-->
@@ -186,7 +187,7 @@
 		<!--Verifica che i codici AIC utilizzati siano corretti-->
 		<rule context="//*[@codeSystem='2.16.840.1.113883.2.9.6.1.5']">
 			<let name="val_AIC" value="@code"/>
-			<assert test="doc('DIZ/XML_FSE_v1/2.16.840.1.113883.2.9.6.1.5.xml')//el[@code=$val_AIC]"
+			<assert test="doc('DIZ/XML_FSE_V1/2.16.840.1.113883.2.9.6.1.5.xml')//el[@code=$val_AIC]"
 			>Errore 2_DIZ| Codice AIC '<value-of select="$val_AIC"/>' errato!
 			</assert>
 		</rule>
@@ -194,7 +195,7 @@
 		<!--Verifica che i codici ATC utilizzati siano corretti-->
 		<rule context="//*[@codeSystem='2.16.840.1.113883.6.73']">
 			<let name="val_ATC" value="@code"/>
-			<assert test="doc('DIZ/XML_FSE_v1/2.16.840.1.113883.6.73.xml')//el[@code=$val_ATC]"
+			<assert test="doc('DIZ/XML_FSE_V1/2.16.840.1.113883.6.73.xml')//el[@code=$val_ATC]"
 			>Errore 3_DIZ| Codice ATC '<value-of select="$val_ATC"/>' errato!
 			</assert>
 		</rule>
@@ -202,7 +203,7 @@
 	    <!--Verifica che i codici GE utilizzati siano corretti-->
 		<rule context="//*[@codeSystem='2.16.840.1.113883.2.9.6.1.51']">
 			<let name="val_GE" value="@code"/>
-			<assert test="doc('DIZ/XML_FSE_v1/2.16.840.1.113883.2.9.6.1.51.xml')//el[@code=$val_GE]"
+			<assert test="doc('DIZ/XML_FSE_V1/2.16.840.1.113883.2.9.6.1.51.xml')//el[@code=$val_GE]"
 			>Errore 4_DIZ| Codice GE '<value-of select="$val_GE"/>' errato!
 			</assert>
 		</rule>
@@ -210,7 +211,7 @@
 		<!--Verifica che i codici ICD-9-CM utilizzati siano corretti-->
 		<!--rule context="//*[@codeSystem='2.16.840.1.113883.6.103']">
 			<let name="val_ICD9CM" value="@code"/>
-			<assert test="doc('DIZ/XML_FSE_v1/2.16.840.1.113883.6.103.xml')//el[@code=$val_ICD9CM]"
+			<assert test="doc('DIZ/XML_FSE_V1/2.16.840.1.113883.6.103.xml')//el[@code=$val_ICD9CM]"
 			>Errore 5_DIZ| Codice ICD-9-CM '<value-of select="$val_ICD9CM"/>' errato!
 			</assert>
 		</rule-->
@@ -218,7 +219,7 @@
 		<!--Verifica che i codici relativi al value set "Allergeni (No Farmaci)" utilizzati siano corretti-->
 		<rule context="//*[@codeSystem='2.16.840.1.113883.2.9.77.22.11.2']">
 			<let name="val_AllNoFarm" value="@code"/>
-			<assert test="doc('DIZ/XML_FSE_v1/2.16.840.1.113883.2.9.77.22.11.2.xml')//el[@code=$val_AllNoFarm]"
+			<assert test="doc('DIZ/XML_FSE_V1/2.16.840.1.113883.2.9.77.22.11.2.xml')//el[@code=$val_AllNoFarm]"
 			>Errore 6_DIZ| Codice "Allergeni (No Farmaci)" '<value-of select="$val_AllNoFarm"/>' errato!
 			</assert>
 		</rule>
@@ -226,7 +227,7 @@
 		<!--Verifica che i codici relativi al value set "UnitsOfMeasureCaseSensitive" utilizzati siano corretti-->
 		<rule context="//*[@unit]">
 			<let name="unit" value="@unit"/>
-			<assert test="doc('DIZ/XML_FSE_v1/2.16.840.1.113883.1.11.12839.xml')//el[@code=$unit]"
+			<assert test="doc('DIZ/XML_FSE_V1/2.16.840.1.113883.1.11.12839.xml')//el[@code=$unit]"
 			>Errore 7_DIZ| Codice "UnitsOfMeasureCaseSensitive" '<value-of select="$unit"/>' errato!
 			</assert>
 		</rule>
@@ -234,7 +235,7 @@
 		<!--Verifica che i codici relativi al value set "ProcedureTrapianti" utilizzati siano corretti-->
 		<rule context="//*[@codeSystem='2.16.840.1.113883.2.9.77.22.11.12']">
 			<let name="procedure_trapiani" value="@code"/>
-			<assert test="doc('DIZ/XML_FSE_v1/2.16.840.1.113883.2.9.77.22.11.12.xml')//el[@code=$procedure_trapiani]"
+			<assert test="doc('DIZ/XML_FSE_V1/2.16.840.1.113883.2.9.77.22.11.12.xml')//el[@code=$procedure_trapiani]"
 			>Errore 8_DIZ| Codice "ProcedureTrapianti" '<value-of select="$procedure_trapiani"/>' errato!
 			</assert>
 		</rule>
@@ -242,7 +243,7 @@
 		<!--Verifica che i codici relativi al value set "ReazioniIntolleranza" utilizzati siano corretti-->
 		<rule context="//*[@codeSystem='2.16.840.1.113883.2.9.77.22.11.3']">
 			<let name="reaz_intoller" value="@code"/>
-			<assert test="doc('DIZ/XML_FSE_v1/2.16.840.1.113883.2.9.77.22.11.3.xml')//el[@code=$reaz_intoller]"
+			<assert test="doc('DIZ/XML_FSE_V1/2.16.840.1.113883.2.9.77.22.11.3.xml')//el[@code=$reaz_intoller]"
 			>Errore 9_DIZ| Codice "Reazioni Intolleranza" '<value-of select="$reaz_intoller"/>' errato!
 			</assert>
 		</rule>
@@ -250,7 +251,7 @@
 		<!--Verifica che i codici relativi al value set "ReazioniAllergiche" utilizzati siano corretti-->
 		<rule context="//*[@codeSystem='2.16.840.1.113883.2.9.77.22.11.4']">
 			<let name="reaz_aller" value="@code"/>
-			<assert test="doc('DIZ/XML_FSE_v1/2.16.840.1.113883.2.9.77.22.11.4.xml')//el[@code=$reaz_aller]"
+			<assert test="doc('DIZ/XML_FSE_V1/2.16.840.1.113883.2.9.77.22.11.4.xml')//el[@code=$reaz_aller]"
 			>Errore 10_DIZ| Codice "ReazioniAllergiche" '<value-of select="$reaz_aller"/>' errato!
 			</assert>
 		</rule>
@@ -258,7 +259,7 @@
 		<!--Verifica che i codici relativi al value set "CriticalityObservation" utilizzati siano corretti-->
 		<rule context="//*[@codeSystem='2.16.840.1.113883.2.9.77.22.11.6']">
 			<let name="criticality" value="@code"/>
-			<assert test="doc('DIZ/XML_FSE_v1/2.16.840.1.113883.2.9.77.22.11.6.xml')//el[@code=$criticality]"
+			<assert test="doc('DIZ/XML_FSE_V1/2.16.840.1.113883.2.9.77.22.11.6.xml')//el[@code=$criticality]"
 			>Errore 11_DIZ| Codice "CriticalityObservation" '<value-of select="$criticality"/>' errato!
 			</assert>
 		</rule>
@@ -266,7 +267,7 @@
 		<!--Verifica che i codici relativi al value set "StatoClinicoProblema" utilizzati siano corretti-->
 		<rule context="//*[@codeSystem='2.16.840.1.113883.2.9.77.22.11.7']">
 			<let name="status_problem" value="@code"/>
-			<assert test="doc('DIZ/XML_FSE_v1/2.16.840.1.113883.2.9.77.22.11.7.xml')//el[@code=$status_problem]"
+			<assert test="doc('DIZ/XML_FSE_V1/2.16.840.1.113883.2.9.77.22.11.7.xml')//el[@code=$status_problem]"
 			>Errore 12_DIZ| Codice "StatoClinicoProblema" '<value-of select="$status_problem"/>' errato!
 			</assert>
 		</rule>
@@ -274,7 +275,7 @@
 		<!--Verifica che i codici relativi al value set "Cronicità" utilizzati siano corretti-->
 		<rule context="//*[@codeSystem='2.16.840.1.113883.2.9.77.22.11.10']">
 			<let name="conicita" value="@code"/>
-			<assert test="doc('DIZ/XML_FSE_v1/2.16.840.1.113883.2.9.77.22.11.10.xml')//el[@code=$conicita]"
+			<assert test="doc('DIZ/XML_FSE_V1/2.16.840.1.113883.2.9.77.22.11.10.xml')//el[@code=$conicita]"
 			>Errore 13_DIZ| Codice "Cronicità" '<value-of select="$conicita"/>' errato!
 			</assert>
 		</rule>
@@ -282,7 +283,7 @@
 		<!--Verifica che i codici relativi al value set "ActSite" utilizzati siano corretti-->
 		<rule context="//*[@codeSystem='2.16.840.1.113883.5.1052']">
 			<let name="sito" value="@code"/>
-			<assert test="doc('DIZ/XML_FSE_v1/2.16.840.1.113883.5.1052.xml')//el[@code=$sito]"
+			<assert test="doc('DIZ/XML_FSE_V1/2.16.840.1.113883.5.1052.xml')//el[@code=$sito]"
 			>Errore 14_DIZ| Codice "ActSite" '<value-of select="$sito"/>' errato!
 			</assert>
 		</rule>
@@ -290,7 +291,7 @@
 		<!--Verifica che i codici relativi al value set "ObservationIntoleranceType" utilizzati siano corretti-->
 		<rule context="//*[@codeSystem='2.16.840.1.113883.1.11.19700']">
 			<let name="intoleranceType" value="@code"/>
-			<assert test="doc('DIZ/XML_FSE_v1/2.16.840.1.113883.1.11.19700.xml')//el[@code=$intoleranceType]"
+			<assert test="doc('DIZ/XML_FSE_V1/2.16.840.1.113883.1.11.19700.xml')//el[@code=$intoleranceType]"
 			>Errore 15_DIZ| Codice "ObservationIntoleranceType" '<value-of select="$intoleranceType"/>' errato!
 			</assert>
 		</rule>
@@ -298,7 +299,7 @@
 		<!--Verifica che i codici relativi al value set "ObservationIntoleranceType" utilizzati siano corretti (ActSite)-->
 		<!--rule context="//*[@codeSystem='2.16.840.1.113883.5.4']">
 			<let name="obsIntoleranceType" value="@code"/>
-			<assert test="doc('DIZ/XML_FSE_v1/2.16.840.1.113883.5.4.xml')//el[@code=$obsIntoleranceType]"
+			<assert test="doc('DIZ/XML_FSE_V1/2.16.840.1.113883.5.4.xml')//el[@code=$obsIntoleranceType]"
 			>Errore 16_DIZ| Codice "ObservationIntoleranceType"  '<value-of select="$obsIntoleranceType"/>' errato!
 			</assert>
 		</rule-->
@@ -306,7 +307,7 @@
 		<!--Verifica che i codici relativi al value set "RouteOfAdministration" utilizzati siano corretti-->
 		<rule context="//*[@codeSystem='2.16.840.1.113883.5.112']">
 			<let name="via_somminist" value="@code"/>
-			<assert test="doc('DIZ/XML_FSE_v1/2.16.840.1.113883.5.112.xml')//el[@code=$via_somminist]"
+			<assert test="doc('DIZ/XML_FSE_V1/2.16.840.1.113883.5.112.xml')//el[@code=$via_somminist]"
 			>Errore 17_DIZ| Codice "RouteOfAdministration" '<value-of select="$via_somminist"/>' errato!
 			</assert>
 		</rule>
@@ -348,12 +349,6 @@
 			>Errore-45| L'attributo "@classCode" dell'elemento "Act" deve essere valorizzato con "ACT" </assert>
 		</rule>
 		
-		<!--controllo code translation-->
-		<rule context="//hl7:code">
-			<report test="count(hl7:translation)=0"
-			>W003| Si consiglia di inserire un elemento translation per codificare le informazioni con un ulteriore sistema di codifica</report> 			
-		</rule>
-		
 	<!-- _____________________________________________ BODY______________________________________________________-->
 	  
 		
@@ -377,8 +372,8 @@
 			>ERRORE-50| Sezione Condizioni del paziente e diagnosi alla dimissione: la sezione DEVE essere presente</assert>
 			<assert test="count(hl7:component/hl7:section[hl7:code[@code='11535-2']]/hl7:text)=1"
 			>ERRORE-51| Sezione Condizioni del paziente e diagnosi alla dimissione: La sezione DEVE contenere l'elemento 'text'</assert>
-			<report test="count(hl7:component/hl7:section[hl7:code[@code='11535-2']]/hl7:entry)=0"
-			>W005|  Sezione Condizioni del paziente e diagnosi alla dimissione: La sezione PUO' contenere l'elemento 'entry' </report>
+			<report test="not(count(hl7:component/hl7:section[hl7:code[@code='11535-2']]/hl7:entry)&gt;=1)"
+			>W003|  Sezione Condizioni del paziente e diagnosi alla dimissione: La sezione PUO' contenere l'elemento 'entry' </report>
 		   
                                         
 									<!--Controllo sulle Section opzionali-->
@@ -433,19 +428,19 @@
 			or count(hl7:code[@code='30954-2'][@codeSystem='2.16.840.1.113883.6.1'])=1 or count(hl7:code[@code='47519-4'][@codeSystem='2.16.840.1.113883.6.1'])=1 or count(hl7:code[@code='48765-2'][@codeSystem='2.16.840.1.113883.6.1'])=1 or count(hl7:code[@code='10160-0'][@codeSystem='2.16.840.1.113883.6.1'])=1 
 			or count(hl7:code[@code='11535-2'][@codeSystem='2.16.840.1.113883.6.1'])=1 or count(hl7:code[@code='10183-2'][@codeSystem='2.16.840.1.113883.6.1'])=1 or count(hl7:code[@code='18776-5'][@codeSystem='2.16.840.1.113883.6.1'])=1"
 			>ERRORE-62| Il codice '<value-of select="$codice"/>' non è corretto. La sezione deve essere valorizzata con uno dei seguenti codici:
-			46241-6		- Sezione Motivo del ricovero
-			47039-3		- Sezione Inquadramento clinico iniziale
-			8648-8		- Sezione Decorso Ospedaliero
-			55109-3		- Sezione Complicanze
-			11493-4		- Sezione Riscontri ed accertamenti significativi
-			34104-0		- Sezione Consulenza
-			30954-2		- Sezione Esami eseguiti durante il ricovero
-			47519-4 	- Sezione Procedure eseguite durante il ricovero
-			48765-2		- Sezione Allergie
-			10160-0		- Sezione Terapia farmacologica effettuata durante il ricovero
-			11535-2		- Sezione Condizioni del paziente alla dimissione e diagnosi alla dimissione
-			10183-2		- Sezione Terapia farmacologica alla dimissione
-			18776-5		- Sezione Istruzioni di follow-up
+			46241-6	Sezione Motivo del ricovero
+			47039-3	Sezione Inquadramento clinico iniziale
+			8648-8  Sezione Decorso Ospedaliero
+			55109-3 Sezione Complicanze
+			11493-4 Sezione Riscontri ed accertamenti significativi
+			34104-0 Sezione Consulenza
+			30954-2 Sezione Esami eseguiti durante il ricovero
+			47519-4 Sezione Procedure eseguite durante il ricovero
+			48765-2 Sezione Allergie
+			10160-0 Sezione Terapia farmacologica effettuata durante il ricovero
+			11535-2 Sezione Condizioni del paziente alla dimissione e diagnosi alla dimissione
+			10183-2 Sezione Terapia farmacologica alla dimissione
+			18776-5 Sezione Istruzioni di follow-up
 			</assert>
 		</rule>	
 		 
@@ -504,7 +499,7 @@
 				(count(hl7:observation[hl7:code[@code='89261-2']]/hl7:value[@codeSystem='2.16.840.1.113883.6.1'])=1 or 
 				count(hl7:observation[hl7:code[@code='89261-2']]/hl7:value[@codeSystem='2.16.840.1.113883.2.9.77.22.11.10'])=1)"
 				>ERRORE-75| Sotto-sezione Anamnesi: l'elemento 'value' relativo alla Cronicità deve essere valorizzato secondo il Value set "CronicitàProblema"</assert>
-				<!--per il controllo inerente il sistema di codifica da utilizzare, c'è la possibilità di usare anche sistemi di codifica locali-->
+				<!--per il controllo inerente al sistema di codifica da utilizzare, c'è la possibilità di usare anche sistemi di codifica locali-->
 				<assert test="count(hl7:observation[hl7:code[@code='33999-4']]/hl7:value)=0 or 
 				(count(hl7:observation[hl7:code[@code='33999-4']]/hl7:value[@codeSystem='2.16.840.1.113883.6.1'])=1 or 
 				count(hl7:observation[hl7:code[@code='33999-4']]/hl7:value[@codeSystem='2.16.840.1.113883.2.9.77.22.11.7'])=1)"
@@ -515,9 +510,9 @@
 		<rule context="hl7:ClinicalDocument/hl7:component/hl7:structuredBody/hl7:component/hl7:section[hl7:code[@code='55109-3']]/hl7:entry">
 			
 			<assert test="count(hl7:observation/hl7:code[@code='75326-9'][@codeSystem='2.16.840.1.113883.6.1'])=1"
-			>ERRORE-77|Sezione Complicanze:l'elemento entry DEVE contenere al suo interno un observation che valorizza  l'elemento "code" con attributi @code='75326-9' e @codeSystem='2.16.840.1.113883.6.1 </assert>
+			>ERRORE-77| Sezione Complicanze:l'elemento entry DEVE contenere al suo interno un observation che valorizza  l'elemento "code" con attributi @code='75326-9' e @codeSystem='2.16.840.1.113883.6.1 </assert>
 			<assert test="count(hl7:observation/hl7:value)=1"
-			>ERRORE-78|Sezione Complicanze: entry/observation deve contenere l'elemento "value"</assert>
+			>ERRORE-78| Sezione Complicanze: entry/observation deve contenere l'elemento "value"</assert>
 		</rule>
 		
 		<!--Consulenza: controllo sui sotto elementi di entry-->
@@ -560,8 +555,8 @@
 			<assert test="count(hl7:observation/hl7:code[@codeSystem='2.16.840.1.113883.6.1'])=1 or 
 			count(hl7:observation/hl7:code[@codeSystem='2.16.840.1.113883.6.103'])=1"
 			>ERRORE-87| Sezione Esami eseguiti durante il ricovero: l'entry/observation/code può essere valorizzato secondo i sistemi di codifica
-			LOINC: @codeSystem='2.16.840.1.113883.6.1'
-			ICD-9-CM: @codeSystem='2.16.840.1.113883.6.103'</assert>
+			LOINC @codeSystem='2.16.840.1.113883.6.1'
+			ICD-9-CM @codeSystem='2.16.840.1.113883.6.103'</assert>
 		</rule>
 		
 			<!--Esami eseguiti durante il ricovero: controllo sui sotto elementi di performer-->
@@ -601,8 +596,8 @@
 			>ERRORE-94|Sezione Procedure Eseguite durante il ricovero: L'elemento proceduere/entryRelationship, deve avere un attributo @typeCode='RSON' </assert>
 			<assert test="count(hl7:observation)=1"
 			>ERRORE-95| Sezione Procedure Eseguite durante il ricovero: L'elemento proceduere/entryRelationship, deve avere un elemento 'observation'.</assert>
-			<report test="count(hl7:observation/hl7:code[@codeSystem='2.16.840.1.113883.6.103'])=0"
-			>W006| Si consiglia di valorizzare l'attributo @codeSystem dell'elemento procedure/entryRelationship/observation/code con il sistema di codifica ICD-9-CM (@codesystem='2.16.840.1.113883.6.103')--> </report>
+			<report test="not(count(hl7:observation/hl7:code[@codeSystem='2.16.840.1.113883.6.103'])=1)"
+			>W004| Si consiglia di valorizzare l'attributo @codeSystem dell'elemento procedure/entryRelationship/observation/code con il sistema di codifica ICD-9-CM (@codesystem='2.16.840.1.113883.6.103')--> </report>
 		</rule>
 		
 		<!--Allergie-->	
@@ -612,23 +607,24 @@
 			>ERRORE-96| Sezione Allergie: la sezione deve contenere l'elemento entry di tipo 'act'</assert>
 			<let name="status" value="hl7:act/hl7:statusCode/@code"/>
 			
-			<assert test="$status='active' or $status='completed' or $status='aborted' or $status='suspended'"
+			<assert test="count(hl7:act)=0 or 
+			$status='active' or $status='completed' or $status='aborted' or $status='suspended'"
 			>ERRORE-97| Sezione Allergie: l'elemento 'statusCode' deve essere valorizzato secondo il value set ActStatus: 'active'|'completed'|'aborted'|'suspended'</assert>
-			<assert test="count(hl7:act/hl7:effectiveTime/hl7:low)=1"
+			<assert test="count(hl7:act)=0 or count(hl7:act/hl7:effectiveTime/hl7:low)=1"
 			>ERRORE-98| Sezione Allergie: l'elemento 'effectiveTime' deve essere presente e deve avere l'elemento 'low' valorizzato</assert>
-			<assert test="($status='completed' and count(hl7:act/hl7:effectiveTime/hl7:high)=1) or
+			<assert test="count(hl7:act)=0 or ($status='completed' and count(hl7:act/hl7:effectiveTime/hl7:high)=1) or
 					($status='aborted' and count(hl7:act/hl7:effectiveTime/hl7:high)=1) or 
 					($status='suspended' and count(hl7:act/hl7:effectiveTime/hl7:high)=0) or 
 					($status='active' and count(hl7:act/hl7:effectiveTime/hl7:high)=0)"
 			>ERRORE-99| Sezione Allergie: l'elemento 'effectiveTime/high' deve essere presente nel caso in cui lo 'statusCode' sia 'completed'oppure'aborted'</assert>
-			<assert test="count(hl7:act/hl7:entryRelationship/hl7:observation/hl7:code[@code='52473-6'][@codeSystem='2.16.840.1.113883.6.1'])=1"
+			<assert test="count(hl7:act)=0 or count(hl7:act/hl7:entryRelationship/hl7:observation/hl7:code[@code='52473-6'][@codeSystem='2.16.840.1.113883.6.1'])=1"
 			>ERRORE-100| Sezione Allergie: l'entry/act deve includere uno ed un solo elemento entryRelationship/observation con attributo @code='52473-6'</assert>	
 			<assert test="count(hl7:act/hl7:entryRelationship/hl7:observation/hl7:text)=0 or 
 						count(hl7:act/hl7:entryRelationship/hl7:observation/hl7:text/hl7:reference/@value)=1"
 			>ERRORE-101| Sezione Allergie: l'entry/act/entryRelationship/observation/text/reference/value deve essere valorizzato con l'URI che punta alla descrizione di allarme, allergia o intolleranza nel narrative block della sezione </assert>
-			<assert test="count(hl7:act/hl7:entryRelationship/hl7:observation/hl7:statusCode[@code='completed'])=1"
+			<assert test="count(hl7:act)=0 or count(hl7:act/hl7:entryRelationship/hl7:observation/hl7:statusCode[@code='completed'])=1"
 			>ERRORE-102| Sezione Allergie: l'elemento entry/act/entryRelationship/observation/statusCode/@code deve assumere il valore costante 'completed'</assert>
-			<assert test="count(hl7:act/hl7:entryRelationship/hl7:observation/hl7:effectiveTime/hl7:low)=1"
+			<assert test="count(hl7:act)=0 or count(hl7:act/hl7:entryRelationship/hl7:observation/hl7:effectiveTime/hl7:low)=1"
 			>ERRORE-103| Sezione Allergie: l'elemento 'effectiveTime' deve essere presente e deve avere l'elemento 'low' valorizzato </assert>
 			<assert test="count(hl7:act/hl7:entryRelationship/hl7:observation/hl7:value)=0 or 
 						count(hl7:act/hl7:entryRelationship/hl7:observation/hl7:value[@xsi:type='CD'])=1"
@@ -636,13 +632,13 @@
 			<assert test="count(hl7:act/hl7:entryRelationship/hl7:observation/hl7:value/@code)=0 or 
 						count(hl7:act/hl7:entryRelationship/hl7:observation/hl7:value[@codeSystem='2.16.840.1.113883.5.4'])=1"
 			>ERRORE-105| Sezione Allergie: l'elemento entry/act/entryRelationship/observation/value codificato, deve avere l'attributo @code valorizzato secondo il value set "ObservationIntoleranceType".</assert>
-			<assert test="count(hl7:act/hl7:entryRelationship/hl7:observation/hl7:value/@code)=1 or 
+			<assert test="count(hl7:act)=0 or count(hl7:act/hl7:entryRelationship/hl7:observation/hl7:value/@code)=1 or 
 						count(hl7:act/hl7:entryRelationship/hl7:observation/hl7:value/hl7:originalText/hl7:reference)=1"
 			>ERRORE-106| Sezione Allergie: l'elemento entry/act/entryRelationship/observation/value non codificato, deve avere l'elemento originalText/reference valorizzato </assert>
 			<assert test="count(hl7:act/hl7:entryRelationship/hl7:observation/hl7:value/hl7:originalText)=0 or 
 						count(hl7:act/hl7:entryRelationship/hl7:observation/hl7:value/hl7:originalText/hl7:reference/@value)=1"
 			>ERRORE-107| Sezione Allergie: entry/act/entryRelationship/observation/value/originalText/reference/value deve essere valorizzato con l'URI che punta alla descrizione del concetto espresso all'interno del narrative block </assert>
-			<assert test="count(hl7:act/hl7:entryRelationship/hl7:observation/hl7:participant)>=1"
+			<assert test="count(hl7:act)=0 or count(hl7:act/hl7:entryRelationship/hl7:observation/hl7:participant)>=1"
 			>ERRORE-108| Sezione Allergie: entry/act/entryRelationship/observation deve contenere almeno un elemento 'participant'</assert>
 			<assert test="(count(hl7:act/hl7:entryRelationship/hl7:observation/hl7:entryRelationship[@typeCode='SUBJ']/hl7:observation)&lt;=1)"
 			>ERRORE-109| Sezione Allergie: entry/act/entryRelationship/observation deve contenere solo un elemento 'entryRelationship/observation' relativo alla Criticità</assert>
@@ -661,9 +657,9 @@
 					count(hl7:participantRole/hl7:playingEntity/hl7:code[@codeSystem='2.16.840.1.113883.2.9.6.1.5'])=1 or
 					count(hl7:participantRole/hl7:playingEntity/hl7:code[@codeSystem='2.16.840.1.113883.2.9.77.22.11.2'])=1"
 					>ERRORE-112| Sezione Allergie: l'elemento participant/participantRole/playingEntity deve avere l'attributo code/@codeSystem valorizzato come segue:
-					- 2.16.840.1.113883.6.73			codifica "WHO ATC"
-					- 2.16.840.1.113883.2.9.6.1.5 		codifica "AIC"
-					- 2.16.840.1.113883.2.9.77.22.11.2 	value set "AllergenNoDrugs" (- per le allergie non a farmaci –)
+					- '2.16.840.1.113883.6.73' per la codifica "WHO ATC"
+					- '2.16.840.1.113883.2.9.6.1.5' per la codifica "AIC"
+					- '2.16.840.1.113883.2.9.77.22.11.2' per il value set "AllergenNoDrugs" (- per le allergie non a farmaci –)
 				</assert>
 			</rule>
 			
@@ -728,8 +724,8 @@
 			<assert test="count(hl7:substanceAdministration/hl7:consumable/hl7:manufacturedProduct/hl7:manufacturedMaterial/hl7:code[@codeSystem='2.16.840.1.113883.2.9.6.1.5'])=1 or
 						count(hl7:substanceAdministration/hl7:consumable/hl7:manufacturedProduct/hl7:manufacturedMaterial/hl7:code[@codeSystem='2.16.840.1.113883.6.73'])=1"
 			>ERRORE-125| Sezione Terapia farmacologica effettuata durante il ricovero: l'elemento section/entry/substanceAdministration/consumable/manufacturedProduct/manufacturedMaterial/code deve avere l'attributo "@codeSystem" valorizzato come segue:
-			- 2.16.840.1.113883.2.9.6.1.5	codifica "AIC"
-			- 2.16.840.1.113883.6.73	codifica "WHO ATC" </assert>
+			- '2.16.840.1.113883.2.9.6.1.5' codifica "AIC"
+			- '2.16.840.1.113883.6.73' codifica "WHO ATC" </assert>
 			
 			<let name="stats" value="hl7:substanceAdministration/hl7:statusCode/@code"/>
 			<assert test="$stats='active' or $stats='completed' or $stats='aborted' or $stats='suspended'"
@@ -790,9 +786,9 @@
 						count(hl7:substanceAdministration/hl7:consumable/hl7:manufacturedProduct/hl7:manufacturedMaterial/hl7:code[@codeSystem='2.16.840.1.113883.6.73'])=1 or 
 						count(hl7:substanceAdministration/hl7:consumable/hl7:manufacturedProduct/hl7:manufacturedMaterial/hl7:code[@codeSystem='2.16.840.1.113883.2.9.6.1.51'])=1"
 			>ERRORE-139|Sezione Terapia farmacologica alla dimissione: l'elemento section/entry/substanceAdministration/consumable/manufacturedProduct/manufacturedMaterial/code deve avere l'attributo "@codeSystem" valorizzato come segue:
-			- 2.16.840.1.113883.2.9.6.1.5 	codifica "AIC"
-			- 2.16.840.1.113883.6.73	codifica "WHO ATC" 
-			- 2.16.840.1.113883.2.9.6.1.51	codifica "GE"
+			- '2.16.840.1.113883.2.9.6.1.5' codifica "AIC"
+			- '2.16.840.1.113883.6.73' codifica "WHO ATC" 
+			- '2.16.840.1.113883.2.9.6.1.51' codifica "GE"
 			</assert>
 			
 			<let name="stscd" value="hl7:substanceAdministration/hl7:statusCode/@code"/>

@@ -15,8 +15,8 @@
 		<rule context="hl7:ClinicalDocument">
 		
 			<!--Controllo realmCode-->	
-			<assert test="count(hl7:realmCode) >= 1"
-			>ERRORE-1| L'elemento <name/> DEVE avere un elemento 'realmCode'</assert>
+			<assert test="count(hl7:realmCode) >= 1 and count(hl7:languageCode)=1"
+			>ERRORE-1| L'elemento <name/> DEVE avere almeno un elemento 'realmCode' e un solo elemento 'languageCode'.</assert>
 			<assert test="count(hl7:realmCode[@code='IT'])= 1">ERRORE-2| L'elemento 'realmCode' DEVE avere l'attributo @root valorizzato come 'IT'</assert>
 	        		
 			<!--Controllo templateId-->
@@ -29,11 +29,10 @@
 			<assert test="count(hl7:code[@code='68604-8'][@codeSystem='2.16.840.1.113883.6.1']) = 1"
 			>ERRORE-5| L'elemento <name/>/code deve essere valorizzato con l'attributo @code='68604-8' e il @codeSystem='2.16.840.1.113883.6.1'</assert>
 			
-			<let name="code_codeSystemName" value="hl7:code/@codeSystemName" />
-			<let name="code_displayName" value="hl7:code/@displayName" />
-			<report test="($code_codeSystemName !='LOINC') or ($code_displayName!= 'Referto Radiologico')"
+			<report test="not(count(hl7:code[@codeSystemName='LOINC'])=1) or not(count(hl7:code[@displayName='Referto Radiologico'])=1 or
+			count(hl7:code[@displayName='REFERTO RADIOLOGICO'])=1 or count(hl7:code[@displayName='Referto radiologico'])=1)"
 			>W001| Si raccomanda di valorizzare gli attributi dell'elemento <name/>/code nel seguente modo: @codeSystemName ='LOINC' e @displayName ='Referto Radiologico'.--> </report>
-			
+				
 			<!--Controllo confidentialityCode-->
 			<assert test="(count(hl7:confidentialityCode[@code='N'][@codeSystem='2.16.840.1.113883.5.25'])= 1) or 
 			(count(hl7:confidentialityCode[@code='V'][@codeSystem='2.16.840.1.113883.5.25'])= 1)"
@@ -54,17 +53,19 @@
 			>ERRORE-8| Se l'attributo <name/>/versionNumber/@value maggiore di  1 l'elemento <name/>  deve contenere un elemento di tipo 'relatedDocument'.</assert>
 
 			<!--Controllo recordTarget/patientRole/id-->
-			<report test="(count(hl7:recordTarget/hl7:patientRole/hl7:id) &gt;0) or (count(hl7:recordTarget/hl7:patientRole/hl7:id[@root='2.16.840.1.113883.2.9.4.3.2']) &gt; 1) or 
-			(count(hl7:recordTarget/hl7:patientRole/hl7:id[@root='2.16.840.1.113883.2.9.4.3.7'])&gt;1) or (count(hl7:recordTarget/hl7:patientRole/hl7:id[@root='2.16.840.1.113883.2.9.4.3.3'])&gt;1) or 
-			(count(hl7:recordTarget/hl7:patientRole/hl7:id[@root='2.16.840.1.113883.2.9.4.3.18']) &gt; 1)or (count(hl7:recordTarget/hl7:patientRole/hl7:id[@root='2.16.840.1.113883.2.9.4.3.17'])&gt;1)or
-			(count(hl7:recordTarget/hl7:patientRole/hl7:id[@root='2.16.840.1.113883.2.9.4.3.15'])&gt;1)"
+			<!--report test="not(count(hl7:recordTarget/hl7:patientRole/hl7:id[@root='2.16.840.1.113883.2.9.4.3.2'])=1) and
+			not(count(hl7:recordTarget/hl7:patientRole/hl7:id[@root='2.16.840.1.113883.2.9.4.3.7'])=1) and 
+			not(count(hl7:recordTarget/hl7:patientRole/hl7:id[@root='2.16.840.1.113883.2.9.4.3.3'])=1) and
+			not(count(hl7:recordTarget/hl7:patientRole/hl7:id[@root='2.16.840.1.113883.2.9.4.3.18'])=1) and
+			not(count(hl7:recordTarget/hl7:patientRole/hl7:id[@root='2.16.840.1.113883.2.9.4.3.17'])=1) and
+			not(count(hl7:recordTarget/hl7:patientRole/hl7:id[@root='2.16.840.1.113883.2.9.4.3.15'])=1)"
 			>W002| Si si consiglia di valorizzare l'elemento recordTarget/patientRole/id  con una  delle seguenti informazioni:
-			CF:2.16.840.1.113883.2.9.4.3.2
-			TEAM: 2.16.840.1.113883.2.9.4.3.7 o 2.16.840.1.113883.2.9.4.3.3
-			ENI:2.16.840.1.113883.2.9.4.3.18
-			STP:2.16.840.1.113883.2.9.4.3.17
-			ANA: 2.16.840.1.113883.2.9.4.3.15.--> 
-			</report>
+			CF 2.16.840.1.113883.2.9.4.3.2
+			TEAM 2.16.840.1.113883.2.9.4.3.7 o 2.16.840.1.113883.2.9.4.3.3
+			ENI 2.16.840.1.113883.2.9.4.3.18
+			STP 2.16.840.1.113883.2.9.4.3.17
+			ANA 2.16.840.1.113883.2.9.4.3.15.> 
+			</report-->
 			
 			<!--Controllo addr-->
 			<let name="num_addr" value="count(hl7:recordTarget/hl7:patientRole/hl7:addr)"/>
@@ -166,8 +167,8 @@
 			<let name="path_name" value="hl7:componentOf/hl7:encompassingEncounter/hl7:responsibleParty/hl7:assignedEntity/hl7:assignedPerson/hl7:name"/>
 			<let name="code_encomp" value="hl7:componentOf/hl7:encompassingEncounter/hl7:code/@code"/>
 			<!--WARNING-->
-			<report test="count(hl7:componentOf/hl7:encompassingEncounter)&gt;0 or $code_encomp!=IMP or $code_encomp!=AMB or $code_encomp!=EMER"
-			>W003| L'attributo code dell'elemento componentOf/encompassingEncounter/code PUO' assumere uno dei seguenti valori :IMP|AMB|EMER --></report>
+			<!--report test="not(count(hl7:componentOf/hl7:encompassingEncounter/hl7:code)=0) and (not($code_encomp=IMP) or not($code_encomp=AMB) or not($code_encomp=EMER))"
+			>W003| L'attributo code dell'elemento componentOf/encompassingEncounter/code PUO' assumere uno dei seguenti valori :IMP|AMB|EMER ></report-->
 			<assert test = "count(hl7:componentOf/hl7:encompassingEncounter/hl7:responsibleParty/hl7:assignedEntity/hl7:assignedPerson)=0 or count (hl7:componentOf/hl7:encompassingEncounter/hl7:responsibleParty/hl7:assignedEntity/hl7:assignedPerson/hl7:name)=1 "
 			>ERRORE-34| deve essere presente l'elemento ClinicalDocument/componentOf/encompassingEncounter/responsibleParty/assignedentity/assignedPerson/name </assert>
 			<assert test = "count(hl7:componentOf/hl7:encompassingEncounter/hl7:responsibleParty/hl7:assignedEntity/hl7:assignedPerson)=0 or (count($path_name/hl7:given)=1 and count($path_name/hl7:family)=1)"
@@ -332,6 +333,13 @@
 			>Errore 19_DIZ| Codice StatoClinicoProblema '<value-of select="$val_StatoProbl"/>' errato!
 			</assert>
 		</rule>
+	<!--Verifica che i codici ICD-9-CM utilizzati siano corretti-->
+		<!--rule context="//*[@codeSystem='2.16.840.1.113883.6.103']">
+			<let name="val_ICD9CM" value="@code"/>
+			<assert test="doc('DIZ/XML_FSE_v1/2.16.840.1.113883.6.103.xml')//el[@code=$val_ICD9CM]"
+			>Errore 20_DIZ| Codice ICD-9-CM '<value-of select="$val_ICD9CM"/>' errato!
+			</assert>
+		</rule-->
 		
 	
 	<!--________________________________ CONTROLLI GENERICI _____________________________________________________________-->
@@ -370,11 +378,6 @@
 			>Errore-42| L'attributo "@classCode" dell'elemento "Act" deve essere valorizzato con "ACT" </assert>
 		</rule>
 		
-		<!--controllo code translation-->
-		<rule context="//hl7:code">
-			<report test="count(hl7:translation)=0"
-			>W004| Si consiglia di inserire un elemento translation per codificare le informazioni con un ulteriore sistema di codifica --></report> 			
-		</rule>
 		
 		
 	<!--________________________________ BODY _____________________________________________________________-->	
@@ -404,16 +407,16 @@
 			or count(hl7:code[@code='55114-3'])=1 or count(hl7:code[@code='55111-9'])=1 or count(hl7:code[@code='18782-3'])=1 
 			or count(hl7:code[@code='55110-1'])=1 or count(hl7:code[@code='55107-7'])=1 or count(hl7:code[@code='55109-3'])=1 or count(hl7:code[@code='18783-1'])=1"
 			>ERRORE-48| Il codice '<value-of select="$codice"/>' non è corretto. La sezione deve essere valorizzata con uno dei seguenti codici:
-			121181		- Sezione DICOM Object Catalog
-			18785-6		- Sezione Quesito Diagnostico
-			11329-0		- Sezione Storia Clinica
-			55114-3		- Sezione Precedenti Esami Eseguiti
-			55111-9		- Sezione Esame Eseguito
-			18782-3		- Sezione Referto
-			55110-1		- Sezione Conclusioni
-			55107-7		- Sezione Informazioni Aggiuntive
-			55109-3		- Sezione Complicanze
-			18783-1		- Sezione Suggerimenti per il medico prescrittore
+			121181   Sezione DICOM Object Catalog
+			18785-6  Sezione Quesito Diagnostico
+			11329-0	 Sezione Storia Clinica
+			55114-3	 Sezione Precedenti Esami Eseguiti
+			55111-9	 Sezione Esame Eseguito
+			18782-3	 Sezione Referto
+			55110-1	 Sezione Conclusioni
+			55107-7	 Sezione Informazioni Aggiuntive
+			55109-3	 Sezione Complicanze
+			18783-1  Sezione Suggerimenti per il medico prescrittore
 			</assert>
 		</rule>
 		
@@ -626,9 +629,9 @@
 			count(hl7:observation/hl7:participant/hl7:participantRole/hl7:playingEntity/hl7:code[@codeSystem='2.16.840.1.113883.2.9.6.1.5'])=1 or
 			count(hl7:observation/hl7:participant/hl7:participantRole/hl7:playingEntity/hl7:code[@codeSystem='2.16.840.1.113883.2.9.77.22.11.2'])=1"
 			>ERRORE-100| Sotto sezione Allergie: L'elemento participant/participantRole/playingEntity deve avere l'attributo code/@codeSystem valorizzato come segue:
-			- 2.16.840.1.113883.6.73 			codifica "WHO ATC"
-			- 2.16.840.1.113883.2.9.6.1.5 		codifica "AIC"
-			- 2.16.840.1.113883.2.9.77.22.11.2 	value set "AllergenNoDrugs" (- per le allergie non a farmaci –)
+			- '2.16.840.1.113883.6.73' codifica "WHO ATC"
+			- '2.16.840.1.113883.2.9.6.1.5' codifica "AIC"
+			- '2.16.840.1.113883.2.9.77.22.11.2' value set "AllergenNoDrugs" (- per le allergie non a farmaci –)
 			</assert>
 		</rule>
 		
@@ -638,8 +641,6 @@
 			>ERRORE-101| Sotto sezione Allergie: L'entryRelationship/observation (Descrizione Reazioni) deve avere un elemento 'code' con gli attributi @code='75321-0' e @codeSystem='2.16.840.1.113883.6.1'.</assert>
 			<assert test="count(hl7:observation/hl7:effectiveTime/hl7:low)=1"
 			>ERRORE-102| Sotto sezione Allergie: L'entryRelationship/observation (Descrizione Reazioni) deve avere un 'effectiveTime'  con un elemento 'low' valorizzato.</assert>
-			<report test="count(hl7:observation/hl7:effectiveTime/hl7:high)=0"
-			>W005| Sotto sezione Allergie: Se la reazione allergica non è attivo effectiveTime/high deve essere  valorizzato.--> </report>
 			<assert test="count(hl7:observation/hl7:value)=0 or	count(hl7:observation/hl7:value[@xsi:type='CD'])=1"
 			>ERRORE-103| Sotto sezione Allergie: L'elemento 'value' di entryRelationship/observation (Descrizione Reazioni) deve avere l'attributo @xsi:type='CD'.</assert>
 			<assert test="count(hl7:observation/hl7:value)=0 or
@@ -665,8 +666,8 @@
 			<assert test="count(hl7:observation/hl7:code[@codeSystem='2.16.840.1.113883.6.1'])=1 or 
 			count(hl7:observation/hl7:code[@codeSystem='2.16.840.1.113883.6.103'])=1"
 			>ERRORE-107| Sezione Precedenti Esami Eseguiti: l'entry/observation/code può essere valorizzato secodo i sistemi di codifica
-			LOINC : 	@codeSystem='2.16.840.1.113883.6.1'
-			ICD-9-CM : 	@codeSystem='2.16.840.1.113883.6.103' </assert>
+			LOINC: @codeSystem='2.16.840.1.113883.6.1'
+			ICD-9-CM: @codeSystem='2.16.840.1.113883.6.103' </assert>
 		</rule>
 		
 		<!--Esame Eseguito: controllo delle entry-->

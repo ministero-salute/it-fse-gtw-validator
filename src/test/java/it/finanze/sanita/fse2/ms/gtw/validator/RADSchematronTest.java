@@ -57,7 +57,7 @@ class RADSchematronTest extends AbstractTest {
 	@Test
 	@DisplayName("CDA OK")
 	void cdaOK() throws Exception {
-		byte[] schematron = FileUtility.getFileFromInternalResources("Files" + File.separator + "schematronRAD" + File.separator + "schematronFSE_RAD_v2.2.sch");
+		byte[] schematron = FileUtility.getFileFromInternalResources("Files" + File.separator + "schematronRAD" + File.separator + "schematronFSE_RAD_v2.5.sch");
 		IReadableResource readableResource = new ReadableResourceInputStream("schematronFSE_RAD_v2.2.sch",new ByteArrayInputStream(schematron));
 		SchematronResourceSCH schematronResource = new SchematronResourceSCH(readableResource);
 		schematronResource.setURIResolver(new ClasspathResourceURIResolver(dictionaryRepo));
@@ -75,7 +75,7 @@ class RADSchematronTest extends AbstractTest {
 	@Test
 	@DisplayName("CDA KO")
 	void cdaKO() throws Exception {
-		byte[] schematron = FileUtility.getFileFromInternalResources("Files" + File.separator + "schematronRAD" + File.separator + "schematronFSE_RAD_v2.2.sch");
+		byte[] schematron = FileUtility.getFileFromInternalResources("Files" + File.separator + "schematronRAD" + File.separator + "schematronFSE_RAD_v2.5.sch");
 		IReadableResource readableResource = new ReadableResourceInputStream("schematronFSE_RAD_v2.2.sch",new ByteArrayInputStream(schematron));
 		SchematronResourceSCH schematronResource = new SchematronResourceSCH(readableResource);
 		schematronResource.setURIResolver(new ClasspathResourceURIResolver(dictionaryRepo));
@@ -101,25 +101,6 @@ class RADSchematronTest extends AbstractTest {
 			assertEquals(false, resultDTO.getValidXML());
 		}
 	}
-	
-	@Test
-	@DisplayName("CDA ERROR")
-	void cdaError() throws Exception {
-		byte[] schematron = FileUtility.getFileFromInternalResources("Files" + File.separator + "schematronRAD" + File.separator + "schematronFSE_RAD_v2.2.sch");
-		IReadableResource readableResource = new ReadableResourceInputStream("schematronFSE_RAD_v2.2.sch",new ByteArrayInputStream(schematron));
-		SchematronResourceSCH schematronResource = new SchematronResourceSCH(readableResource);
-		schematronResource.setURIResolver(new ClasspathResourceURIResolver(dictionaryRepo));
-		
-		Map<String,byte[]> cdasKO = getSchematronFiles("src\\test\\resources\\Files\\schematronRAD\\ERROR");
-		for(Entry<String, byte[]> cdaKO : cdasKO.entrySet()) {
-			
-			SchematronValidationResultDTO resultDTO = CDAHelper.validateXMLViaSchematronFull(schematronResource, cdaKO.getValue());
-			String failedAssertion = resultDTO.getFailedAssertions().stream().map(e->e.getText()).collect(Collectors.joining(",")).toUpperCase();
-			
-			log.info("File analyzed : " + cdaKO.getKey() + " Failed assertion : " + failedAssertion);
-		 
-		}
-	}
- 
+	 
 	 
 }

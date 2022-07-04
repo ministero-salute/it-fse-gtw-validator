@@ -1,4 +1,4 @@
-package it.finanze.sanita.fse2.ms.gtw.validator.repository;
+package it.finanze.sanita.fse2.ms.gtw.validator;
 
 import com.mongodb.MongoException;
 import it.finanze.sanita.fse2.ms.gtw.validator.config.Constants;
@@ -45,14 +45,6 @@ public class TerminologyRepoTest {
         when(mongo).thenThrow(new MongoException("Test"));
         assertThrows(BusinessException.class, () -> repository.findAllCodesExists(TEST_SYSTEM_ID, TEST_SYS_CODES));
     }
-
-    @Test
-    void allCodesExistsTest() {
-        // Retrieve & assert
-        assertTrue(repository.allCodesExists(TEST_SYSTEM_ID, TEST_SYS_CODES));
-        // Exceptions
-        when(mongo).thenThrow(new MongoException("Test"));
-        assertThrows(BusinessException.class, () -> repository.allCodesExists(TEST_SYSTEM_ID, TEST_SYS_CODES));
-    }
+ 
 
 }

@@ -1,4 +1,4 @@
-package it.finanze.sanita.fse2.ms.gtw.validator.repository;
+package it.finanze.sanita.fse2.ms.gtw.validator;
 
 import com.mongodb.MongoException;
 import it.finanze.sanita.fse2.ms.gtw.validator.AbstractTest;

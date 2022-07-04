@@ -4,7 +4,7 @@
         xmlns:iso="http://purl.oclc.org/dsdl/schematron"
         xmlns:sch="http://www.ascc.net/xml/schematron"
         queryBinding="xslt2">
-	<title>Schematron Referto di Specialistica Ambulatoriale V 1.0 </title>
+	<title>Schematron Referto di Specialistica Ambulatoriale </title>
 	<ns prefix="hl7" uri="urn:hl7-org:v3"/>
 	<ns prefix="xsi" uri="http://www.w3.org/2001/XMLSchema-instance"/>
 	<pattern id="all">
@@ -28,11 +28,9 @@
 			<assert test="count(hl7:code[@code='11488-4'][@codeSystem='2.16.840.1.113883.6.1']) = 1"
 			>ERRORE-4| L'elemento <name/>/code DEVE essere valorizzato con l'attributo @code='11488-4' e il @codeSystem='2.16.840.1.113883.6.1'</assert>
 	
-			<let name="code_codeSystemName" value="hl7:code/@codeSystemName"/>
-			<let name="code_displayName" value="hl7:code/@displayName"/>
-			
-			<report test="($code_codeSystemName !='LOINC') or ($code_displayName!= 'Nota di consulto')"
-			>W001| Si raccomanda di valorizzare gli attributi dell'elemento <name/>/code nel seguente modo: @codeSystemName ='LOINC' e @displayName ='Nota di consulto'</report>
+			<report test="not(count(hl7:code[@codeSystemName='LOINC'])=1) or not(count(hl7:code[@displayName=' Nota di consulto'])=1 or
+			count(hl7:code[@displayName='NOTA DI CONSULTO'])=1 or count(hl7:code[@displayName='Nota di Consulto'])=1)"
+			>W001| Si raccomanda di valorizzare gli attributi dell'elemento <name/>/code nel seguente modo: @codeSystemName ='LOINC' e @displayName ='Nota di consulto'.--> </report>
 			
 			<!--Controllo confidentialityCode-->
 			<assert test="(count(hl7:confidentialityCode[@code='N'][@codeSystem='2.16.840.1.113883.5.25'])= 1) or 
@@ -61,17 +59,20 @@
 			<assert test="count(hl7:recordTarget)=1"
 			>ERRORE-9| L'elemento <name/> DEVE contenere un solo elemento 'recordTarget' </assert>
 			
-			<report test="(count(hl7:recordTarget/hl7:patientRole/hl7:id[@root='2.16.840.1.113883.2.9.4.3.2']) &gt; 1) or 
-			(count(hl7:recordTarget/hl7:patientRole/hl7:id[@root='2.16.840.1.113883.2.9.4.3.7'])&gt;1) or (count(hl7:recordTarget/hl7:patientRole/hl7:id[@root='2.16.840.1.113883.2.9.4.3.3'])&gt;1) or 
-			(count(hl7:recordTarget/hl7:patientRole/hl7:id[@root='2.16.840.1.113883.2.9.4.3.18']) &gt; 1)or (count(hl7:recordTarget/hl7:patientRole/hl7:id[@root='2.16.840.1.113883.2.9.4.3.17'])&gt;1)or
-			(count(hl7:recordTarget/hl7:patientRole/hl7:id[@root='2.16.840.1.113883.2.9.4.3.15'])&gt;1)"
-			>W002| Si consiglia di valorizzare l'elemento <name/>recordTarget/patientRole/id  con una  delle seguenti informazioni:
-			CF:2.16.840.1.113883.2.9.4.3.2
-			TEAM: 2.16.840.1.113883.2.9.4.3.7 o 2.16.840.1.113883.2.9.4.3.3
-			ENI:2.16.840.1.113883.2.9.4.3.18
-			STP:2.16.840.1.113883.2.9.4.3.17
-			ANA: 2.16.840.1.113883.2.9.4.3.15
-			</report>
+			<!--Controllo recordTarget/patientRole/id-->
+			<!--report test="not(count(hl7:recordTarget/hl7:patientRole/hl7:id[@root='2.16.840.1.113883.2.9.4.3.2'])=1 and
+			not(count(hl7:recordTarget/hl7:patientRole/hl7:id[@root='2.16.840.1.113883.2.9.4.3.7'])=1) and 
+			not(count(hl7:recordTarget/hl7:patientRole/hl7:id[@root='2.16.840.1.113883.2.9.4.3.3'])=1) and 
+			not(count(hl7:recordTarget/hl7:patientRole/hl7:id[@root='2.16.840.1.113883.2.9.4.3.18'])=1) and 
+			not(count(hl7:recordTarget/hl7:patientRole/hl7:id[@root='2.16.840.1.113883.2.9.4.3.17'])=1) and
+			not(count(hl7:recordTarget/hl7:patientRole/hl7:id[@root='2.16.840.1.113883.2.9.4.3.15'])=1)"
+			>W002| Si si consiglia di valorizzare l'elemento recordTarget/patientRole/id  con una  delle seguenti informazioni:
+			CF 2.16.840.1.113883.2.9.4.3.2
+			TEAM 2.16.840.1.113883.2.9.4.3.7 o 2.16.840.1.113883.2.9.4.3.3
+			ENI 2.16.840.1.113883.2.9.4.3.18
+			STP 2.16.840.1.113883.2.9.4.3.17
+			ANA 2.16.840.1.113883.2.9.4.3.15.
+			</report-->
 			
 			<!--Controllo recordTarget/patientRole/addr-->
 			<let name="num_addr" value="count(hl7:recordTarget/hl7:patientRole/hl7:addr)"/>
@@ -158,12 +159,12 @@
 			 <!--Controllo legalAuthenticator-->
 			<assert test = "count(hl7:legalAuthenticator)=1" 
 			>ERRORE-26| L'elemento <name/>/legalAuthenticator è obbligatorio </assert>
-			<assert test = "count(hl7:legalAuthenticator/hl7:signatureCode[@code='S'])=1" 
+			<assert test = "count(hl7:legalAuthenticator)=0 or count(hl7:legalAuthenticator/hl7:signatureCode[@code='S'])=1" 
 			>ERRORE-27| L'elemento <name/>/legalAuthenticator/signatureCode deve essere valorizzato con il codice "S" </assert>
-			<assert test = "count(hl7:legalAuthenticator/hl7:assignedEntity/hl7:id[@root='2.16.840.1.113883.2.9.4.3.2'])=1"
+			<assert test = "count(hl7:legalAuthenticator)=0 or count(hl7:legalAuthenticator/hl7:assignedEntity/hl7:id[@root='2.16.840.1.113883.2.9.4.3.2'])=1"
 			>ERRORE-28| L'elemento <name/>/legalAuthenticator/assignedEntity DEVE contenere almeno un elemento id valorizzato con l'attributo @root='2.16.840.1.113883.2.9.4.3.2'</assert>
-			<assert test = "count(hl7:legalAuthenticator/hl7:assignedEntity/hl7:assignedPerson/hl7:name/hl7:family)=1 and 
-			count(hl7:legalAuthenticator/hl7:assignedEntity/hl7:assignedPerson/hl7:name/hl7:given)=1"
+			<assert test = "count(hl7:legalAuthenticator)=0 or (count(hl7:legalAuthenticator/hl7:assignedEntity/hl7:assignedPerson/hl7:name/hl7:family)=1 and 
+			count(hl7:legalAuthenticator/hl7:assignedEntity/hl7:assignedPerson/hl7:name/hl7:given)=1)"
 			>ERRORE-29| L'elemento <name/>/legalAuthenticator/assignedEntity/assignedPerson/name DEVE riportare gli elementi 'given' e 'family'</assert>
 			
 			<!--Controllo participant-->
@@ -184,13 +185,13 @@
 			<assert test="count(hl7:componentOf)=1"
 			>ERRORE-33| L'elemento <name/>/componentOf è obbligatorio </assert>
 		
-			<assert test="count(hl7:componentOf/hl7:encompassingEncounter/hl7:id)=1"
+			<assert test="count(hl7:componentOf)=0 or count(hl7:componentOf/hl7:encompassingEncounter/hl7:id)=1"
 			>ERRORE-34| L'elemento <name/>/componentOf/encompassingEncounter deve contenere l'elemento 'id' </assert>
 			
-			<assert test="count(hl7:componentOf/hl7:encompassingEncounter/hl7:location/hl7:healthCareFacility)=1"
+			<assert test="(count(hl7:componentOf)=0 or count(hl7:componentOf/hl7:encompassingEncounter/hl7:location/hl7:healthCareFacility)=1)"
 			>ERRORE-35| L'elemento <name/>/componentOf/encompassingEncounter/location/healthcareFacility  deve essere presente </assert>
 			
-			<assert test="count(hl7:componentOf/hl7:encompassingEncounter/hl7:location/hl7:healthCareFacility/hl7:serviceProviderOrganization/hl7:asOrganizationPartOf)=0 or 
+			<assert test="count(hl7:componentOf)=0 or count(hl7:componentOf/hl7:encompassingEncounter/hl7:location/hl7:healthCareFacility/hl7:serviceProviderOrganization/hl7:asOrganizationPartOf)=0 or 
 			count (hl7:componentOf/hl7:encompassingEncounter/hl7:location/hl7:healthCareFacility/hl7:serviceProviderOrganization/hl7:asOrganizationPartOf/hl7:id)=1"
 			>ERRORE-36| L'elemento <name/>/componentOf/encompassingEncounter/location/healthcareFacility/serviceProviderOrganization/asOrganizationPartOf, se presente deve contenere l'elemento 'id' </assert>	
 		</rule>
@@ -402,11 +403,6 @@
 			>ERRORE-40| L'attributo "@moodCode" dell'elemento "observation" deve essere valorizzato con "EVN" </assert>
 		</rule>
 
-		<!--controllo code translation-->
-		<rule context="//hl7:code">
-			<report test="count(hl7:translation)=0"
-			>W003| Si consiglia di inserire un elemento translation per codificare le informazioni con un ulteriore sistema di codifica</report> 			
-		</rule>
 		
 		
 <!--__________________________________________________BODY__________________________________________________________________________-->
@@ -417,9 +413,9 @@
 			<!--Sezione Prestazioni-->
 			<assert test="count(hl7:component/hl7:section/hl7:code[@code='62387-6'][@codeSystem='2.16.840.1.113883.6.1'])=1"
 			>ERRORE-41| Sezione Prestazioni: la sezione DEVE essere presente</assert>		
-			<assert test="count(hl7:component/hl7:section[hl7:code[@code='62387-6']]/hl7:text)=1"
+			<assert test="count(hl7:component/hl7:section/hl7:code[@code='62387-6'][@codeSystem='2.16.840.1.113883.6.1'])=0 or count(hl7:component/hl7:section[hl7:code[@code='62387-6']]/hl7:text)=1"
 			>ERRORE-42| Sezione Prestazioni: la sezione DEVE contenere un elemento 'text'</assert>
-			<assert test="count(hl7:component/hl7:section[hl7:code[@code='62387-6']]/hl7:entry)>=1"  
+			<assert test="count(hl7:component/hl7:section/hl7:code[@code='62387-6'][@codeSystem='2.16.840.1.113883.6.1'])=0 or count(hl7:component/hl7:section[hl7:code[@code='62387-6']]/hl7:entry)>=1"  
 			>ERRORE-43| Sezione Prestazioni: la sezione DEVE contenere un elemento 'entry'</assert>
 		
 			<!--2-->
@@ -502,18 +498,18 @@
 			or count(hl7:code[@code='47045-0'][@codeSystem='2.16.840.1.113883.6.1'])=1 or count(hl7:code[@code='29548-5'][@codeSystem='2.16.840.1.113883.6.1'])=1 or count(hl7:code[@code='55110-1'][@codeSystem='2.16.840.1.113883.6.1'])=1  
 			or count(hl7:code[@code='62385-0'][@codeSystem='2.16.840.1.113883.6.1'])=1 or count(hl7:code[@code='80615-8'][@codeSystem='2.16.840.1.113883.6.1'])=1 or count(hl7:code[@code='93341-6'][@codeSystem='2.16.840.1.113883.6.1'])=1"
 			>ERRORE-60| Il codice '<value-of select="$codice"/>' non è corretto. La sezione deve essere valorizzata con uno dei seguenti codici:
-			29299-5		- Sezione Quesito Diagnostico
-			11329-0		- Sezione Storia Clinica
-			30954-2		- Sezione Precedenti Esami Eseguiti
-			29545-1		- Sezione Esame Obiettivo
-			62387-6		- Sezione Prestazioni
-			93126-1		- Sezione Confronto Con Precedenti Esami Eseguiti
-			47045-0		- Sezione Referto
-			29548-5 	- Sezione Diagnosi
-			55110-1		- Sezione Conclusioni
-			62385-0		- Sezione Suggerimenti Per Il Medico Prescrittore 
-			80615-8     - Sezione Accertamenti e Controlli Consigliati 
-			93341-6     - Sezione Terapia Farmacologica Consigliata
+			29299-5	Sezione Quesito Diagnostico
+			11329-0	Sezione Storia Clinica
+			30954-2	Sezione Precedenti Esami Eseguiti
+			29545-1	Sezione Esame Obiettivo
+			62387-6	Sezione Prestazioni
+			93126-1	Sezione Confronto Con Precedenti Esami Eseguiti
+			47045-0	Sezione Referto
+			29548-5 Sezione Diagnosi
+			55110-1	Sezione Conclusioni
+			62385-0	Sezione Suggerimenti Per Il Medico Prescrittore 
+			80615-8 Sezione Accertamenti e Controlli Consigliati 
+			93341-6 Sezione Terapia Farmacologica Consigliata
 			</assert>
 		</rule>			
 		
