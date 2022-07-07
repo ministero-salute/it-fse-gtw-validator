@@ -79,7 +79,10 @@ public class UpdateSingletonSRV implements IUpdateSingletonSRV {
 	}
 	
 	boolean checkDataUltimoAggiornamento(Date dataInstanza, Date dataETY) {
-		return !dataInstanza.equals(dataETY);
+		if (dataInstanza != null && dataETY != null) {
+			return !dataInstanza.equals(dataETY);
+		}
+		return false;
 	}
 
 }
