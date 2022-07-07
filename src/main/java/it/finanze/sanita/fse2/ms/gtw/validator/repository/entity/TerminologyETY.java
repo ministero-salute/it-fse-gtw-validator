@@ -13,7 +13,7 @@ import org.springframework.data.mongodb.core.mapping.Field;
 @Data
 @NoArgsConstructor
 @EqualsAndHashCode
-@Document(collection = "terminology")
+@Document(collection = "#{@terminologyBean}")
 public class TerminologyETY {
 
 	@Id

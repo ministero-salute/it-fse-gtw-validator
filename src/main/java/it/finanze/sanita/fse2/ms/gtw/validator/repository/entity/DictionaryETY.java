@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 /**
  * Model to save dictionary.
  */
-@Document(collection = "dictionary")
+@Document(collection = "#{@dictionaryBean}")
 @Data
 @NoArgsConstructor
 public class DictionaryETY {

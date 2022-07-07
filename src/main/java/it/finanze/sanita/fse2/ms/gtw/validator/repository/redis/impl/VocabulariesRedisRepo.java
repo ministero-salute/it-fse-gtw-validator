@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
+import it.finanze.sanita.fse2.ms.gtw.validator.config.Constants;
+import it.finanze.sanita.fse2.ms.gtw.validator.utility.ProfileUtility;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -29,9 +31,13 @@ public class VocabulariesRedisRepo extends AbstractRedisRepo implements IVocabul
 	@Qualifier("stringRedisTemplate")
 	private StringRedisTemplate redisTemplate;
 
+    @Autowired
+    private ProfileUtility profileUtility;
+
     @Override
     public String get(String key) {
-        return super.get(key);
+        String redisKey = checkAndChangeKey(key);
+        return super.get(redisKey);
     }
 
     @Override
@@ -59,10 +65,11 @@ public class VocabulariesRedisRepo extends AbstractRedisRepo implements IVocabul
 
         boolean inserted = false;
         try {
-            if (!redisTemplate.hasKey(key)) {
-                inserted = redisTemplate.opsForValue().setIfAbsent(key, "");
+            String redisKey = checkAndChangeKey(key);
+            if (!redisTemplate.hasKey(redisKey)) {
+                inserted = redisTemplate.opsForValue().setIfAbsent(redisKey, "");
                 if (inserted && ttlSeconds != null) {
-                    redisTemplate.expire(key, ttlSeconds, TimeUnit.SECONDS);
+                    redisTemplate.expire(redisKey, ttlSeconds, TimeUnit.SECONDS);
                 }
             }
         } catch (Exception e) {
@@ -117,6 +124,14 @@ public class VocabulariesRedisRepo extends AbstractRedisRepo implements IVocabul
     }
 
     private String redisKey(final String system, final String code) {
-        return system + "_" + code;
+        return checkAndChangeKey(system + "_" + code);
+    }
+
+    @Override
+    protected String checkAndChangeKey(String key) {
+        if (profileUtility.isTestProfile() && key != null && !key.isEmpty()) {
+            key = Constants.Profile.TEST_PREFIX + key;
+        }
+        return key;
     }
 }

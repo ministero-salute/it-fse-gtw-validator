@@ -9,6 +9,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import it.finanze.sanita.fse2.ms.gtw.validator.config.Constants;
+import it.finanze.sanita.fse2.ms.gtw.validator.utility.ProfileUtility;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.bson.BsonBinarySubType;
 import org.bson.Document;
@@ -33,6 +35,9 @@ public abstract class AbstractTest {
     @Autowired
 	protected MongoTemplate mongoTemplate;
 
+	@Autowired
+	protected ProfileUtility profileUtility;
+
     protected void clearConfigurationItems() {
         mongoTemplate.dropCollection(SchemaETY.class);
         mongoTemplate.dropCollection(SchematronETY.class);
@@ -55,8 +60,12 @@ public abstract class AbstractTest {
 
 			for (File file : folder.listFiles()) {
 				final String schemaJson = new String(Files.readAllBytes(Paths.get(file.getCanonicalPath())), StandardCharsets.UTF_8);
-				final Document schema = Document.parse(schemaJson); 
-				mongoTemplate.insert(schema, item);
+				final Document schema = Document.parse(schemaJson);
+				String targetCollection = item;
+				if (profileUtility.isTestProfile()) {
+					targetCollection = Constants.Profile.TEST_PREFIX + item;
+				}
+				mongoTemplate.insert(schema, targetCollection);
 
 			}
 		} catch(Exception e) {
