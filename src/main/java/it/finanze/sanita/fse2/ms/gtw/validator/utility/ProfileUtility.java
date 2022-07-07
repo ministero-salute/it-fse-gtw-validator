@@ -15,7 +15,7 @@ public class ProfileUtility {
 
     public boolean isTestProfile() {
         if (environment != null && environment.getActiveProfiles().length > 0) {
-            return environment.getActiveProfiles()[0].contains(Constants.Profile.TEST);
+            return environment.getActiveProfiles()[0].toLowerCase().contains(Constants.Profile.TEST);
         }
         return false;
     }
