@@ -51,7 +51,7 @@ public final class SchemaValidatorSingleton {
 		
 		boolean getInstanceCondition = instance == null || Boolean.TRUE.equals(forceUpdate);
 
-		synchronized(SchematronValidatorSingleton.class) {
+		synchronized(SchemaValidatorSingleton.class) {
 			if (getInstanceCondition) {
 				try {
 					ValidationResult result = new ValidationResult();
