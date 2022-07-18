@@ -25,6 +25,10 @@ import it.finanze.sanita.fse2.ms.gtw.validator.repository.entity.SchemaETY;
 import it.finanze.sanita.fse2.ms.gtw.validator.repository.entity.SchematronETY;
 import it.finanze.sanita.fse2.ms.gtw.validator.repository.entity.TerminologyETY;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
+
+import static it.finanze.sanita.fse2.ms.gtw.validator.utility.FileUtility.getFileFromInternalResources;
 
 @Slf4j
 public abstract class AbstractTest {
@@ -48,13 +52,20 @@ public abstract class AbstractTest {
         insertConfigurationItems("schema");
     }
 
+	protected void removeSchema(String searchKey, String searchValue) {
+		removeConfigurationItems(searchKey, searchValue, "schema", SchemaETY.class);
+	}
+
     protected void insertSchematron() {
         insertConfigurationItems("schematron");
     }
 
+	protected void removeSchematron(String searchKey, String searchValue) {
+		removeConfigurationItems(searchKey, searchValue, "schematron", SchematronETY.class);
+	}
 
     private void insertConfigurationItems(final String item) {
-			
+
 		try {
 			final File folder = context.getResource("classpath:Files/" + item).getFile();
 
@@ -68,6 +79,19 @@ public abstract class AbstractTest {
 				mongoTemplate.insert(schema, targetCollection);
 
 			}
+		} catch (Exception e) {
+			log.error(ExceptionUtils.getStackTrace(e));
+			throw new BusinessException(e);
+		}
+	}
+
+	private void removeConfigurationItems(final String searchKey, final String searchValue, final String collectionName, Class<?> destClass) {
+		try {
+			String targetCollection = collectionName;
+			if (profileUtility.isTestProfile()) {
+				targetCollection = Constants.Profile.TEST_PREFIX + collectionName;
+			}
+			mongoTemplate.remove(new Query().addCriteria(Criteria.where(searchKey).is(searchValue)), destClass, targetCollection);
 		} catch(Exception e) {
 			log.error(ExceptionUtils.getStackTrace(e));
 			throw new BusinessException(e);
@@ -128,4 +152,8 @@ public abstract class AbstractTest {
     private void insertAllDictionary(List<DictionaryETY> list) {
     	mongoTemplate.insertAll(list);
     }
+
+	protected String getTestCda() {
+		return new String(getFileFromInternalResources("Files" + File.separator + "cda1.xml"), StandardCharsets.UTF_8);
+	}
 }

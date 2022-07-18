@@ -31,28 +31,27 @@ public final class SchematronValidatorSingleton {
 	private Date dataUltimoAggiornamento;
 	
 	public static SchematronValidatorSingleton getInstance(final boolean forceUpdate,final SchematronETY inSchematronETY,final IDictionaryRepo dictionaryRepo) {
-		if(mapInstance!=null) {
+		if (mapInstance != null && !mapInstance.isEmpty()) {
 			instance = mapInstance.get(inSchematronETY.getTemplateIdRoot());
 		} else {
 			mapInstance = new HashMap<>();
 		}
 		
-		boolean getInstanceCondition = instance==null || Boolean.TRUE.equals(forceUpdate);
+		boolean getInstanceCondition = instance == null || Boolean.TRUE.equals(forceUpdate);
 
-		if(getInstanceCondition) {
-			synchronized(SchematronValidatorSingleton.class) {
-				if (getInstanceCondition) {
-					IReadableResource readableResource = new ReadableResourceInputStream(StringUtility.generateUUID() , 
-							new ByteArrayInputStream(inSchematronETY.getContentSchematron().getData()));
-					SchematronResourceSCH schematronResourceXslt = new SchematronResourceSCH(readableResource);
-					schematronResourceXslt.setURIResolver(new ClasspathResourceURIResolver(dictionaryRepo));
-					instance = new SchematronValidatorSingleton(inSchematronETY.getTemplateIdRoot(),inSchematronETY.getTemplateIdExtension(),
-							inSchematronETY.getLastUpdateDate(), schematronResourceXslt);
-					
-					mapInstance.put(instance.getTemplateIdRoot(), instance);
-				}
+		synchronized(SchematronValidatorSingleton.class) {
+			if (getInstanceCondition) {
+				IReadableResource readableResource = new ReadableResourceInputStream(StringUtility.generateUUID() ,
+						new ByteArrayInputStream(inSchematronETY.getContentSchematron().getData()));
+				SchematronResourceSCH schematronResourceXslt = new SchematronResourceSCH(readableResource);
+				schematronResourceXslt.setURIResolver(new ClasspathResourceURIResolver(dictionaryRepo));
+				instance = new SchematronValidatorSingleton(inSchematronETY.getTemplateIdRoot(),inSchematronETY.getTemplateIdExtension(),
+						inSchematronETY.getLastUpdateDate(), schematronResourceXslt);
+
+				mapInstance.put(instance.getTemplateIdRoot(), instance);
 			}
-		}  
+		}
+
 		return instance;
 	}
 

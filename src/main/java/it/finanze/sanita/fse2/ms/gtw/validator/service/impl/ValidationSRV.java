@@ -123,6 +123,9 @@ public class ValidationSRV implements IValidationSRV {
 			
 			if(schematronResource==null) {
 				SchematronETY schematronETY = schematronRepo.findByTemplateIdRoot(extractedInfoDTO.getTemplateIdSchematron());
+				if (schematronETY == null) {
+					throw new NoRecordFoundException(String.format("Schematron with template id root %s not found on database.", extractedInfoDTO.getTemplateIdSchematron()));
+				}
 				SchematronValidatorSingleton schematron = SchematronValidatorSingleton.getInstance(false,schematronETY,dictionaryRepo);
 				schematronResource = schematron.getSchematronResource();
 			}

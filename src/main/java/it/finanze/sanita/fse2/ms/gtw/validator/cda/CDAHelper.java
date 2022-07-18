@@ -70,15 +70,15 @@ public class CDAHelper {
 		boolean validST = aResSCH.isValidSchematron();
 		boolean validXML = true;
 		if (validST) {
-			Long start = new Date().getTime();
+			long start = new Date().getTime();
 			
 			SchematronOutputType type = null;
 			try (ByteArrayInputStream iStream = new ByteArrayInputStream(xml)){
 				type = aResSCH.applySchematronValidationToSVRL(new StreamSource(iStream));
 			}
 			List<Object> asserts = type.getActivePatternAndFiredRuleAndFailedAssert();
-			Long delta = new Date().getTime() - start;
-			log.info("TIME : " + delta);        
+			long delta = new Date().getTime() - start;
+			log.info("TIME : " + delta);
 			for (Object object : asserts) {
 				if (object instanceof FailedAssert) {
 					validXML = false;

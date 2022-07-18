@@ -43,30 +43,29 @@ public final class SchemaValidatorSingleton {
 	}
 
 	public static SchemaValidatorSingleton getInstance(final boolean forceUpdate, final SchemaETY inSchema, final ISchemaRepo schemaRepo) {
-		if(mapInstance!=null) {
+		if (mapInstance != null && !mapInstance.isEmpty()) {
 			instance = mapInstance.get(inSchema.getTypeIdExtension());
 		} else {
 			mapInstance = new HashMap<>();
 		}
 		
-		boolean getInstanceCondition = instance==null || Boolean.TRUE.equals(forceUpdate);
-		if(getInstanceCondition) {
-			synchronized(SchematronValidatorSingleton.class) {
-				if (getInstanceCondition) {
-					try {
-						ValidationResult result = new ValidationResult();
-						SchemaFactory factory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
-						factory.setResourceResolver(new ResourceResolver(inSchema.getTypeIdExtension(), schemaRepo));
-						Source schemaFile = new StreamSource(new ByteArrayInputStream(inSchema.getContentSchema().getData()));
-						Schema schema = factory.newSchema(schemaFile);
-						Validator validator = schema.newValidator();
-						validator.setErrorHandler(result);
-						instance = new SchemaValidatorSingleton(inSchema.getTypeIdExtension(), validator, inSchema.getLastUpdateDate());
-						mapInstance.put(instance.getTypeIdExtension(), instance);
-					} catch(Exception ex) {
-						log.error("Error while retrieving and updating Singleton for Schema Validation", ex);
-						throw new BusinessException("Error while retrieving and updating Singleton for Schema Validation", ex);
-					}
+		boolean getInstanceCondition = instance == null || Boolean.TRUE.equals(forceUpdate);
+
+		synchronized(SchematronValidatorSingleton.class) {
+			if (getInstanceCondition) {
+				try {
+					ValidationResult result = new ValidationResult();
+					SchemaFactory factory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
+					factory.setResourceResolver(new ResourceResolver(inSchema.getTypeIdExtension(), schemaRepo));
+					Source schemaFile = new StreamSource(new ByteArrayInputStream(inSchema.getContentSchema().getData()));
+					Schema schema = factory.newSchema(schemaFile);
+					Validator validator = schema.newValidator();
+					validator.setErrorHandler(result);
+					instance = new SchemaValidatorSingleton(inSchema.getTypeIdExtension(), validator, inSchema.getLastUpdateDate());
+					mapInstance.put(instance.getTypeIdExtension(), instance);
+				} catch(Exception ex) {
+					log.error("Error while retrieving and updating Singleton for Schema Validation", ex);
+					throw new BusinessException("Error while retrieving and updating Singleton for Schema Validation", ex);
 				}
 			}
 		}

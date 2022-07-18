@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -18,6 +19,7 @@ import it.finanze.sanita.fse2.ms.gtw.validator.singleton.SchemaValidatorSingleto
 import it.finanze.sanita.fse2.ms.gtw.validator.singleton.SchematronValidatorSingleton;
 
 @Service
+@Slf4j
 public class UpdateSingletonSRV implements IUpdateSingletonSRV {
 
 	/**
@@ -45,20 +47,27 @@ public class UpdateSingletonSRV implements IUpdateSingletonSRV {
 		Map<String,SchemaValidatorSingleton> mapSchema = SchemaValidatorSingleton.getMapInstance();
 		if(mapSchema!=null && !mapSchema.isEmpty()) {
 			for(Entry<String, SchemaValidatorSingleton> map : mapSchema.entrySet()) {
-				SchemaETY father = schemaRepo.findFatherXsd(map.getKey());
-				boolean isDifferent = checkDataUltimoAggiornamento(map.getValue().getDataUltimoAggiornamento(), father.getLastUpdateDate());
-				if(Boolean.FALSE.equals(isDifferent)) {
-					List<SchemaETY> children = schemaRepo.findChildrenXsd(map.getKey());
-					for(SchemaETY ety : children) {
-						isDifferent = checkDataUltimoAggiornamento(map.getValue().getDataUltimoAggiornamento(), ety.getLastUpdateDate());
-						if(Boolean.TRUE.equals(isDifferent)) {
-							break;
+				String searchKey = map.getKey();
+				SchemaETY father = schemaRepo.findFatherXsd(searchKey);
+				if (father == null) {
+					log.warn("No schema found on DB... singleton map will be reset");
+					mapSchema.remove(searchKey);
+				} else {
+					log.info("Father schema found on DB... check update time");
+					boolean isDifferent = checkDataUltimoAggiornamento(map.getValue().getDataUltimoAggiornamento(), father.getLastUpdateDate());
+					if(Boolean.FALSE.equals(isDifferent)) {
+						List<SchemaETY> children = schemaRepo.findChildrenXsd(map.getKey());
+						for(SchemaETY ety : children) {
+							isDifferent = checkDataUltimoAggiornamento(map.getValue().getDataUltimoAggiornamento(), ety.getLastUpdateDate());
+							if(Boolean.TRUE.equals(isDifferent)) {
+								break;
+							}
 						}
 					}
-				}
-				
-				if(Boolean.TRUE.equals(isDifferent)) {
-					 SchemaValidatorSingleton.getInstance(true, father, schemaRepo);
+
+					if(Boolean.TRUE.equals(isDifferent)) {
+						SchemaValidatorSingleton.getInstance(true, father, schemaRepo);
+					}
 				}
 			}
 		}
@@ -66,13 +75,19 @@ public class UpdateSingletonSRV implements IUpdateSingletonSRV {
 	
 	private void updateSchematronSingleton() {
 		Map<String,SchematronValidatorSingleton> mapSchema = SchematronValidatorSingleton.getMapInstance();
-		if(mapSchema!=null && !mapSchema.isEmpty()) {
+		if (mapSchema != null && !mapSchema.isEmpty()) {
 			for(Entry<String, SchematronValidatorSingleton> map : mapSchema.entrySet()) {
-				SchematronETY schematron = schematronRepo.findByTemplateIdRoot(map.getKey());
-				boolean isDifferent = checkDataUltimoAggiornamento(map.getValue().getDataUltimoAggiornamento(), schematron.getLastUpdateDate()); 
-				
-				if(Boolean.TRUE.equals(isDifferent)) {
-					SchematronValidatorSingleton.getInstance(true,schematron, dictionaryRepo);
+				String searchKey = map.getKey();
+				SchematronETY schematron = schematronRepo.findByTemplateIdRoot(searchKey);
+				if (schematron == null) {
+					log.warn("No schematron found on DB... singleton map will be reset");
+					mapSchema.remove(searchKey);
+				} else {
+					boolean isDifferent = checkDataUltimoAggiornamento(map.getValue().getDataUltimoAggiornamento(), schematron.getLastUpdateDate());
+
+					if(Boolean.TRUE.equals(isDifferent)) {
+						SchematronValidatorSingleton.getInstance(true,schematron, dictionaryRepo);
+					}
 				}
 			}
 		}

@@ -1,12 +1,11 @@
 package it.finanze.sanita.fse2.ms.gtw.validator;
 
-import static it.finanze.sanita.fse2.ms.gtw.validator.utility.FileUtility.getFileFromInternalResources;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-
+import it.finanze.sanita.fse2.ms.gtw.validator.config.Constants;
+import it.finanze.sanita.fse2.ms.gtw.validator.controller.IValidationCTL;
+import it.finanze.sanita.fse2.ms.gtw.validator.dto.request.ValidationRequestDTO;
+import it.finanze.sanita.fse2.ms.gtw.validator.dto.response.ValidationResponseDTO;
+import it.finanze.sanita.fse2.ms.gtw.validator.enums.RawValidationEnum;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -14,16 +13,24 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.test.context.ActiveProfiles;
 
-import it.finanze.sanita.fse2.ms.gtw.validator.config.Constants;
-import it.finanze.sanita.fse2.ms.gtw.validator.controller.IValidationCTL;
-import it.finanze.sanita.fse2.ms.gtw.validator.dto.request.ValidationRequestDTO;
-import it.finanze.sanita.fse2.ms.gtw.validator.dto.response.ValidationResponseDTO;
-import it.finanze.sanita.fse2.ms.gtw.validator.enums.RawValidationEnum;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
+import static it.finanze.sanita.fse2.ms.gtw.validator.utility.FileUtility.getFileFromInternalResources;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ComponentScan(basePackages = { Constants.ComponentScan.BASE })
 @ActiveProfiles(Constants.Profile.TEST)
-public class ValidationControllerTest {
+class ValidationControllerTest extends AbstractTest {
+
+    @BeforeEach
+    void setup() {
+        clearConfigurationItems();
+        insertSchematron();
+        insertSchema();
+    }
 
     public static final Path TEST_FILE = Paths.get(
         "Files",
@@ -47,7 +54,7 @@ public class ValidationControllerTest {
                 StandardCharsets.UTF_8
             )
         ), new MockHttpServletRequest());
-        assertEquals(res.getResult().getResult(), RawValidationEnum.SYNTAX_ERROR);
+        assertEquals(RawValidationEnum.SYNTAX_ERROR, res.getResult().getResult());
 
         res = controller.validation(new ValidationRequestDTO(
             new String(
@@ -56,7 +63,7 @@ public class ValidationControllerTest {
             )
         ), new MockHttpServletRequest());
 
-        assertEquals(res.getResult().getResult(), RawValidationEnum.VOCABULARY_ERROR);
+        assertEquals(RawValidationEnum.VOCABULARY_ERROR, res.getResult().getResult());
 
     }
 
