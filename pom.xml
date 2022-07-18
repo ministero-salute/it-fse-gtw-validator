@@ -161,6 +161,11 @@
 			<version>5.6.5</version>
 		</dependency>
  
+ 		<!-- GSON -->
+		<dependency>
+			<groupId>com.google.code.gson</groupId>
+			<artifactId>gson</artifactId>
+		</dependency>
  	</dependencies>
 
 	<dependencyManagement>
