@@ -50,22 +50,7 @@
 						  ($versionNumber=1) or 
 						  (($versionNumber &gt;1) and count(hl7:relatedDocument)=1)"
 			>ERRORE-8| Se l'attributo <name/>/versionNumber/@value maggiore di  1 l'elemento <name/>  deve contenere un elemento di tipo 'relatedDocument'.</assert>
-
-			<!--Controllo recordTarget/patientRole/id-->
-			<!--report test="not(count(hl7:recordTarget/hl7:patientRole/hl7:id[@root='2.16.840.1.113883.2.9.4.3.2'])=1) and
-			not(count(hl7:recordTarget/hl7:patientRole/hl7:id[@root='2.16.840.1.113883.2.9.4.3.7'])=1) and
-			not(count(hl7:recordTarget/hl7:patientRole/hl7:id[@root='2.16.840.1.113883.2.9.4.3.3'])=1) and
-			not(count(hl7:recordTarget/hl7:patientRole/hl7:id[@root='2.16.840.1.113883.2.9.4.3.18'])=1) and
-			not(count(hl7:recordTarget/hl7:patientRole/hl7:id[@root='2.16.840.1.113883.2.9.4.3.17'])=1) and
-			not(count(hl7:recordTarget/hl7:patientRole/hl7:id[@root='2.16.840.1.113883.2.9.4.3.15'])=1)"
-			>W002| Si si consiglia di valorizzare l'elemento recordTarget/patientRole/id  con una  delle seguenti informazioni:
-			CF 2.16.840.1.113883.2.9.4.3.2
-			TEAM 2.16.840.1.113883.2.9.4.3.7 o 2.16.840.1.113883.2.9.4.3.3
-			ENI 2.16.840.1.113883.2.9.4.3.18
-			STP 2.16.840.1.113883.2.9.4.3.17
-			ANA 2.16.840.1.113883.2.9.4.3.15.> 
-			</report-->
-
+ 
 			<!--controllo addr-->
 			<let name="num_addr" value="count(hl7:recordTarget/hl7:patientRole/hl7:addr)"/>
 			<assert test="$num_addr=0 or (count(hl7:recordTarget/hl7:patientRole/hl7:addr/hl7:country)>=$num_addr and count(hl7:recordTarget/hl7:patientRole/hl7:addr/hl7:city)=$num_addr and count(hl7:recordTarget/hl7:patientRole/hl7:addr/hl7:streetAddressLine)=$num_addr)"
@@ -285,50 +270,20 @@
 	
 		<!-- verifica che i codici LOINC utilizzati siano corretti -->
 		<rule context="//*[@codeSystem='2.16.840.1.113883.6.1']">
-			<let name="val_LOINC" value="@code"/>
-			<assert test="doc('DIZ/XML_FSE_v1/2.16.840.1.113883.6.1.xml')//el[@code=$val_LOINC]"
+			<let name="val_LOINC" value="@code"/> 
+			<assert test="doc(concat('http://###PLACEHOLDER_URL###/v1/validate-terminology/2.16.840.1.113883.6.1/',$val_LOINC))//result='true'"
 			>ERRORE-1_DIZ| Codice LOINC <value-of select="$val_LOINC"/> errato
 			</assert>
 		</rule>
-		
-		<!--rule context="//*[@codeSystem='2.16.840.1.113883.5.129']">
-			<let name="val_SpecimenType" value="@code"/>
-			<assert test="doc('DIZ/XML_FSE_v1/2.16.840.1.113883.5.129.xml')//el[@code=$val_SpecimenType]"
-			>ERRORE-2_DIZ| Codice SpecimenType <value-of select="$val_SpecimenType"/> errato
-			</assert>
-		</rule-->
-		
-		<!--rule context="//*[@codeSystem='2.16.840.1.113883.5.83']">
-			<let name="val_Obs_interp" value="@code"/>
-			<assert test="doc('DIZ/XML_FSE_v1/2.16.840.1.113883.5.83.xml')//el[@code=$val_Obs_interp]"
-			>ERRORE-3_DIZ| Codice ObservationInterpretation <value-of select="$val_Obs_interp"/> errato
-			</assert>
-		</rule-->
-		
-		
+		 
 		<!--Verifica che i codici relativi al value set "ActSite" utilizzati siano corretti-->
 		<rule context="//*[@codeSystem='2.16.840.1.113883.5.1052']">
-			<let name="sito" value="@code"/>
-			<assert test="doc('DIZ/XML_FSE_v1/2.16.840.1.113883.5.1052.xml')//el[@code=$sito]"
+			<let name="sito" value="@code"/> 
+			<assert test="doc(concat('http://###PLACEHOLDER_URL###/v1/validate-terminology/2.16.840.1.113883.5.1052/',$sito))//result='true'"
 			>Errore 4_DIZ| Codice "ActSite" '<value-of select="$sito"/>' errato!
-			</assert>
+			</assert> 
 		</rule>
-		
-		<!--rule context="//*[@codeSystem='2.16.840.1.113883.5.84']">
-			<let name="val_method" value="@code"/>
-			<assert test="doc('DIZ/XML_FSE_v1/2.16.840.1.113883.5.84.xml')//el[@code=$val_method]"
-			>ERRORE-5_DIZ| Codice ObservationMethod <value-of select="$val_method"/> errato
-			</assert>
-		</rule-->
-		
-		<!--rule context="//*[@codeSystem='2.16.840.1.113883.4.642.3.912']">
-			<let name="val_UCUM" value="@code"/>
-			<assert test="doc('DIZ/XML_FSE_v1/2.16.840.1.113883.4.642.3.912.xml')//el[@code=$val_UCUM]"
-			>ERRORE-6_DIZ| Codice UCUM <value-of select="$val_UCUM"/> errato
-			</assert>
-		</rule-->
-		
-		
+		 
 		
 		<!-- 6 -->
 		<!-- verifica che gli elementi organizer di tipo battery contengano obbligatoriamente un elemento code -->
