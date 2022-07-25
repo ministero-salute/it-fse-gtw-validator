@@ -15,4 +15,6 @@ public interface ITerminologyRepo {
     
     List<String> findAllCodesExists(String system, List<String> codes);
     
+    boolean existBySystemAndCode(String system, String code);
+    
 }

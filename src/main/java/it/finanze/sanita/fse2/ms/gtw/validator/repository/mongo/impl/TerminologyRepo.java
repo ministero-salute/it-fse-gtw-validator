@@ -58,4 +58,20 @@ public class TerminologyRepo implements ITerminologyRepo {
 
         return output;
     }
+    
+    @Override
+    public boolean existBySystemAndCode(final String system, final String code) {
+    	 boolean exists = false;
+         try {
+             Query query = new Query();
+             query.addCriteria(Criteria.where("system").is(system).and("code").is(code));
+
+             exists = mongoTemplate.exists(query, TerminologyETY.class);
+          } catch (Exception ex) {
+        	  log.error("Error while execute find by system and code of vocabularies : " , ex);
+      		  throw new BusinessException("Error while execute find by system and code of vocabularies : " , ex);
+         }
+
+         return exists;
+    }
 }

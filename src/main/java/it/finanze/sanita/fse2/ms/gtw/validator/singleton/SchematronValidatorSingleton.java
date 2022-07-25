@@ -8,7 +8,7 @@ import java.util.Map;
 import com.helger.commons.io.resource.IReadableResource;
 import com.helger.commons.io.resource.inmemory.ReadableResourceInputStream;
 import com.helger.schematron.ISchematronResource;
-import com.helger.schematron.xslt.SchematronResourceSCH;
+import com.helger.schematron.xslt.SchematronResourceXSLT;
 
 import it.finanze.sanita.fse2.ms.gtw.validator.repository.entity.SchematronETY;
 import it.finanze.sanita.fse2.ms.gtw.validator.repository.mongo.IDictionaryRepo;
@@ -22,7 +22,7 @@ public final class SchematronValidatorSingleton {
 	
 	private static SchematronValidatorSingleton instance;
 
-	private SchematronResourceSCH schematronResource;
+	private SchematronResourceXSLT schematronResource;
 
 	private String templateIdRoot;
 	
@@ -30,7 +30,8 @@ public final class SchematronValidatorSingleton {
 	
 	private Date dataUltimoAggiornamento;
 	
-	public static SchematronValidatorSingleton getInstance(final boolean forceUpdate,final SchematronETY inSchematronETY,final IDictionaryRepo dictionaryRepo) {
+	public static SchematronValidatorSingleton getInstance(final boolean forceUpdate,final SchematronETY inSchematronETY,final IDictionaryRepo dictionaryRepo,
+			String requestURL) {
 		if (mapInstance != null && !mapInstance.isEmpty()) {
 			instance = mapInstance.get(inSchematronETY.getTemplateIdRoot());
 		} else {
@@ -41,9 +42,11 @@ public final class SchematronValidatorSingleton {
 
 		synchronized(SchematronValidatorSingleton.class) {
 			if (getInstanceCondition) {
-				IReadableResource readableResource = new ReadableResourceInputStream(StringUtility.generateUUID() ,
-						new ByteArrayInputStream(inSchematronETY.getContentSchematron().getData()));
-				SchematronResourceSCH schematronResourceXslt = new SchematronResourceSCH(readableResource);
+				String schematronAsString = new String(inSchematronETY.getContentSchematron().getData());
+				String schematronWithReplacesUrl = schematronAsString.replace("###PLACEHOLDER_URL###", requestURL);
+				IReadableResource readableResource = new ReadableResourceInputStream(StringUtility.generateUUID() , 
+						new ByteArrayInputStream(schematronWithReplacesUrl.getBytes()));
+				SchematronResourceXSLT schematronResourceXslt = new SchematronResourceXSLT(readableResource);
 				schematronResourceXslt.setURIResolver(new ClasspathResourceURIResolver(dictionaryRepo));
 				instance = new SchematronValidatorSingleton(inSchematronETY.getTemplateIdRoot(),inSchematronETY.getTemplateIdExtension(),
 						inSchematronETY.getLastUpdateDate(), schematronResourceXslt);
@@ -56,7 +59,7 @@ public final class SchematronValidatorSingleton {
 	}
 
 	private SchematronValidatorSingleton(final String inTemplateIdRoot,final String inTemplateIdExtension,
-			final Date inDataUltimoAggiornamento,final SchematronResourceSCH inSchematronResource) {
+			final Date inDataUltimoAggiornamento,final SchematronResourceXSLT inSchematronResource) {
 		templateIdRoot = inTemplateIdRoot;
 		dataUltimoAggiornamento = inDataUltimoAggiornamento;
 		schematronResource = inSchematronResource;

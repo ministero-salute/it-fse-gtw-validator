@@ -5,8 +5,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import it.finanze.sanita.fse2.ms.gtw.validator.repository.entity.SchemaETY;
@@ -17,6 +17,7 @@ import it.finanze.sanita.fse2.ms.gtw.validator.repository.mongo.ISchematronRepo;
 import it.finanze.sanita.fse2.ms.gtw.validator.service.IUpdateSingletonSRV;
 import it.finanze.sanita.fse2.ms.gtw.validator.singleton.SchemaValidatorSingleton;
 import it.finanze.sanita.fse2.ms.gtw.validator.singleton.SchematronValidatorSingleton;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
 @Slf4j
@@ -36,11 +37,11 @@ public class UpdateSingletonSRV implements IUpdateSingletonSRV {
 	@Autowired
 	private IDictionaryRepo dictionaryRepo;
 	
+	
 	@Override
-	public void updateSingletonInstance() {
+	public void updateSingletonInstance(final String requestURL) {
 		updateSchemaSingleton();
-		
-		updateSchematronSingleton();
+		updateSchematronSingleton(requestURL);
 	}
 
 	private void updateSchemaSingleton() {
@@ -73,7 +74,7 @@ public class UpdateSingletonSRV implements IUpdateSingletonSRV {
 		}
 	}
 	
-	private void updateSchematronSingleton() {
+	private void updateSchematronSingleton(final String requestUrl) {
 		Map<String,SchematronValidatorSingleton> mapSchema = SchematronValidatorSingleton.getMapInstance();
 		if (mapSchema != null && !mapSchema.isEmpty()) {
 			for(Entry<String, SchematronValidatorSingleton> map : mapSchema.entrySet()) {
@@ -86,7 +87,7 @@ public class UpdateSingletonSRV implements IUpdateSingletonSRV {
 					boolean isDifferent = checkDataUltimoAggiornamento(map.getValue().getDataUltimoAggiornamento(), schematron.getLastUpdateDate());
 
 					if(Boolean.TRUE.equals(isDifferent)) {
-						SchematronValidatorSingleton.getInstance(true,schematron, dictionaryRepo);
+						SchematronValidatorSingleton.getInstance(true,schematron, dictionaryRepo,requestUrl);
 					}
 				}
 			}

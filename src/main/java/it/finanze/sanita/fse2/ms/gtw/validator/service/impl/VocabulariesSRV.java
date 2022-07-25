@@ -103,4 +103,15 @@ public class VocabulariesSRV implements IVocabulariesSRV {
         return new VocabularyResultDTO(exists, vocaboliInesistenti);
     }
 
+    @Override
+    public boolean existBySystemAndCode(final String system, final String code) {
+    	boolean output = false;
+    	try {
+    		output = vocabulariesMongoRepo.existBySystemAndCode(system, code);
+    	} catch(Exception ex) {
+    		log.error("Error while execute find by system and code of vocabularies : " , ex);
+    		throw new BusinessException("Error while execute find by system and code of vocabularies : " , ex);
+    	} 
+    	return output;
+    }
 }

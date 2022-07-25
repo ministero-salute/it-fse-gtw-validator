@@ -7,6 +7,7 @@ import java.util.Map.Entry;
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
 import it.finanze.sanita.fse2.ms.gtw.validator.cda.CDAHelper;
@@ -24,6 +25,7 @@ import it.finanze.sanita.fse2.ms.gtw.validator.enums.CDASeverityViolationEnum;
 import it.finanze.sanita.fse2.ms.gtw.validator.enums.CDAValidationStatusEnum;
 import it.finanze.sanita.fse2.ms.gtw.validator.enums.RawValidationEnum;
 import it.finanze.sanita.fse2.ms.gtw.validator.service.facade.IValidationFacadeSRV;
+import it.finanze.sanita.fse2.ms.gtw.validator.service.facade.IVocabulariesFacadeSRV;
 import it.finanze.sanita.fse2.ms.gtw.validator.utility.StringUtility;
 import lombok.extern.slf4j.Slf4j;
 
@@ -45,6 +47,9 @@ public class ValidationCTL extends AbstractCTL implements IValidationCTL {
 	@Autowired
 	private IValidationFacadeSRV validationSRV;
  
+	@Autowired
+	private IVocabulariesFacadeSRV vocabularySRV;
+	
 	@Override
 	public ValidationResponseDTO validation(ValidationRequestDTO requestBody, HttpServletRequest request) {
 
@@ -96,6 +101,14 @@ public class ValidationCTL extends AbstractCTL implements IValidationCTL {
 
 		ValidationInfoDTO out = ValidationInfoDTO.builder().result(outcome).message(messages).build();
 		return new ValidationResponseDTO(getLogTraceInfo(), out);
+	}
+	
+	@Override
+	public String validateTerminology(@PathVariable(required = true,name = "system") final String system,
+			@PathVariable(required = true,name = "code") final String code, HttpServletRequest request) {
+		log.info(String.format("Validation of system: %s and code: %s ", system , code));
+		boolean esito = vocabularySRV.existBySystemAndCode(system, code);
+		return String.format("<result>%s</result>", esito);
 	}
 	 
 	
