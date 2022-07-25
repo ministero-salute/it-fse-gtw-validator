@@ -181,165 +181,176 @@
 		
 	<!--________________________________ CONTROLLI SUI DIZIONARI _____________________________________________________________-->
 	
+		
 		<!--Verifica che i codici LOINC utilizzati siano corretti-->
 		<rule context="//*[@codeSystem='2.16.840.1.113883.6.1']">
 			<let name="val_LOINC" value="@code"/>
-			<assert test="doc('DIZ/XML_FSE_v1/2.16.840.1.113883.6.1.xml')//el[@code=$val_LOINC] or 
+			<assert test="doc(concat('http://###PLACEHOLDER_URL###/v1/validate-terminology/2.16.840.1.113883.6.1/',$val_LOINC))//result='true' or 
 			$val_LOINC='LA16666-2' or $val_LOINC='LA18632-2' or $val_LOINC='LA28752-6' or $val_LOINC='LA18821-1'"
 			>Errore 1_DIZ| Codice LOINC '<value-of select="$val_LOINC"/>' errato!
 			</assert>
 		</rule>
+
 		
 		<!--Verifica che i codici AIC utilizzati siano corretti-->
 		<rule context="//*[@codeSystem='2.16.840.1.113883.2.9.6.1.5']">
 			<let name="val_AIC" value="@code"/>
-			<assert test="doc('DIZ/XML_FSE_v1/2.16.840.1.113883.2.9.6.1.5.xml')//el[@code=$val_AIC]"
+			<assert test="doc(concat('http://###PLACEHOLDER_URL###/v1/validate-terminology/2.16.840.1.113883.2.9.6.1.5/',$val_AIC))//result='true'"
 			>Errore 2_DIZ| Codice  AIC  '<value-of select="$val_AIC"/>' errato!
 			</assert>
 		</rule>
 		
+
 		<!--Verifica che i codici ATC utilizzati siano corretti-->
 		<rule context="//*[@codeSystem='2.16.840.1.113883.6.73']">
 			<let name="val_ATC" value="@code"/>
-			<assert test="doc('DIZ/XML_FSE_v1/2.16.840.1.113883.6.73.xml')//el[@code=$val_ATC]"
+			<assert test="doc(concat('http://###PLACEHOLDER_URL###/v1/validate-terminology/2.16.840.1.113883.6.73/',$val_ATC))//result='true'"
 			>Errore 3_DIZ| Codice  ATC  '<value-of select="$val_ATC"/>' errato!
 			</assert>
 		</rule>
+
 		
 		<!--Verifica che i codici derivati da "Absent or Unknown Allergies" siano corretti-->
 		<rule context="//*[@codeSystem='2.16.840.1.113883.11.22.9']">
 			<let name="val_UKA" value="@code"/>
-			<assert test="doc('DIZ/XML_FSE_v1/2.16.840.1.113883.11.22.9.xml')//el[@code=$val_UKA]"
+			<assert test="doc(concat('http://###PLACEHOLDER_URL###/v1/validate-terminology/2.16.840.1.113883.11.22.9/',$val_UKA))//result='true'"
 			>Errore 4_DIZ| Codice Absent or Unknown Allergies '<value-of select="$val_UKA"/>' errato!
 			</assert>
 		</rule>
+
 		
 		<!--Verifica che i codici di ObservationIntoleranceType utilizzati siano corretti-->
 		<rule context="//*[@codeSystem='2.16.840.1.113883.1.11.19700']">
 			<let name="val_OIT" value="@code"/>
-			<assert test="doc('DIZ/XML_FSE_v1/2.16.840.1.113883.1.11.19700.xml')//el[@code=$val_OIT]"
+			<assert test="doc(concat('http://###PLACEHOLDER_URL###/v1/validate-terminology/2.16.840.1.113883.1.11.19700/',$val_OIT))//result='true'"
 			>Errore 5_DIZ| Codice ObservationIntoleranceType  '<value-of select="$val_OIT"/>' errato!
 			</assert>
 		</rule>
+
 		
-		<!--Verifica che i codici di ObservationIntoleranceType utilizzati siano corretti-->
-		<!--rule context="//*[@codeSystem='2.16.840.1.113883.5.4']">
-			<let name="val_OIT" value="@code"/>
-			<assert test="doc('DIZ/XML_FSE_v1/2.16.840.1.113883.5.4.xml')//el[@code=$val_OIT]"
-			>Errore 6_DIZ| Codice ObservationIntoleranceType  '<value-of select="$val_OIT"/>' errato!
-			</assert>
-		</rule-->
-		
+		 
 		<!--Verifica che i codici di Allergeni (No Farmaci) utilizzati siano corretti-->
 		<rule context="//*[@codeSystem='2.16.840.1.113883.2.9.77.22.11.2']">
 			<let name="val_ANF" value="@code"/>
-			<assert test="doc('DIZ/XML_FSE_v1/2.16.840.1.113883.2.9.77.22.11.2.xml')//el[@code=$val_ANF]"
+			<assert test="doc(concat('http://###PLACEHOLDER_URL###/v1/validate-terminology/2.16.840.1.113883.2.9.77.22.11.2/',$val_ANF))//result='true'"
 			>Errore 7_DIZ| Codice Allergeni (No Farmaci)  '<value-of select="$val_ANF"/>' errato!
 			</assert>
 		</rule>
+
 		
 		<!--Verifica che i codici di Reazioni Intolleranza utilizzati siano corretti-->
 		<rule context="//*[@codeSystem='2.16.840.1.113883.2.9.77.22.11.3']">
 			<let name="val_REAZINT" value="@code"/>
-			<assert test="doc('DIZ/XML_FSE_v1/2.16.840.1.113883.2.9.77.22.11.3.xml')//el[@code=$val_REAZINT]"
+			<assert test="doc(concat('http://###PLACEHOLDER_URL###/v1/validate-terminology/2.16.840.1.113883.2.9.77.22.11.3/',$val_REAZINT))//result='true'"
 			>Errore 8_DIZ| Codice  Reazioni Intolleranza  '<value-of select="$val_REAZINT"/>' errato!
 			</assert>
 		</rule>
 		
+		
+
 		<!--Verifica che i codici di Reazioni Allergiche utilizzati siano corretti-->
 		<rule context="//*[@codeSystem='2.16.840.1.113883.2.9.77.22.11.4']">
 			<let name="val_REAZALL" value="@code"/>
-			<assert test="doc('DIZ/XML_FSE_v1/2.16.840.1.113883.2.9.77.22.11.4.xml')//el[@code=$val_REAZALL]"
+			<assert test="doc(concat('http://###PLACEHOLDER_URL###/v1/validate-terminology/2.16.840.1.113883.2.9.77.22.11.4/',$val_REAZALL))//result='true'"
 			>Errore 9_DIZ| Codice  Reazioni Allergiche  '<value-of select="$val_REAZALL"/>' errato!
 			</assert>
 		</rule>
+
+		 
 		
 		<!--Verifica che i codici di SeverityObservation utilizzati siano corretti-->
 		<rule context="//*[@codeSystem='2.16.840.1.113883.2.9.77.22.11.5']">
 			<let name="val_SEVOBS" value="@code"/>
-			<assert test="doc('DIZ/XML_FSE_v1/2.16.840.1.113883.2.9.77.22.11.5.xml')//el[@code=$val_SEVOBS]"
+			<assert test="doc(concat('http://###PLACEHOLDER_URL###/v1/validate-terminology/2.16.840.1.113883.2.9.77.22.11.5/',$val_SEVOBS))//result='true'"
 			>Errore 10_DIZ| Codice  SeverityObservation  '<value-of select="$val_SEVOBS"/>' errato!
 			</assert>
 		</rule>
+
 		
 		<!--Verifica che i codici di CriticalityObservation utilizzati siano corretti-->
 		<rule context="//*[@codeSystem='2.16.840.1.113883.2.9.77.22.11.6']">
 			<let name="val_CRIOBS" value="@code"/>
-			<assert test="doc('DIZ/XML_FSE_v1/2.16.840.1.113883.2.9.77.22.11.6.xml')//el[@code=$val_CRIOBS]"
+			<assert test="doc(concat('http://###PLACEHOLDER_URL###/v1/validate-terminology/2.16.840.1.113883.2.9.77.22.11.6/',$val_CRIOBS))//result='true'"
 			>Errore 11_DIZ| Codice  CriticalityObservation  '<value-of select="$val_CRIOBS"/>' errato!
 			</assert>
 		</rule>
+ 
 		
 		<!--Verifica che i codici di StatoClinicoAllergia utilizzati siano corretti-->
 		<rule context="//*[@codeSystem='2.16.840.1.113883.2.9.77.22.11.11']">
 			<let name="val_STATCLINALL" value="@code"/>
-			<assert test="doc('DIZ/XML_FSE_v1/2.16.840.1.113883.2.9.77.22.11.11.xml')//el[@code=$val_STATCLINALL]"
+			<assert test="doc(concat('http://###PLACEHOLDER_URL###/v1/validate-terminology/2.16.840.1.113883.2.9.77.22.11.11/',$val_STATCLINALL))//result='true'"
 			>Errore 12_DIZ| Codice  StatoClinicoAllergia  '<value-of select="$val_STATCLINALL"/>' errato!
 			</assert>
 		</rule>
+
 		
 		<!--Verifica correttezza codici EtaInsorgenza_PSSIT-->
 		<rule context="//*[@codeSystem='2.16.840.1.113883.2.9.77.22.11.8']">
 			<let name="val_age" value="@code"/>
-			<assert test="doc('DIZ/XML_FSE_v1/2.16.840.1.113883.2.9.77.22.11.8.xml')//el[@code=$val_age]"
+			<assert test="doc(concat('http://###PLACEHOLDER_URL###/v1/validate-terminology/2.16.840.1.113883.2.9.77.22.11.8/',$val_age))//result='true'"
 			>Errore 13_DIZ| Codice EtaInsorgenza_PSSIT '<value-of select="$val_age"/>' errato!
 			</assert>
 		</rule>
-
+ 
+		 
 		<!--Verifica correttezza codici ProblemObservation_PSSIT-->
 		<rule context="//*[@codeSystem='2.16.840.1.113883.2.9.77.22.11.9']">
 			<let name="val_problem_obs" value="@code"/>
-			<assert test="doc('DIZ/XML_FSE_v1/2.16.840.1.113883.2.9.77.22.11.9.xml')//el[@code=$val_problem_obs]"
+			<assert test="doc(concat('http://###PLACEHOLDER_URL###/v1/validate-terminology/2.16.840.1.113883.2.9.77.22.11.9/',$val_problem_obs))//result='true'"
 			>Errore 14_DIZ| Codice ProblemObservation_PSSIT '<value-of select="$val_problem_obs"/>' errato!
 			</assert>
 		</rule>
+
+
 		
 		<!--Verifica che i codici di "RoleCode"  siano corretti-->
 		<rule context="//*[@codeSystem='2.16.840.1.113883.5.111']">
 			<let name="val_parentela" value="@code"/>
-			<assert test="doc('DIZ/XML_FSE_v1/2.16.840.1.113883.5.111.xml')//el[@code=$val_parentela]"
+			<assert test="doc(concat('http://###PLACEHOLDER_URL###/v1/validate-terminology/2.16.840.1.113883.5.111/',$val_parentela))//result='true'"
 			>Errore 15_DIZ| Codice RoleCode '<value-of select="$val_parentela"/>' errato!
 			</assert>
 		</rule>
+
 		
 		<!--Verifica che i codici di "AdministrativeGender"  siano corretti-->
 		<rule context="//*[@codeSystem='2.16.840.1.113883.5.1']">
 			<let name="val_Gender1" value="@code"/>
-			<assert test="doc('DIZ/XML_FSE_v1/2.16.840.1.113883.5.1.xml')//el[@code=$val_Gender1]"
+			<assert test="doc(concat('http://###PLACEHOLDER_URL###/v1/validate-terminology/2.16.840.1.113883.5.1/',$val_Gender1))//result='true'"
 			>Errore 16_DIZ| Codice AdministrativeGender '<value-of select="$val_Gender1"/>' errato!
 			</assert>
 		</rule>
+
+		
 		
 		<!--Verifica che i codici derivati da "AdministrativeGender"  siano corretti-->
 		<rule context="//*[@codeSystem='2.16.840.1.113883.1.11.1']">
 			<let name="val_Gender2" value="@code"/>
-			<assert test="doc('DIZ/XML_FSE_v1/2.16.840.1.113883.1.11.1.xml')//el[@code=$val_Gender2]"
+			<assert test="doc(concat('http://###PLACEHOLDER_URL###/v1/validate-terminology/2.16.840.1.113883.1.11.1/',$val_Gender2))//result='true'"
 			>Errore 17_DIZ| Codice AdministrativeGender '<value-of select="$val_Gender2"/>' errato!
 			</assert>
 		</rule>
+
+		
 		
 		<!--Verifica che i codici derivati da "CronicitàProblema" siano corretti-->
 		<rule context="//*[@codeSystem='2.16.840.1.113883.2.9.77.22.11.10']">
 			<let name="val_CronProbl" value="@code"/>
-			<assert test="doc('DIZ/XML_FSE_v1/2.16.840.1.113883.2.9.77.22.11.10.xml')//el[@code=$val_CronProbl]"
+			<assert test="doc(concat('http://###PLACEHOLDER_URL###/v1/validate-terminology/2.16.840.1.113883.2.9.77.22.11.10/',$val_CronProbl))//result='true'"
 			>Errore 18_DIZ| Codice CronicitàProblema '<value-of select="$val_CronProbl"/>' errato!
 			</assert>
 		</rule>
 		
+		
+
 		<!--Verifica che i codici derivati da "StatoClinicaoProblema" siano corretti-->
 		<rule context="//*[@codeSystem='2.16.840.1.113883.2.9.77.22.11.7']">
 			<let name="val_StatoProbl" value="@code"/>
-			<assert test="doc('DIZ/XML_FSE_v1/2.16.840.1.113883.2.9.77.22.11.7.xml')//el[@code=$val_StatoProbl]"
+			<assert test="doc(concat('http://###PLACEHOLDER_URL###/v1/validate-terminology/2.16.840.1.113883.2.9.77.22.11.7/',$val_StatoProbl))//result='true'"
 			>Errore 19_DIZ| Codice StatoClinicoProblema '<value-of select="$val_StatoProbl"/>' errato!
 			</assert>
 		</rule>
-	<!--Verifica che i codici ICD-9-CM utilizzati siano corretti-->
-		<!--rule context="//*[@codeSystem='2.16.840.1.113883.6.103']">
-			<let name="val_ICD9CM" value="@code"/>
-			<assert test="doc('DIZ/XML_FSE_v1/2.16.840.1.113883.6.103.xml')//el[@code=$val_ICD9CM]"
-			>Errore 20_DIZ| Codice ICD-9-CM '<value-of select="$val_ICD9CM"/>' errato!
-			</assert>
-		</rule-->
+	 
 		
 	
 	<!--________________________________ CONTROLLI GENERICI _____________________________________________________________-->
