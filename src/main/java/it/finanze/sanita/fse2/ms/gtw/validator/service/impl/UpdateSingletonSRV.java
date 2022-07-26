@@ -6,7 +6,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import it.finanze.sanita.fse2.ms.gtw.validator.repository.entity.SchemaETY;
@@ -87,7 +86,7 @@ public class UpdateSingletonSRV implements IUpdateSingletonSRV {
 					boolean isDifferent = checkDataUltimoAggiornamento(map.getValue().getDataUltimoAggiornamento(), schematron.getLastUpdateDate());
 
 					if(Boolean.TRUE.equals(isDifferent)) {
-						SchematronValidatorSingleton.getInstance(true,schematron, dictionaryRepo,requestUrl);
+						SchematronValidatorSingleton.getInstance(true,schematron, requestUrl);
 					}
 				}
 			}

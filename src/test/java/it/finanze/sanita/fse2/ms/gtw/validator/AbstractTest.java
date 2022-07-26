@@ -1,5 +1,7 @@
 package it.finanze.sanita.fse2.ms.gtw.validator;
 
+import static it.finanze.sanita.fse2.ms.gtw.validator.utility.FileUtility.getFileFromInternalResources;
+
 import java.io.File;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -8,9 +10,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
-import it.finanze.sanita.fse2.ms.gtw.validator.config.Constants;
-import it.finanze.sanita.fse2.ms.gtw.validator.utility.ProfileUtility;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.bson.BsonBinarySubType;
 import org.bson.Document;
@@ -18,17 +19,17 @@ import org.bson.types.Binary;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 
+import it.finanze.sanita.fse2.ms.gtw.validator.config.Constants;
 import it.finanze.sanita.fse2.ms.gtw.validator.exceptions.BusinessException;
 import it.finanze.sanita.fse2.ms.gtw.validator.repository.entity.DictionaryETY;
 import it.finanze.sanita.fse2.ms.gtw.validator.repository.entity.SchemaETY;
 import it.finanze.sanita.fse2.ms.gtw.validator.repository.entity.SchematronETY;
 import it.finanze.sanita.fse2.ms.gtw.validator.repository.entity.TerminologyETY;
+import it.finanze.sanita.fse2.ms.gtw.validator.utility.ProfileUtility;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.mongodb.core.query.Criteria;
-import org.springframework.data.mongodb.core.query.Query;
-
-import static it.finanze.sanita.fse2.ms.gtw.validator.utility.FileUtility.getFileFromInternalResources;
 
 @Slf4j
 public abstract class AbstractTest {
@@ -155,5 +156,33 @@ public abstract class AbstractTest {
 
 	protected String getTestCda() {
 		return new String(getFileFromInternalResources("Files" + File.separator + "cda1.xml"), StandardCharsets.UTF_8);
+	}
+	
+	protected void deleteAndsaveTerminology(Map<String,List<String>> map) {
+		try {
+			for(Entry<String, List<String>> el : map.entrySet()) {
+				String system = el.getKey();
+
+				Query query = new Query();
+				query.addCriteria(Criteria.where("system").is(system));
+				mongoTemplate.remove(query, TerminologyETY.class);
+				
+				TerminologyETY terminology = null;
+				for(String val : el.getValue()) {
+					terminology = new TerminologyETY();
+					terminology.setSystem(system);
+					terminology.setCode(val);
+					terminology.setDescription(val);
+					mongoTemplate.save(terminology);
+				}
+			}
+		} catch(Exception ex) {
+			log.error("Error while save dictionary file : " + ex);
+			throw new BusinessException("Error while save dictionary file : " + ex);
+		}
+	}
+	
+	protected void dropTerminology() {
+		mongoTemplate.dropCollection(TerminologyETY.class);
 	}
 }

@@ -722,13 +722,13 @@
 	<!--RULE -->
 <xsl:template match="//*[@codeSystem='2.16.840.1.113883.6.1']" mode="M3" priority="1034">
     <svrl:fired-rule context="//*[@codeSystem='2.16.840.1.113883.6.1']" />
-    <xsl:variable name="val_LOINC" select="@code" />
+    <xsl:variable name="val_LOINC" select="encode-for-uri(@code)" />
 
 		<!--ASSERT -->
 <xsl:choose>
-      <xsl:when test="doc(concat('http://###PLACEHOLDER_URL###/v1/validate-terminology/2.16.840.1.113883.6.1/',$val_LOINC))//result='true' or     $val_LOINC='LA16666-2' or $val_LOINC='LA18632-2' or $val_LOINC='LA28752-6' or $val_LOINC='LA18821-1'" />
+      <xsl:when test="doc(concat('http://###PLACEHOLDER_URL###/v1/validate-terminology/2.16.840.1.113883.6.1?code=',$val_LOINC))//result='true' or     $val_LOINC='LA16666-2' or $val_LOINC='LA18632-2' or $val_LOINC='LA28752-6' or $val_LOINC='LA18821-1'" />
       <xsl:otherwise>
-        <svrl:failed-assert test="doc(concat('http://###PLACEHOLDER_URL###/v1/validate-terminology/2.16.840.1.113883.6.1/',$val_LOINC))//result='true' or $val_LOINC='LA16666-2' or $val_LOINC='LA18632-2' or $val_LOINC='LA28752-6' or $val_LOINC='LA18821-1'">
+        <svrl:failed-assert test="doc(concat('http://###PLACEHOLDER_URL###/v1/validate-terminology/2.16.840.1.113883.6.1?code=',$val_LOINC))//result='true' or $val_LOINC='LA16666-2' or $val_LOINC='LA18632-2' or $val_LOINC='LA28752-6' or $val_LOINC='LA18821-1'">
           <xsl:attribute name="location">
             <xsl:apply-templates mode="schematron-select-full-path" select="." />
           </xsl:attribute>
@@ -745,13 +745,13 @@
 	<!--RULE -->
 <xsl:template match="//*[@codeSystem='2.16.840.1.113883.2.9.6.1.5']" mode="M3" priority="1033">
     <svrl:fired-rule context="//*[@codeSystem='2.16.840.1.113883.2.9.6.1.5']" />
-    <xsl:variable name="val_AIC" select="@code" />
+    <xsl:variable name="val_AIC" select="encode-for-uri(@code)" />
 
 		<!--ASSERT -->
 <xsl:choose>
-      <xsl:when test="doc(concat('http://###PLACEHOLDER_URL###/v1/validate-terminology/2.16.840.1.113883.2.9.6.1.5/',$val_AIC))//result='true'" />
+      <xsl:when test="doc(concat('http://###PLACEHOLDER_URL###/v1/validate-terminology/2.16.840.1.113883.2.9.6.1.5?code=',$val_AIC))//result='true'" />
       <xsl:otherwise>
-        <svrl:failed-assert test="doc(concat('http://###PLACEHOLDER_URL###/v1/validate-terminology/2.16.840.1.113883.2.9.6.1.5/',$val_AIC))//result='true'">
+        <svrl:failed-assert test="doc(concat('http://###PLACEHOLDER_URL###/v1/validate-terminology/2.16.840.1.113883.2.9.6.1.5?code=',$val_AIC))//result='true'">
           <xsl:attribute name="location">
             <xsl:apply-templates mode="schematron-select-full-path" select="." />
           </xsl:attribute>
@@ -768,13 +768,13 @@
 	<!--RULE -->
 <xsl:template match="//*[@codeSystem='2.16.840.1.113883.6.73']" mode="M3" priority="1032">
     <svrl:fired-rule context="//*[@codeSystem='2.16.840.1.113883.6.73']" />
-    <xsl:variable name="val_ATC" select="@code" />
+    <xsl:variable name="val_ATC" select="encode-for-uri(@code)" />
 
 		<!--ASSERT -->
 <xsl:choose>
-      <xsl:when test="doc(concat('http://###PLACEHOLDER_URL###/v1/validate-terminology/2.16.840.1.113883.6.73/',$val_ATC))//result='true'" />
+      <xsl:when test="doc(concat('http://###PLACEHOLDER_URL###/v1/validate-terminology/2.16.840.1.113883.6.73?code=',$val_ATC))//result='true'" />
       <xsl:otherwise>
-        <svrl:failed-assert test="doc(concat('http://###PLACEHOLDER_URL###/v1/validate-terminology/2.16.840.1.113883.6.73/',$val_ATC))//result='true'">
+        <svrl:failed-assert test="doc(concat('http://###PLACEHOLDER_URL###/v1/validate-terminology/2.16.840.1.113883.6.73?code=',$val_ATC))//result='true'">
           <xsl:attribute name="location">
             <xsl:apply-templates mode="schematron-select-full-path" select="." />
           </xsl:attribute>
@@ -791,13 +791,13 @@
 	<!--RULE -->
 <xsl:template match="//*[@codeSystem='2.16.840.1.113883.11.22.9']" mode="M3" priority="1031">
     <svrl:fired-rule context="//*[@codeSystem='2.16.840.1.113883.11.22.9']" />
-    <xsl:variable name="val_UKA" select="@code" />
+    <xsl:variable name="val_UKA" select="encode-for-uri(@code)" />
 
 		<!--ASSERT -->
 <xsl:choose>
-      <xsl:when test="doc(concat('http://###PLACEHOLDER_URL###/v1/validate-terminology/2.16.840.1.113883.11.22.9/',$val_UKA))//result='true'" />
+      <xsl:when test="doc(concat('http://###PLACEHOLDER_URL###/v1/validate-terminology/2.16.840.1.113883.11.22.9?code=',$val_UKA))//result='true'" />
       <xsl:otherwise>
-        <svrl:failed-assert test="doc(concat('http://###PLACEHOLDER_URL###/v1/validate-terminology/2.16.840.1.113883.11.22.9/',$val_UKA))//result='true'">
+        <svrl:failed-assert test="doc(concat('http://###PLACEHOLDER_URL###/v1/validate-terminology/2.16.840.1.113883.11.22.9?code=',$val_UKA))//result='true'">
           <xsl:attribute name="location">
             <xsl:apply-templates mode="schematron-select-full-path" select="." />
           </xsl:attribute>
@@ -814,13 +814,13 @@
 	<!--RULE -->
 <xsl:template match="//*[@codeSystem='2.16.840.1.113883.1.11.19700']" mode="M3" priority="1030">
     <svrl:fired-rule context="//*[@codeSystem='2.16.840.1.113883.1.11.19700']" />
-    <xsl:variable name="val_OIT" select="@code" />
+    <xsl:variable name="val_OIT" select="encode-for-uri(@code)" />
 
 		<!--ASSERT -->
 <xsl:choose>
-      <xsl:when test="doc(concat('http://###PLACEHOLDER_URL###/v1/validate-terminology/2.16.840.1.113883.1.11.19700/',$val_OIT))//result='true'" />
+      <xsl:when test="doc(concat('http://###PLACEHOLDER_URL###/v1/validate-terminology/2.16.840.1.113883.1.11.19700?code=',$val_OIT))//result='true'" />
       <xsl:otherwise>
-        <svrl:failed-assert test="doc(concat('http://###PLACEHOLDER_URL###/v1/validate-terminology/2.16.840.1.113883.1.11.19700/',$val_OIT))//result='true'">
+        <svrl:failed-assert test="doc(concat('http://###PLACEHOLDER_URL###/v1/validate-terminology/2.16.840.1.113883.1.11.19700?code=',$val_OIT))//result='true'">
           <xsl:attribute name="location">
             <xsl:apply-templates mode="schematron-select-full-path" select="." />
           </xsl:attribute>
@@ -837,13 +837,13 @@
 	<!--RULE -->
 <xsl:template match="//*[@codeSystem='2.16.840.1.113883.2.9.77.22.11.2']" mode="M3" priority="1029">
     <svrl:fired-rule context="//*[@codeSystem='2.16.840.1.113883.2.9.77.22.11.2']" />
-    <xsl:variable name="val_ANF" select="@code" />
+    <xsl:variable name="val_ANF" select="encode-for-uri(@code)" />
 
 		<!--ASSERT -->
 <xsl:choose>
-      <xsl:when test="doc(concat('http://###PLACEHOLDER_URL###/v1/validate-terminology/2.16.840.1.113883.2.9.77.22.11.2/',$val_ANF))//result='true'" />
+      <xsl:when test="doc(concat('http://###PLACEHOLDER_URL###/v1/validate-terminology/2.16.840.1.113883.2.9.77.22.11.2?code=',$val_ANF))//result='true'" />
       <xsl:otherwise>
-        <svrl:failed-assert test="doc(concat('http://###PLACEHOLDER_URL###/v1/validate-terminology/2.16.840.1.113883.2.9.77.22.11.2/',$val_ANF))//result='true'">
+        <svrl:failed-assert test="doc(concat('http://###PLACEHOLDER_URL###/v1/validate-terminology/2.16.840.1.113883.2.9.77.22.11.2?code=',$val_ANF))//result='true'">
           <xsl:attribute name="location">
             <xsl:apply-templates mode="schematron-select-full-path" select="." />
           </xsl:attribute>
@@ -860,13 +860,13 @@
 	<!--RULE -->
 <xsl:template match="//*[@codeSystem='2.16.840.1.113883.2.9.77.22.11.3']" mode="M3" priority="1028">
     <svrl:fired-rule context="//*[@codeSystem='2.16.840.1.113883.2.9.77.22.11.3']" />
-    <xsl:variable name="val_REAZINT" select="@code" />
+    <xsl:variable name="val_REAZINT" select="encode-for-uri(@code)" />
 
 		<!--ASSERT -->
 <xsl:choose>
-      <xsl:when test="doc(concat('http://###PLACEHOLDER_URL###/v1/validate-terminology/2.16.840.1.113883.2.9.77.22.11.3/',$val_REAZINT))//result='true'" />
+      <xsl:when test="doc(concat('http://###PLACEHOLDER_URL###/v1/validate-terminology/2.16.840.1.113883.2.9.77.22.11.3?code=',$val_REAZINT))//result='true'" />
       <xsl:otherwise>
-        <svrl:failed-assert test="doc(concat('http://###PLACEHOLDER_URL###/v1/validate-terminology/2.16.840.1.113883.2.9.77.22.11.3/',$val_REAZINT))//result='true'">
+        <svrl:failed-assert test="doc(concat('http://###PLACEHOLDER_URL###/v1/validate-terminology/2.16.840.1.113883.2.9.77.22.11.3?code=',$val_REAZINT))//result='true'">
           <xsl:attribute name="location">
             <xsl:apply-templates mode="schematron-select-full-path" select="." />
           </xsl:attribute>
@@ -883,13 +883,13 @@
 	<!--RULE -->
 <xsl:template match="//*[@codeSystem='2.16.840.1.113883.2.9.77.22.11.4']" mode="M3" priority="1027">
     <svrl:fired-rule context="//*[@codeSystem='2.16.840.1.113883.2.9.77.22.11.4']" />
-    <xsl:variable name="val_REAZALL" select="@code" />
+    <xsl:variable name="val_REAZALL" select="encode-for-uri(@code)" />
 
 		<!--ASSERT -->
 <xsl:choose>
-      <xsl:when test="doc(concat('http://###PLACEHOLDER_URL###/v1/validate-terminology/2.16.840.1.113883.2.9.77.22.11.4/',$val_REAZALL))//result='true'" />
+      <xsl:when test="doc(concat('http://###PLACEHOLDER_URL###/v1/validate-terminology/2.16.840.1.113883.2.9.77.22.11.4?code=',$val_REAZALL))//result='true'" />
       <xsl:otherwise>
-        <svrl:failed-assert test="doc(concat('http://###PLACEHOLDER_URL###/v1/validate-terminology/2.16.840.1.113883.2.9.77.22.11.4/',$val_REAZALL))//result='true'">
+        <svrl:failed-assert test="doc(concat('http://###PLACEHOLDER_URL###/v1/validate-terminology/2.16.840.1.113883.2.9.77.22.11.4?code=',$val_REAZALL))//result='true'">
           <xsl:attribute name="location">
             <xsl:apply-templates mode="schematron-select-full-path" select="." />
           </xsl:attribute>
@@ -906,13 +906,13 @@
 	<!--RULE -->
 <xsl:template match="//*[@codeSystem='2.16.840.1.113883.2.9.77.22.11.5']" mode="M3" priority="1026">
     <svrl:fired-rule context="//*[@codeSystem='2.16.840.1.113883.2.9.77.22.11.5']" />
-    <xsl:variable name="val_SEVOBS" select="@code" />
+    <xsl:variable name="val_SEVOBS" select="encode-for-uri(@code)" />
 
 		<!--ASSERT -->
 <xsl:choose>
-      <xsl:when test="doc(concat('http://###PLACEHOLDER_URL###/v1/validate-terminology/2.16.840.1.113883.2.9.77.22.11.5/',$val_SEVOBS))//result='true'" />
+      <xsl:when test="doc(concat('http://###PLACEHOLDER_URL###/v1/validate-terminology/2.16.840.1.113883.2.9.77.22.11.5?code=',$val_SEVOBS))//result='true'" />
       <xsl:otherwise>
-        <svrl:failed-assert test="doc(concat('http://###PLACEHOLDER_URL###/v1/validate-terminology/2.16.840.1.113883.2.9.77.22.11.5/',$val_SEVOBS))//result='true'">
+        <svrl:failed-assert test="doc(concat('http://###PLACEHOLDER_URL###/v1/validate-terminology/2.16.840.1.113883.2.9.77.22.11.5?code=',$val_SEVOBS))//result='true'">
           <xsl:attribute name="location">
             <xsl:apply-templates mode="schematron-select-full-path" select="." />
           </xsl:attribute>
@@ -929,13 +929,13 @@
 	<!--RULE -->
 <xsl:template match="//*[@codeSystem='2.16.840.1.113883.2.9.77.22.11.6']" mode="M3" priority="1025">
     <svrl:fired-rule context="//*[@codeSystem='2.16.840.1.113883.2.9.77.22.11.6']" />
-    <xsl:variable name="val_CRIOBS" select="@code" />
+    <xsl:variable name="val_CRIOBS" select="encode-for-uri(@code)" />
 
 		<!--ASSERT -->
 <xsl:choose>
-      <xsl:when test="doc(concat('http://###PLACEHOLDER_URL###/v1/validate-terminology/2.16.840.1.113883.2.9.77.22.11.6/',$val_CRIOBS))//result='true'" />
+      <xsl:when test="doc(concat('http://###PLACEHOLDER_URL###/v1/validate-terminology/2.16.840.1.113883.2.9.77.22.11.6?code=',$val_CRIOBS))//result='true'" />
       <xsl:otherwise>
-        <svrl:failed-assert test="doc(concat('http://###PLACEHOLDER_URL###/v1/validate-terminology/2.16.840.1.113883.2.9.77.22.11.6/',$val_CRIOBS))//result='true'">
+        <svrl:failed-assert test="doc(concat('http://###PLACEHOLDER_URL###/v1/validate-terminology/2.16.840.1.113883.2.9.77.22.11.6?code=',$val_CRIOBS))//result='true'">
           <xsl:attribute name="location">
             <xsl:apply-templates mode="schematron-select-full-path" select="." />
           </xsl:attribute>
@@ -952,13 +952,13 @@
 	<!--RULE -->
 <xsl:template match="//*[@codeSystem='2.16.840.1.113883.2.9.77.22.11.11']" mode="M3" priority="1024">
     <svrl:fired-rule context="//*[@codeSystem='2.16.840.1.113883.2.9.77.22.11.11']" />
-    <xsl:variable name="val_STATCLINALL" select="@code" />
+    <xsl:variable name="val_STATCLINALL" select="encode-for-uri(@code)" />
 
 		<!--ASSERT -->
 <xsl:choose>
-      <xsl:when test="doc(concat('http://###PLACEHOLDER_URL###/v1/validate-terminology/2.16.840.1.113883.2.9.77.22.11.11/',$val_STATCLINALL))//result='true'" />
+      <xsl:when test="doc(concat('http://###PLACEHOLDER_URL###/v1/validate-terminology/2.16.840.1.113883.2.9.77.22.11.11?code=',$val_STATCLINALL))//result='true'" />
       <xsl:otherwise>
-        <svrl:failed-assert test="doc(concat('http://###PLACEHOLDER_URL###/v1/validate-terminology/2.16.840.1.113883.2.9.77.22.11.11/',$val_STATCLINALL))//result='true'">
+        <svrl:failed-assert test="doc(concat('http://###PLACEHOLDER_URL###/v1/validate-terminology/2.16.840.1.113883.2.9.77.22.11.11?code=',$val_STATCLINALL))//result='true'">
           <xsl:attribute name="location">
             <xsl:apply-templates mode="schematron-select-full-path" select="." />
           </xsl:attribute>
@@ -975,13 +975,13 @@
 	<!--RULE -->
 <xsl:template match="//*[@codeSystem='2.16.840.1.113883.2.9.77.22.11.8']" mode="M3" priority="1023">
     <svrl:fired-rule context="//*[@codeSystem='2.16.840.1.113883.2.9.77.22.11.8']" />
-    <xsl:variable name="val_age" select="@code" />
+    <xsl:variable name="val_age" select="encode-for-uri(@code)" />
 
 		<!--ASSERT -->
 <xsl:choose>
-      <xsl:when test="doc(concat('http://###PLACEHOLDER_URL###/v1/validate-terminology/2.16.840.1.113883.2.9.77.22.11.8/',$val_age))//result='true'" />
+      <xsl:when test="doc(concat('http://###PLACEHOLDER_URL###/v1/validate-terminology/2.16.840.1.113883.2.9.77.22.11.8?code=',$val_age))//result='true'" />
       <xsl:otherwise>
-        <svrl:failed-assert test="doc(concat('http://###PLACEHOLDER_URL###/v1/validate-terminology/2.16.840.1.113883.2.9.77.22.11.8/',$val_age))//result='true'">
+        <svrl:failed-assert test="doc(concat('http://###PLACEHOLDER_URL###/v1/validate-terminology/2.16.840.1.113883.2.9.77.22.11.8?code=',$val_age))//result='true'">
           <xsl:attribute name="location">
             <xsl:apply-templates mode="schematron-select-full-path" select="." />
           </xsl:attribute>
@@ -998,13 +998,13 @@
 	<!--RULE -->
 <xsl:template match="//*[@codeSystem='2.16.840.1.113883.2.9.77.22.11.9']" mode="M3" priority="1022">
     <svrl:fired-rule context="//*[@codeSystem='2.16.840.1.113883.2.9.77.22.11.9']" />
-    <xsl:variable name="val_problem_obs" select="@code" />
+    <xsl:variable name="val_problem_obs" select="encode-for-uri(@code)" />
 
 		<!--ASSERT -->
 <xsl:choose>
-      <xsl:when test="doc(concat('http://###PLACEHOLDER_URL###/v1/validate-terminology/2.16.840.1.113883.2.9.77.22.11.9/',$val_problem_obs))//result='true'" />
+      <xsl:when test="doc(concat('http://###PLACEHOLDER_URL###/v1/validate-terminology/2.16.840.1.113883.2.9.77.22.11.9?code=',$val_problem_obs))//result='true'" />
       <xsl:otherwise>
-        <svrl:failed-assert test="doc(concat('http://###PLACEHOLDER_URL###/v1/validate-terminology/2.16.840.1.113883.2.9.77.22.11.9/',$val_problem_obs))//result='true'">
+        <svrl:failed-assert test="doc(concat('http://###PLACEHOLDER_URL###/v1/validate-terminology/2.16.840.1.113883.2.9.77.22.11.9?code=',$val_problem_obs))//result='true'">
           <xsl:attribute name="location">
             <xsl:apply-templates mode="schematron-select-full-path" select="." />
           </xsl:attribute>
@@ -1021,13 +1021,13 @@
 	<!--RULE -->
 <xsl:template match="//*[@codeSystem='2.16.840.1.113883.5.111']" mode="M3" priority="1021">
     <svrl:fired-rule context="//*[@codeSystem='2.16.840.1.113883.5.111']" />
-    <xsl:variable name="val_parentela" select="@code" />
+    <xsl:variable name="val_parentela" select="encode-for-uri(@code)" />
 
 		<!--ASSERT -->
 <xsl:choose>
-      <xsl:when test="doc(concat('http://###PLACEHOLDER_URL###/v1/validate-terminology/2.16.840.1.113883.5.111/',$val_parentela))//result='true'" />
+      <xsl:when test="doc(concat('http://###PLACEHOLDER_URL###/v1/validate-terminology/2.16.840.1.113883.5.111?code=',$val_parentela))//result='true'" />
       <xsl:otherwise>
-        <svrl:failed-assert test="doc(concat('http://###PLACEHOLDER_URL###/v1/validate-terminology/2.16.840.1.113883.5.111/',$val_parentela))//result='true'">
+        <svrl:failed-assert test="doc(concat('http://###PLACEHOLDER_URL###/v1/validate-terminology/2.16.840.1.113883.5.111?code=',$val_parentela))//result='true'">
           <xsl:attribute name="location">
             <xsl:apply-templates mode="schematron-select-full-path" select="." />
           </xsl:attribute>
@@ -1044,13 +1044,13 @@
 	<!--RULE -->
 <xsl:template match="//*[@codeSystem='2.16.840.1.113883.5.1']" mode="M3" priority="1020">
     <svrl:fired-rule context="//*[@codeSystem='2.16.840.1.113883.5.1']" />
-    <xsl:variable name="val_Gender1" select="@code" />
+    <xsl:variable name="val_Gender1" select="encode-for-uri(@code)" />
 
 		<!--ASSERT -->
 <xsl:choose>
-      <xsl:when test="doc(concat('http://###PLACEHOLDER_URL###/v1/validate-terminology/2.16.840.1.113883.5.1/',$val_Gender1))//result='true'" />
+      <xsl:when test="doc(concat('http://###PLACEHOLDER_URL###/v1/validate-terminology/2.16.840.1.113883.5.1?code=',$val_Gender1))//result='true'" />
       <xsl:otherwise>
-        <svrl:failed-assert test="doc(concat('http://###PLACEHOLDER_URL###/v1/validate-terminology/2.16.840.1.113883.5.1/',$val_Gender1))//result='true'">
+        <svrl:failed-assert test="doc(concat('http://###PLACEHOLDER_URL###/v1/validate-terminology/2.16.840.1.113883.5.1?code=',$val_Gender1))//result='true'">
           <xsl:attribute name="location">
             <xsl:apply-templates mode="schematron-select-full-path" select="." />
           </xsl:attribute>
@@ -1067,13 +1067,13 @@
 	<!--RULE -->
 <xsl:template match="//*[@codeSystem='2.16.840.1.113883.1.11.1']" mode="M3" priority="1019">
     <svrl:fired-rule context="//*[@codeSystem='2.16.840.1.113883.1.11.1']" />
-    <xsl:variable name="val_Gender2" select="@code" />
+    <xsl:variable name="val_Gender2" select="encode-for-uri(@code)" />
 
 		<!--ASSERT -->
 <xsl:choose>
-      <xsl:when test="doc(concat('http://###PLACEHOLDER_URL###/v1/validate-terminology/2.16.840.1.113883.1.11.1/',$val_Gender2))//result='true'" />
+      <xsl:when test="doc(concat('http://###PLACEHOLDER_URL###/v1/validate-terminology/2.16.840.1.113883.1.11.1?code=',$val_Gender2))//result='true'" />
       <xsl:otherwise>
-        <svrl:failed-assert test="doc(concat('http://###PLACEHOLDER_URL###/v1/validate-terminology/2.16.840.1.113883.1.11.1/',$val_Gender2))//result='true'">
+        <svrl:failed-assert test="doc(concat('http://###PLACEHOLDER_URL###/v1/validate-terminology/2.16.840.1.113883.1.11.1?code=',$val_Gender2))//result='true'">
           <xsl:attribute name="location">
             <xsl:apply-templates mode="schematron-select-full-path" select="." />
           </xsl:attribute>
@@ -1090,13 +1090,13 @@
 	<!--RULE -->
 <xsl:template match="//*[@codeSystem='2.16.840.1.113883.2.9.77.22.11.10']" mode="M3" priority="1018">
     <svrl:fired-rule context="//*[@codeSystem='2.16.840.1.113883.2.9.77.22.11.10']" />
-    <xsl:variable name="val_CronProbl" select="@code" />
+    <xsl:variable name="val_CronProbl" select="encode-for-uri(@code)" />
 
 		<!--ASSERT -->
 <xsl:choose>
-      <xsl:when test="doc(concat('http://###PLACEHOLDER_URL###/v1/validate-terminology/2.16.840.1.113883.2.9.77.22.11.10/',$val_CronProbl))//result='true'" />
+      <xsl:when test="doc(concat('http://###PLACEHOLDER_URL###/v1/validate-terminology/2.16.840.1.113883.2.9.77.22.11.10?code=',$val_CronProbl))//result='true'" />
       <xsl:otherwise>
-        <svrl:failed-assert test="doc(concat('http://###PLACEHOLDER_URL###/v1/validate-terminology/2.16.840.1.113883.2.9.77.22.11.10/',$val_CronProbl))//result='true'">
+        <svrl:failed-assert test="doc(concat('http://###PLACEHOLDER_URL###/v1/validate-terminology/2.16.840.1.113883.2.9.77.22.11.10?code=',$val_CronProbl))//result='true'">
           <xsl:attribute name="location">
             <xsl:apply-templates mode="schematron-select-full-path" select="." />
           </xsl:attribute>
@@ -1113,13 +1113,13 @@
 	<!--RULE -->
 <xsl:template match="//*[@codeSystem='2.16.840.1.113883.2.9.77.22.11.7']" mode="M3" priority="1017">
     <svrl:fired-rule context="//*[@codeSystem='2.16.840.1.113883.2.9.77.22.11.7']" />
-    <xsl:variable name="val_StatoProbl" select="@code" />
+    <xsl:variable name="val_StatoProbl" select="encode-for-uri(@code)" />
 
 		<!--ASSERT -->
 <xsl:choose>
-      <xsl:when test="doc(concat('http://###PLACEHOLDER_URL###/v1/validate-terminology/2.16.840.1.113883.2.9.77.22.11.7/',$val_StatoProbl))//result='true'" />
+      <xsl:when test="doc(concat('http://###PLACEHOLDER_URL###/v1/validate-terminology/2.16.840.1.113883.2.9.77.22.11.7?code=',$val_StatoProbl))//result='true'" />
       <xsl:otherwise>
-        <svrl:failed-assert test="doc(concat('http://###PLACEHOLDER_URL###/v1/validate-terminology/2.16.840.1.113883.2.9.77.22.11.7/',$val_StatoProbl))//result='true'">
+        <svrl:failed-assert test="doc(concat('http://###PLACEHOLDER_URL###/v1/validate-terminology/2.16.840.1.113883.2.9.77.22.11.7?code=',$val_StatoProbl))//result='true'">
           <xsl:attribute name="location">
             <xsl:apply-templates mode="schematron-select-full-path" select="." />
           </xsl:attribute>

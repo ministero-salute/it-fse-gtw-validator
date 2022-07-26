@@ -35,7 +35,7 @@ public interface IValidationCTL {
 							@ApiResponse(responseCode = "500", description = "Internal Server Error", content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE)) })
 	ValidationResponseDTO validation(@RequestBody ValidationRequestDTO requestBody, HttpServletRequest request);
 
-	@GetMapping(value = "/validate-terminology/{system}/{code}")
+	@GetMapping(value = "/validate-terminology/{system}")
 	@ApiResponse(content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = void.class)))
 	@Operation(summary = "Validazione terminology", description = "Endpoint invocato dallo schematron per la validazione terminology.")
 	@ApiResponses(value = { @ApiResponse(responseCode = "200", description = "Eventi recuperati", content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = void.class))),

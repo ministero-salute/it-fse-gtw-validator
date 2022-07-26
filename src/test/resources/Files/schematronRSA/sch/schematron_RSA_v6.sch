@@ -58,21 +58,7 @@
 			<!--Controllo recordTarget-->
 			<assert test="count(hl7:recordTarget)=1"
 			>ERRORE-9| L'elemento <name/> DEVE contenere un solo elemento 'recordTarget' </assert>
-			
-			<!--Controllo recordTarget/patientRole/id-->
-			<!--report test="not(count(hl7:recordTarget/hl7:patientRole/hl7:id[@root='2.16.840.1.113883.2.9.4.3.2'])=1 and
-			not(count(hl7:recordTarget/hl7:patientRole/hl7:id[@root='2.16.840.1.113883.2.9.4.3.7'])=1) and 
-			not(count(hl7:recordTarget/hl7:patientRole/hl7:id[@root='2.16.840.1.113883.2.9.4.3.3'])=1) and 
-			not(count(hl7:recordTarget/hl7:patientRole/hl7:id[@root='2.16.840.1.113883.2.9.4.3.18'])=1) and 
-			not(count(hl7:recordTarget/hl7:patientRole/hl7:id[@root='2.16.840.1.113883.2.9.4.3.17'])=1) and
-			not(count(hl7:recordTarget/hl7:patientRole/hl7:id[@root='2.16.840.1.113883.2.9.4.3.15'])=1)"
-			>W002| Si si consiglia di valorizzare l'elemento recordTarget/patientRole/id  con una  delle seguenti informazioni:
-			CF 2.16.840.1.113883.2.9.4.3.2
-			TEAM 2.16.840.1.113883.2.9.4.3.7 o 2.16.840.1.113883.2.9.4.3.3
-			ENI 2.16.840.1.113883.2.9.4.3.18
-			STP 2.16.840.1.113883.2.9.4.3.17
-			ANA 2.16.840.1.113883.2.9.4.3.15.
-			</report-->
+			 
 			
 			<!--Controllo recordTarget/patientRole/addr-->
 			<let name="num_addr" value="count(hl7:recordTarget/hl7:patientRole/hl7:addr)"/>
@@ -198,132 +184,135 @@
 		
 		
 <!--____________________________________________CONTROLLI SUI DIZIONARI_____________________________________________________________-->
-				
+		
+
 		<!--Verifica che i codici LOINC utilizzati siano corretti-->
 		<rule context="//*[@codeSystem='2.16.840.1.113883.6.1']">
-			<let name="val_LOINC" value="@code"/>
-			<assert test="doc('DIZ/XML_FSE_v1/2.16.840.1.113883.6.1.xml')//el[@code=$val_LOINC] or 
+			<let name="val_LOINC" value="encode-for-uri(@code)"/>
+			<assert test="doc(concat('http://###PLACEHOLDER_URL###/v1/validate-terminology/2.16.840.1.113883.6.1?code=',$val_LOINC))//result='true' or 
 			$val_LOINC='LA16666-2' or $val_LOINC='LA18632-2' or $val_LOINC='LA28752-6' or $val_LOINC='LA18821-1'"
 			>Errore 1_DIZ| Codice LOINC '<value-of select="$val_LOINC"/>' errato!
 			</assert>
 		</rule>
+
 		
 		<!--Verifica che i codici AIC utilizzati siano corretti-->
 		<rule context="//*[@codeSystem='2.16.840.1.113883.2.9.6.1.5']">
-			<let name="val_AIC" value="@code"/>
-			<assert test="doc('DIZ/XML_FSE_v1/2.16.840.1.113883.2.9.6.1.5.xml')//el[@code=$val_AIC]"
+			<let name="val_AIC" value="encode-for-uri(@code)"/>
+			<assert test="doc(concat('http://###PLACEHOLDER_URL###/v1/validate-terminology/2.16.840.1.113883.2.9.6.1.5?code=',$val_AIC))//result='true'"
 			>Errore 2_DIZ| Codice AIC '<value-of select="$val_AIC"/>' errato!
 			</assert>
 		</rule>
+
 	
 		<!--Verifica che i codici ATC utilizzati siano corretti-->
 		<rule context="//*[@codeSystem='2.16.840.1.113883.6.73']">
-			<let name="val_ATC" value="@code"/>
-			<assert test="doc('DIZ/XML_FSE_v1/2.16.840.1.113883.6.73.xml')//el[@code=$val_ATC]"
+			<let name="val_ATC" value="encode-for-uri(@code)"/>
+			<assert test="doc(concat('http://###PLACEHOLDER_URL###/v1/validate-terminology/2.16.840.1.113883.6.73?code=',$val_ATC))//result='true'"
 			>Errore 3_DIZ| Codice ATC '<value-of select="$val_ATC"/>' errato!
 			</assert>
 		</rule>
+
+		
 		
 		<!--Verifica che i codici GE utilizzati siano corretti-->
 		<rule context="//*[@codeSystem='2.16.840.1.113883.2.9.6.1.51']">
-			<let name="val_GE" value="@code"/>
-			<assert test="doc('DIZ/XML_FSE_v1/2.16.840.1.113883.2.9.6.1.51.xml')//el[@code=$val_GE]"
+			<let name="val_GE" value="encode-for-uri(@code)"/>
+			<assert test="doc(concat('http://###PLACEHOLDER_URL###/v1/validate-terminology/2.16.840.1.113883.2.9.6.1.51?code=',$val_GE))//result='true'"
 			>Errore 4_DIZ| Codice GE '<value-of select="$val_GE"/>' errato!
 			</assert>
 		</rule>
+
+		
 		
 		<!--Verifica che i codici relativi al value set "Allergeni (No Farmaci)" utilizzati siano corretti-->		
 		<rule context="//*[@codeSystem='2.16.840.1.113883.2.9.77.22.11.2']">
-			<let name="val_AllNoFarm" value="@code"/>
-			<assert test="doc('DIZ/XML_FSE_v1/2.16.840.1.113883.2.9.77.22.11.2.xml')//el[@code=$val_AllNoFarm]"
+			<let name="val_AllNoFarm" value="encode-for-uri(@code)"/>
+			<assert test="doc(concat('http://###PLACEHOLDER_URL###/v1/validate-terminology/2.16.840.1.113883.2.9.77.22.11.2?code=',$val_AllNoFarm))//result='true'"
 			>Errore 5_DIZ| Codice "Allergeni (No Farmaci)"  '<value-of select="$val_AllNoFarm"/>' errato!
 			</assert>
 		</rule>
 		
+		
+
 		<!--Verifica che i codici relativi al value set "ReazioniAllergiche" utilizzati siano corretti-->
 		<rule context="//*[@codeSystem='2.16.840.1.113883.2.9.77.22.11.4']">
-			<let name="reaz_aller" value="@code"/>
-			<assert test="doc('DIZ/XML_FSE_v1/2.16.840.1.113883.2.9.77.22.11.4.xml')//el[@code=$reaz_aller]"
+			<let name="reaz_aller" value="encode-for-uri(@code)"/>
+			<assert test="doc(concat('http://###PLACEHOLDER_URL###/v1/validate-terminology/2.16.840.1.113883.2.9.77.22.11.4?code=',$reaz_aller))//result='true'"
 			>Errore 6_DIZ| Codice "ReazioniAllergiche"  '<value-of select="$reaz_aller"/>' errato!
 			</assert>
 		</rule>
+
 		
-		<!--Verifica che i codici ICD-9-CM utilizzati siano corretti-->
-		<!--rule context="//*[@codeSystem='2.16.840.1.113883.6.103']">
-			<let name="val_ICD9CM" value="@code"/>
-			<assert test="doc('DIZ/XML_FSE_v1/2.16.840.1.113883.6.103.xml')//el[@code=$val_ICD9CM]"
-			>Errore 7_DIZ| Codice ICD-9-CM '<value-of select="$val_ICD9CM"/>' errato!
-			</assert>
-		</rule-->
-		
+		 
 		<!--Verifica che i codici relativi al value set "ActSite" utilizzati siano corretti-->
 		<rule context="//*[@codeSystem='2.16.840.1.113883.5.1052']">
-			<let name="sito" value="@code"/>
-			<assert test="doc('DIZ/XML_FSE_v1/2.16.840.1.113883.5.1052.xml')//el[@code=$sito]"
+			<let name="sito" value="encode-for-uri(@code)"/>
+			<assert test="doc(concat('http://###PLACEHOLDER_URL###/v1/validate-terminology/2.16.840.1.113883.5.1052?code=',$sito))//result='true'"
 			>Errore 8_DIZ| Codice "ActSite"  '<value-of select="$sito"/>' errato!
 			</assert>
 		</rule>
+
 		
 		<!--Verifica che i codici relativi al value set "RouteOfAdministration" utilizzati siano corretti-->
 		<rule context="//*[@codeSystem='2.16.840.1.113883.5.112']">
-			<let name="via_somminist" value="@code"/>
-			<assert test="doc('DIZ/XML_FSE_v1/2.16.840.1.113883.5.112.xml')//el[@code=$via_somminist]"
+			<let name="via_somminist" value="encode-for-uri(@code)"/>
+			<assert test="doc(concat('http://###PLACEHOLDER_URL###/v1/validate-terminology/2.16.840.1.113883.5.112?code=',$via_somminist))//result='true'"
 			>Errore 9_DIZ| Codice "RouteOfAdministration"  '<value-of select="$via_somminist"/>' errato!
 			</assert>
 		</rule>		
-		
+
+ 	
 		<!--Verifica che i codici ActStatus utilizzati siano corretti-->
 		<rule context="//hl7:statusCode">
-			<let name="val_status" value="@code"/>
-			<assert test="doc('DIZ/XML_FSE_v1/2.16.840.1.113883.11.22.12.xml')//el[@code=$val_status]"
+			<let name="val_status" value="encode-for-uri(@code)"/>
+			<assert test="doc(concat('http://###PLACEHOLDER_URL###/v1/validate-terminology/2.16.840.1.113883.11.22.12?code=',$val_status))//result='true'"
 			>Errore 10_DIZ| Codice ActStatus '<value-of select="$val_status"/>' errato!
 			</assert>
 		</rule>	
 		
+		
 		<!--Verifica che i codici relativi al value set "RoleCode" utilizzati siano corretti-->
 		<rule context="//*[@codeSystem='2.16.840.1.113883.5.111']">
-			<let name="roleCode" value="@code"/>
-			<assert test="doc('DIZ/XML_FSE_v1/2.16.840.1.113883.5.111.xml')//el[@code=$roleCode]"
+			<let name="roleCode" value="encode-for-uri(@code)"/>
+			<assert test="doc(concat('http://###PLACEHOLDER_URL###/v1/validate-terminology/2.16.840.1.113883.5.111?code=',$roleCode))//result='true'"
 			>Errore 11_DIZ| Codice "RoleCode"  '<value-of select="$roleCode"/>' errato!
 			</assert>
 		</rule>
+
+		
 		
 		<!--Verifica che i codici relativi al value set "ObservationIntoleranceType" utilizzati siano corretti-->
 		<rule context="//*[@codeSystem='2.16.840.1.113883.1.11.19700']">
-			<let name="obsIntoleranceType1" value="@code"/>
-			<assert test="doc('DIZ/XML_FSE_v1/2.16.840.1.113883.1.11.19700.xml')//el[@code=$obsIntoleranceType1]"
+			<let name="obsIntoleranceType1" value="encode-for-uri(@code)"/>
+			<assert test="doc(concat('http://###PLACEHOLDER_URL###/v1/validate-terminology/2.16.840.1.113883.1.11.19700?code=',$obsIntoleranceType1))//result='true'"
 			>Errore 12_DIZ| Codice "ObservationIntoleranceType" '<value-of select="$obsIntoleranceType1"/>' errato!
 			</assert>
 		</rule>
-		
-		<!--Verifica che i codici relativi al value set "ObservationIntoleranceType" utilizzati siano corretti-->
-		<!--rule context="//*[@codeSystem='2.16.840.1.113883.5.4']">
-			<let name="obsIntoleranceType" value="@code"/>
-			<assert test="doc('DIZ/XML_FSE_v1/2.16.840.1.113883.5.4.xml')//el[@code=$obsIntoleranceType]"
-			>Errore 13_DIZ| Codice "ObservationIntoleranceType" '<value-of select="$obsIntoleranceType"/>' errato!
-			</assert>
-		</rule-->
-		
+
+		  
 		<!--Verifica che i codici "UnitsOfMeasureCaseSensitive" utilizzati siano corretti-->
 		<rule context="//*[@unit]">
-			<let name="unit" value="@unit"/>
-			<assert test="doc('DIZ/XML_FSE_v1/2.16.840.1.113883.1.11.12839.xml')//el[@code=$unit]"
+			<let name="unit" value="encode-for-uri(@unit)"/>
+			<assert test="doc(concat('http://###PLACEHOLDER_URL###/v1/validate-terminology/2.16.840.1.113883.1.11.12839?code=',$unit))//result='true'"
 			>Errore 14_DIZ| Codice "UnitsOfMeasureCaseSensitive"  '<value-of select="$unit"/>' errato!
 			</assert>
 		</rule>
 		
+		
 		<!--Verifica che i codici relativi al value set "AdministrativeGender" utilizzati siano corretti-->
 		<rule context="//*[@codeSystem='2.16.840.1.113883.1.11.1']">
-			<let name="gender" value="@code"/>
-			<assert test="doc('DIZ/XML_FSE_v1/2.16.840.1.113883.1.11.1.xml')//el[@code=$gender]"
+			<let name="gender" value="encode-for-uri(@code)"/>
+			<assert test="doc(concat('http://###PLACEHOLDER_URL###/v1/validate-terminology/2.16.840.1.113883.1.11.1?code=',$gender))//result='true'"
 			>Errore 15_DIZ| Codice "AdministrativeGender" '<value-of select="$gender"/>' errato!
 			</assert>
 		</rule>
+
 		
 		<!--Verifica che i codici relativi al value set "AdministrativeGender" utilizzati siano corretti-->
 		<rule context="//*[@codeSystem='2.16.840.1.113883.5.1']">
-			<let name="gender1" value="@code"/>
-			<assert test="doc('DIZ/XML_FSE_v1/2.16.840.1.113883.5.1.xml')//el[@code=$gender1]"
+			<let name="gender1" value="encode-for-uri(@code)"/>
+			<assert test="doc(concat('http://###PLACEHOLDER_URL###/v1/validate-terminology/2.16.840.1.113883.5.1?code=',$gender1))//result='true'"
 			>Errore 16_DIZ| Codice "AdministrativeGender" '<value-of select="$gender1"/>' errato!
 			</assert>
 		</rule>
@@ -331,48 +320,52 @@
 		
 		<!--Verifica che i codici relativi al value set "ReazioniIntolleranze" utilizzati siano corretti-->
 		<rule context="//*[@codeSystem='2.16.840.1.113883.2.9.77.22.11.3']">
-			<let name="reaz_int" value="@code"/>
-			<assert test="doc('DIZ/XML_FSE_v1/2.16.840.1.113883.2.9.77.22.11.3.xml')//el[@code=$reaz_int]"
+			<let name="reaz_int" value="encode-for-uri(@code)"/>
+			<assert test="doc(concat('http://###PLACEHOLDER_URL###/v1/validate-terminology/2.16.840.1.113883.2.9.77.22.11.3?code=',$reaz_int))//result='true'"
 			>Errore 17_DIZ| Codice "ReazioniIntolleranza"  '<value-of select="$reaz_int"/>' errato!
 			</assert>
 		</rule>
+
 		
 		<!--Verifica che i codici relativi al value set "CriticalityObservation" utilizzati siano corretti-->
 		<rule context="//*[@codeSystem='2.16.840.1.113883.2.9.77.22.11.6']">
-			<let name="cri_obs" value="@code"/>
-			<assert test="doc('DIZ/XML_FSE_v1/2.16.840.1.113883.2.9.77.22.11.6.xml')//el[@code=$cri_obs]"
+			<let name="cri_obs" value="encode-for-uri(@code)"/>
+			<assert test="doc(concat('http://###PLACEHOLDER_URL###/v1/validate-terminology/2.16.840.1.113883.2.9.77.22.11.6?code=',$cri_obs))//result='true'"
 			>Errore 18_DIZ| Codice "CriticalityObservation"  '<value-of select="$cri_obs"/>' errato!
 			</assert>
 		</rule>
+
 		
 		<!--Verifica che i codici relativi al value set "Stato clinico del problema" utilizzati siano corretti-->
 		<rule context="//*[@codeSystem='2.16.840.1.113883.2.9.77.22.11.7']">
-			<let name="problem_status" value="@code"/>
-			<assert test="doc('DIZ/XML_FSE_v1/2.16.840.1.113883.2.9.77.22.11.7.xml')//el[@code=$problem_status]"
+			<let name="problem_status" value="encode-for-uri(@code)"/>
+			<assert test="doc(concat('http://###PLACEHOLDER_URL###/v1/validate-terminology/2.16.840.1.113883.2.9.77.22.11.7?code=',$problem_status))//result='true'"
 			>Errore 19_DIZ| Codice "Stato clinico del problema"  '<value-of select="$problem_status"/>' errato!
 			</assert>
 		</rule>
+
 		
 		<!--Verifica che i codici relativi al value set "Età insorgenza" utilizzati siano corretti-->
 		<rule context="//*[@codeSystem='2.16.840.1.113883.2.9.77.22.11.8']">
-			<let name="age" value="@code"/>
-			<assert test="doc('DIZ/XML_FSE_v1/2.16.840.1.113883.2.9.77.22.11.8.xml')//el[@code=$age]"
+			<let name="age" value="encode-for-uri(@code)"/>
+			<assert test="doc(concat('http://###PLACEHOLDER_URL###/v1/validate-terminology/2.16.840.1.113883.2.9.77.22.11.8?code=',$age))//result='true'"
 			>Errore 20_DIZ| Codice "Età insorgenza"  '<value-of select="$age"/>' errato!
 			</assert>
 		</rule>
+
 		
 		<!--Verifica che i codici relativi al value set "ProblemObservation" utilizzati siano corretti-->
 		<rule context="//*[@codeSystem='2.16.840.1.113883.2.9.77.22.11.9']">
-			<let name="prob_obs" value="@code"/>
-			<assert test="doc('DIZ/XML_FSE_v1/2.16.840.1.113883.2.9.77.22.11.9.xml')//el[@code=$prob_obs]"
+			<let name="prob_obs" value="encode-for-uri(@code)"/>
+			<assert test="doc(concat('http://###PLACEHOLDER_URL###/v1/validate-terminology/2.16.840.1.113883.2.9.77.22.11.9?code=',$prob_obs))//result='true'"
 			>Errore 21_DIZ| Codice "ProblemObservation"  '<value-of select="$prob_obs"/>' errato!
 			</assert>
 		</rule>
-		
+		 
 		<!--Verifica che i codici relativi al value set "CronicitàProblema" utilizzati siano corretti-->
 		<rule context="//*[@codeSystem='2.16.840.1.113883.2.9.77.22.11.10']">
-			<let name="prob_cron" value="@code"/>
-			<assert test="doc('DIZ/XML_FSE_v1/2.16.840.1.113883.2.9.77.22.11.10.xml')//el[@code=$prob_cron]"
+			<let name="prob_cron" value="encode-for-uri(@code)"/>
+			<assert test="doc(concat('http://###PLACEHOLDER_URL###/v1/validate-terminology/2.16.840.1.113883.2.9.77.22.11.10?code=',$prob_cron))//result='true'"
 			>Errore 22_DIZ| Codice "CronicitàProblema"  '<value-of select="$prob_cron"/>' errato!
 			</assert>
 		</rule>

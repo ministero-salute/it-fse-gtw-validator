@@ -270,16 +270,16 @@
 	
 		<!-- verifica che i codici LOINC utilizzati siano corretti -->
 		<rule context="//*[@codeSystem='2.16.840.1.113883.6.1']">
-			<let name="val_LOINC" value="@code"/> 
-			<assert test="doc(concat('http://###PLACEHOLDER_URL###/v1/validate-terminology/2.16.840.1.113883.6.1/',$val_LOINC))//result='true'"
+			<let name="val_LOINC" value="encode-for-uri(@code)"/> 
+			<assert test="doc(concat('http://###PLACEHOLDER_URL###/v1/validate-terminology/2.16.840.1.113883.6.1?code=',$val_LOINC))//result='true'"
 			>ERRORE-1_DIZ| Codice LOINC <value-of select="$val_LOINC"/> errato
 			</assert>
 		</rule>
 		 
 		<!--Verifica che i codici relativi al value set "ActSite" utilizzati siano corretti-->
 		<rule context="//*[@codeSystem='2.16.840.1.113883.5.1052']">
-			<let name="sito" value="@code"/> 
-			<assert test="doc(concat('http://###PLACEHOLDER_URL###/v1/validate-terminology/2.16.840.1.113883.5.1052/',$sito))//result='true'"
+			<let name="sito" value="encode-for-uri(@code)"/> 
+			<assert test="doc(concat('http://###PLACEHOLDER_URL###/v1/validate-terminology/2.16.840.1.113883.5.1052?code=',$sito))//result='true'"
 			>Errore 4_DIZ| Codice "ActSite" '<value-of select="$sito"/>' errato!
 			</assert> 
 		</rule>

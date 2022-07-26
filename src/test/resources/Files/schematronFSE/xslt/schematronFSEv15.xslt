@@ -939,13 +939,13 @@
 	<!--RULE -->
 <xsl:template match="//*[@codeSystem='2.16.840.1.113883.6.1']" mode="M3" priority="1004">
     <svrl:fired-rule context="//*[@codeSystem='2.16.840.1.113883.6.1']" />
-    <xsl:variable name="val_LOINC" select="@code" />
+    <xsl:variable name="val_LOINC" select="encode-for-uri(@code)" />
 
 		<!--ASSERT -->
 <xsl:choose>
-      <xsl:when test="doc(concat('http://###PLACEHOLDER_URL###/v1/validate-terminology/2.16.840.1.113883.6.1/',$val_LOINC))//result='true'" />
+      <xsl:when test="doc(concat('http://###PLACEHOLDER_URL###/v1/validate-terminology/2.16.840.1.113883.6.1?code=',$val_LOINC))//result='true'" />
       <xsl:otherwise>
-        <svrl:failed-assert test="doc(concat('http://###PLACEHOLDER_URL###/v1/validate-terminology/2.16.840.1.113883.6.1/',$val_LOINC))//result='true'">
+        <svrl:failed-assert test="doc(concat('http://###PLACEHOLDER_URL###/v1/validate-terminology/2.16.840.1.113883.6.1?code=',$val_LOINC))//result='true'">
           <xsl:attribute name="location">
             <xsl:apply-templates mode="schematron-select-full-path" select="." />
           </xsl:attribute>
@@ -962,13 +962,13 @@
 	<!--RULE -->
 <xsl:template match="//*[@codeSystem='2.16.840.1.113883.5.1052']" mode="M3" priority="1003">
     <svrl:fired-rule context="//*[@codeSystem='2.16.840.1.113883.5.1052']" />
-    <xsl:variable name="sito" select="@code" />
+    <xsl:variable name="sito" select="encode-for-uri(@code)" />
 
 		<!--ASSERT -->
 <xsl:choose>
-      <xsl:when test="doc(concat('http://###PLACEHOLDER_URL###/v1/validate-terminology/2.16.840.1.113883.5.1052/',$sito))//result='true'" />
+      <xsl:when test="doc(concat('http://###PLACEHOLDER_URL###/v1/validate-terminology/2.16.840.1.113883.5.1052?code=',$sito))//result='true'" />
       <xsl:otherwise>
-        <svrl:failed-assert test="doc(concat('http://###PLACEHOLDER_URL###/v1/validate-terminology/2.16.840.1.113883.5.1052/',$sito))//result='true'">
+        <svrl:failed-assert test="doc(concat('http://###PLACEHOLDER_URL###/v1/validate-terminology/2.16.840.1.113883.5.1052?code=',$sito))//result='true'">
           <xsl:attribute name="location">
             <xsl:apply-templates mode="schematron-select-full-path" select="." />
           </xsl:attribute>

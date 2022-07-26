@@ -105,7 +105,7 @@ public class ValidationCTL extends AbstractCTL implements IValidationCTL {
 	
 	@Override
 	public String validateTerminology(@PathVariable(required = true,name = "system") final String system,
-			@PathVariable(required = true,name = "code") final String code, HttpServletRequest request) {
+			 final String code, HttpServletRequest request) {
 		log.info(String.format("Validation of system: %s and code: %s ", system , code));
 		boolean esito = vocabularySRV.existBySystemAndCode(system, code);
 		return String.format("<result>%s</result>", esito);
