@@ -86,16 +86,16 @@
 
 		<!-- LOGSTASH LOGBACK ENCODER -->
 		<dependency>
-		    <groupId>net.logstash.logback</groupId>
-		    <artifactId>logstash-logback-encoder</artifactId>
-		    <version>7.2</version>
-		</dependency> 
-		
+			<groupId>net.logstash.logback</groupId>
+			<artifactId>logstash-logback-encoder</artifactId>
+			<version>7.2</version>
+		</dependency>
+
 		<dependency>
-            <groupId>org.codehaus.janino</groupId>
-            <artifactId>janino</artifactId>
-            <version>3.0.6</version>
-        </dependency>
+			<groupId>org.codehaus.janino</groupId>
+			<artifactId>janino</artifactId>
+			<version>3.0.6</version>
+		</dependency>
 
 		<!-- DEVTOOL -->
 		<dependency>
@@ -135,7 +135,7 @@
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-pool2</artifactId>
 		</dependency>
-		
+
 		<!-- SHEDLOCK -->
 		<dependency>
 			<groupId>net.javacrumbs.shedlock</groupId>
@@ -153,25 +153,26 @@
 			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-starter-sleuth</artifactId>
 		</dependency>
-		
-		<!-- SCHEMATRON -->
+
+		<!-- JSOUP -->
 		<dependency>
-		    <groupId>org.jsoup</groupId>
-		    <artifactId>jsoup</artifactId>
-		    <version>1.14.3</version>
+			<groupId>org.jsoup</groupId>
+			<artifactId>jsoup</artifactId>
+			<version>1.14.3</version>
 		</dependency>
+
+		<!-- SCHEMATRON -->
 		<dependency>
 			<groupId>com.helger</groupId>
 			<artifactId>ph-schematron</artifactId>
 			<version>5.6.5</version>
 		</dependency>
  
- 		<!-- GSON -->
 		<dependency>
 			<groupId>com.google.code.gson</groupId>
 			<artifactId>gson</artifactId>
 		</dependency>
- 	</dependencies>
+	</dependencies>
 
 	<dependencyManagement>
 		<dependencies>
@@ -278,6 +279,18 @@
 				</executions>
 			</plugin>
 
+<!-- 			<plugin> -->
+<!-- 				<groupId>com.helger.maven</groupId> -->
+<!-- 				<artifactId>ph-sch2xslt-maven-plugin</artifactId> -->
+<!-- 				<version>5.3.0</version> -->
+<!-- 				<executions> -->
+<!-- 					<execution> -->
+<!-- 						<goals> -->
+<!-- 							<goal>convert</goal> -->
+<!-- 						</goals> -->
+<!-- 					</execution> -->
+<!-- 				</executions> -->
+<!-- 			</plugin> -->
 		</plugins>
 
 	</build>
