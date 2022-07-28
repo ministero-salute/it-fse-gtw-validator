@@ -54,8 +54,8 @@ class PssSchematronTest extends AbstractTest {
 	@Autowired
 	@Qualifier("baseUrl")
 	private String baseUrl;
-
-
+ 
+	
 	@BeforeEach
 	void setup() { 
 		dropTerminology();
@@ -209,7 +209,7 @@ class PssSchematronTest extends AbstractTest {
 	void cdaOK() throws Exception {
 		byte[] schematron = FileUtility.getFileFromInternalResources("Files" + File.separator + "schematronPSS" + File.separator + "sch" + File.separator +"schematron_PSS_v2.4.sch");
 		String schematronAsString = new String(schematron);
-		String schematronWithReplacesUrl = schematronAsString.replace("###PLACEHOLDER_URL###", baseUrl);
+		String schematronWithReplacesUrl = schematronAsString.replace("###PLACEHOLDER_URL###", baseUrl.split(":")[0] + ":" + server.getWebServer().getPort());
 		IReadableResource readableResource = new ReadableResourceInputStream("schematron_PSS_v2.4.sch",new ByteArrayInputStream(schematronWithReplacesUrl.getBytes()));
 		SchematronResourceSCH schematronResource = new SchematronResourceSCH(readableResource);
 		Map<String,byte[]> cdasOK = getSchematronFiles("src\\test\\resources\\Files\\schematronPSS\\OK");
@@ -227,7 +227,7 @@ class PssSchematronTest extends AbstractTest {
 	void cdaError() throws Exception {
 		byte[] schematron = FileUtility.getFileFromInternalResources("Files" + File.separator + "schematronPSS" + File.separator + "sch" + File.separator +"schematron_PSS_v2.4.sch");
 		String schematronAsString = new String(schematron);
-		String schematronWithReplacesUrl = schematronAsString.replace("###PLACEHOLDER_URL###", baseUrl);
+		String schematronWithReplacesUrl = schematronAsString.replace("###PLACEHOLDER_URL###", baseUrl.split(":")[0] + ":" + server.getWebServer().getPort());
 		IReadableResource readableResource = new ReadableResourceInputStream("schematron_PSS_v2.4.sch",new ByteArrayInputStream(schematronWithReplacesUrl.getBytes()));
 		SchematronResourceSCH schematronResource = new SchematronResourceSCH(readableResource);
 
@@ -249,7 +249,7 @@ class PssSchematronTest extends AbstractTest {
 	void cdaOKXslt() throws Exception {
 		byte[] schematron = FileUtility.getFileFromInternalResources("Files" + File.separator + "schematronPSS" + File.separator + "xslt" + File.separator +"schematron_PSS_v2.4.xslt");
 		String schematronAsString = new String(schematron);
-		String schematronWithReplacesUrl = schematronAsString.replace("###PLACEHOLDER_URL###", baseUrl);
+		String schematronWithReplacesUrl = schematronAsString.replace("###PLACEHOLDER_URL###", baseUrl.split(":")[0] + ":" + server.getWebServer().getPort());
 		IReadableResource readableResource = new ReadableResourceInputStream("schematron_PSS_v2.4.xslt",new ByteArrayInputStream(schematronWithReplacesUrl.getBytes()));
 		SchematronResourceXSLT schematronResource = new SchematronResourceXSLT(readableResource);
 		Map<String,byte[]> cdasOK = getSchematronFiles("src\\test\\resources\\Files\\schematronPSS\\OK");
@@ -267,7 +267,7 @@ class PssSchematronTest extends AbstractTest {
 	void cdaErrorXslt() throws Exception {
 		byte[] schematron = FileUtility.getFileFromInternalResources("Files" + File.separator + "schematronPSS" + File.separator + "xslt" + File.separator +"schematron_PSS_v2.4.xslt");
 		String schematronAsString = new String(schematron);
-		String schematronWithReplacesUrl = schematronAsString.replace("###PLACEHOLDER_URL###", baseUrl);
+		String schematronWithReplacesUrl = schematronAsString.replace("###PLACEHOLDER_URL###", baseUrl.split(":")[0] + ":" + server.getWebServer().getPort());
 		IReadableResource readableResource = new ReadableResourceInputStream("schematron_PSS_v2.4.xslt",new ByteArrayInputStream(schematronWithReplacesUrl.getBytes()));
 		SchematronResourceXSLT schematronResource = new SchematronResourceXSLT(readableResource);
 		

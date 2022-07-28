@@ -42,6 +42,9 @@ public abstract class AbstractTest {
 
 	@Autowired
 	protected ProfileUtility profileUtility;
+	
+	@Autowired
+    protected ServletWebServerApplicationContext server;
 
     protected void clearConfigurationItems() {
         mongoTemplate.dropCollection(SchemaETY.class);
