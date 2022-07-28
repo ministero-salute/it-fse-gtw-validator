@@ -6,8 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext;
 import org.springframework.context.annotation.Bean;
+import org.springframework.core.env.Environment;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.web.client.RestTemplate;
 
@@ -18,9 +18,10 @@ import lombok.extern.slf4j.Slf4j;
 @EnableScheduling
 @Slf4j
 public class ValidatorApplication {
-
+ 
+	
 	@Autowired
-    private ServletWebServerApplicationContext server;
+	private Environment env;
 	
 	public static void main(String[] args) {
 		SpringApplication.run(ValidatorApplication.class, args);
@@ -37,8 +38,8 @@ public class ValidatorApplication {
 		String out = "";
 		try {
 			String ip = InetAddress.getLocalHost().getHostAddress();
-			Integer port = server.getWebServer().getPort();
-			out = String.format("%s:%d", ip, port);
+			String port = env.getProperty("server.port");
+			out = String.format("%s:%s", ip, port);
 		} catch (Exception ex) {
 			log.error("Error wile retrieve base url server : " , ex);
 			throw new BusinessException("Error wile retrieve base url server : " , ex);
