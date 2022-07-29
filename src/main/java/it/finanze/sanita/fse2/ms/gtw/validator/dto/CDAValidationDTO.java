@@ -12,7 +12,7 @@ import java.util.Map;
 @Data
 public class CDAValidationDTO {
 	
-	private String noRecordFound;
+	private String message;
 	
 	private CDAValidationStatusEnum status;
 	

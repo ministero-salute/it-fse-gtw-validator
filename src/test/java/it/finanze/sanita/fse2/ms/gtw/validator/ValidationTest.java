@@ -56,7 +56,7 @@ class ValidationTest extends AbstractTest {
 		log.info("Testing with version {}", version);
 		
 		CDAValidationDTO out = validationSRV.validateSyntactic(cda, "2.0.0");
-		assertNotNull(out.getNoRecordFound()); 
+		assertNotNull(out.getMessage()); 
 	}
 
 	@Test
@@ -68,11 +68,11 @@ class ValidationTest extends AbstractTest {
 		log.info("Testing with version {}", version);
 		CDAValidationDTO firstResult = validationSRV.validateSyntactic(cda, version);
 		assertEquals(CDAValidationStatusEnum.NOT_VALID, firstResult.getStatus(), "The validation should have been completed correctly and result as Invalid");
-		assertNull(firstResult.getNoRecordFound());
+		assertNull(firstResult.getMessage());
 	
 		CDAValidationDTO secondResult = validationSRV.validateSyntactic(cda, version);
 		assertEquals(CDAValidationStatusEnum.NOT_VALID, secondResult.getStatus(), "The validation should have been completed correctly and result as Invalid");
-		assertNull(firstResult.getNoRecordFound());
+		assertNull(firstResult.getMessage());
 	}
 
 	@Test
@@ -82,7 +82,7 @@ class ValidationTest extends AbstractTest {
 		final String version = "3.0.0";
 		
 		CDAValidationDTO res = validationSRV.validateSyntactic(cda, version);
-		assertEquals(String.format("Schema with version %s not found on database.", version), res.getNoRecordFound());
+		assertEquals(String.format("Schema with version %s not found on database.", version), res.getMessage());
 	}
 
 	@Test
