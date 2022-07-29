@@ -16,4 +16,5 @@ public abstract class AbstractRedisRepo {
 		return redisTemplate.opsForValue().get(key);
 	}
 
+	protected abstract String checkAndChangeKey(String key);
 }

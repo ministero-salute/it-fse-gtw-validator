@@ -1,22 +1,14 @@
 package it.finanze.sanita.fse2.ms.gtw.validator;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.BDDMockito.given;
-
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.RepeatedTest;
-import org.junit.jupiter.api.Test;
+import it.finanze.sanita.fse2.ms.gtw.validator.config.Constants;
+import it.finanze.sanita.fse2.ms.gtw.validator.config.properties.PropertiesCFG;
+import it.finanze.sanita.fse2.ms.gtw.validator.dto.VocabularyResultDTO;
+import it.finanze.sanita.fse2.ms.gtw.validator.repository.entity.TerminologyETY;
+import it.finanze.sanita.fse2.ms.gtw.validator.repository.mongo.ITerminologyRepo;
+import it.finanze.sanita.fse2.ms.gtw.validator.repository.redis.IVocabulariesRedisRepo;
+import it.finanze.sanita.fse2.ms.gtw.validator.service.IVocabulariesSRV;
+import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.api.*;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,14 +18,11 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.test.context.ActiveProfiles;
 
-import it.finanze.sanita.fse2.ms.gtw.validator.config.Constants;
-import it.finanze.sanita.fse2.ms.gtw.validator.config.properties.PropertiesCFG;
-import it.finanze.sanita.fse2.ms.gtw.validator.dto.VocabularyResultDTO;
-import it.finanze.sanita.fse2.ms.gtw.validator.repository.entity.TerminologyETY;
-import it.finanze.sanita.fse2.ms.gtw.validator.repository.mongo.IVocabulariesMongoRepo;
-import it.finanze.sanita.fse2.ms.gtw.validator.repository.redis.IVocabulariesRedisRepo;
-import it.finanze.sanita.fse2.ms.gtw.validator.service.IVocabulariesSRV;
-import lombok.extern.slf4j.Slf4j;
+import java.util.*;
+
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.BDDMockito.given;
 
 @Slf4j
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -48,7 +37,7 @@ class TerminologyValidationTest {
     IVocabulariesRedisRepo vocabulariesRedisRepo;
 
     @Autowired
-    IVocabulariesMongoRepo vocabulariesMongoRepo;
+    ITerminologyRepo vocabulariesMongoRepo;
 
     @MockBean
     PropertiesCFG propsCFG;
@@ -71,6 +60,8 @@ class TerminologyValidationTest {
 
         // A chunk of keys will exist only in Redis
         insertTerminologyOnRedis(redisTerminology);
+        // Add one test key for the sake of coverage
+        insertTerminologyOnRedis("test");
 
         // All keys should exist in Mongo
         insertTerminologyOnMongo(redisTerminology);
@@ -243,6 +234,10 @@ class TerminologyValidationTest {
 
     void insertTerminologyOnRedis(Map<String, List<String>> terminology) {
         vocabulariesRedisRepo.insertAll(terminology, propsCFG.getValidationTTL());
+    }
+
+    void insertTerminologyOnRedis(String key) {
+        vocabulariesRedisRepo.insert(key, propsCFG.getValidationTTL());
     }
 
     void insertTerminologyOnMongo(Map<String, List<String>> terminology) {

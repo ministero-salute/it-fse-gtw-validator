@@ -1,5 +1,4 @@
 {
-	"cda_type": "CDA_TYPE",
 	"name_schema": "NarrativeBlock.xsd",
 	"content_schema": {
 		"$binary": {

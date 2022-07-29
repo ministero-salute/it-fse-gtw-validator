@@ -1,13 +1,14 @@
 package it.finanze.sanita.fse2.ms.gtw.validator;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-
-import java.io.File;
-import java.nio.charset.StandardCharsets;
-
+import it.finanze.sanita.fse2.ms.gtw.validator.cda.CDAHelper;
+import it.finanze.sanita.fse2.ms.gtw.validator.config.Constants;
+import it.finanze.sanita.fse2.ms.gtw.validator.dto.CDAValidationDTO;
+import it.finanze.sanita.fse2.ms.gtw.validator.dto.SchematronValidationResultDTO;
+import it.finanze.sanita.fse2.ms.gtw.validator.dto.VocabularyResultDTO;
+import it.finanze.sanita.fse2.ms.gtw.validator.enums.CDAValidationStatusEnum;
+import it.finanze.sanita.fse2.ms.gtw.validator.exceptions.BusinessException;
+import it.finanze.sanita.fse2.ms.gtw.validator.service.facade.IValidationFacadeSRV;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,13 +16,11 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.test.context.ActiveProfiles;
 
-import it.finanze.sanita.fse2.ms.gtw.validator.config.Constants;
-import it.finanze.sanita.fse2.ms.gtw.validator.dto.CDAValidationDTO;
-import it.finanze.sanita.fse2.ms.gtw.validator.enums.CDAValidationStatusEnum;
-import it.finanze.sanita.fse2.ms.gtw.validator.exceptions.BusinessException;
-import it.finanze.sanita.fse2.ms.gtw.validator.service.facade.IValidationFacadeSRV;
-import it.finanze.sanita.fse2.ms.gtw.validator.utility.FileUtility;
-import lombok.extern.slf4j.Slf4j;
+import java.io.File;
+import java.nio.charset.StandardCharsets;
+
+import static it.finanze.sanita.fse2.ms.gtw.validator.utility.FileUtility.getFileFromInternalResources;
+import static org.junit.jupiter.api.Assertions.*;
 
 @Slf4j
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -37,12 +36,13 @@ class ValidationTest extends AbstractTest {
 		clearConfigurationItems();
 		insertSchema();
 		insertSchematron();
+		saveDictionaryFiles();
 	}
 
 	@Test
 	void shouldReturnValidWhenCDAIsValid() {
 
-		final String cda = new String(FileUtility.getFileFromInternalResources("Files" + File.separator + "cda.xml"), StandardCharsets.UTF_8);
+		final String cda = new String(getFileFromInternalResources("Files" + File.separator + "cda.xml"), StandardCharsets.UTF_8);
 		String version = "1.3";
 		
 		log.info("Testing with version {}", version);
@@ -78,7 +78,7 @@ class ValidationTest extends AbstractTest {
 	@Test
 	void shouldThrowBusinessExceptionWhenSchemaisNull() {
 
-		final String cda = new String(FileUtility.getFileFromInternalResources("Files" + File.separator + "cda.xml"), StandardCharsets.UTF_8);
+		final String cda = new String(getFileFromInternalResources("Files" + File.separator + "cda.xml"), StandardCharsets.UTF_8);
 		final String version = "3.0.0";
 		
 		CDAValidationDTO res = validationSRV.validateSyntactic(cda, version);
@@ -92,5 +92,37 @@ class ValidationTest extends AbstractTest {
 		final String version = "1.3";
 		
 		assertThrows(BusinessException.class, () -> validationSRV.validateSyntactic(cda, version));
+	}
+
+	@Test
+	void shouldReturnWhenCDASemanticIsInvalid() {
+		final String cda = new String(getFileFromInternalResources(
+			"Files\\cda_ok\\Esempio CDA_001.xml"
+		), StandardCharsets.UTF_8);
+		String version = "1.3";
+
+		log.info("Testing with version {}", version);
+		SchematronValidationResultDTO res = validationSRV.validateSemantic(cda, CDAHelper.extractInfo(cda));
+		assertTrue(res.getValidXML(), "The xml validation should have been completed correctly");
+		assertFalse(res.getValidSchematron(), "The schematron validation should be falsy");
+
+		res = validationSRV.validateSemantic(cda, CDAHelper.extractInfo(cda));
+		assertTrue(res.getValidXML(), "Repeating xml validation should have been completed correctly");
+		assertFalse(res.getValidSchematron(), "Repeating the schematron validation should be falsy");
+	}
+
+	@Test
+	void shouldReturnWhenCDAVocabularyIsInvalid() {
+		final String cda = new String(getFileFromInternalResources(
+			"Files\\cda_ok\\Esempio CDA_001.xml"
+		), StandardCharsets.UTF_8);
+		String version = "1.3";
+
+		log.info("Testing with version {}", version);
+		VocabularyResultDTO res = validationSRV.validateVocabularies(cda);
+		assertFalse(res.getValid(), "The vocabulary validation should be falsy");
+
+		res = validationSRV.validateVocabularies(cda);
+		assertFalse(res.getValid(), "Repeating vocabulary validation should be falsy");
 	}
 }

@@ -1,5 +1,4 @@
 {
-	"cda_type": "CDA_TYPE",
 	"name_schema": "POCD_MT000040UV02.xsd",
 	"content_schema": {
 		"$binary": {

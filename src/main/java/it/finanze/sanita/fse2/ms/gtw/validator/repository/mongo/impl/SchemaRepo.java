@@ -1,19 +1,16 @@
 package it.finanze.sanita.fse2.ms.gtw.validator.repository.mongo.impl;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import it.finanze.sanita.fse2.ms.gtw.validator.exceptions.BusinessException;
+import it.finanze.sanita.fse2.ms.gtw.validator.repository.entity.SchemaETY;
+import it.finanze.sanita.fse2.ms.gtw.validator.repository.mongo.ISchemaRepo;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Repository;
 
-import it.finanze.sanita.fse2.ms.gtw.validator.exceptions.BusinessException;
-import it.finanze.sanita.fse2.ms.gtw.validator.repository.entity.SchemaETY;
-import it.finanze.sanita.fse2.ms.gtw.validator.repository.mongo.ISchemaRepo;
-import lombok.extern.slf4j.Slf4j;
+import java.util.List;
 
 /**
  *	@author vincenzoingenito
@@ -22,7 +19,7 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Slf4j
 @Repository
-public class SchemaRepo extends AbstractMongoRepo<SchemaETY, String> implements ISchemaRepo {
+public class SchemaRepo implements ISchemaRepo {
 	
 	/**
 	 * Serial version uid.
@@ -35,7 +32,7 @@ public class SchemaRepo extends AbstractMongoRepo<SchemaETY, String> implements 
 
 	@Override
 	public List<SchemaETY> findChildrenXsd(final String version) {
-		List<SchemaETY> output = null;
+		List<SchemaETY> output;
 		try {
 			Query query = new Query();
 			query.addCriteria(Criteria.where("root_schema").is(false).and("type_id_extension").is(version));
@@ -49,7 +46,7 @@ public class SchemaRepo extends AbstractMongoRepo<SchemaETY, String> implements 
 	
 	@Override
 	public SchemaETY findFatherXsd(final String version) {
-		SchemaETY output = null;
+		SchemaETY output;
 		try {
 			Query query = new Query();
 			query.addCriteria(Criteria.where("root_schema").is(true).and("type_id_extension").is(version));
@@ -63,7 +60,7 @@ public class SchemaRepo extends AbstractMongoRepo<SchemaETY, String> implements 
 	
 	@Override
 	public SchemaETY findFatherLastVersionXsd() {
-		SchemaETY output = null;
+		SchemaETY output;
 		try {
 			Query query = new Query();
 			query.addCriteria(Criteria.where("root_schema").is(true));
@@ -77,7 +74,7 @@ public class SchemaRepo extends AbstractMongoRepo<SchemaETY, String> implements 
 
 	@Override
 	public SchemaETY findByNameAndVersion(final String nameSchema, final String version) {
-		SchemaETY output = null;
+		SchemaETY output;
 		try {
 			Query query = new Query();
 			query.addCriteria(Criteria.where("name_schema").is(nameSchema).and("type_id_extension").is(version));
@@ -91,10 +88,10 @@ public class SchemaRepo extends AbstractMongoRepo<SchemaETY, String> implements 
 
 	@Override
 	public List<SchemaETY> findByVersion(final String version) {
-		List<SchemaETY> output = new ArrayList<>();
+		List<SchemaETY> output;
 		try {
 			Query query = new Query();
-			query.addCriteria(Criteria.where("version").is(version));
+			query.addCriteria(Criteria.where("type_id_extension").is(version));
 			output = mongoTemplate.find(query, SchemaETY.class);
 		} catch(Exception ex) {
 			log.info("Error while running find by version : " , ex);

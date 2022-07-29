@@ -14,7 +14,7 @@ import lombok.NoArgsConstructor;
 /**
  * Model to save schema.
  */
-@Document(collection = "schema")
+@Document(collection = "#{@schemaBean}")
 @Data
 @NoArgsConstructor
 public class SchemaETY {

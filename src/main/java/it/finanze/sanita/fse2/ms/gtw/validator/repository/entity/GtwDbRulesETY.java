@@ -15,7 +15,7 @@ import lombok.Setter;
  */
 @Getter
 @Setter
-@Document(collection = "gtw-db-rules")
+@Document(collection = "#{@gtwDbRulesBean}")
 @Data 
 @Builder 
 @NoArgsConstructor

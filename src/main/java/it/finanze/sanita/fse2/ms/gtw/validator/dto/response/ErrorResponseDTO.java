@@ -2,7 +2,7 @@ package it.finanze.sanita.fse2.ms.gtw.validator.dto.response;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import it.finanze.sanita.fse2.ms.gtw.validator.dto.AbstractDTO;
-import lombok.Data;
+import lombok.*;
 
 
 /**

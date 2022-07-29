@@ -42,7 +42,23 @@ public final class Constants {
 		 * Configuration mongo repository path.
 		 */
 		public static final String REPOSITORY_MONGO = "it.sanita.fse.validator.repository";
-		 
+
+		public static final class Collections {
+
+			public static final String DICTIONARY = "dictionary";
+
+			public static final String GTW_DB_RULES = "gtw-db-rules";
+
+			public static final String SCHEMA = "schema";
+
+			public static final String SCHEMATRON = "schematron";
+
+			public static final String TERMINOLOGY = "terminology";
+
+			private Collections() {
+
+			}
+		}
 		
 		private ComponentScan() {
 			//This method is intentionally left blank.
@@ -52,6 +68,8 @@ public final class Constants {
  
 	public static final class Profile {
 		public static final String TEST = "test";
+
+		public static final String TEST_PREFIX = "test_";
 
 		/** 
 		 * Constructor.

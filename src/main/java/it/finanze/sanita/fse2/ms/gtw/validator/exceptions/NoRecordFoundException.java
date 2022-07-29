@@ -22,23 +22,4 @@ public class NoRecordFoundException extends RuntimeException {
 		super(msg);
 	}
 	
-	/**
-	 * Costruttore.
-	 * 
-	 * @param msg	messaggio
-	 * @param e		eccezione
-	 */
-	public NoRecordFoundException(final String msg, final Exception e) {
-		super(msg, e);
-	}
-	
-	/**
-	 * Costruttore.
-	 * 
-	 * @param e	eccezione.
-	 */
-	public NoRecordFoundException(final Exception e) {
-		super(e);
-	}
-	
 }

@@ -1,17 +1,15 @@
 package it.finanze.sanita.fse2.ms.gtw.validator.dto;
 
+import it.finanze.sanita.fse2.ms.gtw.validator.cda.ValidationResult;
+import it.finanze.sanita.fse2.ms.gtw.validator.enums.CDASeverityViolationEnum;
+import it.finanze.sanita.fse2.ms.gtw.validator.enums.CDAValidationStatusEnum;
+import lombok.Data;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import it.finanze.sanita.fse2.ms.gtw.validator.cda.ValidationResult;
-import it.finanze.sanita.fse2.ms.gtw.validator.enums.CDASeverityViolationEnum;
-import it.finanze.sanita.fse2.ms.gtw.validator.enums.CDAValidationStatusEnum;
-import lombok.Getter;
-import lombok.Setter;
-
-@Getter
-@Setter
+@Data
 public class CDAValidationDTO {
 	
 	private String noRecordFound;

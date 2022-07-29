@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 import it.finanze.sanita.fse2.ms.gtw.validator.config.properties.PropertiesCFG;
 import it.finanze.sanita.fse2.ms.gtw.validator.dto.VocabularyResultDTO;
 import it.finanze.sanita.fse2.ms.gtw.validator.exceptions.BusinessException;
-import it.finanze.sanita.fse2.ms.gtw.validator.repository.mongo.IVocabulariesMongoRepo;
+import it.finanze.sanita.fse2.ms.gtw.validator.repository.mongo.ITerminologyRepo;
 import it.finanze.sanita.fse2.ms.gtw.validator.repository.redis.IVocabulariesRedisRepo;
 import it.finanze.sanita.fse2.ms.gtw.validator.service.IVocabulariesSRV;
 import lombok.extern.slf4j.Slf4j;
@@ -29,7 +29,7 @@ public class VocabulariesSRV implements IVocabulariesSRV {
     private IVocabulariesRedisRepo vocabulariesRedisRepo;
 
     @Autowired
-    private IVocabulariesMongoRepo vocabulariesMongoRepo;
+    private ITerminologyRepo vocabulariesMongoRepo;
 
     @Autowired
     private PropertiesCFG propsCFG;
@@ -103,4 +103,15 @@ public class VocabulariesSRV implements IVocabulariesSRV {
         return new VocabularyResultDTO(exists, vocaboliInesistenti);
     }
 
+    @Override
+    public boolean existBySystemAndCode(final String system, final String code) {
+    	boolean output = false;
+    	try {
+    		output = vocabulariesMongoRepo.existBySystemAndCode(system, code);
+    	} catch(Exception ex) {
+    		log.error("Error while execute find by system and code of vocabularies : " , ex);
+    		throw new BusinessException("Error while execute find by system and code of vocabularies : " , ex);
+    	} 
+    	return output;
+    }
 }

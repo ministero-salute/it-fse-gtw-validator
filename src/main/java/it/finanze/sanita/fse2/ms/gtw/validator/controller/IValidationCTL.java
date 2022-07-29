@@ -3,6 +3,7 @@ package it.finanze.sanita.fse2.ms.gtw.validator.controller;
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -22,7 +23,7 @@ import it.finanze.sanita.fse2.ms.gtw.validator.dto.response.ValidationResponseDT
  *
  *	Controller validation.
  */
-@RequestMapping(path = "/v1.0.0")
+@RequestMapping(path = "/v1")
 @Tag(name = "Servizio validazione documenti")
 public interface IValidationCTL {
 
@@ -34,4 +35,12 @@ public interface IValidationCTL {
 							@ApiResponse(responseCode = "500", description = "Internal Server Error", content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE)) })
 	ValidationResponseDTO validation(@RequestBody ValidationRequestDTO requestBody, HttpServletRequest request);
 
+	@GetMapping(value = "/validate-terminology/{system}")
+	@ApiResponse(content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = void.class)))
+	@Operation(summary = "Validazione terminology", description = "Endpoint invocato dallo schematron per la validazione terminology.")
+	@ApiResponses(value = { @ApiResponse(responseCode = "200", description = "Eventi recuperati", content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = void.class))),
+			@ApiResponse(responseCode = "400", description = "Bad Request", content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = void.class))),
+			@ApiResponse(responseCode = "404", description = "Record not found", content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = void.class))),
+			@ApiResponse(responseCode = "500", description = "Internal Server Error", content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE, schema = @Schema(implementation = void.class))) })
+	String validateTerminology(String system, String code,HttpServletRequest request);
 }

@@ -6,6 +6,7 @@ import java.util.Map;
 import javax.xml.validation.Validator;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import com.helger.schematron.ISchematronResource;
@@ -21,7 +22,6 @@ import it.finanze.sanita.fse2.ms.gtw.validator.exceptions.BusinessException;
 import it.finanze.sanita.fse2.ms.gtw.validator.exceptions.NoRecordFoundException;
 import it.finanze.sanita.fse2.ms.gtw.validator.repository.entity.SchemaETY;
 import it.finanze.sanita.fse2.ms.gtw.validator.repository.entity.SchematronETY;
-import it.finanze.sanita.fse2.ms.gtw.validator.repository.mongo.IDictionaryRepo;
 import it.finanze.sanita.fse2.ms.gtw.validator.repository.mongo.ISchemaRepo;
 import it.finanze.sanita.fse2.ms.gtw.validator.repository.mongo.ISchematronRepo;
 import it.finanze.sanita.fse2.ms.gtw.validator.service.ISchemaSRV;
@@ -29,6 +29,7 @@ import it.finanze.sanita.fse2.ms.gtw.validator.service.IValidationSRV;
 import it.finanze.sanita.fse2.ms.gtw.validator.service.IVocabulariesSRV;
 import it.finanze.sanita.fse2.ms.gtw.validator.singleton.SchemaValidatorSingleton;
 import it.finanze.sanita.fse2.ms.gtw.validator.singleton.SchematronValidatorSingleton;
+import it.finanze.sanita.fse2.ms.gtw.validator.utility.StringUtility;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -46,9 +47,11 @@ public class ValidationSRV implements IValidationSRV {
     
     @Autowired
     private ISchemaSRV schemaSRV;
+     
     
     @Autowired
-    private IDictionaryRepo dictionaryRepo;
+	@Qualifier("baseUrl")
+	private String baseUrl;
     
     @Override
     public VocabularyResultDTO validateVocabularies(final String cda) {
@@ -88,7 +91,7 @@ public class ValidationSRV implements IValidationSRV {
     			validator = instance.getValidator();
     		} 	
 
-    		ValidationResult validationResult = schemaSRV.validateXsd(validator, cda);
+    		ValidationResult validationResult = schemaSRV.validateXsd(validator, StringUtility.sanitizeCDA(cda));
     		if(validationResult!=null && !validationResult.isSuccess()) {
     			out  = new CDAValidationDTO(validationResult);
     		}
@@ -115,7 +118,7 @@ public class ValidationSRV implements IValidationSRV {
 				if(singleton!=null) {
 					SchematronETY majorVersion = schematronRepo.findBySystemAndVersion(singleton.getTemplateIdRoot(), singleton.getTemplateIdExtension());
 					if(majorVersion!=null) {
-						singleton = SchematronValidatorSingleton.getInstance(true, majorVersion, dictionaryRepo);
+						singleton = SchematronValidatorSingleton.getInstance(true, majorVersion, baseUrl);
 					}
 					schematronResource = singleton.getSchematronResource();
 				}
@@ -123,7 +126,10 @@ public class ValidationSRV implements IValidationSRV {
 			
 			if(schematronResource==null) {
 				SchematronETY schematronETY = schematronRepo.findByTemplateIdRoot(extractedInfoDTO.getTemplateIdSchematron());
-				SchematronValidatorSingleton schematron = SchematronValidatorSingleton.getInstance(false,schematronETY,dictionaryRepo);
+				if (schematronETY == null) {
+					throw new NoRecordFoundException(String.format("Schematron with template id root %s not found on database.", extractedInfoDTO.getTemplateIdSchematron()));
+				}
+				SchematronValidatorSingleton schematron = SchematronValidatorSingleton.getInstance(false,schematronETY,baseUrl);
 				schematronResource = schematron.getSchematronResource();
 			}
 			

@@ -31,12 +31,6 @@ public class ResponseDTO extends AbstractDTO {
 
 	/**
 	 * Instantiates a new response DTO.
-	 */
-	public ResponseDTO() {
-	}
-
-	/**
-	 * Instantiates a new response DTO.
 	 *
 	 * @param traceInfo the trace info
 	 */

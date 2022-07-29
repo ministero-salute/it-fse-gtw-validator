@@ -1,8 +1,9 @@
 package it.finanze.sanita.fse2.ms.gtw.validator.repository.mongo.impl;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import it.finanze.sanita.fse2.ms.gtw.validator.exceptions.BusinessException;
+import it.finanze.sanita.fse2.ms.gtw.validator.repository.entity.SchematronETY;
+import it.finanze.sanita.fse2.ms.gtw.validator.repository.mongo.ISchematronRepo;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -10,10 +11,7 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Repository;
 
-import it.finanze.sanita.fse2.ms.gtw.validator.exceptions.BusinessException;
-import it.finanze.sanita.fse2.ms.gtw.validator.repository.entity.SchematronETY;
-import it.finanze.sanita.fse2.ms.gtw.validator.repository.mongo.ISchematronRepo;
-import lombok.extern.slf4j.Slf4j;
+import java.util.List;
 
 /**
  *	@author vincenzoingenito
@@ -22,7 +20,7 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Slf4j
 @Repository
-public class SchematronRepo extends AbstractMongoRepo<SchematronETY, String> implements ISchematronRepo {
+public class SchematronRepo implements ISchematronRepo {
 	
 	/**
 	 * Serial version uid. 
@@ -34,7 +32,7 @@ public class SchematronRepo extends AbstractMongoRepo<SchematronETY, String> imp
 	
 	@Override
 	public SchematronETY findByTemplateIdRoot(final String templateIdRoot) {
-		SchematronETY output = null;
+		SchematronETY output;
 		try {
 			Query query = new Query();
 			query.addCriteria(Criteria.where("template_id_root").is(templateIdRoot));
@@ -49,7 +47,7 @@ public class SchematronRepo extends AbstractMongoRepo<SchematronETY, String> imp
 	
 	@Override
 	public List<SchematronETY> findChildrenBySystem(final String system) {
-		List<SchematronETY> output = new ArrayList<>();
+		List<SchematronETY> output;
 		try {
 			Query query = new Query();
 			query.addCriteria(Criteria.where("cda_code_system").is(system).
@@ -66,7 +64,7 @@ public class SchematronRepo extends AbstractMongoRepo<SchematronETY, String> imp
 	
 	@Override
 	public SchematronETY findByName(final String name) {
-		SchematronETY output = null;
+		SchematronETY output;
 		try {
 			Query query = new Query();
 			query.addCriteria(Criteria.where("name_schematron").is(name));
@@ -81,7 +79,7 @@ public class SchematronRepo extends AbstractMongoRepo<SchematronETY, String> imp
 	
 	@Override
 	public SchematronETY findBySystemAndVersion(final String system, final String version) {
-		SchematronETY output = null;
+		SchematronETY output;
 		try {
 			Query query = new Query();
 			query.addCriteria(Criteria.where("template_id_root").is(system).

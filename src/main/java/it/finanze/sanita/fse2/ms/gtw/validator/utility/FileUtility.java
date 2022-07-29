@@ -1,13 +1,14 @@
 package it.finanze.sanita.fse2.ms.gtw.validator.utility;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-
 import it.finanze.sanita.fse2.ms.gtw.validator.exceptions.BusinessException;
 import lombok.extern.slf4j.Slf4j;
+
+import java.io.BufferedOutputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 
 /**
  * The Class FileUtils.
@@ -30,26 +31,6 @@ public final class FileUtility {
 	private FileUtility() {
 	}
 
-
-	/**
-	 * Method to get the file's content from fs.
-	 *
-	 * @param filename	filename
-	 * @return			content
-	 */
-	public static byte[] getFileFromFS(final String filename) {
-		byte[] b = null;
-		try {
-			File f = new File(filename);
-			InputStream is = new FileInputStream(f);
-			b = getByteFromInputStream(is);
-			is.close();
-		} catch (Exception e) {
-			log.error("FILE UTILS getFileFromFS(): Errore in fase di recupero del contenuto di un file da file system. ", e);
-		}
-		return b;
-	}
-
 	/**
 	 * Metodo per il recupero del contenuto di un file dalla folder interna "/src/main/resources".
 	 *
@@ -62,7 +43,9 @@ public final class FileUtility {
 		try {
 			is = Thread.currentThread().getContextClassLoader().getResourceAsStream(filename);
 			b = getByteFromInputStream(is);
-			is.close();
+			if (is != null) {
+				is.close();
+			}
 		} catch (Exception e) {
 			log.error("FILE UTILS getFileFromInternalResources(): Errore in fase di recupero del contenuto di un file dalla folder '/src/main/resources'. ", e);
 		} finally {
@@ -101,6 +84,21 @@ public final class FileUtility {
 			throw new BusinessException(e);
 		}
 		return b;
+	}
+	
+	/**
+	 * Metodo per il salvataggio di un file sul filesystem (tipicamente usato in fase di test).
+	 *
+	 * @param content	contenuto da salvare
+	 * @param fileName	path del file
+	 */
+	public static void saveToFile(final byte[] content, final String fileName) {
+		try (BufferedOutputStream bs = new BufferedOutputStream(new FileOutputStream(new File(fileName)))){
+		    bs.write(content);
+		} catch (Exception ex) {
+			log.error("Errore durante il salvataggio del file : " , ex);
+			throw new BusinessException("Errore durante il salvataggio del file : " , ex);
+		} 
 	}
 
 }
