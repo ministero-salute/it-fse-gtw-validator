@@ -105,4 +105,8 @@ public final class StringUtility {
 		}
 		return output;
 	}
+	
+	public static String sanitizeCDA(String cda) {
+		return cda.replaceAll("<!DOCTYPE[^<>]*(?:<!ENTITY[^<>]*>[^<>]*)+>", "");
+	}
  }
