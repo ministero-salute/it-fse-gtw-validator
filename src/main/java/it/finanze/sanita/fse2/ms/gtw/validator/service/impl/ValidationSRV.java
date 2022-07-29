@@ -29,6 +29,7 @@ import it.finanze.sanita.fse2.ms.gtw.validator.service.IValidationSRV;
 import it.finanze.sanita.fse2.ms.gtw.validator.service.IVocabulariesSRV;
 import it.finanze.sanita.fse2.ms.gtw.validator.singleton.SchemaValidatorSingleton;
 import it.finanze.sanita.fse2.ms.gtw.validator.singleton.SchematronValidatorSingleton;
+import it.finanze.sanita.fse2.ms.gtw.validator.utility.StringUtility;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -90,7 +91,7 @@ public class ValidationSRV implements IValidationSRV {
     			validator = instance.getValidator();
     		} 	
 
-    		ValidationResult validationResult = schemaSRV.validateXsd(validator, cda);
+    		ValidationResult validationResult = schemaSRV.validateXsd(validator, StringUtility.sanitizeCDA(cda));
     		if(validationResult!=null && !validationResult.isSuccess()) {
     			out  = new CDAValidationDTO(validationResult);
     		}

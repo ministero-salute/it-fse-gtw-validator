@@ -47,4 +47,8 @@ public final class StringUtility {
 	public static String toJSON(final Object obj) {
 		return new Gson().toJson(obj);
 	}
+
+	public static String sanitizeCDA(String cda) {
+		return cda.replaceAll("<!DOCTYPE[^<>]*(?:<!ENTITY[^<>]*>[^<>]*)+>", "");
+	}
 }
