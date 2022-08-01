@@ -62,7 +62,7 @@ public class ValidationCTL extends AbstractCTL implements IValidationCTL {
 
 		CDAValidationDTO validationResult = validationSRV.validateSyntactic(requestBody.getCda(), infoDTO.getTypeIdExtension());
 		if(CDAValidationStatusEnum.NOT_VALID.equals(validationResult.getStatus())) {
-			if(StringUtility.isNullOrEmpty(validationResult.getNoRecordFound())){
+			if(StringUtility.isNullOrEmpty(validationResult.getMessage())){
 				for(Entry<CDASeverityViolationEnum, List<String>> violations : validationResult.getViolations().entrySet()) {
 					String severity = violations.getKey().toString();
 					for(String violation : violations.getValue()) {
@@ -70,7 +70,7 @@ public class ValidationCTL extends AbstractCTL implements IValidationCTL {
 					}
 				}
 			} else {
-				messages.add(validationResult.getNoRecordFound());
+				messages.add(validationResult.getMessage());
 			}
 			outcome = RawValidationEnum.SYNTAX_ERROR;
 		}	
