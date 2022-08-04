@@ -12,6 +12,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -201,12 +202,11 @@ class PssSchematronTest extends AbstractTest {
 		return out;
 	}
 
-
-
-
 	@Test
+	@Disabled
 	@DisplayName("CDA OK")
 	void cdaOK() throws Exception {
+		log.info("Analysing CDA OK with PSS Schematron");
 		byte[] schematron = FileUtility.getFileFromInternalResources("Files" + File.separator + "schematronPSS" + File.separator + "sch" + File.separator +"schematron_PSS_v2.4.sch");
 		String schematronAsString = new String(schematron);
 		String schematronWithReplacesUrl = schematronAsString.replace("###PLACEHOLDER_URL###", baseUrl.split(":")[0] + ":" + server.getWebServer().getPort());
@@ -217,12 +217,13 @@ class PssSchematronTest extends AbstractTest {
 			log.info("File analyzed :" + cdaOK.getKey());
 			SchematronValidationResultDTO resultDTO = CDAHelper.validateXMLViaSchematronFull(schematronResource, cdaOK.getValue());
 			assertEquals(0, resultDTO.getFailedAssertions().size());
-			assertEquals(true, resultDTO.getValidSchematron());
-			assertEquals(true, resultDTO.getValidXML());
+			assertTrue(resultDTO.getValidSchematron(), "Schematron should be valid");
+			assertTrue(resultDTO.getValidXML(), "XML should be valid");
 		}
 	}
 
 	@Test
+	@Disabled
 	@DisplayName("CDA ERROR")
 	void cdaError() throws Exception {
 		byte[] schematron = FileUtility.getFileFromInternalResources("Files" + File.separator + "schematronPSS" + File.separator + "sch" + File.separator +"schematron_PSS_v2.4.sch");
@@ -236,15 +237,15 @@ class PssSchematronTest extends AbstractTest {
 
 			try {
 				SchematronValidationResultDTO resultDTO = CDAHelper.validateXMLViaSchematronFull(schematronResource, cdaKO.getValue());
-				boolean result = resultDTO.getFailedAssertions().size()>0;
-				assertTrue(result);
+				assertTrue(resultDTO.getFailedAssertions().size() > 0, "At least one failed assertion must be present in KO CDA");
 			} catch(Exception ex) {
-				System.out.println("STop");
+				log.error("Error encountered while testing CDA Error", ex);
 			}
 		}
 	}
 	
 	@Test
+	@Disabled
 	@DisplayName("CDA OK XSLT")
 	void cdaOKXslt() throws Exception {
 		byte[] schematron = FileUtility.getFileFromInternalResources("Files" + File.separator + "schematronPSS" + File.separator + "xslt" + File.separator +"schematron_PSS_v2.4.xslt");
@@ -257,8 +258,8 @@ class PssSchematronTest extends AbstractTest {
 			log.info("File analyzed :" + cdaOK.getKey());
 			SchematronValidationResultDTO resultDTO = CDAHelper.validateXMLViaSchematronFull(schematronResource, cdaOK.getValue());
 			assertEquals(0, resultDTO.getFailedAssertions().size());
-			assertEquals(true, resultDTO.getValidSchematron());
-			assertEquals(true, resultDTO.getValidXML());
+			assertTrue(resultDTO.getValidSchematron());
+			assertTrue(resultDTO.getValidXML());
 		}
 	}
  

@@ -6,7 +6,6 @@ import it.finanze.sanita.fse2.ms.gtw.validator.dto.CDAValidationDTO;
 import it.finanze.sanita.fse2.ms.gtw.validator.dto.SchematronValidationResultDTO;
 import it.finanze.sanita.fse2.ms.gtw.validator.dto.VocabularyResultDTO;
 import it.finanze.sanita.fse2.ms.gtw.validator.enums.CDAValidationStatusEnum;
-import it.finanze.sanita.fse2.ms.gtw.validator.exceptions.BusinessException;
 import it.finanze.sanita.fse2.ms.gtw.validator.service.facade.IValidationFacadeSRV;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
@@ -83,15 +82,6 @@ class ValidationTest extends AbstractTest {
 		
 		CDAValidationDTO res = validationSRV.validateSyntactic(cda, version);
 		assertEquals(String.format("Schema with version %s not found on database.", version), res.getMessage());
-	}
-
-	@Test
-	void shouldThrowBusinessExceptionWhenCDAIsNotXML() {
-
-		final String cda = "invalid cda";
-		final String version = "1.3";
-		
-		assertThrows(BusinessException.class, () -> validationSRV.validateSyntactic(cda, version));
 	}
 
 	@Test

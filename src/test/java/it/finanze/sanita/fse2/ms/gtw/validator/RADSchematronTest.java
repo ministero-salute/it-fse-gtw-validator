@@ -227,8 +227,8 @@ class RADSchematronTest extends AbstractTest {
 			log.info("File analyzed :" + cdaOK.getKey());
 			SchematronValidationResultDTO resultDTO = CDAHelper.validateXMLViaSchematronFull(schematronResource, cdaOK.getValue());
 			assertEquals(0, resultDTO.getFailedAssertions().size());
-			assertEquals(true, resultDTO.getValidSchematron());
-			assertEquals(true, resultDTO.getValidXML());
+			assertTrue(resultDTO.getValidSchematron());
+			assertTrue(resultDTO.getValidXML());
 		}
 	}
 	
