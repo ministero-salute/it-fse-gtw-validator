@@ -10,10 +10,12 @@ import com.helger.commons.io.resource.inmemory.ReadableResourceInputStream;
 import com.helger.schematron.ISchematronResource;
 import com.helger.schematron.xslt.SchematronResourceXSLT;
 
+import it.finanze.sanita.fse2.ms.gtw.validator.exceptions.BusinessException;
 import it.finanze.sanita.fse2.ms.gtw.validator.repository.entity.SchematronETY;
 import it.finanze.sanita.fse2.ms.gtw.validator.utility.StringUtility;
+import lombok.extern.slf4j.Slf4j;
 
-
+@Slf4j
 public final class SchematronValidatorSingleton {
 
 	private static Map<String,SchematronValidatorSingleton> mapInstance;
@@ -41,13 +43,19 @@ public final class SchematronValidatorSingleton {
 			if (getInstanceCondition) {
 				String schematronAsString = new String(inSchematronETY.getContentSchematron().getData());
 				String schematronWithReplacesUrl = schematronAsString.replace("###PLACEHOLDER_URL###", requestURL);
-				IReadableResource readableResource = new ReadableResourceInputStream(StringUtility.generateUUID() , 
-						new ByteArrayInputStream(schematronWithReplacesUrl.getBytes()));
-				SchematronResourceXSLT schematronResourceXslt = new SchematronResourceXSLT(readableResource);
-				instance = new SchematronValidatorSingleton(inSchematronETY.getTemplateIdRoot(),inSchematronETY.getTemplateIdExtension(),
-						inSchematronETY.getLastUpdateDate(), schematronResourceXslt);
-
-				mapInstance.put(instance.getTemplateIdRoot(), instance);
+				try (ByteArrayInputStream schematronBytes = new ByteArrayInputStream(schematronWithReplacesUrl.getBytes());) {
+					
+					IReadableResource readableResource = new ReadableResourceInputStream(StringUtility.generateUUID(), schematronBytes);
+					SchematronResourceXSLT schematronResourceXslt = new SchematronResourceXSLT(readableResource);
+					instance = new SchematronValidatorSingleton(inSchematronETY.getTemplateIdRoot(), 
+						inSchematronETY.getTemplateIdExtension(), inSchematronETY.getLastUpdateDate(), schematronResourceXslt);
+	
+					mapInstance.put(instance.getTemplateIdRoot(), instance);
+				} catch (Exception e) {
+					log.error("Error encountered while updating schematron singleton", e);
+					throw new BusinessException("Error encountered while updating schematron singleton", e);
+				}
+				
 			}
 		}
 

@@ -30,7 +30,9 @@ public class ResourceResolver  implements LSResourceResolver {
 		try {
 			String nameFile = StringUtility.getFilename(systemId);
 			SchemaETY schema = schemaRepo.findByNameAndVersion(nameFile, version);
-			output = new Input(publicId, schema.getNameSchema(), new ByteArrayInputStream(schema.getContentSchema().getData())); 
+			try (ByteArrayInputStream bytes = new ByteArrayInputStream(schema.getContentSchema().getData())) {
+				output = new Input(publicId, schema.getNameSchema(), bytes); 
+			}
 		} catch(Exception ex) {
 			log.error("Error while resolve resource" , ex);
 			throw new BusinessException("Error while resolve resource" , ex);	
