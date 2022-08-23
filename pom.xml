@@ -28,7 +28,11 @@
 		<sonar.exclusions>
 			src/main/java/it/finanze/sanita/fse2/ms/gtw/validator/config/OpenApiCFG.java,
 			src/main/java/it/finanze/sanita/fse2/ms/gtw/validator/logging/ElasticLoggerHelper.java,
-			src/main/java/it/finanze/sanita/fse2/ms/gtw/validator/enums/**/*.*
+			src/main/java/it/finanze/sanita/fse2/ms/gtw/validator/enums/**/*.*,
+			src/main/java/it/finanze/sanita/fse2/ms/gtw/validator/service/impl/UpdateSingletonSRV.java,
+			src/main/java/it/finanze/sanita/fse2/ms/gtw/validator/controller/impl/SingletonInspectorCTL.java,
+			src/main/java/it/finanze/sanita/fse2/ms/gtw/validator/xmlresolver/**/*.*,
+			src/main/java/it/finanze/sanita/fse2/ms/gtw/validator/repository/CollectionNaming.java
 		</sonar.exclusions>
 	</properties>
 
@@ -206,6 +210,10 @@
 						<exclude>src/main/java/it/finanze/sanita/fse2/ms/gtw/validator/config/OpenApiCFG.java</exclude>
 						<exclude>src/main/java/it/finanze/sanita/fse2/ms/gtw/validator/logging/ElasticLoggerHelper.java</exclude>
 						<exclude>src/main/java/it/finanze/sanita/fse2/ms/gtw/validator/enums/**/*.*</exclude>
+						<exclude>src/main/java/it/finanze/sanita/fse2/ms/gtw/validator/service/impl/UpdateSingletonSRV.java</exclude>
+						<exclude>src/main/java/it/finanze/sanita/fse2/ms/gtw/validator/controller/impl/SingletonInspectorCTL.java</exclude>
+						<exclude>src/main/java/it/finanze/sanita/fse2/ms/gtw/validator/xmlresolver/**/*.*</exclude>
+						<exclude>src/main/java/it/finanze/sanita/fse2/ms/gtw/validator/repository/CollectionNaming.java</exclude>
 					</excludes>
 				</configuration>
 				<executions>
