@@ -83,23 +83,7 @@ class ValidationTest extends AbstractTest {
 		CDAValidationDTO res = validationSRV.validateSyntactic(cda, version);
 		assertEquals(String.format("Schema with version %s not found on database.", version), res.getMessage());
 	}
-
-	@Test
-	void shouldReturnWhenCDASemanticIsInvalid() {
-		final String cda = new String(getFileFromInternalResources(
-			"Files\\cda_ok\\Esempio CDA_001.xml"
-		), StandardCharsets.UTF_8);
-		String version = "1.3";
-
-		log.info("Testing with version {}", version);
-		SchematronValidationResultDTO res = validationSRV.validateSemantic(cda, CDAHelper.extractInfo(cda));
-		assertTrue(res.getValidXML(), "The xml validation should have been completed correctly");
-		assertFalse(res.getValidSchematron(), "The schematron validation should be falsy");
-
-		res = validationSRV.validateSemantic(cda, CDAHelper.extractInfo(cda));
-		assertTrue(res.getValidXML(), "Repeating xml validation should have been completed correctly");
-		assertFalse(res.getValidSchematron(), "Repeating the schematron validation should be falsy");
-	}
+ 
 
 	@Test
 	void shouldReturnWhenCDAVocabularyIsInvalid() {
