@@ -46,25 +46,5 @@ class ValidationControllerTest extends AbstractTest {
     @Autowired
     private IValidationCTL controller;
 
-    @Test
-    void validate() {
-        ValidationResponseDTO res = controller.validation(new ValidationRequestDTO(
-            new String(
-                getFileFromInternalResources(TEST_FILE.toString()),
-                StandardCharsets.UTF_8
-            )
-        ), new MockHttpServletRequest());
-        assertEquals(RawValidationEnum.SYNTAX_ERROR, res.getResult().getResult());
-
-        res = controller.validation(new ValidationRequestDTO(
-            new String(
-                getFileFromInternalResources(TEST_FILE_ERR.toString()),
-                StandardCharsets.UTF_8
-            )
-        ), new MockHttpServletRequest());
-
-        assertEquals(RawValidationEnum.VOCABULARY_ERROR, res.getResult().getResult());
-
-    }
-
+    
 }
