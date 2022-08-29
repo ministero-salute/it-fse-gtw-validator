@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.nio.charset.StandardCharsets;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -26,12 +27,18 @@ import it.finanze.sanita.fse2.ms.gtw.validator.singleton.SchemaValidatorSingleto
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ComponentScan(basePackages = { Constants.ComponentScan.BASE })
 @ActiveProfiles(Constants.Profile.TEST)
-public class SchemaSRVTest {
+public class SchemaSRVTest extends AbstractTest {
 
     @Autowired
     private ISchemaSRV service;
     @Autowired
     private ISchemaRepo repository;
+
+    @BeforeEach
+    void setup() {
+        clearConfigurationItems();
+        insertSchema();
+    }
 
     @Test
     void validationObjectTest() throws SAXException {

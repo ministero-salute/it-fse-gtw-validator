@@ -85,20 +85,4 @@ public final class FileUtility {
 		}
 		return b;
 	}
-	
-	/**
-	 * Metodo per il salvataggio di un file sul filesystem (tipicamente usato in fase di test).
-	 *
-	 * @param content	contenuto da salvare
-	 * @param fileName	path del file
-	 */
-	public static void saveToFile(final byte[] content, final String fileName) {
-		try (BufferedOutputStream bs = new BufferedOutputStream(new FileOutputStream(new File(fileName)))){
-		    bs.write(content);
-		} catch (Exception ex) {
-			log.error("Errore durante il salvataggio del file : " , ex);
-			throw new BusinessException("Errore durante il salvataggio del file : " , ex);
-		} 
-	}
-
 }

@@ -203,7 +203,7 @@ class SchemaTest extends AbstractTest {
 		@Override
 		public void run() {
 			log.info("[THREAD - " + id + "] STARTING ACTION");
-			System.out.println("Version : " + version);
+			log.info("Version : " + version);
 			validationSRV.validateSyntactic(cda, version);
 			log.info("[THREAD - " + id + "] STOP ACTION");
 

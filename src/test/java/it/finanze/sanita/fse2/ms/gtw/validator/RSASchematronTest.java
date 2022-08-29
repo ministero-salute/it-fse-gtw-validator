@@ -176,15 +176,17 @@ class RSASchematronTest extends AbstractTest {
 		byte[] schematron = FileUtility.getFileFromInternalResources("Files" + File.separator + "schematronRSA" + File.separator + "sch" + File.separator +"schematron_RSA_v6.sch");
 		String schematronAsString = new String(schematron);
 		String schematronWithReplacesUrl = schematronAsString.replace("###PLACEHOLDER_URL###", baseUrl.split(":")[0] + ":" + server.getWebServer().getPort());
-		IReadableResource readableResource = new ReadableResourceInputStream("schematron_RSA_v6.sch",new ByteArrayInputStream(schematronWithReplacesUrl.getBytes()));
-		SchematronResourceSCH schematronResource = new SchematronResourceSCH(readableResource);
-		Map<String,byte[]> cdasOK = getSchematronFiles("src\\test\\resources\\Files\\schematronRSA\\OK");
-		for(Entry<String, byte[]> cdaOK : cdasOK.entrySet()) {
-			log.info("File analyzed :" + cdaOK.getKey());
-			SchematronValidationResultDTO resultDTO = CDAHelper.validateXMLViaSchematronFull(schematronResource, cdaOK.getValue());
-			assertEquals(0, resultDTO.getFailedAssertions().size());
-			assertEquals(true, resultDTO.getValidSchematron());
-			assertEquals(true, resultDTO.getValidXML());
+		try (ByteArrayInputStream bytes = new ByteArrayInputStream(schematronWithReplacesUrl.getBytes())) {
+			IReadableResource readableResource = new ReadableResourceInputStream("schematron_RSA_v6.sch", bytes);
+			SchematronResourceSCH schematronResource = new SchematronResourceSCH(readableResource);
+			Map<String,byte[]> cdasOK = getSchematronFiles("src\\test\\resources\\Files\\schematronRSA\\OK");
+			for(Entry<String, byte[]> cdaOK : cdasOK.entrySet()) {
+				log.info("File analyzed :" + cdaOK.getKey());
+				SchematronValidationResultDTO resultDTO = CDAHelper.validateXMLViaSchematronFull(schematronResource, cdaOK.getValue());
+				assertEquals(0, resultDTO.getFailedAssertions().size());
+				assertEquals(true, resultDTO.getValidSchematron());
+				assertEquals(true, resultDTO.getValidXML());
+			}
 		}
 	}
 	 
@@ -194,15 +196,17 @@ class RSASchematronTest extends AbstractTest {
 		byte[] schematron = FileUtility.getFileFromInternalResources("Files" + File.separator + "schematronRSA" + File.separator + "sch" + File.separator +"schematron_RSA_v6.sch");
 		String schematronAsString = new String(schematron);
 		String schematronWithReplacesUrl = schematronAsString.replace("###PLACEHOLDER_URL###", baseUrl.split(":")[0] + ":" + server.getWebServer().getPort());
-		IReadableResource readableResource = new ReadableResourceInputStream("schematron_RSA_v6.sch",new ByteArrayInputStream(schematronWithReplacesUrl.getBytes()));
-		SchematronResourceSCH schematronResource = new SchematronResourceSCH(readableResource);
-		
-		Map<String,byte[]> cdasKO = getSchematronFiles("src\\test\\resources\\Files\\schematronRSA\\ERROR");
-		for(Entry<String, byte[]> cdaKO : cdasKO.entrySet()) {
+		try (ByteArrayInputStream bytes = new ByteArrayInputStream(schematronWithReplacesUrl.getBytes())) {
+			IReadableResource readableResource = new ReadableResourceInputStream("schematron_RSA_v6.sch", bytes);
+			SchematronResourceSCH schematronResource = new SchematronResourceSCH(readableResource);
 			
-			SchematronValidationResultDTO resultDTO = CDAHelper.validateXMLViaSchematronFull(schematronResource, cdaKO.getValue());
-			boolean result = resultDTO.getFailedAssertions().size()>0;
-			assertTrue(result);
+			Map<String,byte[]> cdasKO = getSchematronFiles("src\\test\\resources\\Files\\schematronRSA\\ERROR");
+			for(Entry<String, byte[]> cdaKO : cdasKO.entrySet()) {
+				
+				SchematronValidationResultDTO resultDTO = CDAHelper.validateXMLViaSchematronFull(schematronResource, cdaKO.getValue());
+				boolean result = resultDTO.getFailedAssertions().size()>0;
+				assertTrue(result);
+			}
 		}
 	}
 	
@@ -212,16 +216,19 @@ class RSASchematronTest extends AbstractTest {
 		byte[] schematron = FileUtility.getFileFromInternalResources("Files" + File.separator + "schematronRSA" + File.separator + "xslt" + File.separator +"schematron_RSA_v6.xslt");
 		String schematronAsString = new String(schematron);
 		String schematronWithReplacesUrl = schematronAsString.replace("###PLACEHOLDER_URL###", baseUrl.split(":")[0] + ":" + server.getWebServer().getPort());
-		IReadableResource readableResource = new ReadableResourceInputStream("schematron_RSA_v6.xslt",new ByteArrayInputStream(schematronWithReplacesUrl.getBytes()));
-		SchematronResourceXSLT schematronResource = new SchematronResourceXSLT(readableResource);
-		Map<String,byte[]> cdasOK = getSchematronFiles("src\\test\\resources\\Files\\schematronRSA\\OK");
-		for(Entry<String, byte[]> cdaOK : cdasOK.entrySet()) {
-			log.info("File analyzed :" + cdaOK.getKey());
-			SchematronValidationResultDTO resultDTO = CDAHelper.validateXMLViaSchematronFull(schematronResource, cdaOK.getValue());
-			assertEquals(0, resultDTO.getFailedAssertions().size());
-			assertEquals(true, resultDTO.getValidSchematron());
-			assertEquals(true, resultDTO.getValidXML());
+		try (ByteArrayInputStream bytes = new ByteArrayInputStream(schematronWithReplacesUrl.getBytes())) {
+			IReadableResource readableResource = new ReadableResourceInputStream("schematron_RSA_v6.xslt", bytes);
+			SchematronResourceXSLT schematronResource = new SchematronResourceXSLT(readableResource);
+			Map<String,byte[]> cdasOK = getSchematronFiles("src\\test\\resources\\Files\\schematronRSA\\OK");
+			for(Entry<String, byte[]> cdaOK : cdasOK.entrySet()) {
+				log.info("File analyzed :" + cdaOK.getKey());
+				SchematronValidationResultDTO resultDTO = CDAHelper.validateXMLViaSchematronFull(schematronResource, cdaOK.getValue());
+				assertEquals(0, resultDTO.getFailedAssertions().size());
+				assertEquals(true, resultDTO.getValidSchematron());
+				assertEquals(true, resultDTO.getValidXML());
+			}
 		}
+		
 	}
  
 	@Test
@@ -230,15 +237,16 @@ class RSASchematronTest extends AbstractTest {
 		byte[] schematron = FileUtility.getFileFromInternalResources("Files" + File.separator + "schematronRSA" + File.separator + "xslt" + File.separator +"schematron_RSA_v6.xslt");
 		String schematronAsString = new String(schematron);
 		String schematronWithReplacesUrl = schematronAsString.replace("###PLACEHOLDER_URL###", baseUrl.split(":")[0] + ":" + server.getWebServer().getPort());
-		IReadableResource readableResource = new ReadableResourceInputStream("schematron_RSA_v6.xslt",new ByteArrayInputStream(schematronWithReplacesUrl.getBytes()));
-		SchematronResourceXSLT schematronResource = new SchematronResourceXSLT(readableResource);
-		
-		Map<String,byte[]> cdasKO = getSchematronFiles("src\\test\\resources\\Files\\schematronRSA\\ERROR");
-		for(Entry<String, byte[]> cdaKO : cdasKO.entrySet()) {
-			SchematronValidationResultDTO resultDTO = CDAHelper.validateXMLViaSchematronFull(schematronResource, cdaKO.getValue());
-			boolean result = resultDTO.getFailedAssertions().size()>0;
-			assertTrue(result);
-		 
+		try (ByteArrayInputStream bytes = new ByteArrayInputStream(schematronWithReplacesUrl.getBytes())) {
+			IReadableResource readableResource = new ReadableResourceInputStream("schematron_RSA_v6.xslt", bytes);
+			SchematronResourceXSLT schematronResource = new SchematronResourceXSLT(readableResource);
+			
+			Map<String,byte[]> cdasKO = getSchematronFiles("src\\test\\resources\\Files\\schematronRSA\\ERROR");
+			for(Entry<String, byte[]> cdaKO : cdasKO.entrySet()) {
+				SchematronValidationResultDTO resultDTO = CDAHelper.validateXMLViaSchematronFull(schematronResource, cdaKO.getValue());
+				boolean result = resultDTO.getFailedAssertions().size()>0;
+				assertTrue(result);
+			}
 		}
 	}
 	 

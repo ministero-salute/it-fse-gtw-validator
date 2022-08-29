@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map.Entry;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -55,7 +56,7 @@ public class ValidationCTL extends AbstractCTL implements IValidationCTL {
 
 		List<String> messages = new ArrayList<>();
 		Validation.notNull(requestBody.getCda());
-
+		
 		RawValidationEnum outcome = RawValidationEnum.OK;
 
 		ExtractedInfoDTO infoDTO = CDAHelper.extractInfo(requestBody.getCda());

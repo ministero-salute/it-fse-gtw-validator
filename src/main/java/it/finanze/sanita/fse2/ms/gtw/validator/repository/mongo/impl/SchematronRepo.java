@@ -28,7 +28,7 @@ public class SchematronRepo implements ISchematronRepo {
 	private static final long serialVersionUID = 8948529146857638945L;
 
 	@Autowired
-	private MongoTemplate mongoTemplate;
+	private transient MongoTemplate mongoTemplate;
 	
 	@Override
 	public SchematronETY findByTemplateIdRoot(final String templateIdRoot) {
@@ -44,39 +44,7 @@ public class SchematronRepo implements ISchematronRepo {
 		}
 		return output;
 	}
-	
-	@Override
-	public List<SchematronETY> findChildrenBySystem(final String system) {
-		List<SchematronETY> output;
-		try {
-			Query query = new Query();
-			query.addCriteria(Criteria.where("cda_code_system").is(system).
-					and("root_schematron").is(false));
-			query.with(Sort.by(Sort.Direction.DESC, "template_id_extension"));
-			output = mongoTemplate.find(query, SchematronETY.class);
-		} catch(Exception ex) {
-			log.error("Error while executing find by version on schematron ETY", ex);
-			throw new BusinessException("Error while executing find by version on schematron ETY", ex);
-		}
-		return output;
-	}
- 
-	
-	@Override
-	public SchematronETY findByName(final String name) {
-		SchematronETY output;
-		try {
-			Query query = new Query();
-			query.addCriteria(Criteria.where("name_schematron").is(name));
-			output = mongoTemplate.findOne(query, SchematronETY.class);
-		} catch(Exception ex) {
-			log.error("Error while executing find by name on schematron ETY", ex);
-			throw new BusinessException("Error while executing find by name on schematron ETY", ex);
-		}
-		return output;
-	}
-	
-	
+
 	@Override
 	public SchematronETY findBySystemAndVersion(final String system, final String version) {
 		SchematronETY output;

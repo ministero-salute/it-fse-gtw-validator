@@ -1,7 +1,6 @@
 package it.finanze.sanita.fse2.ms.gtw.validator;
 
 import com.mongodb.MongoException;
-import it.finanze.sanita.fse2.ms.gtw.validator.AbstractTest;
 import it.finanze.sanita.fse2.ms.gtw.validator.config.Constants;
 import it.finanze.sanita.fse2.ms.gtw.validator.exceptions.BusinessException;
 import it.finanze.sanita.fse2.ms.gtw.validator.repository.entity.SchemaETY;
