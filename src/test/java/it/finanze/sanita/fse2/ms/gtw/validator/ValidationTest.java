@@ -1,13 +1,14 @@
 package it.finanze.sanita.fse2.ms.gtw.validator;
 
-import it.finanze.sanita.fse2.ms.gtw.validator.cda.CDAHelper;
-import it.finanze.sanita.fse2.ms.gtw.validator.config.Constants;
-import it.finanze.sanita.fse2.ms.gtw.validator.dto.CDAValidationDTO;
-import it.finanze.sanita.fse2.ms.gtw.validator.dto.SchematronValidationResultDTO;
-import it.finanze.sanita.fse2.ms.gtw.validator.dto.VocabularyResultDTO;
-import it.finanze.sanita.fse2.ms.gtw.validator.enums.CDAValidationStatusEnum;
-import it.finanze.sanita.fse2.ms.gtw.validator.service.facade.IValidationFacadeSRV;
-import lombok.extern.slf4j.Slf4j;
+import static it.finanze.sanita.fse2.ms.gtw.validator.utility.FileUtility.getFileFromInternalResources;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+
+import java.io.File;
+import java.nio.charset.StandardCharsets;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,11 +16,12 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.test.context.ActiveProfiles;
 
-import java.io.File;
-import java.nio.charset.StandardCharsets;
-
-import static it.finanze.sanita.fse2.ms.gtw.validator.utility.FileUtility.getFileFromInternalResources;
-import static org.junit.jupiter.api.Assertions.*;
+import it.finanze.sanita.fse2.ms.gtw.validator.config.Constants;
+import it.finanze.sanita.fse2.ms.gtw.validator.dto.CDAValidationDTO;
+import it.finanze.sanita.fse2.ms.gtw.validator.dto.VocabularyResultDTO;
+import it.finanze.sanita.fse2.ms.gtw.validator.enums.CDAValidationStatusEnum;
+import it.finanze.sanita.fse2.ms.gtw.validator.service.facade.IValidationFacadeSRV;
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
