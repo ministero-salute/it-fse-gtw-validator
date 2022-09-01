@@ -35,16 +35,16 @@ public class AuditSRV implements IAuditSRV {
 	public void saveAuditReqRes(HttpServletRequest httpServletRequest,Object body) {
 		try {
 			String requestBody = new String(((ContentCachingRequestWrapper) httpServletRequest).getContentAsByteArray());
-			Map<String, Object> auditMap = new HashMap<>();
-			auditMap.put("servizio", httpServletRequest.getRequestURI());
-			auditMap.put("start_time", httpServletRequest.getAttribute("START_TIME"));
-			auditMap.put("end_time", new Date());
-			auditMap.put("request", StringUtility.fromJSON(requestBody, Object.class));
-			auditMap.put("response", body);
-			auditMap.put("jwt_issuer", httpServletRequest.getAttribute("JWT_ISSUER"));
-			httpServletRequest.removeAttribute("JWT_ISSUER");
-
-			auditServiceRepo.save(auditMap);
+			
+			if (!httpServletRequest.getRequestURI().contains("validate-terminology")) {
+				Map<String, Object> auditMap = new HashMap<>();
+				auditMap.put("servizio", httpServletRequest.getRequestURI());
+				auditMap.put("start_time", httpServletRequest.getAttribute("START_TIME"));
+				auditMap.put("end_time", new Date());
+				auditMap.put("request", StringUtility.fromJSON(requestBody, Object.class));
+				auditMap.put("response", body);
+				auditServiceRepo.save(auditMap);
+			}
 		} catch(Exception ex) {
 			log.error("Errore nel salvataggio dell'audit : ", ex);
 			throw new BusinessException("Errore nel salvataggio dell'audit : ", ex);
