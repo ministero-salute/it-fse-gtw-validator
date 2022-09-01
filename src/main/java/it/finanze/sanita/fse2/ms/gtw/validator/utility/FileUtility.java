@@ -1,14 +1,11 @@
 package it.finanze.sanita.fse2.ms.gtw.validator.utility;
 
-import it.finanze.sanita.fse2.ms.gtw.validator.exceptions.BusinessException;
-import lombok.extern.slf4j.Slf4j;
-
-import java.io.BufferedOutputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+
+import it.finanze.sanita.fse2.ms.gtw.validator.exceptions.BusinessException;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * The Class FileUtils.

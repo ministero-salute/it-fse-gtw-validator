@@ -3,15 +3,12 @@ package it.finanze.sanita.fse2.ms.gtw.validator;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import org.junit.jupiter.api.BeforeEach;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.junit.jupiter.api.BeforeEach; 
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.test.context.ActiveProfiles;
 
-import it.finanze.sanita.fse2.ms.gtw.validator.config.Constants;
-import it.finanze.sanita.fse2.ms.gtw.validator.controller.IValidationCTL;
-
+import it.finanze.sanita.fse2.ms.gtw.validator.config.Constants; 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ComponentScan(basePackages = { Constants.ComponentScan.BASE })
 @ActiveProfiles(Constants.Profile.TEST)
@@ -35,8 +32,4 @@ class ValidationControllerTest extends AbstractTest {
         "Esempio CDA_002.xml"
     );
 
-    @Autowired
-    private IValidationCTL controller;
-
-    
 }
