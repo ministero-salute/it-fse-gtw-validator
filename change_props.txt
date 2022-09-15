@@ -1,0 +1,6 @@
+15/09/2022
+
+Removed:
+log.elastic.level=trace
+log.elastic-search.enable=false
+log.logstash.url=127.0.0.1:5000
