@@ -213,7 +213,6 @@ class RADSchematronTest extends AbstractTest {
 		return out;
 	}
 	
-	
 	@Test
 	@DisplayName("CDA OK")
 	void cdaOK() throws Exception {

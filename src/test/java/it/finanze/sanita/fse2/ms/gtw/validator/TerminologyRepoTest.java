@@ -4,6 +4,8 @@ import com.mongodb.MongoException;
 import it.finanze.sanita.fse2.ms.gtw.validator.config.Constants;
 import it.finanze.sanita.fse2.ms.gtw.validator.exceptions.BusinessException;
 import it.finanze.sanita.fse2.ms.gtw.validator.repository.mongo.ITerminologyRepo;
+
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +37,7 @@ public class TerminologyRepoTest {
     private MongoTemplate mongo;
 
     @Test
+    @Disabled
     void findAllCodesExistsTest() {
         // Retrieve
         List<String> res = repository.findAllCodesExists(TEST_SYSTEM_ID, TEST_SYS_CODES);
