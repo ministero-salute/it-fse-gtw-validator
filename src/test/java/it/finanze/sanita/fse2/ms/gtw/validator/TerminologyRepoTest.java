@@ -4,8 +4,6 @@ import com.mongodb.MongoException;
 import it.finanze.sanita.fse2.ms.gtw.validator.config.Constants;
 import it.finanze.sanita.fse2.ms.gtw.validator.exceptions.BusinessException;
 import it.finanze.sanita.fse2.ms.gtw.validator.repository.mongo.ITerminologyRepo;
-
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +18,7 @@ import java.util.List;
 
 import static com.mongodb.assertions.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.when;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -37,12 +36,11 @@ public class TerminologyRepoTest {
     private MongoTemplate mongo;
 
     @Test
-    @Disabled
     void findAllCodesExistsTest() {
         // Retrieve
         List<String> res = repository.findAllCodesExists(TEST_SYSTEM_ID, TEST_SYS_CODES);
         // Assertions
-        assertFalse(!res.isEmpty());
+        assertTrue(res.isEmpty());
         // Exceptions
         when(mongo).thenThrow(new MongoException("Test"));
         assertThrows(BusinessException.class, () -> repository.findAllCodesExists(TEST_SYSTEM_ID, TEST_SYS_CODES));
