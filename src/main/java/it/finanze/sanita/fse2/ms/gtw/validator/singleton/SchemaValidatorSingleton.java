@@ -14,6 +14,7 @@ import javax.xml.validation.Validator;
 
 import it.finanze.sanita.fse2.ms.gtw.validator.cda.ValidationResult;
 import it.finanze.sanita.fse2.ms.gtw.validator.exceptions.BusinessException;
+import it.finanze.sanita.fse2.ms.gtw.validator.exceptions.NoRecordFoundException;
 import it.finanze.sanita.fse2.ms.gtw.validator.repository.entity.SchemaETY;
 import it.finanze.sanita.fse2.ms.gtw.validator.repository.mongo.ISchemaRepo;
 import it.finanze.sanita.fse2.ms.gtw.validator.xmlresolver.ResourceResolver;
@@ -65,10 +66,9 @@ public final class SchemaValidatorSingleton {
 						validator.setErrorHandler(result);
 						instance = new SchemaValidatorSingleton(inSchema.getTypeIdExtension(), validator, inSchema.getLastUpdateDate());
 						mapInstance.put(instance.getTypeIdExtension(), instance);
-					} catch (Exception e) {
-						log.error("Error while retrieving and updating Singleton for Schema Validation", e);
-						throw new BusinessException("Error while retrieving and updating Singleton for Schema Validation", e);
 					}
+				} catch (NoRecordFoundException ne) {
+					throw ne;
 				} catch(Exception ex) {
 					log.error("Error while retrieving and updating Singleton for Schema Validation", ex);
 					throw new BusinessException("Error while retrieving and updating Singleton for Schema Validation", ex);
