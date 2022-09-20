@@ -2,7 +2,6 @@ package it.finanze.sanita.fse2.ms.gtw.validator.cda;
 
 import java.io.ByteArrayInputStream;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -70,15 +69,13 @@ public class CDAHelper {
 		boolean validST = aResSCH.isValidSchematron();
 		boolean validXML = true;
 		if (validST) {
-			long start = new Date().getTime();
 			
 			SchematronOutputType type = null;
 			try (ByteArrayInputStream iStream = new ByteArrayInputStream(xml)){
 				type = aResSCH.applySchematronValidationToSVRL(new StreamSource(iStream));
 			}
 			List<Object> asserts = type.getActivePatternAndFiredRuleAndFailedAssert();
-			long delta = new Date().getTime() - start;
-			log.info("TIME : " + delta);
+			
 			for (Object object : asserts) {
 				if (object instanceof FailedAssert) {
 					validXML = false;

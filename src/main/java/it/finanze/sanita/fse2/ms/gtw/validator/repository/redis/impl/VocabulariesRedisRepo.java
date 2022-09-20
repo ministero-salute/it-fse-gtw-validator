@@ -88,7 +88,7 @@ public class VocabulariesRedisRepo extends AbstractRedisRepo implements IVocabul
             Map<String, String> redisEntries = buildRedisMap(terminology);
             redisTemplate.opsForValue().multiSetIfAbsent(buildRedisMap(terminology));
             if (validationTTL != null) {
-                log.info("Updating Redis TTL of {} keys", redisEntries.keySet().size());
+                log.debug("Updating Redis TTL of {} keys", redisEntries.keySet().size());
                 for (String key : redisEntries.keySet()) {
                     redisTemplate.expire(key, validationTTL, TimeUnit.SECONDS);
                 }

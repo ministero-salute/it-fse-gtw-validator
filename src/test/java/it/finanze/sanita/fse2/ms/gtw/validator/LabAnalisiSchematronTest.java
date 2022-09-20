@@ -84,7 +84,7 @@ class LabAnalisiSchematronTest extends AbstractTest {
 			SchematronResourceSCH schematronResource = new SchematronResourceSCH(readableResource);
 			Map<String,byte[]> cdasOK = getSchematronFiles("src\\test\\resources\\Files\\schematronFSE\\OK");
 			for(Entry<String, byte[]> cdaOK : cdasOK.entrySet()) {
-				log.info("File analyzed :" + cdaOK.getKey());
+				log.debug("File analyzed :" + cdaOK.getKey());
 				SchematronValidationResultDTO resultDTO = CDAHelper.validateXMLViaSchematronFull(schematronResource, cdaOK.getValue());
 				assertEquals(0, resultDTO.getFailedAssertions().size());
 				assertEquals(true, resultDTO.getValidSchematron());
@@ -124,7 +124,7 @@ class LabAnalisiSchematronTest extends AbstractTest {
 			SchematronResourceXSLT schematronResource = new SchematronResourceXSLT(readableResource);
 			Map<String,byte[]> cdasOK = getSchematronFiles("src\\test\\resources\\Files\\schematronFSE\\OK");
 			for(Entry<String, byte[]> cdaOK : cdasOK.entrySet()) {
-				log.info("File analyzed :" + cdaOK.getKey());
+				log.debug("File analyzed :" + cdaOK.getKey());
 				SchematronValidationResultDTO resultDTO = CDAHelper.validateXMLViaSchematronFull(schematronResource, cdaOK.getValue());
 				assertEquals(0, resultDTO.getFailedAssertions().size());
 				assertEquals(true, resultDTO.getValidSchematron());

@@ -91,7 +91,7 @@ public class ValidationCTL extends AbstractCTL implements IValidationCTL {
 			if(RawValidationEnum.OK.equals(outcome)) {
 				VocabularyResultDTO result =  validationSRV.validateVocabularies(requestBody.getCda());
 				if(Boolean.TRUE.equals(result.getValid())) {
-					log.info("Validation completed successfully!");
+					log.debug("Validation completed successfully!");
 				} else {
 					outcome = RawValidationEnum.VOCABULARY_ERROR;
 					messages.add("Almeno uno dei seguenti vocaboli non sono censiti : " + result.getMessage());
@@ -106,10 +106,9 @@ public class ValidationCTL extends AbstractCTL implements IValidationCTL {
 	@Override
 	public String validateTerminology(@PathVariable(required = true,name = "system") final String system,
 			 final String code, HttpServletRequest request) {
-		log.info(String.format("Validation of system: %s and code: %s ", system , code));
+		log.debug(String.format("Validation of system: %s and code: %s ", system , code));
 		boolean esito = vocabularySRV.existBySystemAndCode(system, code);
 		return String.format("<result>%s</result>", esito);
 	}
-	 
 	
 }

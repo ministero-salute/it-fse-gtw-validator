@@ -13,13 +13,11 @@ import brave.Tracer;
 import it.finanze.sanita.fse2.ms.gtw.validator.dto.response.LogTraceInfoDTO;
 import it.finanze.sanita.fse2.ms.gtw.validator.dto.response.ResponseDTO;
 import it.finanze.sanita.fse2.ms.gtw.validator.exceptions.NoRecordFoundException;
-import lombok.extern.slf4j.Slf4j;
 
 /**
  *	Exceptions Handler.
  */
 @ControllerAdvice
-@Slf4j
 public class ControllerExceptionHandler extends ResponseEntityExceptionHandler {
 
 	
@@ -39,7 +37,6 @@ public class ControllerExceptionHandler extends ResponseEntityExceptionHandler {
 	 */
     @ExceptionHandler(value = {NoRecordFoundException.class})
     protected ResponseEntity<ResponseDTO> handleValidationException(final Exception ex, final WebRequest request) {
-    	log.info("HANDLER handleValidationException");
     	return handleException(ex, HttpStatus.BAD_REQUEST);
     }
 
@@ -52,7 +49,6 @@ public class ControllerExceptionHandler extends ResponseEntityExceptionHandler {
 	 */
     @ExceptionHandler(value = {Exception.class})
     protected ResponseEntity<ResponseDTO> handleGenericException(final Exception ex, final WebRequest request) {
-    	log.info("HANDLER handleGenericException");
     	return handleException(ex, HttpStatus.INTERNAL_SERVER_ERROR);
     }
  
