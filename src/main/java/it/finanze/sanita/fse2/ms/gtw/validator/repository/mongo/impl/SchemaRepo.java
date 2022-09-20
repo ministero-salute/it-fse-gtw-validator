@@ -1,16 +1,20 @@
 package it.finanze.sanita.fse2.ms.gtw.validator.repository.mongo.impl;
 
-import it.finanze.sanita.fse2.ms.gtw.validator.exceptions.BusinessException;
-import it.finanze.sanita.fse2.ms.gtw.validator.repository.entity.SchemaETY;
-import it.finanze.sanita.fse2.ms.gtw.validator.repository.mongo.ISchemaRepo;
-import lombok.extern.slf4j.Slf4j;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
+import it.finanze.sanita.fse2.ms.gtw.validator.exceptions.BusinessException;
+import it.finanze.sanita.fse2.ms.gtw.validator.repository.entity.SchemaETY;
+import it.finanze.sanita.fse2.ms.gtw.validator.repository.mongo.ISchemaRepo;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  *	@author vincenzoingenito
@@ -29,6 +33,21 @@ public class SchemaRepo implements ISchemaRepo {
 	@Autowired
 	private MongoTemplate mongoTemplate;
     
+	
+	@Override
+	public List<SchemaETY> findByExtensionAndLastUpdateDate(final String typeIdExtension, final Date lastUpdateDate) {
+		List<SchemaETY> output = new ArrayList<>();
+		try {
+			Query query = new Query();
+			query.addCriteria(Criteria.where("type_id_extension").is(typeIdExtension).and("last_update_date").gt(lastUpdateDate));
+			query.with(Sort.by(Sort.Direction.DESC, "last_update_date"));
+			output = mongoTemplate.find(query, SchemaETY.class);
+		} catch(Exception ex) {
+			log.error("Error while perform findByExtensionAndLastUpdateDate" , ex);
+			throw new BusinessException("Error while perform findByExtensionAndLastUpdateDate" , ex);
+		}
+		return output;
+	}
 
 	@Override
 	public List<SchemaETY> findChildrenXsd(final String version) {
@@ -96,6 +115,21 @@ public class SchemaRepo implements ISchemaRepo {
 		} catch(Exception ex) {
 			log.info("Error while running find by version : " , ex);
 			throw new BusinessException("Error while running find by version : " , ex);
+		}
+		return output;
+	}
+
+	@Override
+	public SchemaETY findGtLastUpdate(final String typeIdExtension) {
+		SchemaETY output;
+		try {
+			Query query = new Query();
+			query.addCriteria(Criteria.where("type_id_extension").is(typeIdExtension));
+			query.with(Sort.by(Sort.Direction.DESC, "last_update_date"));
+			output = mongoTemplate.findOne(query, SchemaETY.class);
+		} catch(Exception ex) {
+			log.error("Error while perform findGtLastUpdate" , ex);
+			throw new BusinessException("Error while perform findGtLastUpdate" , ex);
 		}
 		return output;
 	}

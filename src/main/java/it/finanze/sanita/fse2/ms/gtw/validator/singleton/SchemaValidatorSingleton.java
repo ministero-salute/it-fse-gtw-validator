@@ -43,7 +43,8 @@ public final class SchemaValidatorSingleton {
 		dataUltimoAggiornamento = inDataUltimoAggiornamento;
 	}
 
-	public static SchemaValidatorSingleton getInstance(final boolean forceUpdate, final SchemaETY inSchema, final ISchemaRepo schemaRepo) {
+	public static SchemaValidatorSingleton getInstance(final boolean forceUpdate, final SchemaETY inSchema, final ISchemaRepo schemaRepo,
+			Date lastUpdatedDate) {
 		if (mapInstance != null && !mapInstance.isEmpty()) {
 			instance = mapInstance.get(inSchema.getTypeIdExtension());
 		} else {
@@ -64,7 +65,7 @@ public final class SchemaValidatorSingleton {
 						Schema schema = factory.newSchema(schemaFile);
 						Validator validator = schema.newValidator();
 						validator.setErrorHandler(result);
-						instance = new SchemaValidatorSingleton(inSchema.getTypeIdExtension(), validator, inSchema.getLastUpdateDate());
+						instance = new SchemaValidatorSingleton(inSchema.getTypeIdExtension(), validator, lastUpdatedDate/*inSchema.getLastUpdateDate()*/);
 						mapInstance.put(instance.getTypeIdExtension(), instance);
 					}
 				} catch (NoRecordFoundException ne) {

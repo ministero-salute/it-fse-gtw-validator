@@ -86,8 +86,10 @@ public class ValidationSRV implements IValidationSRV {
     			if (schema == null) {
     				throw new NoRecordFoundException(String.format("Schema with version %s not found on database.", typeIdExtension));
     			}
+    			
+    			SchemaETY lastUpdated = schemaRepo.findGtLastUpdate(typeIdExtension);
 
-    			SchemaValidatorSingleton instance = SchemaValidatorSingleton.getInstance(false, schema, schemaRepo);
+    			SchemaValidatorSingleton instance = SchemaValidatorSingleton.getInstance(false, schema, schemaRepo,lastUpdated.getLastUpdateDate());
     			validator = instance.getValidator();
     		} 	
 

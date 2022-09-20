@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.nio.charset.StandardCharsets;
+import java.util.Date;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -54,7 +55,7 @@ public class SchemaSRVTest extends AbstractTest {
             throw new NoRecordFoundException(String.format("Schema with version %s not found on database.", version));
         }
 
-        SchemaValidatorSingleton instance = SchemaValidatorSingleton.getInstance(false, schema, repository);
+        SchemaValidatorSingleton instance = SchemaValidatorSingleton.getInstance(false, schema, repository, new Date());
         ValidationResult res = service.validateXsd(instance.getValidator(), cda);
 
         assertTrue(res.isSuccess());
