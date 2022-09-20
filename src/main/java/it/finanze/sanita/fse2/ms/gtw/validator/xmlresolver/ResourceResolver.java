@@ -6,6 +6,7 @@ import org.w3c.dom.ls.LSInput;
 import org.w3c.dom.ls.LSResourceResolver;
 
 import it.finanze.sanita.fse2.ms.gtw.validator.exceptions.BusinessException;
+import it.finanze.sanita.fse2.ms.gtw.validator.exceptions.NoRecordFoundException;
 import it.finanze.sanita.fse2.ms.gtw.validator.repository.entity.SchemaETY;
 import it.finanze.sanita.fse2.ms.gtw.validator.repository.mongo.ISchemaRepo;
 import it.finanze.sanita.fse2.ms.gtw.validator.utility.StringUtility;
@@ -30,9 +31,14 @@ public class ResourceResolver  implements LSResourceResolver {
 		try {
 			String nameFile = StringUtility.getFilename(systemId);
 			SchemaETY schema = schemaRepo.findByNameAndVersion(nameFile, version);
+			if (schema == null) {
+				throw new NoRecordFoundException(String.format("Schema with name %s not found", nameFile));
+			}
 			try (ByteArrayInputStream bytes = new ByteArrayInputStream(schema.getContentSchema().getData())) {
 				output = new Input(publicId, schema.getNameSchema(), bytes); 
 			}
+		} catch (NoRecordFoundException e) {
+			throw e;
 		} catch(Exception ex) {
 			log.error("Error while resolve resource" , ex);
 			throw new BusinessException("Error while resolve resource" , ex);	

@@ -28,10 +28,10 @@ public class UpdateSingletonSRV implements IUpdateSingletonSRV {
 
 	@Autowired
 	private ISchemaRepo schemaRepo;
-	
+
 	@Autowired
 	private ISchematronRepo schematronRepo;
-	
+
 	@Override
 	public void updateSingletonInstance(final String requestURL) {
 		updateSchemaSingleton();
@@ -49,25 +49,16 @@ public class UpdateSingletonSRV implements IUpdateSingletonSRV {
 					mapSchema.remove(searchKey);
 				} else {
 					log.debug("Father schema found on DB... check update time");
-					boolean isDifferent = checkDataUltimoAggiornamento(map.getValue().getDataUltimoAggiornamento(), father.getLastUpdateDate());
-					if(Boolean.FALSE.equals(isDifferent)) {
-						List<SchemaETY> children = schemaRepo.findChildrenXsd(map.getKey());
-						for(SchemaETY ety : children) {
-							isDifferent = checkDataUltimoAggiornamento(map.getValue().getDataUltimoAggiornamento(), ety.getLastUpdateDate());
-							if(Boolean.TRUE.equals(isDifferent)) {
-								break;
-							}
-						}
-					}
+					List<SchemaETY> schemas = schemaRepo.findByExtensionAndLastUpdateDate(map.getKey(), map.getValue().getDataUltimoAggiornamento());
 
-					if(Boolean.TRUE.equals(isDifferent)) {
-						SchemaValidatorSingleton.getInstance(true, father, schemaRepo);
+					if(!schemas.isEmpty()) {
+						SchemaValidatorSingleton.getInstance(true, father, schemaRepo, schemas.get(0).getLastUpdateDate());
 					}
 				}
 			}
 		}
 	}
-	
+
 	private void updateSchematronSingleton(final String requestUrl) {
 		Map<String,SchematronValidatorSingleton> mapSchema = SchematronValidatorSingleton.getMapInstance();
 		if (mapSchema != null && !mapSchema.isEmpty()) {
@@ -87,7 +78,7 @@ public class UpdateSingletonSRV implements IUpdateSingletonSRV {
 			}
 		}
 	}
-	
+
 	boolean checkDataUltimoAggiornamento(Date dataInstanza, Date dataETY) {
 		if (dataInstanza != null && dataETY != null) {
 			return !dataInstanza.equals(dataETY);
