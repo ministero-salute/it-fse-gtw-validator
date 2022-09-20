@@ -48,7 +48,7 @@ public class UpdateSingletonSRV implements IUpdateSingletonSRV {
 					log.warn("No schema found on DB... singleton map will be reset");
 					mapSchema.remove(searchKey);
 				} else {
-					log.info("Father schema found on DB... check update time");
+					log.debug("Father schema found on DB... check update time");
 					boolean isDifferent = checkDataUltimoAggiornamento(map.getValue().getDataUltimoAggiornamento(), father.getLastUpdateDate());
 					if(Boolean.FALSE.equals(isDifferent)) {
 						List<SchemaETY> children = schemaRepo.findChildrenXsd(map.getKey());

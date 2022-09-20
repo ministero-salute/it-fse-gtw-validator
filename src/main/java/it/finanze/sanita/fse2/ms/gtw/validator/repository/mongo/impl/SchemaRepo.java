@@ -94,8 +94,8 @@ public class SchemaRepo implements ISchemaRepo {
 			query.addCriteria(Criteria.where("type_id_extension").is(version));
 			output = mongoTemplate.find(query, SchemaETY.class);
 		} catch(Exception ex) {
-			log.info("Error while running find by version : " , ex);
-			throw new BusinessException("Error while running find by version : " , ex);
+			log.error(String.format("Error while running find by version: %s", ex));
+			throw new BusinessException(String.format("Error while running find by version: %s", ex));
 		}
 		return output;
 	}

@@ -39,7 +39,6 @@ public class ControllerExceptionHandler extends ResponseEntityExceptionHandler {
 	 */
     @ExceptionHandler(value = {NoRecordFoundException.class})
     protected ResponseEntity<ResponseDTO> handleValidationException(final Exception ex, final WebRequest request) {
-    	log.info("HANDLER handleValidationException");
     	return handleException(ex, HttpStatus.BAD_REQUEST);
     }
 
@@ -52,7 +51,6 @@ public class ControllerExceptionHandler extends ResponseEntityExceptionHandler {
 	 */
     @ExceptionHandler(value = {Exception.class})
     protected ResponseEntity<ResponseDTO> handleGenericException(final Exception ex, final WebRequest request) {
-    	log.info("HANDLER handleGenericException");
     	return handleException(ex, HttpStatus.INTERNAL_SERVER_ERROR);
     }
  
