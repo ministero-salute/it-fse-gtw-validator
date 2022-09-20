@@ -13,13 +13,11 @@ import brave.Tracer;
 import it.finanze.sanita.fse2.ms.gtw.validator.dto.response.LogTraceInfoDTO;
 import it.finanze.sanita.fse2.ms.gtw.validator.dto.response.ResponseDTO;
 import it.finanze.sanita.fse2.ms.gtw.validator.exceptions.NoRecordFoundException;
-import lombok.extern.slf4j.Slf4j;
 
 /**
  *	Exceptions Handler.
  */
 @ControllerAdvice
-@Slf4j
 public class ControllerExceptionHandler extends ResponseEntityExceptionHandler {
 
 	
