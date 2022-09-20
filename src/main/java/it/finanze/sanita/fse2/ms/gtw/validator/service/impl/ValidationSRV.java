@@ -86,8 +86,10 @@ public class ValidationSRV implements IValidationSRV {
     			if (schema == null) {
     				throw new NoRecordFoundException(String.format("Schema with version %s not found on database.", typeIdExtension));
     			}
+    			
+    			SchemaETY lastUpdated = schemaRepo.findGtLastUpdate(typeIdExtension);
 
-    			SchemaValidatorSingleton instance = SchemaValidatorSingleton.getInstance(false, schema, schemaRepo);
+    			SchemaValidatorSingleton instance = SchemaValidatorSingleton.getInstance(false, schema, schemaRepo,lastUpdated.getLastUpdateDate());
     			validator = instance.getValidator();
     		} 	
 
@@ -97,14 +99,12 @@ public class ValidationSRV implements IValidationSRV {
     		}
 
     	} catch(NoRecordFoundException nEx) {
-    		log.error(String.format("Schema with version %s not found on database.", typeIdExtension));
-    		out.setMessage(String.format("Schema with version %s not found on database.", typeIdExtension));
+    		out.setMessage(nEx.getMessage());
     		out.setStatus(CDAValidationStatusEnum.NOT_VALID);
     	} catch(Exception ex) {
     		log.error("Error while executing validation on xsd schema", ex);
     		out.setMessage("Error while executing validation on xsd schema");
     		out.setStatus(CDAValidationStatusEnum.NOT_VALID);
-//    		throw new BusinessException("Error while executing validation on xsd schema", ex);
     	}
     	return out;
     }

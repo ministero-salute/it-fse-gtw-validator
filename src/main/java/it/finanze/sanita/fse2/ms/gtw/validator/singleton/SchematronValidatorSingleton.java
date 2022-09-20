@@ -5,6 +5,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.springframework.util.CollectionUtils;
+
 import com.helger.commons.io.resource.IReadableResource;
 import com.helger.commons.io.resource.inmemory.ReadableResourceInputStream;
 import com.helger.schematron.ISchematronResource;
@@ -30,14 +32,14 @@ public final class SchematronValidatorSingleton {
 	
 	private Date dataUltimoAggiornamento;
 	
-	public static SchematronValidatorSingleton getInstance(final boolean forceUpdate,final SchematronETY inSchematronETY,String requestURL) {
+	public static SchematronValidatorSingleton getInstance(final boolean forceUpdate, final SchematronETY inSchematronETY,String requestURL) {
 		if (mapInstance != null && !mapInstance.isEmpty()) {
 			instance = mapInstance.get(inSchematronETY.getTemplateIdRoot());
 		} else {
 			mapInstance = new HashMap<>();
 		}
 		
-		boolean getInstanceCondition = instance == null || Boolean.TRUE.equals(forceUpdate);
+		boolean getInstanceCondition = instance == null  || CollectionUtils.isEmpty(mapInstance) || Boolean.TRUE.equals(forceUpdate);
 
 		synchronized(SchematronValidatorSingleton.class) {
 			if (getInstanceCondition) {

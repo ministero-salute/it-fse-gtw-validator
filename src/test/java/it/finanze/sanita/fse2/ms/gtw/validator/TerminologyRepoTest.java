@@ -18,7 +18,6 @@ import java.util.List;
 
 import static com.mongodb.assertions.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.when;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -40,7 +39,7 @@ public class TerminologyRepoTest {
         // Retrieve
         List<String> res = repository.findAllCodesExists(TEST_SYSTEM_ID, TEST_SYS_CODES);
         // Assertions
-        assertTrue(res.isEmpty());
+        assertFalse(!res.isEmpty());
         // Exceptions
         when(mongo).thenThrow(new MongoException("Test"));
         assertThrows(BusinessException.class, () -> repository.findAllCodesExists(TEST_SYSTEM_ID, TEST_SYS_CODES));

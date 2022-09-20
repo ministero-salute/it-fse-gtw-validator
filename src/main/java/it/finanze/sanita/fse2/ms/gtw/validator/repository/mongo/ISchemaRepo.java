@@ -1,6 +1,7 @@
 package it.finanze.sanita.fse2.ms.gtw.validator.repository.mongo;
 
 import java.io.Serializable;
+import java.util.Date;
 import java.util.List;
 
 import it.finanze.sanita.fse2.ms.gtw.validator.repository.entity.SchemaETY;
@@ -31,4 +32,8 @@ public interface ISchemaRepo extends Serializable {
 	SchemaETY findByNameAndVersion(String schemaName, String version);
 	
 	List<SchemaETY> findByVersion(String version);
+	
+	List<SchemaETY> findByExtensionAndLastUpdateDate(String typeIdExtension, Date lastUpdateDate);
+	
+	SchemaETY findGtLastUpdate(String typeIdExtension);
 }

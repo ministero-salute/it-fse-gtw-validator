@@ -12,8 +12,11 @@ import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
 import javax.xml.validation.Validator;
 
+import org.springframework.util.CollectionUtils;
+
 import it.finanze.sanita.fse2.ms.gtw.validator.cda.ValidationResult;
 import it.finanze.sanita.fse2.ms.gtw.validator.exceptions.BusinessException;
+import it.finanze.sanita.fse2.ms.gtw.validator.exceptions.NoRecordFoundException;
 import it.finanze.sanita.fse2.ms.gtw.validator.repository.entity.SchemaETY;
 import it.finanze.sanita.fse2.ms.gtw.validator.repository.mongo.ISchemaRepo;
 import it.finanze.sanita.fse2.ms.gtw.validator.xmlresolver.ResourceResolver;
@@ -42,14 +45,15 @@ public final class SchemaValidatorSingleton {
 		dataUltimoAggiornamento = inDataUltimoAggiornamento;
 	}
 
-	public static SchemaValidatorSingleton getInstance(final boolean forceUpdate, final SchemaETY inSchema, final ISchemaRepo schemaRepo) {
+	public static SchemaValidatorSingleton getInstance(final boolean forceUpdate, final SchemaETY inSchema, final ISchemaRepo schemaRepo,
+			Date lastUpdatedDate) {
 		if (mapInstance != null && !mapInstance.isEmpty()) {
 			instance = mapInstance.get(inSchema.getTypeIdExtension());
 		} else {
 			mapInstance = new HashMap<>();
 		}
 		
-		boolean getInstanceCondition = instance == null || Boolean.TRUE.equals(forceUpdate);
+		boolean getInstanceCondition = instance == null || CollectionUtils.isEmpty(mapInstance) || Boolean.TRUE.equals(forceUpdate);
 
 		synchronized(SchemaValidatorSingleton.class) {
 			if (getInstanceCondition) {
@@ -63,12 +67,11 @@ public final class SchemaValidatorSingleton {
 						Schema schema = factory.newSchema(schemaFile);
 						Validator validator = schema.newValidator();
 						validator.setErrorHandler(result);
-						instance = new SchemaValidatorSingleton(inSchema.getTypeIdExtension(), validator, inSchema.getLastUpdateDate());
+						instance = new SchemaValidatorSingleton(inSchema.getTypeIdExtension(), validator, lastUpdatedDate/*inSchema.getLastUpdateDate()*/);
 						mapInstance.put(instance.getTypeIdExtension(), instance);
-					} catch (Exception e) {
-						log.error("Error while retrieving and updating Singleton for Schema Validation", e);
-						throw new BusinessException("Error while retrieving and updating Singleton for Schema Validation", e);
 					}
+				} catch (NoRecordFoundException ne) {
+					throw ne;
 				} catch(Exception ex) {
 					log.error("Error while retrieving and updating Singleton for Schema Validation", ex);
 					throw new BusinessException("Error while retrieving and updating Singleton for Schema Validation", ex);
