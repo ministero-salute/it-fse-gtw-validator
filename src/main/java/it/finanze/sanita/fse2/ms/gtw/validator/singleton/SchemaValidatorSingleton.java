@@ -12,6 +12,8 @@ import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
 import javax.xml.validation.Validator;
 
+import org.springframework.util.CollectionUtils;
+
 import it.finanze.sanita.fse2.ms.gtw.validator.cda.ValidationResult;
 import it.finanze.sanita.fse2.ms.gtw.validator.exceptions.BusinessException;
 import it.finanze.sanita.fse2.ms.gtw.validator.exceptions.NoRecordFoundException;
@@ -51,7 +53,7 @@ public final class SchemaValidatorSingleton {
 			mapInstance = new HashMap<>();
 		}
 		
-		boolean getInstanceCondition = instance == null || Boolean.TRUE.equals(forceUpdate);
+		boolean getInstanceCondition = instance == null || CollectionUtils.isEmpty(mapInstance) || Boolean.TRUE.equals(forceUpdate);
 
 		synchronized(SchemaValidatorSingleton.class) {
 			if (getInstanceCondition) {
