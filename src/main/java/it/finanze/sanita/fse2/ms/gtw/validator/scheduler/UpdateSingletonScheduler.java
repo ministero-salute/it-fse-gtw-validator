@@ -1,7 +1,6 @@
 package it.finanze.sanita.fse2.ms.gtw.validator.scheduler;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
@@ -14,10 +13,7 @@ public class UpdateSingletonScheduler {
 
 	@Autowired
 	private IUpdateSingletonSRV updateSingletonSRV;
-	
-	@Autowired
-	@Qualifier("baseUrl")
-	private String baseUrl;
+	 
 	
 	/**
 	 * Scheduler.
@@ -25,7 +21,7 @@ public class UpdateSingletonScheduler {
 	@Scheduled(cron = "${scheduler.update-singleton.run}")   
 	public void schedulingTask() {
 		log.debug("Update singleton scheduler - START");
-		updateSingletonSRV.updateSingletonInstance(baseUrl);
+		updateSingletonSRV.updateSingletonInstance();
 		log.debug("Update singleton scheduler - END");
 	}
 }

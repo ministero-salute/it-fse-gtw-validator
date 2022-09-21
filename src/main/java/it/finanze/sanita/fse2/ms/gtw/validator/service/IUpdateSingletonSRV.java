@@ -4,5 +4,5 @@ import java.io.Serializable;
 
 public interface IUpdateSingletonSRV extends Serializable {
 
-	void updateSingletonInstance(String requestURL);
+	void updateSingletonInstance();
 }

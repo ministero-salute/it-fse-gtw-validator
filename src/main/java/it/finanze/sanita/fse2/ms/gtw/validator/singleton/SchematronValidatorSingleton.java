@@ -10,7 +10,7 @@ import org.springframework.util.CollectionUtils;
 import com.helger.commons.io.resource.IReadableResource;
 import com.helger.commons.io.resource.inmemory.ReadableResourceInputStream;
 import com.helger.schematron.ISchematronResource;
-import com.helger.schematron.xslt.SchematronResourceXSLT;
+import com.helger.schematron.xslt.SchematronResourceSCH;
 
 import it.finanze.sanita.fse2.ms.gtw.validator.exceptions.BusinessException;
 import it.finanze.sanita.fse2.ms.gtw.validator.repository.entity.SchematronETY;
@@ -24,7 +24,7 @@ public final class SchematronValidatorSingleton {
 	
 	private static SchematronValidatorSingleton instance;
 
-	private SchematronResourceXSLT schematronResource;
+	private SchematronResourceSCH schematronResourceSCH;
 
 	private String templateIdRoot;
 	
@@ -32,7 +32,7 @@ public final class SchematronValidatorSingleton {
 	
 	private Date dataUltimoAggiornamento;
 	
-	public static SchematronValidatorSingleton getInstance(final boolean forceUpdate, final SchematronETY inSchematronETY,String requestURL) {
+	public static SchematronValidatorSingleton getInstance(final boolean forceUpdate, final SchematronETY inSchematronETY) {
 		if (mapInstance != null && !mapInstance.isEmpty()) {
 			instance = mapInstance.get(inSchematronETY.getTemplateIdRoot());
 		} else {
@@ -43,14 +43,12 @@ public final class SchematronValidatorSingleton {
 
 		synchronized(SchematronValidatorSingleton.class) {
 			if (getInstanceCondition) {
-				String schematronAsString = new String(inSchematronETY.getContentSchematron().getData());
-				String schematronWithReplacesUrl = schematronAsString.replace("###PLACEHOLDER_URL###", requestURL);
-				try (ByteArrayInputStream schematronBytes = new ByteArrayInputStream(schematronWithReplacesUrl.getBytes());) {
+				try (ByteArrayInputStream schematronBytes = new ByteArrayInputStream(inSchematronETY.getContentSchematron().getData());) {
 					
 					IReadableResource readableResource = new ReadableResourceInputStream(StringUtility.generateUUID(), schematronBytes);
-					SchematronResourceXSLT schematronResourceXslt = new SchematronResourceXSLT(readableResource);
+					SchematronResourceSCH schematronResourceSCH = new SchematronResourceSCH(readableResource);
 					instance = new SchematronValidatorSingleton(inSchematronETY.getTemplateIdRoot(), 
-						inSchematronETY.getTemplateIdExtension(), inSchematronETY.getLastUpdateDate(), schematronResourceXslt);
+						inSchematronETY.getTemplateIdExtension(), inSchematronETY.getLastUpdateDate(), schematronResourceSCH);
 	
 					mapInstance.put(instance.getTemplateIdRoot(), instance);
 				} catch (Exception e) {
@@ -65,16 +63,16 @@ public final class SchematronValidatorSingleton {
 	}
 
 	private SchematronValidatorSingleton(final String inTemplateIdRoot,final String inTemplateIdExtension,
-			final Date inDataUltimoAggiornamento,final SchematronResourceXSLT inSchematronResource) {
+			final Date inDataUltimoAggiornamento,final SchematronResourceSCH inSchematronResource) {
 		templateIdRoot = inTemplateIdRoot;
 		dataUltimoAggiornamento = inDataUltimoAggiornamento;
-		schematronResource = inSchematronResource;
+		schematronResourceSCH = inSchematronResource;
 		templateIdExtension = inTemplateIdExtension;
 	}
 
 
 	public ISchematronResource getSchematronResource() {
-		return schematronResource;
+		return schematronResourceSCH;
 	}
 
 	public Date getDataUltimoAggiornamento() {

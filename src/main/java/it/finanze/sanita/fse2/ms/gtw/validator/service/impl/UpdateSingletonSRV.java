@@ -33,9 +33,9 @@ public class UpdateSingletonSRV implements IUpdateSingletonSRV {
 	private ISchematronRepo schematronRepo;
 
 	@Override
-	public void updateSingletonInstance(final String requestURL) {
+	public void updateSingletonInstance() {
 		updateSchemaSingleton();
-		updateSchematronSingleton(requestURL);
+		updateSchematronSingleton();
 	}
 
 	private void updateSchemaSingleton() {
@@ -59,7 +59,7 @@ public class UpdateSingletonSRV implements IUpdateSingletonSRV {
 		}
 	}
 
-	private void updateSchematronSingleton(final String requestUrl) {
+	private void updateSchematronSingleton() {
 		Map<String,SchematronValidatorSingleton> mapSchema = SchematronValidatorSingleton.getMapInstance();
 		if (mapSchema != null && !mapSchema.isEmpty()) {
 			for(Entry<String, SchematronValidatorSingleton> map : mapSchema.entrySet()) {
@@ -72,7 +72,7 @@ public class UpdateSingletonSRV implements IUpdateSingletonSRV {
 					boolean isDifferent = checkDataUltimoAggiornamento(map.getValue().getDataUltimoAggiornamento(), schematron.getLastUpdateDate());
 
 					if(Boolean.TRUE.equals(isDifferent)) {
-						SchematronValidatorSingleton.getInstance(true,schematron, requestUrl);
+						SchematronValidatorSingleton.getInstance(true,schematron);
 					}
 				}
 			}

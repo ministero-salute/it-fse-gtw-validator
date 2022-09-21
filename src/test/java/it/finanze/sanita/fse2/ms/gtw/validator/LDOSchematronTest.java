@@ -15,7 +15,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.test.context.ActiveProfiles;
@@ -23,7 +22,6 @@ import org.springframework.test.context.ActiveProfiles;
 import com.helger.commons.io.resource.IReadableResource;
 import com.helger.commons.io.resource.inmemory.ReadableResourceInputStream;
 import com.helger.schematron.xslt.SchematronResourceSCH;
-import com.helger.schematron.xslt.SchematronResourceXSLT;
 
 import it.finanze.sanita.fse2.ms.gtw.validator.cda.CDAHelper;
 import it.finanze.sanita.fse2.ms.gtw.validator.config.Constants;
@@ -51,10 +49,6 @@ class LDOSchematronTest extends AbstractTest {
 	@Autowired
 	IValidationSRV validationSRV;
 
-	@Autowired
-	@Qualifier("baseUrl")
-	private String baseUrl;
-	 
 	
 	@BeforeEach
 	void setup() { 
@@ -158,11 +152,9 @@ class LDOSchematronTest extends AbstractTest {
 	@Test
 	@DisplayName("CDA OK")
 	void cdaOK() throws Exception {
-		byte[] schematron = FileUtility.getFileFromInternalResources("Files" + File.separator + "schematronLDO" + File.separator + "sch" + File.separator +"schematronFSE_LDO_V3.5.sch");
-		String schematronAsString = new String(schematron);
-		String schematronWithReplacesUrl = schematronAsString.replace("###PLACEHOLDER_URL###", baseUrl.split(":")[0] + ":" + server.getWebServer().getPort());
-		try (ByteArrayInputStream bytes = new ByteArrayInputStream(schematronWithReplacesUrl.getBytes())) {
-			IReadableResource readableResource = new ReadableResourceInputStream("schematronFSE_LDO_V3.5.sch", bytes);
+		byte[] schematron = FileUtility.getFileFromInternalResources("Files" + File.separator + "schematronLDO" + File.separator + "schV3" + File.separator +"schematronFSE_LDO_V4.7.sch");
+		try (ByteArrayInputStream bytes = new ByteArrayInputStream(schematron)) {
+			IReadableResource readableResource = new ReadableResourceInputStream("schematronFSE_LDO_V4.7.sch", bytes);
 			SchematronResourceSCH schematronResource = new SchematronResourceSCH(readableResource);
 			Map<String,byte[]> cdasOK = getSchematronFiles("src\\test\\resources\\Files\\schematronLDO\\OK");
 			for(Entry<String, byte[]> cdaOK : cdasOK.entrySet()) {
@@ -178,11 +170,9 @@ class LDOSchematronTest extends AbstractTest {
 	@Test
 	@DisplayName("CDA ERROR")
 	void cdaError() throws Exception {
-		byte[] schematron = FileUtility.getFileFromInternalResources("Files" + File.separator + "schematronLDO" + File.separator + "sch" + File.separator +"schematronFSE_LDO_V3.5.sch");
-		String schematronAsString = new String(schematron);
-		String schematronWithReplacesUrl = schematronAsString.replace("###PLACEHOLDER_URL###", baseUrl.split(":")[0] + ":" + server.getWebServer().getPort());
-		try (ByteArrayInputStream bytes = new ByteArrayInputStream(schematronWithReplacesUrl.getBytes())) {
-			IReadableResource readableResource = new ReadableResourceInputStream("schematronFSE_LDO_V3.5.sch", bytes);
+		byte[] schematron = FileUtility.getFileFromInternalResources("Files" + File.separator + "schematronLDO" + File.separator + "schV3" + File.separator +"schematronFSE_LDO_V4.7.sch");
+		try (ByteArrayInputStream bytes = new ByteArrayInputStream(schematron)) {
+			IReadableResource readableResource = new ReadableResourceInputStream("schematronFSE_LDO_V4.7.sch", bytes);
 			SchematronResourceSCH schematronResource = new SchematronResourceSCH(readableResource);
 			
 			Map<String,byte[]> cdasKO = getSchematronFiles("src\\test\\resources\\Files\\schematronLDO\\ERROR");
@@ -194,47 +184,5 @@ class LDOSchematronTest extends AbstractTest {
 			}
 		}
 	}
-
-	@Test
-	@DisplayName("CDA OK XSLT")
-	void cdaOKXslt() throws Exception {
-		byte[] schematron = FileUtility.getFileFromInternalResources("Files" + File.separator + "schematronLDO" + File.separator + "xslt" + File.separator +"schematronFSE_LDO_V3.5.xslt");
-		String schematronAsString = new String(schematron);
-		String schematronWithReplacesUrl = schematronAsString.replace("###PLACEHOLDER_URL###", baseUrl.split(":")[0] + ":" + server.getWebServer().getPort());
-		
-		try (ByteArrayInputStream bytes = new ByteArrayInputStream(schematronWithReplacesUrl.getBytes())) {
-			IReadableResource readableResource = new ReadableResourceInputStream("schematronFSE_LDO_V3.5.xslt", bytes);
-			SchematronResourceXSLT schematronResource = new SchematronResourceXSLT(readableResource);
-			Map<String,byte[]> cdasOK = getSchematronFiles("src\\test\\resources\\Files\\schematronLDO\\OK");
-			for(Entry<String, byte[]> cdaOK : cdasOK.entrySet()) {
-				log.info("File analyzed :" + cdaOK.getKey());
-				SchematronValidationResultDTO resultDTO = CDAHelper.validateXMLViaSchematronFull(schematronResource, cdaOK.getValue());
-				assertEquals(0, resultDTO.getFailedAssertions().size());
-				assertEquals(true, resultDTO.getValidSchematron());
-				assertEquals(true, resultDTO.getValidXML());
-			}
-		}
-	}
  
-	@Test
-	@DisplayName("CDA ERROR XSLT")
-	void cdaErrorXslt() throws Exception {
-		byte[] schematron = FileUtility.getFileFromInternalResources("Files" + File.separator + "schematronLDO" + File.separator + "xslt" + File.separator +"schematronFSE_LDO_V3.5.xslt");
-		String schematronAsString = new String(schematron);
-		String schematronWithReplacesUrl = schematronAsString.replace("###PLACEHOLDER_URL###", baseUrl.split(":")[0] + ":" + server.getWebServer().getPort());
-		try (ByteArrayInputStream bytes = new ByteArrayInputStream(schematronWithReplacesUrl.getBytes())) {
-			IReadableResource readableResource = new ReadableResourceInputStream("schematronFSE_LDO_V3.5.xslt", bytes);
-			SchematronResourceXSLT schematronResource = new SchematronResourceXSLT(readableResource);
-			
-			Map<String,byte[]> cdasKO = getSchematronFiles("src\\test\\resources\\Files\\schematronLDO\\ERROR");
-			for(Entry<String, byte[]> cdaKO : cdasKO.entrySet()) {
-				SchematronValidationResultDTO resultDTO = CDAHelper.validateXMLViaSchematronFull(schematronResource, cdaKO.getValue());
-				boolean result = resultDTO.getFailedAssertions().size()>0;
-				assertTrue(result);
-			}
-		}
-
-	}
- 
-
 }

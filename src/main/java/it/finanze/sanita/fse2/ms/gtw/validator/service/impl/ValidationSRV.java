@@ -6,7 +6,6 @@ import java.util.Map;
 import javax.xml.validation.Validator;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import com.helger.schematron.ISchematronResource;
@@ -47,11 +46,7 @@ public class ValidationSRV implements IValidationSRV {
     
     @Autowired
     private ISchemaSRV schemaSRV;
-     
-    
-    @Autowired
-	@Qualifier("baseUrl")
-	private String baseUrl;
+      
     
     @Override
     public VocabularyResultDTO validateVocabularies(final String cda) {
@@ -120,7 +115,7 @@ public class ValidationSRV implements IValidationSRV {
 				if(singleton!=null) {
 					SchematronETY majorVersion = schematronRepo.findBySystemAndVersion(singleton.getTemplateIdRoot(), singleton.getTemplateIdExtension());
 					if(majorVersion!=null) {
-						singleton = SchematronValidatorSingleton.getInstance(true, majorVersion, baseUrl);
+						singleton = SchematronValidatorSingleton.getInstance(true, majorVersion);
 					}
 					schematronResource = singleton.getSchematronResource();
 				}
@@ -131,7 +126,7 @@ public class ValidationSRV implements IValidationSRV {
 				if (schematronETY == null) {
 					throw new NoRecordFoundException(String.format("Schematron with template id root %s not found on database.", extractedInfoDTO.getTemplateIdSchematron()));
 				}
-				SchematronValidatorSingleton schematron = SchematronValidatorSingleton.getInstance(false,schematronETY,baseUrl);
+				SchematronValidatorSingleton schematron = SchematronValidatorSingleton.getInstance(false,schematronETY);
 				schematronResource = schematron.getSchematronResource();
 			}
 			
