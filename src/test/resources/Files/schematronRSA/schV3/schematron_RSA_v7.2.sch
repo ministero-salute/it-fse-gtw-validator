@@ -31,7 +31,7 @@
 			>ERRORE-5| L'elemento <name/>/code DEVE essere valorizzato con l'attributo @code='11488-4' e il @codeSystem='2.16.840.1.113883.6.1'</assert>
 	
 			<report test="not(count(hl7:code[@codeSystemName='LOINC'])=1) or not(count(hl7:code[@displayName=' Nota di consulto'])=1 or
-			count(hl7:code[@displayName='NOTA DI CONSULTO'])=1 or count(hl7:code[@displayName='Nota di Consulto'])=1)"
+			count(hl7:code[@displayName='NOTA DI CONSULTO'])=1 or count(hl7:code[@displayName='Nota di Consulto'])=1 or count(hl7:code[@displayName='Nota di consulto'])=1 or count(hl7:code[@displayName='nota di consulto'])=1)"
 			>W001| Si raccomanda di valorizzare gli attributi dell'elemento <name/>/code nel seguente modo: @codeSystemName ='LOINC' e @displayName ='Nota di consulto'--> </report>
 			
 			<!--Controllo confidentialityCode-->
@@ -601,8 +601,8 @@
 			
 			<assert test="count(hl7:observation)=1"
 			>ERRORE-b77| Sezione Precedenti esami eseguiti: l'elemento entry DEVE contenere una observation</assert>
-			<report test="not(count(hl7:observation/hl7:code[@codeSystem='2.16.840.1.113883.6.1'])=0) and 
-			not(count(hl7:observation/hl7:code[@codeSystem='2.16.840.1.113883.6.103'])=0)"
+			<report test="not(count(hl7:observation/hl7:code[@codeSystem='2.16.840.1.113883.6.1'])=1) and 
+			not(count(hl7:observation/hl7:code[@codeSystem='2.16.840.1.113883.6.103'])=1)"
 			>W003 | Sezione Esami eseguiti durante il ricovero: l'entry/observation/code può essere valorizzato secondo i sistemi di codifica
 			LOINC @codeSystem='2.16.840.1.113883.6.1'
 			ICD-9-CM @codeSystem='2.16.840.1.113883.6.103'</report>

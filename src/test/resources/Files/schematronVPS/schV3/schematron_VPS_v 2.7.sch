@@ -388,7 +388,7 @@
 			<!--Controllo 3° entry "Livello appropriatezza" (0..1)-->
 				<let name="appropriatezza" value="hl7:component/hl7:section[hl7:code[@code='28574-2']]/hl7:entry[hl7:observation/hl7:code[@code='11283-9']]"/>
 				<assert test="(count($appropriatezza)&lt;=1)"
-				>ERRORE-b28| Sezione Dimissione: l'entry/observation "Livello di Appropriatezza" può essere presente una sola volta</assert>
+				>ERRORE-b38| Sezione Dimissione: l'entry/observation "Livello di Appropriatezza" può essere presente una sola volta</assert>
 				<assert test="count($appropriatezza)=0 or count($appropriatezza/hl7:observation/hl7:templateId[@root='2.16.840.1.113883.2.9.10.1.6.72'])=1"
 				>ERRORE-b39| Sezione Dimissione: l'entry/observation "Livello di Appropriatezza" DEVE contenere un elemento 'templateId' valorizzato con @root='2.16.840.1.113883.2.9.10.1.6.72'</assert>
 				<assert test="count($appropriatezza)=0 or count($appropriatezza/hl7:observation/hl7:statusCode[@code='completed'])=1"

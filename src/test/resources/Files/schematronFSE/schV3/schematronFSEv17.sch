@@ -101,7 +101,7 @@
 			>ERRORE-16| L'OID assegnato all'attributo <name/>/recordTarget/patientRole/patient/administrativeGenderCode/@codeSystem='<value-of select="$genderOID"/>' non è corretto. L'attributo DEVE essere valorizzato con '2.16.840.1.113883.5.1' </assert>
 					
 			<!--Controllo recordTarget/patientRole/patient/birthTime-->
-			<assert test="count(hl7:recordTarget/hl7:patientRole/hl7:id[@root='2.16.840.1.113883.2.9.4.3.2' or 
+			<assert test="count($patient)=0 or count(hl7:recordTarget/hl7:patientRole/hl7:id[@root='2.16.840.1.113883.2.9.4.3.2' or 
 			@root='2.16.840.1.113883.2.9.4.3.7' or @root='2.16.840.1.113883.2.9.4.3.3' or 
 			@root='2.16.840.1.113883.2.9.4.3.17'])=0 or 
 			count(hl7:recordTarget/hl7:patientRole/hl7:patient/hl7:birthTime)=1"

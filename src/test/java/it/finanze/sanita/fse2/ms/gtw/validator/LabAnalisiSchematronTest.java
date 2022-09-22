@@ -47,32 +47,14 @@ class LabAnalisiSchematronTest extends AbstractTest {
 	@Autowired
 	IValidationSRV validationSRV;
 	 
-
-	@BeforeEach
-	void setup() { 
-		dropTerminology();
-		Map<String,List<String>> map = new HashMap<>();
-		map.put("2.16.840.1.113883.6.1", buildLoincValue()); 
-		deleteAndsaveTerminology(map); 
-	}
-	
-	private List<String> buildLoincValue(){
-		List<String> out = new ArrayList<>();
-		out.add("11502-2");
-		out.add("18729-4");
-		out.add("14957-5");
-		out.add("48767-8");
-		out.add("30525-0");
-		return out;
-	}
-	
+ 
 	@Test
 	@DisplayName("CDA OK")
 	void cdaOK() throws Exception {
-		byte[] schematron = FileUtility.getFileFromInternalResources("Files" + File.separator + "schematronFSE" + File.separator + "schV3" + File.separator +"schematronFSEv16.sch");
+		byte[] schematron = FileUtility.getFileFromInternalResources("Files" + File.separator + "schematronFSE" + File.separator + "schV3" + File.separator +"schematronFSEv17.sch");
 		
 		try (ByteArrayInputStream bytes = new ByteArrayInputStream(schematron)) {
-			IReadableResource readableResource = new ReadableResourceInputStream("schematronFSEv16.sch", bytes);
+			IReadableResource readableResource = new ReadableResourceInputStream("schematronFSEv17.sch", bytes);
 			SchematronResourceSCH schematronResource = new SchematronResourceSCH(readableResource);
 			Map<String,byte[]> cdasOK = getSchematronFiles("src\\test\\resources\\Files\\schematronFSE\\OK");
 			for(Entry<String, byte[]> cdaOK : cdasOK.entrySet()) {
@@ -88,9 +70,9 @@ class LabAnalisiSchematronTest extends AbstractTest {
 	@Test
 	@DisplayName("CDA ERROR")
 	void cdaError() throws Exception {
-		byte[] schematron = FileUtility.getFileFromInternalResources("Files" + File.separator + "schematronFSE" + File.separator + "schV3" + File.separator +"schematronFSEv16.sch");
+		byte[] schematron = FileUtility.getFileFromInternalResources("Files" + File.separator + "schematronFSE" + File.separator + "schV3" + File.separator +"schematronFSEv17.sch");
 		try (ByteArrayInputStream bytes = new ByteArrayInputStream(schematron)) {
-			IReadableResource readableResource = new ReadableResourceInputStream("schematronFSEv16.sch", bytes);
+			IReadableResource readableResource = new ReadableResourceInputStream("schematronFSEv17.sch", bytes);
 			SchematronResourceSCH schematronResource = new SchematronResourceSCH(readableResource);
 			
 			Map<String,byte[]> cdasKO = getSchematronFiles("src\\test\\resources\\Files\\schematronFSE\\ERROR");

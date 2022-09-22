@@ -552,8 +552,8 @@
 			LOINC: @codeSystem='2.16.840.1.113883.6.1'
 			ICD-9-CM: @codeSystem='2.16.840.1.113883.6.103' </assert-->
 			
-			<report test="not(count(hl7:observation/hl7:code[@codeSystem='2.16.840.1.113883.6.1'])=0) and 
-			not(count(hl7:observation/hl7:code[@codeSystem='2.16.840.1.113883.6.103'])=0)"
+			<report test="not(count(hl7:observation/hl7:code[@codeSystem='2.16.840.1.113883.6.1'])=1) and 
+			not(count(hl7:observation/hl7:code[@codeSystem='2.16.840.1.113883.6.103'])=1)"
 			>W004 | Sezione Esami eseguiti durante il ricovero: l'entry/observation/code può essere valorizzato secondo i sistemi di codifica
 			LOINC @codeSystem='2.16.840.1.113883.6.1'
 			ICD-9-CM @codeSystem='2.16.840.1.113883.6.103'</report>
@@ -571,8 +571,8 @@
 			- LOINC (@codeSystem: 2.16.840.1.113883.6.1)
 			- ICD-9-CM (@codeSystem: 2.16.840.1.113883.6.103).</assert-->
 			
-			<report test="not(count(hl7:act/hl7:code[@codeSystem='2.16.840.1.113883.6.1'])=0) and 
-			not(count(hl7:act/hl7:code[@codeSystem='2.16.840.1.113883.6.103'])=0)"
+			<report test="not(count(hl7:act/hl7:code[@codeSystem='2.16.840.1.113883.6.1'])=1) and 
+			not(count(hl7:act/hl7:code[@codeSystem='2.16.840.1.113883.6.103'])=1)"
 			>W005 | Sezione Esami eseguiti durante il ricovero: l'entry/act/code può essere valorizzato secondo i sistemi di codifica
 			LOINC @codeSystem='2.16.840.1.113883.6.1'
 			ICD-9-CM @codeSystem='2.16.840.1.113883.6.103'</report>

@@ -5,13 +5,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,64 +44,7 @@ public class VaccSchematronTest extends AbstractTest {
 	IValidationSRV validationSRV;
 	
 	 
-
-	@BeforeEach
-	void setup() { 
-		dropTerminology();
-		Map<String,List<String>> map = new HashMap<>();
-		map.put("2.16.840.1.113883.6.1", buildLoincValue());
-		map.put("2.16.840.1.113883.6.73", buildLoinc673Value());
-		map.put("2.16.840.1.113883.2.9.6.1.5", buildLoinc15Value());
-		
-		map.put("2.16.840.1.113883.5.1052", buildLoinc51052Value());
-		map.put("2.16.840.1.113883.5.112", buildLoinc51112Value());
-		deleteAndsaveTerminology(map); 
-	}
-	
-	private List<String> buildLoinc51112Value(){
-		List<String> out = new ArrayList<>();
-		out.add("IABDINJ");
-		return out;
-	}
-	
-	private List<String> buildLoinc51052Value(){
-		List<String> out = new ArrayList<>();
-		out.add("LA");
-		return out;
-	}
-	
-	private List<String> buildLoinc15Value(){
-		List<String> out = new ArrayList<>();
-		out.add("035606033");
-		out.add("043348022");
-		return out;
-	}
-	
-	private List<String> buildLoinc673Value(){
-		List<String> out = new ArrayList<>();
-		out.add("B01AX05");
-		out.add("C08CA01");
-		return out;
-	}
-	
-	private List<String> buildLoincValue(){
-		List<String> out = new ArrayList<>();
-		out.add("11369-6");
-		out.add("30973-2");
-		out.add("59778-1");
-		out.add("30980-7");
-		out.add("95715-9");
-		out.add("59785-6");
-		out.add("31044-1");
-		out.add("75323-6");
-		out.add("85714-4");
-		out.add("59784-9");
-		out.add("82593-5");
-		
-		return out;
-	}
-	
-	
+ 
 	
 	@Test
 	@DisplayName("CDA OK")
