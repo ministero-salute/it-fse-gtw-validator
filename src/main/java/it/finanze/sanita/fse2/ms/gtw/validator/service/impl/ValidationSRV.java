@@ -131,7 +131,9 @@ public class ValidationSRV implements IValidationSRV {
 			}
 			
 			output = CDAHelper.validateXMLViaSchematronFull(schematronResource, cdaToValidate.getBytes());
-		} catch(Exception ex) {
+		} catch(NoRecordFoundException nEx) {
+			throw nEx;
+    	} catch(Exception ex) {
 			log.error("Error while executing validation on schematron", ex);
 			throw new BusinessException("Error while executing validation on schematron", ex);
 		}
