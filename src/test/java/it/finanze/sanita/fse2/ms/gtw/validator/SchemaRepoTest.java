@@ -4,7 +4,10 @@ import com.mongodb.MongoException;
 import it.finanze.sanita.fse2.ms.gtw.validator.config.Constants;
 import it.finanze.sanita.fse2.ms.gtw.validator.exceptions.BusinessException;
 import it.finanze.sanita.fse2.ms.gtw.validator.repository.entity.SchemaETY;
+import it.finanze.sanita.fse2.ms.gtw.validator.repository.entity.SchematronETY;
 import it.finanze.sanita.fse2.ms.gtw.validator.repository.mongo.ISchemaRepo;
+import it.finanze.sanita.fse2.ms.gtw.validator.repository.mongo.ISchematronRepo;
+
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
@@ -22,6 +25,7 @@ import static com.mongodb.assertions.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.anyString; 
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles(Constants.Profile.TEST)
@@ -34,7 +38,10 @@ public class SchemaRepoTest extends AbstractTest {
     public static final int TEST_FILES_SIZE = 10;
 
     @Autowired
-    private ISchemaRepo repository;
+    private ISchemaRepo repository; 
+    
+    @SpyBean
+    private ISchematronRepo schematronRepository; 
 
     @SpyBean
     private MongoTemplate mongo;
@@ -43,6 +50,7 @@ public class SchemaRepoTest extends AbstractTest {
     void setup() {
         clearConfigurationItems();
         insertSchema();
+        insertSchematron(); 
     }
 
     @Test
@@ -96,5 +104,15 @@ public class SchemaRepoTest extends AbstractTest {
         when(mongo).thenThrow(new MongoException("Test"));
         assertThrows(BusinessException.class, () -> repository.findByVersion(TEST_TYPE_ID_EXTENSION));
     }
+    
+    /* @Test
+    void findBySystemAndVersionTest() {
+    	SchematronETY ety = schematronRepository.findBySystemAndVersion("2.16.840.1.113883.2.9.10.1.11.1.2", "0.0"); 
+    	
+    	assertEquals(ety.getClass(), SchematronETY.class);   	
+    	assertEquals(ety.getId().getClass(), String.class); 
+    	
+    	assertEquals(ety.getTemplateIdRoot(), "2.16.840.1.113883.2.9.10.1.11.1.2"); 
+    } */ 
 
 }

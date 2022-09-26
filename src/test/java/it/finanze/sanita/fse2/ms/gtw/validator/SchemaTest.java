@@ -1,6 +1,7 @@
 package it.finanze.sanita.fse2.ms.gtw.validator;
 
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.File;
@@ -25,6 +26,7 @@ import org.springframework.test.context.ActiveProfiles;
 
 import it.finanze.sanita.fse2.ms.gtw.validator.config.Constants;
 import it.finanze.sanita.fse2.ms.gtw.validator.repository.entity.SchemaETY;
+import it.finanze.sanita.fse2.ms.gtw.validator.service.IUpdateSingletonSRV;
 import it.finanze.sanita.fse2.ms.gtw.validator.service.IValidationSRV;
 import it.finanze.sanita.fse2.ms.gtw.validator.singleton.ResetSingleton;
 import it.finanze.sanita.fse2.ms.gtw.validator.singleton.SchemaValidatorSingleton;
@@ -40,7 +42,13 @@ import lombok.extern.slf4j.Slf4j;
 class SchemaTest extends AbstractTest {
 
 	@Autowired
-	IValidationSRV validationSRV;
+	IValidationSRV validationSRV; 
+	
+	@Autowired
+	IUpdateSingletonSRV updateSingletonSRV; 
+
+	
+	
 
     @BeforeEach
     void setup() {
@@ -182,9 +190,23 @@ class SchemaTest extends AbstractTest {
         update.set("last_update_date", newDate);
         mongoTemplate.updateFirst(query, update, SchemaETY.class);
 
-	}
-    
+	}   
 
+    @Test
+	@DisplayName("Update Singleton Test")
+	void updateSingletonTest() throws Exception {
+
+		insertSchema();
+        addSchemaVersion();
+
+		final String cda = new String(FileUtility.getFileFromInternalResources("Files" + File.separator + "cda_ok" + File.separator + "Esempio CDA2_Referto Medicina di Laboratorio v6_OK.xml"), StandardCharsets.UTF_8);
+
+        assertDoesNotThrow(() -> updateSingletonSRV.updateSingletonInstance("TEST_URL")); 
+        
+	}
+
+    
+    
     void deleteSchema() {
 		mongoTemplate.remove(new Query(), SchemaETY.class);
     }
