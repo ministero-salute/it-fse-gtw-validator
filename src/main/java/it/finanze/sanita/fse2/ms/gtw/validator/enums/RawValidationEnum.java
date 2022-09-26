@@ -1,5 +1,8 @@
 package it.finanze.sanita.fse2.ms.gtw.validator.enums;
 
+import lombok.Getter;
+
+@Getter
 public enum RawValidationEnum {
 
 	OK("00", "OK"),
@@ -17,12 +20,5 @@ public enum RawValidationEnum {
 		description = inDescription;
 	}
 
-	public String getCode() {
-		return code;
-	}
-
-	public String getDescription() {
-		return description;
-	}
 
 }

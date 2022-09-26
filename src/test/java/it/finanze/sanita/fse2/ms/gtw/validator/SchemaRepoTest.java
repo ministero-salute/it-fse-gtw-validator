@@ -105,7 +105,7 @@ public class SchemaRepoTest extends AbstractTest {
         assertThrows(BusinessException.class, () -> repository.findByVersion(TEST_TYPE_ID_EXTENSION));
     }
     
-    /* @Test
+     @Test
     void findBySystemAndVersionTest() {
     	SchematronETY ety = schematronRepository.findBySystemAndVersion("2.16.840.1.113883.2.9.10.1.11.1.2", "0.0"); 
     	
@@ -113,6 +113,6 @@ public class SchemaRepoTest extends AbstractTest {
     	assertEquals(ety.getId().getClass(), String.class); 
     	
     	assertEquals(ety.getTemplateIdRoot(), "2.16.840.1.113883.2.9.10.1.11.1.2"); 
-    } */ 
+    } 
 
 }

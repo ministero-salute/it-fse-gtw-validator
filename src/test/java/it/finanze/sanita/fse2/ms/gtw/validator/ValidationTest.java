@@ -32,6 +32,7 @@ import com.helger.schematron.ISchematronResource;
 
 import it.finanze.sanita.fse2.ms.gtw.validator.cda.CDAHelper;
 import it.finanze.sanita.fse2.ms.gtw.validator.config.Constants;
+import it.finanze.sanita.fse2.ms.gtw.validator.controller.Validation;
 import it.finanze.sanita.fse2.ms.gtw.validator.dto.CDAValidationDTO;
 import it.finanze.sanita.fse2.ms.gtw.validator.dto.ExtractedInfoDTO;
 import it.finanze.sanita.fse2.ms.gtw.validator.dto.SchematronValidationResultDTO;
@@ -174,6 +175,16 @@ class ValidationTest extends AbstractTest {
 		//SchematronValidationResultDTO firstResult = validationSRV.validateSemantic(cda, infoDTO); 
 		
 		assertThrows(BusinessException.class, () -> validationSRV.validateSemantic(cda, infoDTO)); 
+	} 
+	
+	@Test
+	void notNullTest() {
+		assertThrows(Exception.class, () -> Validation.notNull(null)); 
+	} 
+	
+	@Test
+	void notNullStringTest() {
+		assertThrows(Exception.class, () -> Validation.notNull("")); 
 	} 
 
 }
