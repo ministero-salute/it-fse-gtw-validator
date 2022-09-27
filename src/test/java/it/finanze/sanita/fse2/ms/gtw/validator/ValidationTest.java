@@ -39,6 +39,7 @@ import it.finanze.sanita.fse2.ms.gtw.validator.dto.SchematronValidationResultDTO
 import it.finanze.sanita.fse2.ms.gtw.validator.dto.VocabularyResultDTO;
 import it.finanze.sanita.fse2.ms.gtw.validator.enums.CDAValidationStatusEnum;
 import it.finanze.sanita.fse2.ms.gtw.validator.exceptions.BusinessException;
+import it.finanze.sanita.fse2.ms.gtw.validator.exceptions.NoRecordFoundException;
 import it.finanze.sanita.fse2.ms.gtw.validator.repository.entity.SchematronETY;
 import it.finanze.sanita.fse2.ms.gtw.validator.repository.mongo.impl.SchematronRepo;
 import it.finanze.sanita.fse2.ms.gtw.validator.service.facade.IValidationFacadeSRV;
@@ -140,7 +141,7 @@ class ValidationTest extends AbstractTest {
 		String version = "1.3";
 		
 		SchematronETY ety = new SchematronETY(); 
-		byte[] schematron = FileUtility.getFileFromInternalResources("Files" + File.separator + "schematronLDO" + File.separator + "sch" + File.separator +"schematronFSE_LDO_V3.5.sch");
+		byte[] schematron = FileUtility.getFileFromInternalResources("Files" + File.separator + "schematronLDO" + File.separator + "schV3" + File.separator +"schematronFSE_LDO_V4.8.sch");
 
 		ety.setNameSchematron("Lettera di dimissione ospedaliera"); 
 		ety.setContentSchematron(new Binary(BsonBinarySubType.BINARY, schematron));
@@ -174,7 +175,7 @@ class ValidationTest extends AbstractTest {
 		log.info("Testing with version {}", version);
 		//SchematronValidationResultDTO firstResult = validationSRV.validateSemantic(cda, infoDTO); 
 		
-		assertThrows(BusinessException.class, () -> validationSRV.validateSemantic(cda, infoDTO)); 
+		assertThrows(NoRecordFoundException.class, () -> validationSRV.validateSemantic(cda, infoDTO)); 
 	} 
 	
 	@Test

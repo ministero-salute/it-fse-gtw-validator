@@ -210,7 +210,7 @@ class SchemaTest extends AbstractTest {
 
 		final String cda = new String(FileUtility.getFileFromInternalResources("Files" + File.separator + "cda_ok" + File.separator + "Esempio CDA2_Referto Medicina di Laboratorio v6_OK.xml"), StandardCharsets.UTF_8);
 
-        assertDoesNotThrow(() -> updateSingletonSRV.updateSingletonInstance("TEST_URL")); 
+        assertDoesNotThrow(() -> updateSingletonSRV.updateSingletonInstance()); 
         
 	}
 
