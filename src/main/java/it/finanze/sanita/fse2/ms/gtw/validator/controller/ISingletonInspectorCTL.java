@@ -21,7 +21,7 @@ import it.finanze.sanita.fse2.ms.gtw.validator.dto.response.SingletonInspectorRe
 @RequestMapping(path = "/v1.0.0")
 @Tag(name = "Servizio ispezione singleton in memoria")
 public interface ISingletonInspectorCTL {
-
+	
     @GetMapping("/singletons")
 	@Operation(summary = "Ritorna i singleton presenti in memoria", description = "Servizio che permette di ispezionare i singleton di Schema e Schematron attualmente caricati in memoria")
 	@ApiResponse(content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = SingletonInspectorResponseDTO.class)))

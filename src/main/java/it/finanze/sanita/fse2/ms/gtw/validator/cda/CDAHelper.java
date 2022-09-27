@@ -78,7 +78,7 @@ public class CDAHelper {
 			}
 			List<Object> asserts = type.getActivePatternAndFiredRuleAndFailedAssert();
 			Long delta = new Date().getTime() - start;
-			log.info("TIME : " + delta);        
+			log.debug("TIME : " + delta);        
 			for (Object object : asserts) {
 				if (object instanceof FailedAssert) {
 					validXML = false;

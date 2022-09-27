@@ -57,7 +57,7 @@ public class ValidationSRV implements IValidationSRV {
         
         try {
             Map<String, List<String>> vocabularies = CDAHelper.extractTerminology(cda);
-            log.info("Validating {} systems...", vocabularies.size());
+            log.debug("Validating {} systems...", vocabularies.size());
             output = vocabulariesRV.vocabulariesExists(vocabularies);
         } catch (Exception e) {
             log.error("Error while executing validation on vocabularies", e);

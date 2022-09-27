@@ -20,8 +20,8 @@ public class UpdateSingletonScheduler {
 	 */
 	@Scheduled(cron = "${scheduler.update-singleton.run}")   
 	public void schedulingTask() {
-		log.info("Update singleton scheduler - START");
+		log.debug("Update singleton scheduler - START");
 		updateSingletonSRV.updateSingletonInstance();
-		log.info("Update singleton scheduler - END");
+		log.debug("Update singleton scheduler - END");
 	}
 }
