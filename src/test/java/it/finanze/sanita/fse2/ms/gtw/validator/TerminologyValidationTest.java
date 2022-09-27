@@ -3,6 +3,7 @@ package it.finanze.sanita.fse2.ms.gtw.validator;
 import it.finanze.sanita.fse2.ms.gtw.validator.config.Constants;
 import it.finanze.sanita.fse2.ms.gtw.validator.config.properties.PropertiesCFG;
 import it.finanze.sanita.fse2.ms.gtw.validator.dto.VocabularyResultDTO;
+import it.finanze.sanita.fse2.ms.gtw.validator.exceptions.BusinessException;
 import it.finanze.sanita.fse2.ms.gtw.validator.repository.entity.TerminologyETY;
 import it.finanze.sanita.fse2.ms.gtw.validator.repository.mongo.ITerminologyRepo;
 import it.finanze.sanita.fse2.ms.gtw.validator.repository.redis.IVocabulariesRedisRepo;
@@ -14,6 +15,7 @@ import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.test.context.ActiveProfiles;
@@ -21,8 +23,15 @@ import org.springframework.test.context.ActiveProfiles;
 import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.any;
+import static org.mockito.BDDMockito.anyString;
+import static org.mockito.BDDMockito.when;
+import static org.mockito.BDDMockito.doThrow;
+
+
 
 @Slf4j
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -38,10 +47,10 @@ class TerminologyValidationTest {
 
     @Autowired
     ITerminologyRepo vocabulariesMongoRepo;
-
+    
     @MockBean
-    PropertiesCFG propsCFG;
-
+    private PropertiesCFG propsCFG;
+    
     @Autowired
     MongoTemplate mongoTemplate;
 
@@ -74,6 +83,33 @@ class TerminologyValidationTest {
         VocabularyResultDTO existing = vocabulariesSRV.vocabulariesExists(terminology);
 
         assertTrue(existing.getValid());
+    } 
+    
+    @Test
+    @DisplayName("Terminology Validation Exception Test")
+    void validationExceptionTest() {
+
+        final Map<String, List<String>> redisTerminology = generateRandomTerminology(10, 100);
+        final Map<String, List<String>> mongoTerminology = generateRandomTerminology(10, 100);
+
+        // A chunk of keys will exist only in Redis
+        insertTerminologyOnRedis(redisTerminology);
+        // Add one test key for the sake of coverage
+        insertTerminologyOnRedis("test");
+
+        // All keys should exist in Mongo
+        insertTerminologyOnMongo(redisTerminology);
+        insertTerminologyOnMongo(mongoTerminology);
+
+        final Map<String, List<String>> terminology = new HashMap<>();
+        terminology.putAll(redisTerminology);
+        terminology.putAll(mongoTerminology);
+
+
+        doThrow(new BusinessException("Test Error", null)).when(propsCFG).isRedisEnabled(); 
+        
+        assertThrows(Exception.class, () -> vocabulariesSRV.vocabulariesExists(terminology)); 
+        
     }
 
     @Test

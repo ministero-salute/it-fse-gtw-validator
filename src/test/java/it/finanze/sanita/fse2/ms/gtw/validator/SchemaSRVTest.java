@@ -45,7 +45,7 @@ public class SchemaSRVTest extends AbstractTest {
     void validationObjectTest() throws SAXException {
 
         final String cda = new String(getFileFromInternalResources(
-            "Files\\cda_ok\\Esempio CDA_002.xml"
+            "Files/cda_ok/Esempio CDA_002.xml"
         ), StandardCharsets.UTF_8);
         String version = "1.3";
 
