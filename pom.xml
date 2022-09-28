@@ -190,6 +190,19 @@
 			<groupId>com.google.code.gson</groupId>
 			<artifactId>gson</artifactId>
 		</dependency>
+
+		<!-- KAFKA -->
+		<dependency>
+			<groupId>org.springframework.kafka</groupId>
+			<artifactId>spring-kafka</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.kafka</groupId>
+			<artifactId>spring-kafka-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+
+
 	</dependencies>
 
 	<dependencyManagement>
@@ -233,7 +246,6 @@
 				<configuration>
 					<excludes>
 						<exclude>src/main/java/it/finanze/sanita/fse2/ms/gtw/validator/config/OpenApiCFG.java</exclude>
-						<exclude>src/main/java/it/finanze/sanita/fse2/ms/gtw/validator/logging/ElasticLoggerHelper.java</exclude>
 						<exclude>src/main/java/it/finanze/sanita/fse2/ms/gtw/validator/enums/**/*.*</exclude>
 						<!--<exclude>src/main/java/it/finanze/sanita/fse2/ms/gtw/validator/service/impl/UpdateSingletonSRV.java</exclude> --> 
 						<exclude>src/main/java/it/finanze/sanita/fse2/ms/gtw/validator/controller/impl/SingletonInspectorCTL.java</exclude>
