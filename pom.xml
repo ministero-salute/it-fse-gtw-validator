@@ -26,8 +26,8 @@
 		<container.output>target/container</container.output>
 		<container.output.runtime>${container.output}/runtime</container.output.runtime>
 		<!-- Sonar integration -->
-		  <sonar.organization>ministero-salute</sonar.organization>
-		<sonar.host.url>https://sonarcloud.io</sonar.host.url> 
+		<sonar.organization>ministero-salute</sonar.organization>
+		<sonar.host.url>https://sonarcloud.io</sonar.host.url>
 		<sonar.exclusions>
 			src/main/java/it/finanze/sanita/fse2/ms/gtw/validator/config/OpenApiCFG.java,
 			src/main/java/it/finanze/sanita/fse2/ms/gtw/validator/xmlresolver/Input.java
@@ -246,11 +246,7 @@
 				<configuration>
 					<excludes>
 						<exclude>src/main/java/it/finanze/sanita/fse2/ms/gtw/validator/config/OpenApiCFG.java</exclude>
-						<exclude>src/main/java/it/finanze/sanita/fse2/ms/gtw/validator/enums/**/*.*</exclude>
-						<!--<exclude>src/main/java/it/finanze/sanita/fse2/ms/gtw/validator/service/impl/UpdateSingletonSRV.java</exclude> --> 
-						<exclude>src/main/java/it/finanze/sanita/fse2/ms/gtw/validator/controller/impl/SingletonInspectorCTL.java</exclude>
-						<exclude>src/main/java/it/finanze/sanita/fse2/ms/gtw/validator/xmlresolver/**/*.*</exclude>
-						<exclude>src/main/java/it/finanze/sanita/fse2/ms/gtw/validator/repository/CollectionNaming.java</exclude>
+						<exclude>src/main/java/it/finanze/sanita/fse2/ms/gtw/validator/xmlresolver/Input.java</exclude>
 					</excludes>
 				</configuration>
 				<executions>
