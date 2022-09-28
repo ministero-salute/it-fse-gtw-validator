@@ -163,7 +163,7 @@ public class KafkaAppender<E> extends KafkaAppenderConfig<E> {
      */
     private class LazyProducer {
 
-        private volatile Producer<byte[], byte[]> producer;
+        private Producer<byte[], byte[]> producer;
 
         public Producer<byte[], byte[]> get() {
             Producer<byte[], byte[]> result = this.producer;

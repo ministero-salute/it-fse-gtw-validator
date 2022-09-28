@@ -1,6 +1,8 @@
 package it.finanze.sanita.fse2.ms.gtw.validator.logging;
 
 import ch.qos.logback.core.spi.ContextAwareBase;
+import it.finanze.sanita.fse2.ms.gtw.validator.exceptions.BusinessException;
+
 import org.apache.kafka.clients.producer.BufferExhaustedException;
 import org.apache.kafka.clients.producer.Producer;
 import org.apache.kafka.clients.producer.ProducerRecord;
@@ -24,7 +26,8 @@ public class BlockingDeliveryStrategy extends ContextAwareBase implements Delive
             else if (timeout == 0) future.get();
             return true;
         } catch (InterruptedException e) { 
-        	return false; 
+        	Thread.currentThread().interrupt();
+			throw new BusinessException(e);  
         } catch (BufferExhaustedException | ExecutionException | CancellationException | TimeoutException e) {
             failureCallback.onFailedDelivery(event, e);
         }
