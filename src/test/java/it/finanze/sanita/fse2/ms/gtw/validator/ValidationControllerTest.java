@@ -1,34 +1,30 @@
 package it.finanze.sanita.fse2.ms.gtw.validator;
 
+import static it.finanze.sanita.fse2.ms.gtw.validator.utility.FileUtility.getFileFromInternalResources;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 import java.io.File;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import javax.xml.validation.Validator;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
-import org.mockito.Mock;
-import org.mockito.MockedConstruction;
-import org.mockito.MockedStatic;
-import org.mockito.Mockito;
-import org.mockito.Spy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.SpyBean;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.core.query.Criteria;
-import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.http.MediaType;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
@@ -36,23 +32,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
-import static it.finanze.sanita.fse2.ms.gtw.validator.utility.FileUtility.getFileFromInternalResources;
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.BDDMockito.any; 
-import static org.mockito.BDDMockito.eq; 
-import static org.mockito.BDDMockito.when;
-import static org.mockito.BDDMockito.given;
-import org.mockito.MockedStatic;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.mockito.BDDMockito.anyString;
-import static org.mockito.BDDMockito.anyBoolean; 
-
-import static org.mockito.Mockito.*;
-
 
 import it.finanze.sanita.fse2.ms.gtw.validator.cda.ValidationResult;
 import it.finanze.sanita.fse2.ms.gtw.validator.config.Constants;
@@ -62,22 +42,11 @@ import it.finanze.sanita.fse2.ms.gtw.validator.dto.ExtractedInfoDTO;
 import it.finanze.sanita.fse2.ms.gtw.validator.dto.SchematronValidationResultDTO;
 import it.finanze.sanita.fse2.ms.gtw.validator.dto.VocabularyResultDTO;
 import it.finanze.sanita.fse2.ms.gtw.validator.dto.request.ValidationRequestDTO;
-import it.finanze.sanita.fse2.ms.gtw.validator.dto.response.LogTraceInfoDTO;
-import it.finanze.sanita.fse2.ms.gtw.validator.dto.response.ResponseDTO;
 import it.finanze.sanita.fse2.ms.gtw.validator.enums.CDASeverityViolationEnum;
 import it.finanze.sanita.fse2.ms.gtw.validator.enums.CDAValidationStatusEnum;
-import it.finanze.sanita.fse2.ms.gtw.validator.exceptions.BusinessException;
 import it.finanze.sanita.fse2.ms.gtw.validator.repository.entity.SchemaETY;
-import it.finanze.sanita.fse2.ms.gtw.validator.repository.entity.TerminologyETY;
-import it.finanze.sanita.fse2.ms.gtw.validator.repository.mongo.ISchemaRepo;
-import it.finanze.sanita.fse2.ms.gtw.validator.repository.mongo.ITerminologyRepo;
-import it.finanze.sanita.fse2.ms.gtw.validator.repository.mongo.impl.SchemaRepo;
-import it.finanze.sanita.fse2.ms.gtw.validator.repository.mongo.impl.SchematronRepo;
 import it.finanze.sanita.fse2.ms.gtw.validator.service.impl.UpdateSingletonSRV;
-import it.finanze.sanita.fse2.ms.gtw.validator.service.impl.ValidationSRV;
-import it.finanze.sanita.fse2.ms.gtw.validator.singleton.SchemaValidatorSingleton;
-import it.finanze.sanita.fse2.ms.gtw.validator.utility.FileUtility;
-import lombok.val; 
+import it.finanze.sanita.fse2.ms.gtw.validator.service.impl.ValidationSRV; 
 
 
 

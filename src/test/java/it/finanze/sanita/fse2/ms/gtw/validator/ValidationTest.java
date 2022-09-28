@@ -1,25 +1,15 @@
 package it.finanze.sanita.fse2.ms.gtw.validator;
 
 import static it.finanze.sanita.fse2.ms.gtw.validator.utility.FileUtility.getFileFromInternalResources;
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
-import static org.mockito.BDDMockito.when; 
-import static org.mockito.BDDMockito.any; 
-import static org.mockito.BDDMockito.given; 
-import static org.mockito.BDDMockito.eq; 
-import static org.mockito.BDDMockito.anyString; 
 
 import java.io.File;
 import java.nio.charset.StandardCharsets;
 
-import org.bson.BsonBinarySubType;
-import org.bson.types.Binary;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,22 +18,15 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.test.context.ActiveProfiles;
 
-import com.helger.schematron.ISchematronResource;
-
 import it.finanze.sanita.fse2.ms.gtw.validator.cda.CDAHelper;
 import it.finanze.sanita.fse2.ms.gtw.validator.config.Constants;
-import it.finanze.sanita.fse2.ms.gtw.validator.controller.Validation;
 import it.finanze.sanita.fse2.ms.gtw.validator.dto.CDAValidationDTO;
 import it.finanze.sanita.fse2.ms.gtw.validator.dto.ExtractedInfoDTO;
-import it.finanze.sanita.fse2.ms.gtw.validator.dto.SchematronValidationResultDTO;
 import it.finanze.sanita.fse2.ms.gtw.validator.dto.VocabularyResultDTO;
 import it.finanze.sanita.fse2.ms.gtw.validator.enums.CDAValidationStatusEnum;
-import it.finanze.sanita.fse2.ms.gtw.validator.exceptions.BusinessException;
 import it.finanze.sanita.fse2.ms.gtw.validator.exceptions.NoRecordFoundException;
-import it.finanze.sanita.fse2.ms.gtw.validator.repository.entity.SchematronETY;
 import it.finanze.sanita.fse2.ms.gtw.validator.repository.mongo.impl.SchematronRepo;
 import it.finanze.sanita.fse2.ms.gtw.validator.service.facade.IValidationFacadeSRV;
-import it.finanze.sanita.fse2.ms.gtw.validator.utility.FileUtility;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -62,7 +45,6 @@ class ValidationTest extends AbstractTest {
 	@MockBean
 	private CDAHelper cdaHelper; 
 	
-
 	@BeforeEach
 	void setup() {
 		clearConfigurationItems();
@@ -134,36 +116,6 @@ class ValidationTest extends AbstractTest {
 	}
 	
 	@Test
-	void validateSemanticTest() throws Exception {
-
-		final String cda = new String(getFileFromInternalResources("Files" + File.separator + "schematronLDO"
-				+ File.separator + "OK" + File.separator + "CDA2_Lettera_Dimissione_Ospedaliera_v2.2.xml"), StandardCharsets.UTF_8);
-		String version = "1.3";
-		
-		SchematronETY ety = new SchematronETY(); 
-		byte[] schematron = FileUtility.getFileFromInternalResources("Files" + File.separator + "schematronLDO" + File.separator + "schV3" + File.separator +"schematronFSE_LDO_V4.8.sch");
-
-		ety.setNameSchematron("Lettera di dimissione ospedaliera"); 
-		ety.setContentSchematron(new Binary(BsonBinarySubType.BINARY, schematron));
-		ety.setTemplateIdRoot("2.16.840.1.113883.2.9.10.1.5"); 
-		ety.setTemplateIdExtension("1.2"); 
-		
-		ExtractedInfoDTO infoDTO = CDAHelper.extractInfo(cda); 
-	
-		
-		 when(schematronRepo.findByTemplateIdRoot(anyString()))
-			.thenReturn(ety); 
-		
-		/* given(CDAHelper.validateXMLViaSchematronFull(any(), any()))
-			.willReturn(null); */ 
-		
-		log.info("Testing with version {}", version);
-		//SchematronValidationResultDTO firstResult = validationSRV.validateSemantic(cda, infoDTO); 
-		
-		assertDoesNotThrow(() -> validationSRV.validateSemantic(cda, infoDTO)); 
-	} 
-	
-	@Test
 	void validateSemanticExceptionTest() {
 
 		final String cda = new String(getFileFromInternalResources("Files" + File.separator + "cda.xml"), StandardCharsets.UTF_8);
@@ -176,16 +128,6 @@ class ValidationTest extends AbstractTest {
 		//SchematronValidationResultDTO firstResult = validationSRV.validateSemantic(cda, infoDTO); 
 		
 		assertThrows(NoRecordFoundException.class, () -> validationSRV.validateSemantic(cda, infoDTO)); 
-	} 
-	
-	@Test
-	void notNullTest() {
-		assertThrows(Exception.class, () -> Validation.notNull(null)); 
-	} 
-	
-	@Test
-	void notNullStringTest() {
-		assertThrows(Exception.class, () -> Validation.notNull("")); 
-	} 
+	}
 
 }
