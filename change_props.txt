@@ -4,3 +4,13 @@ Removed:
 log.elastic.level=trace
 log.elastic-search.enable=false
 log.logstash.url=127.0.0.1:5000
+
+
+28/09/2022
+Added:
+log.level=trace
+log.kafka-log.enable=true
+kafka.log.base-topic=MDS-SA-0004_FU_001_LOG
+
+kafka.producer.client-id=springboot-gtw-validator
+kafka.bootstrap-servers=kafka.bootstrap-servers=${KAFKA_HOST}:${KAFKA_PORT1},${KAFKA_HOST}:${KAFKA_PORT2},${KAFKA_HOST}:${KAFKA_PORT3}

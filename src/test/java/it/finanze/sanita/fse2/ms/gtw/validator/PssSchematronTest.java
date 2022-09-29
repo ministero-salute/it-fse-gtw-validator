@@ -8,7 +8,6 @@ import java.io.File;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -68,26 +67,4 @@ class PssSchematronTest extends AbstractTest {
 
 	}
 
-	@Test
-	@Disabled
-	@DisplayName("CDA ERROR")
-	void cdaError() throws Exception {
-		byte[] schematron = FileUtility.getFileFromInternalResources("Files" + File.separator + "schematronPSS" + File.separator + "schV3" + File.separator +"schematron_PSS_v2.7.sch");
-		try (ByteArrayInputStream bytes = new ByteArrayInputStream(schematron)) {
-			IReadableResource readableResource = new ReadableResourceInputStream("schematron_PSS_v2.7.sch", bytes);
-			SchematronResourceSCH schematronResource = new SchematronResourceSCH(readableResource);
-	
-			Map<String,byte[]> cdasKO = getSchematronFiles("src\\test\\resources\\Files\\schematronPSS\\KO");
-			for(Entry<String, byte[]> cdaKO : cdasKO.entrySet()) {
-	
-				try {
-					SchematronValidationResultDTO resultDTO = CDAHelper.validateXMLViaSchematronFull(schematronResource, cdaKO.getValue());
-					assertTrue(resultDTO.getFailedAssertions().size() > 0, "At least one failed assertion must be present in KO CDA");
-				} catch(Exception ex) {
-					log.error("Error encountered while testing CDA Error", ex);
-				}
-			}
-		}
-	}
-	 
 }

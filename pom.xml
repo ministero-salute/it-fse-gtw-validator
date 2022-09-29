@@ -27,9 +27,11 @@
 		<container.output.runtime>${container.output}/runtime</container.output.runtime>
 		<!-- Sonar integration -->
 		<sonar.organization>ministero-salute</sonar.organization>
-		<sonar.host.url>https://sonarcloud.io</sonar.host.url>
+		<sonar.host.url>https://sonarcloud.io</sonar.host.url> 
 		<sonar.exclusions>
 			src/main/java/it/finanze/sanita/fse2/ms/gtw/validator/config/OpenApiCFG.java,
+			src/main/java/it/finanze/sanita/fse2/ms/gtw/validator/xmlresolver/Input.java,
+			src/main/java/it/finanze/sanita/fse2/ms/gtw/validator/logging/*
 		</sonar.exclusions>
 	</properties>
 
@@ -99,12 +101,33 @@
 			<optional>true</optional>
 		</dependency>
 
-		<!-- MAPPER -->
+		<!-- TEST -->
 		<dependency>
-			<groupId>org.modelmapper.extensions</groupId>
-			<artifactId>modelmapper-spring</artifactId>
-			<version>3.1.0</version>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-test</artifactId>
+			<scope>test</scope>
 		</dependency>
+		
+
+						
+								<!-- CORE -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter</artifactId>
+		</dependency>
+		<!-- VALIDATION -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-validation</artifactId>
+		</dependency>
+		
+
+<dependency>
+    <groupId>org.objenesis</groupId>
+    <artifactId>objenesis</artifactId>
+    <version>3.2</version>
+    <scope>test</scope>
+</dependency>
 
 		<!-- TEST -->
 		<dependency>
@@ -113,6 +136,7 @@
 			<scope>test</scope>
 		</dependency>
 
+		
 		<!-- MONGODB -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -167,6 +191,19 @@
 			<groupId>com.google.code.gson</groupId>
 			<artifactId>gson</artifactId>
 		</dependency>
+
+		<!-- KAFKA -->
+		<dependency>
+			<groupId>org.springframework.kafka</groupId>
+			<artifactId>spring-kafka</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.kafka</groupId>
+			<artifactId>spring-kafka-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+
+
 	</dependencies>
 
 	<dependencyManagement>
@@ -178,7 +215,18 @@
 				<type>pom</type>
 				<scope>import</scope>
 			</dependency>
-		</dependencies>
+
+			 <dependency>
+				<groupId>ant-contrib</groupId>
+				<artifactId>ant-contrib</artifactId>
+				<version>1.0b3</version>
+			</dependency>
+			<dependency>
+				<groupId>ant</groupId>
+				<artifactId>ant</artifactId>
+				<version>1.7.0</version>
+			</dependency>
+	</dependencies>
 	</dependencyManagement>
 
 	<build>
@@ -199,12 +247,7 @@
 				<configuration>
 					<excludes>
 						<exclude>src/main/java/it/finanze/sanita/fse2/ms/gtw/validator/config/OpenApiCFG.java</exclude>
-						<exclude>src/main/java/it/finanze/sanita/fse2/ms/gtw/validator/logging/ElasticLoggerHelper.java</exclude>
-						<exclude>src/main/java/it/finanze/sanita/fse2/ms/gtw/validator/enums/**/*.*</exclude>
-						<exclude>src/main/java/it/finanze/sanita/fse2/ms/gtw/validator/service/impl/UpdateSingletonSRV.java</exclude>
-						<exclude>src/main/java/it/finanze/sanita/fse2/ms/gtw/validator/controller/impl/SingletonInspectorCTL.java</exclude>
-						<exclude>src/main/java/it/finanze/sanita/fse2/ms/gtw/validator/xmlresolver/**/*.*</exclude>
-						<exclude>src/main/java/it/finanze/sanita/fse2/ms/gtw/validator/repository/CollectionNaming.java</exclude>
+						<exclude>src/main/java/it/finanze/sanita/fse2/ms/gtw/validator/xmlresolver/Input.java</exclude>
 					</excludes>
 				</configuration>
 				<executions>

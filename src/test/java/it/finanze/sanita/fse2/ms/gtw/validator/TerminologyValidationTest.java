@@ -1,14 +1,24 @@
 package it.finanze.sanita.fse2.ms.gtw.validator;
 
-import it.finanze.sanita.fse2.ms.gtw.validator.config.Constants;
-import it.finanze.sanita.fse2.ms.gtw.validator.config.properties.PropertiesCFG;
-import it.finanze.sanita.fse2.ms.gtw.validator.dto.VocabularyResultDTO;
-import it.finanze.sanita.fse2.ms.gtw.validator.repository.entity.TerminologyETY;
-import it.finanze.sanita.fse2.ms.gtw.validator.repository.mongo.ITerminologyRepo;
-import it.finanze.sanita.fse2.ms.gtw.validator.repository.redis.IVocabulariesRedisRepo;
-import it.finanze.sanita.fse2.ms.gtw.validator.service.IVocabulariesSRV;
-import lombok.extern.slf4j.Slf4j;
-import org.junit.jupiter.api.*;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.doThrow;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.RepeatedTest;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,11 +28,17 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.test.context.ActiveProfiles;
 
-import java.util.*;
+import it.finanze.sanita.fse2.ms.gtw.validator.config.Constants;
+import it.finanze.sanita.fse2.ms.gtw.validator.config.properties.PropertiesCFG;
+import it.finanze.sanita.fse2.ms.gtw.validator.dto.VocabularyResultDTO;
+import it.finanze.sanita.fse2.ms.gtw.validator.exceptions.BusinessException;
+import it.finanze.sanita.fse2.ms.gtw.validator.repository.entity.TerminologyETY;
+import it.finanze.sanita.fse2.ms.gtw.validator.repository.mongo.ITerminologyRepo;
+import it.finanze.sanita.fse2.ms.gtw.validator.repository.redis.IVocabulariesRedisRepo;
+import it.finanze.sanita.fse2.ms.gtw.validator.service.IVocabulariesSRV;
+import lombok.extern.slf4j.Slf4j;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.BDDMockito.given;
+
 
 @Slf4j
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -38,10 +54,10 @@ class TerminologyValidationTest {
 
     @Autowired
     ITerminologyRepo vocabulariesMongoRepo;
-
+    
     @MockBean
-    PropertiesCFG propsCFG;
-
+    private PropertiesCFG propsCFG;
+    
     @Autowired
     MongoTemplate mongoTemplate;
 
@@ -74,6 +90,33 @@ class TerminologyValidationTest {
         VocabularyResultDTO existing = vocabulariesSRV.vocabulariesExists(terminology);
 
         assertTrue(existing.getValid());
+    } 
+    
+    @Test
+    @DisplayName("Terminology Validation Exception Test")
+    void validationExceptionTest() {
+
+        final Map<String, List<String>> redisTerminology = generateRandomTerminology(10, 100);
+        final Map<String, List<String>> mongoTerminology = generateRandomTerminology(10, 100);
+
+        // A chunk of keys will exist only in Redis
+        insertTerminologyOnRedis(redisTerminology);
+        // Add one test key for the sake of coverage
+        insertTerminologyOnRedis("test");
+
+        // All keys should exist in Mongo
+        insertTerminologyOnMongo(redisTerminology);
+        insertTerminologyOnMongo(mongoTerminology);
+
+        final Map<String, List<String>> terminology = new HashMap<>();
+        terminology.putAll(redisTerminology);
+        terminology.putAll(mongoTerminology);
+
+
+        doThrow(new BusinessException("Test Error", null)).when(propsCFG).isRedisEnabled(); 
+        
+        assertThrows(Exception.class, () -> vocabulariesSRV.vocabulariesExists(terminology)); 
+        
     }
 
     @Test

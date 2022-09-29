@@ -1,7 +1,9 @@
 package it.finanze.sanita.fse2.ms.gtw.validator;
 
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.io.File;
 import java.nio.charset.StandardCharsets;
@@ -16,15 +18,21 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
+import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import it.finanze.sanita.fse2.ms.gtw.validator.config.Constants;
 import it.finanze.sanita.fse2.ms.gtw.validator.repository.entity.SchemaETY;
+import it.finanze.sanita.fse2.ms.gtw.validator.service.IUpdateSingletonSRV;
 import it.finanze.sanita.fse2.ms.gtw.validator.service.IValidationSRV;
 import it.finanze.sanita.fse2.ms.gtw.validator.singleton.ResetSingleton;
 import it.finanze.sanita.fse2.ms.gtw.validator.singleton.SchemaValidatorSingleton;
@@ -37,10 +45,18 @@ import lombok.extern.slf4j.Slf4j;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ComponentScan(basePackages = { Constants.ComponentScan.BASE })
 @ActiveProfiles(Constants.Profile.TEST)
+@AutoConfigureMockMvc
 class SchemaTest extends AbstractTest {
 
 	@Autowired
-	IValidationSRV validationSRV;
+	IValidationSRV validationSRV; 
+	
+	@Autowired
+	IUpdateSingletonSRV updateSingletonSRV; 
+
+    @Autowired
+    MockMvc mvc; 
+	
 
     @BeforeEach
     void setup() {
@@ -65,15 +81,16 @@ class SchemaTest extends AbstractTest {
         // load new version
         validationSRV.validateSyntactic(cda, "1.4");
 
-        mapInstance = SchemaValidatorSingleton.getMapInstance();
-        assertEquals(2, mapInstance.size());
 
-        // update data ultimo aggiornamento
-		updateSchemaLastUpdateDate();
-
-        validationSRV.validateSyntactic(cda, "1.4");
-        mapInstance = SchemaValidatorSingleton.getMapInstance();
-        assertEquals(2, mapInstance.size());
+        
+    	MockHttpServletRequestBuilder builder =
+    	            MockMvcRequestBuilders.get("http://localhost:8012/v1/singletons"); 
+    	    
+	    mvc.perform(builder
+    	            .contentType(MediaType.APPLICATION_JSON_VALUE))
+    	            .andExpect(status().is2xxSuccessful());     	
+        	
+        
 
 	}
 
@@ -182,9 +199,23 @@ class SchemaTest extends AbstractTest {
         update.set("last_update_date", newDate);
         mongoTemplate.updateFirst(query, update, SchemaETY.class);
 
-	}
-    
+	}   
 
+    @Test
+	@DisplayName("Update Singleton Test")
+	void updateSingletonTest() throws Exception {
+
+		insertSchema();
+        addSchemaVersion();
+
+		final String cda = new String(FileUtility.getFileFromInternalResources("Files" + File.separator + "cda_ok" + File.separator + "Esempio CDA2_Referto Medicina di Laboratorio v6_OK.xml"), StandardCharsets.UTF_8);
+
+        assertDoesNotThrow(() -> updateSingletonSRV.updateSingletonInstance()); 
+        
+	}
+
+    
+    
     void deleteSchema() {
 		mongoTemplate.remove(new Query(), SchemaETY.class);
     }
