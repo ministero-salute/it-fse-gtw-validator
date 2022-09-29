@@ -2,6 +2,8 @@ package it.finanze.sanita.fse2.ms.gtw.validator;
 
 import static it.finanze.sanita.fse2.ms.gtw.validator.utility.FileUtility.getFileFromInternalResources;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
@@ -19,6 +21,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
+import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -33,6 +36,7 @@ import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilde
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.helger.schematron.ISchematronResource;
 
 import it.finanze.sanita.fse2.ms.gtw.validator.cda.ValidationResult;
 import it.finanze.sanita.fse2.ms.gtw.validator.config.Constants;
@@ -42,8 +46,11 @@ import it.finanze.sanita.fse2.ms.gtw.validator.dto.ExtractedInfoDTO;
 import it.finanze.sanita.fse2.ms.gtw.validator.dto.SchematronValidationResultDTO;
 import it.finanze.sanita.fse2.ms.gtw.validator.dto.VocabularyResultDTO;
 import it.finanze.sanita.fse2.ms.gtw.validator.dto.request.ValidationRequestDTO;
+import it.finanze.sanita.fse2.ms.gtw.validator.dto.response.LogTraceInfoDTO;
+import it.finanze.sanita.fse2.ms.gtw.validator.dto.response.ResponseDTO;
 import it.finanze.sanita.fse2.ms.gtw.validator.enums.CDASeverityViolationEnum;
 import it.finanze.sanita.fse2.ms.gtw.validator.enums.CDAValidationStatusEnum;
+import it.finanze.sanita.fse2.ms.gtw.validator.exceptions.NoRecordFoundException;
 import it.finanze.sanita.fse2.ms.gtw.validator.repository.entity.SchemaETY;
 import it.finanze.sanita.fse2.ms.gtw.validator.service.impl.UpdateSingletonSRV;
 import it.finanze.sanita.fse2.ms.gtw.validator.service.impl.ValidationSRV; 
@@ -93,7 +100,7 @@ class ValidationControllerTest extends AbstractTest {
     
     @SpyBean
     private MongoTemplate mongoTemplate; 
-        
+    
     
     @Test
     @DisplayName("Validation Controller - Test Success")
@@ -169,66 +176,51 @@ class ValidationControllerTest extends AbstractTest {
 	    mvc.perform(builder
 	            .contentType(MediaType.APPLICATION_JSON_VALUE))
 	            .andExpect(status().is2xxSuccessful()); 
-    	
-    	
+    	  	
     } 
     
     
-   /*  @Test
-    @DisplayName("Validate Terminology Test")
-    void validateTerminologyTest() throws Exception {
-
-        Query query = new Query();
-        query.addCriteria(Criteria.where("system").is("system").and("code").is("TEST_CODE"));
+    @Test
+    @DisplayName("Validation Controller - Invalid Semantic Validation")
+    void validationInvalidSemanticTest() throws Exception {
     	
-    	when(mongoTemplate.exists(query, TerminologyETY.class))
-    		.thenReturn(true); 
+		final String cda = new String(getFileFromInternalResources("Files" + File.separator + "schematronLDO"
+				+ File.separator + "OK" + File.separator + "CDA2_Lettera_Dimissione_Ospedaliera_v2.2.xml"), StandardCharsets.UTF_8);
+		
+    	CDAValidationDTO validation = new CDAValidationDTO(CDAValidationStatusEnum.NOT_VALID); 
+    	Map<CDASeverityViolationEnum, List<String>> violations = new HashMap<CDASeverityViolationEnum, List<String>>(); 
+    	ValidationResult vl = new ValidationResult(); 
+    	vl.addWarning("testWarning"); 
+    	violations.put(CDASeverityViolationEnum.WARN, vl.getWarnings()); 
+    	validation.setViolations(violations); 
     	
+    	ValidationRequestDTO validationRequest = new ValidationRequestDTO(); 
+    	VocabularyResultDTO vocabularyResultDto = new VocabularyResultDTO(); 
+    	vocabularyResultDto.setValid(true); 
+    	validationRequest.setCda(cda); 
+    	SchematronValidationResultDTO schematronValidationResult = new SchematronValidationResultDTO(true, true, null); 
+    	ObjectMapper objectMapper = new ObjectMapper(); 
+    	
+    	
+    	when(validationSrv.validateSyntactic(anyString(), anyString()))
+    		.thenReturn(validation); 
+    	
+    	when(validationSrv.validateSemantic(anyString(), any(ExtractedInfoDTO.class)))
+    		.thenThrow(new NoRecordFoundException("Error")); 
+    	
+    	when(validationSrv.validateVocabularies(anyString()))
+			.thenReturn(vocabularyResultDto); 
+    	
+	    
     	MockHttpServletRequestBuilder builder =
-	            MockMvcRequestBuilders.get("http://localhost:8012/v1/validate-terminology/system?" + "TEST_CODE"); 
+	            MockMvcRequestBuilders.post("http://localhost:8012/v1/validate").content(objectMapper.writeValueAsString(validationRequest)); 
 	    
 	    mvc.perform(builder
 	            .contentType(MediaType.APPLICATION_JSON_VALUE))
-	            .andExpect(status().is2xxSuccessful());     	
+	            .andExpect(status().is2xxSuccessful()); 
+    	
     	
     } 
-    
-    @Test
-    @DisplayName("Validate Terminology - Mongo Exception Test")
-    void validateTerminologyExceptionTest() throws Exception {
-
-        Query query = new Query();
-        query.addCriteria(Criteria.where("system").is("system").and("code").is("TEST_CODE"));
-    	
-    	when(mongoTemplate.exists(query, TerminologyETY.class))
-    		.thenThrow(new BusinessException("Exception")); 
-    	
-    	MockHttpServletRequestBuilder builder =
-	            MockMvcRequestBuilders.get("http://localhost:8012/v1/validate-terminology/system?" + "TEST_CODE"); 
-	    
-	    mvc.perform(builder
-	            .contentType(MediaType.APPLICATION_JSON_VALUE))
-	            .andExpect(status().is2xxSuccessful());     
-	    
-	    
-    	MockHttpServletRequestBuilder builderGetSingletons =
-	            MockMvcRequestBuilders.get("http://localhost:8012/v1/singletons"); 
-	    
-	    mvc.perform(builderGetSingletons
-	            .contentType(MediaType.APPLICATION_JSON_VALUE))
-	            .andExpect(status().is2xxSuccessful());     	
-    	
-	    
-    	
-    } */ 
-    
-  
-    
-    @Test
-    @DisplayName("Update Schema Test")
-    void updateSchemaTest() {
-    	assertDoesNotThrow(() -> updateSingletonSrv.updateSingletonInstance()); 
-    }
     
     
     void addSchemaVersion(){
@@ -246,7 +238,7 @@ class ValidationControllerTest extends AbstractTest {
     
     
     @Test
-    @DisplayName("Inspect Singletions Test - No Singleton")
+    @DisplayName("Inspect Singletons Test")
     void getSingletonsTest() throws Exception {
     	
     	MockHttpServletRequestBuilder builder =
@@ -258,36 +250,6 @@ class ValidationControllerTest extends AbstractTest {
     	
     } 
 
-   /*  @Test
-    @DisplayName("Response DTO Test")
-    void responseDtoTest() {
-    	LogTraceInfoDTO logTraceInfo = new LogTraceInfoDTO("TEST_SPAN_ID", "TEST_TRACE_ID"); 
-    	ResponseDTO responseDto = new ResponseDTO(logTraceInfo, 0, "testErrorMsg"); 
-    	
-    	assertEquals(responseDto.getClass(), ResponseDTO.class); 
-    	assertEquals(responseDto.getTraceID().getClass(), String.class); 
-    	assertEquals(responseDto.getSpanID().getClass(), String.class); 
-    	
-    	assertEquals(responseDto.getTraceID(), "TEST_TRACE_ID"); 
-    	assertEquals(responseDto.getSpanID(), "TEST_SPAN_ID"); 
-
-    } */ 
-    
-  /*  @Test
-    @DisplayName("Update Schematron Singleton - No dfference")
-    void updateSchematronSingletonNoDiffTest() {
-    	SchemaValidatorSingleton singleton = new SchemaValidatorSingleton("TEST_TYPE_EXTENSION",
-    			new Validator(), new Date()); 
-    	
-    	when(schemaRepo.findFatherXsd(anyString()))
-			.thenReturn(null); 
-    	
-    	updateSingletonSrv.updateSingletonInstance("TEST_URL"); 
-  
-    	
-    	assertDoesNotThrow(() -> updateSingletonSrv.updateSingletonInstance("TEST_URL")); 
-    } */ 
-    
     
 
 }

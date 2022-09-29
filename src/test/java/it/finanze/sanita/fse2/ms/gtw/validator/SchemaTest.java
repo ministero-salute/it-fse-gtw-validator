@@ -3,6 +3,7 @@ package it.finanze.sanita.fse2.ms.gtw.validator;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.io.File;
@@ -17,6 +18,7 @@ import java.util.Map;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -45,6 +47,7 @@ import lombok.extern.slf4j.Slf4j;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ComponentScan(basePackages = { Constants.ComponentScan.BASE })
 @ActiveProfiles(Constants.Profile.TEST)
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @AutoConfigureMockMvc
 class SchemaTest extends AbstractTest {
 
@@ -61,6 +64,7 @@ class SchemaTest extends AbstractTest {
     @BeforeEach
     void setup() {
 		deleteSchema();
+		clearConfigurationItems();
     }
 
     @Test
@@ -82,7 +86,6 @@ class SchemaTest extends AbstractTest {
         validationSRV.validateSyntactic(cda, "1.4");
 
 
-        
     	MockHttpServletRequestBuilder builder =
     	            MockMvcRequestBuilders.get("http://localhost:8012/v1/singletons"); 
     	    
@@ -202,15 +205,9 @@ class SchemaTest extends AbstractTest {
 	}   
 
     @Test
-	@DisplayName("Update Singleton Test")
-	void updateSingletonTest() throws Exception {
-
-		insertSchema();
-        addSchemaVersion();
-
-		final String cda = new String(FileUtility.getFileFromInternalResources("Files" + File.separator + "cda_ok" + File.separator + "Esempio CDA2_Referto Medicina di Laboratorio v6_OK.xml"), StandardCharsets.UTF_8);
-
-        assertDoesNotThrow(() -> updateSingletonSRV.updateSingletonInstance()); 
+	@DisplayName("Update Singleton - Exception Test")
+	void updateSingletonExceptionTest() throws Exception {
+        assertThrows(Exception.class, () -> updateSingletonSRV.updateSingletonInstance()); 
         
 	}
 
