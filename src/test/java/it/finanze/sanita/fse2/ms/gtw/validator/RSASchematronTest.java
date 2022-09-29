@@ -49,10 +49,17 @@ class RSASchematronTest extends AbstractTest {
 	@Test
 	@DisplayName("CDA OK")
 	void cdaOK() throws Exception {
+<<<<<<< HEAD
 		byte[] schematron = FileUtility.getFileFromInternalResources("Files" + File.separator + "schematronRSA" + File.separator + "schV3" + File.separator +"schematron_RSA_v7.2.sch");
 		
 		try (ByteArrayInputStream bytes = new ByteArrayInputStream(schematron)) {
 			IReadableResource readableResource = new ReadableResourceInputStream("schematron_RSA_v7.2.sch", bytes);
+=======
+		byte[] schematron = FileUtility.getFileFromInternalResources("Files" + File.separator + "schematronRSA" + File.separator + "schV3" + File.separator +"schematron_RSA_v7.3.sch");
+		
+		try (ByteArrayInputStream bytes = new ByteArrayInputStream(schematron)) {
+			IReadableResource readableResource = new ReadableResourceInputStream("schematron_RSA_v7.3.sch", bytes);
+>>>>>>> 93e00ee0e4ba6ecfc249d7737257dd55f21ca5fa
 			SchematronResourceSCH schematronResource = new SchematronResourceSCH(readableResource);
 			Map<String,byte[]> cdasOK = getSchematronFiles("src\\test\\resources\\Files\\schematronRSA\\OK");
 			for(Entry<String, byte[]> cdaOK : cdasOK.entrySet()) {
@@ -68,10 +75,17 @@ class RSASchematronTest extends AbstractTest {
 	@Test
 	@DisplayName("CDA ERROR")
 	void cdaError() throws Exception {
+<<<<<<< HEAD
 		byte[] schematron = FileUtility.getFileFromInternalResources("Files" + File.separator + "schematronRSA" + File.separator + "schV3" + File.separator +"schematron_RSA_v7.2.sch");
 
 		try (ByteArrayInputStream bytes = new ByteArrayInputStream(schematron)) {
 			IReadableResource readableResource = new ReadableResourceInputStream("schematron_RSA_v7.2.sch", bytes);
+=======
+		byte[] schematron = FileUtility.getFileFromInternalResources("Files" + File.separator + "schematronRSA" + File.separator + "schV3" + File.separator +"schematron_RSA_v7.3.sch");
+
+		try (ByteArrayInputStream bytes = new ByteArrayInputStream(schematron)) {
+			IReadableResource readableResource = new ReadableResourceInputStream("schematron_RSA_v7.3.sch", bytes);
+>>>>>>> 93e00ee0e4ba6ecfc249d7737257dd55f21ca5fa
 			SchematronResourceSCH schematronResource = new SchematronResourceSCH(readableResource);
 			
 			Map<String,byte[]> cdasKO = getSchematronFiles("src\\test\\resources\\Files\\schematronRSA\\ERROR");

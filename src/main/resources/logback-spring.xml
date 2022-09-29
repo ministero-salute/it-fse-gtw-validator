@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
 
+<<<<<<< HEAD
 	<!-- <property name="LOGS" value="${APP_LOGGING_ROOT:-application-log}/logs"
 		/> <property name="FILE_NAME" value="springboot-liberty-project" /> -->
 	<springProfile name="default">
@@ -12,6 +13,11 @@
 	<springProfile name="test">
 		<property resource="application-test.properties" />
 	</springProfile>
+=======
+	<!-- <property name="LOGS" value="${APP_LOGGING_ROOT:-application-log}/logs" 
+		/> <property name="FILE_NAME" value="springboot-liberty-project" /> -->
+	<property resource="application.properties" />
+>>>>>>> 93e00ee0e4ba6ecfc249d7737257dd55f21ca5fa
 
 	<springProperty scope="context" name="springAppName"
 		source="spring.application.name" />
@@ -20,7 +26,12 @@
 	<property name="CONSOLE_LOG_PATTERN"
 		value=" %d{yyyy-MM-dd HH:mm:ss.SSS} %5p [${springAppName},trace: %X{X-B3-TraceId:-} span: %X{X-B3-SpanId:-}, parent: %X{X-B3-ParentSpanId:-} exportable: %X{X-Span-Export:-},] %m%n%throwable" />
 
+<<<<<<< HEAD
 	<appender name="console" class="ch.qos.logback.core.ConsoleAppender">
+=======
+	<appender name="console"
+		class="ch.qos.logback.core.ConsoleAppender">
+>>>>>>> 93e00ee0e4ba6ecfc249d7737257dd55f21ca5fa
 		<layout class="ch.qos.logback.classic.PatternLayout">
 			<Pattern>
 				${CONSOLE_LOG_PATTERN}
