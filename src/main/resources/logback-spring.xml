@@ -28,10 +28,13 @@
 		</layout>
 	</appender>
 
-	<appender name="json" class="ch.qos.logback.core.ConsoleAppender">
-		<encoder class="ch.qos.logback.core.encoder.LayoutWrappingEncoder">
+	<appender name="json"
+		class="ch.qos.logback.core.ConsoleAppender">
+		<encoder
+			class="ch.qos.logback.core.encoder.LayoutWrappingEncoder">
 			<layout class="ch.qos.logback.contrib.json.classic.JsonLayout">
-				<jsonFormatter class="ch.qos.logback.contrib.jackson.JacksonJsonFormatter">
+				<jsonFormatter
+					class="ch.qos.logback.contrib.jackson.JacksonJsonFormatter">
 					<!-- prettyPrint is probably ok in dev, but usually not ideal in production: -->
 					<prettyPrint>false</prettyPrint>
 				</jsonFormatter>

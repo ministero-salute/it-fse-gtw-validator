@@ -49,10 +49,10 @@ class RSASchematronTest extends AbstractTest {
 	@Test
 	@DisplayName("CDA OK")
 	void cdaOK() throws Exception {
-		byte[] schematron = FileUtility.getFileFromInternalResources("Files" + File.separator + "schematronRSA" + File.separator + "schV3" + File.separator +"schematron_RSA_v7.2.sch");
+		byte[] schematron = FileUtility.getFileFromInternalResources("Files" + File.separator + "schematronRSA" + File.separator + "schV3" + File.separator +"schematron_RSA_v7.3.sch");
 		
 		try (ByteArrayInputStream bytes = new ByteArrayInputStream(schematron)) {
-			IReadableResource readableResource = new ReadableResourceInputStream("schematron_RSA_v7.2.sch", bytes);
+			IReadableResource readableResource = new ReadableResourceInputStream("schematron_RSA_v7.3.sch", bytes);
 			SchematronResourceSCH schematronResource = new SchematronResourceSCH(readableResource);
 			Map<String,byte[]> cdasOK = getSchematronFiles("src\\test\\resources\\Files\\schematronRSA\\OK");
 			for(Entry<String, byte[]> cdaOK : cdasOK.entrySet()) {
@@ -68,10 +68,10 @@ class RSASchematronTest extends AbstractTest {
 	@Test
 	@DisplayName("CDA ERROR")
 	void cdaError() throws Exception {
-		byte[] schematron = FileUtility.getFileFromInternalResources("Files" + File.separator + "schematronRSA" + File.separator + "schV3" + File.separator +"schematron_RSA_v7.2.sch");
+		byte[] schematron = FileUtility.getFileFromInternalResources("Files" + File.separator + "schematronRSA" + File.separator + "schV3" + File.separator +"schematron_RSA_v7.3.sch");
 
 		try (ByteArrayInputStream bytes = new ByteArrayInputStream(schematron)) {
-			IReadableResource readableResource = new ReadableResourceInputStream("schematron_RSA_v7.2.sch", bytes);
+			IReadableResource readableResource = new ReadableResourceInputStream("schematron_RSA_v7.3.sch", bytes);
 			SchematronResourceSCH schematronResource = new SchematronResourceSCH(readableResource);
 			
 			Map<String,byte[]> cdasKO = getSchematronFiles("src\\test\\resources\\Files\\schematronRSA\\ERROR");
