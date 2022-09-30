@@ -1,9 +1,6 @@
 package it.finanze.sanita.fse2.ms.gtw.validator;
 
 import static it.finanze.sanita.fse2.ms.gtw.validator.utility.FileUtility.getFileFromInternalResources;
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
@@ -21,7 +18,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
-import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -36,7 +32,6 @@ import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilde
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.helger.schematron.ISchematronResource;
 
 import it.finanze.sanita.fse2.ms.gtw.validator.cda.ValidationResult;
 import it.finanze.sanita.fse2.ms.gtw.validator.config.Constants;
@@ -46,8 +41,6 @@ import it.finanze.sanita.fse2.ms.gtw.validator.dto.ExtractedInfoDTO;
 import it.finanze.sanita.fse2.ms.gtw.validator.dto.SchematronValidationResultDTO;
 import it.finanze.sanita.fse2.ms.gtw.validator.dto.VocabularyResultDTO;
 import it.finanze.sanita.fse2.ms.gtw.validator.dto.request.ValidationRequestDTO;
-import it.finanze.sanita.fse2.ms.gtw.validator.dto.response.LogTraceInfoDTO;
-import it.finanze.sanita.fse2.ms.gtw.validator.dto.response.ResponseDTO;
 import it.finanze.sanita.fse2.ms.gtw.validator.enums.CDASeverityViolationEnum;
 import it.finanze.sanita.fse2.ms.gtw.validator.enums.CDAValidationStatusEnum;
 import it.finanze.sanita.fse2.ms.gtw.validator.exceptions.NoRecordFoundException;

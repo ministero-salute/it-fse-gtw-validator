@@ -5,10 +5,8 @@ import it.finanze.sanita.fse2.ms.gtw.validator.config.Constants;
 import it.finanze.sanita.fse2.ms.gtw.validator.exceptions.BusinessException;
 import it.finanze.sanita.fse2.ms.gtw.validator.repository.entity.SchemaETY;
 import it.finanze.sanita.fse2.ms.gtw.validator.repository.entity.SchematronETY;
-import it.finanze.sanita.fse2.ms.gtw.validator.repository.entity.TerminologyETY;
 import it.finanze.sanita.fse2.ms.gtw.validator.repository.mongo.ISchemaRepo;
 import it.finanze.sanita.fse2.ms.gtw.validator.repository.mongo.ISchematronRepo;
-import it.finanze.sanita.fse2.ms.gtw.validator.repository.mongo.ITerminologyRepo;
 import it.finanze.sanita.fse2.ms.gtw.validator.repository.mongo.impl.AuditRepo;
 import it.finanze.sanita.fse2.ms.gtw.validator.repository.mongo.impl.DictionaryRepo;
 import it.finanze.sanita.fse2.ms.gtw.validator.repository.mongo.impl.TerminologyRepo;
@@ -21,7 +19,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.util.ArrayList;
@@ -33,10 +30,7 @@ import static com.mongodb.assertions.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.when;
-import static org.mockito.ArgumentMatchers.eq; 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.BDDMockito.given; 
+import static org.mockito.Mockito.when; 
 
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)

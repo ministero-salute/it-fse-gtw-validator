@@ -141,7 +141,7 @@ class ValidationTest extends AbstractTest {
 		SchematronETY ety = new SchematronETY(); 
 		ety.setId("TEST_ID"); 
 		ety.setNameSchematron("schematronFSE_LDO_V3.5.sch");
-		ety.setContentSchematron(new Binary("PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4NCjxzY2hlbWEgeG1sbnM9Imh0dHA6Ly9wdXJsLm9jbGMub3JnL2RzZGwvc2NoZW1hdHJvbiIgDQoJCXhtbG5zOmNkYT0idXJuOmhsNy1vcmc6djMiDQogICAgICAgIHhtbG5zOmlzbz0iaHR0cDovL3B1cmwub2NsYy5vcmcvZHNkbC9zY2hlbWF0cm9uIg0KICAgICAgICB4bWxuczpzY2g9Imh0dHA6Ly93d3cuYXNjYy5uZXQveG1sL3NjaGVtYXRyb24iDQogICAgICAgIHF1ZXJ5QmluZGluZz0ieHNsdDIiPg0KCTx0aXRsZT5TY2hlbWF0cm9uIFJlZmVydG8gZGkgUmFkaW9sb2dpYSAgMS4xPC90aXRsZT4NCgk8bnMgcHJlZml4PSJobDciIHVyaT0idXJuOmhsNy1vcmc6djMiLz4NCgk8bnMgcHJlZml4PSJ4c2kiIHVyaT0iaHR0cDovL3d3dy53My5vcmcvMjAwMS9YTUxTY2hlbWEtaW5zdGFuY2UiLz4NCgk8cGF0dGVybiBpZD0iYWxsIj4NCgkNCgk8IS0tX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18gSEVBREVSIF9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18tLT4NCgkNCgk8IS0tIENsaW5pY2FsRG9jdW1lbnQgLS0".getBytes())); 
+		ety.setContentSchematron(new Binary("SGVsbG8gV29ybGQh".getBytes())); 
 		ety.setTemplateIdRoot("2.16.840.1.113883.2.9.10.1.5");
 		ety.setTemplateIdExtension("1.0"); 
 		
