@@ -14,7 +14,6 @@ import static org.mockito.ArgumentMatchers.anyString;
 import java.io.File;
 import java.nio.charset.StandardCharsets;
 
-import org.bson.BsonBinarySubType;
 import org.bson.types.Binary;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
