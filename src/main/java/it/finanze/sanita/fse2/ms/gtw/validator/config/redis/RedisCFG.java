@@ -12,11 +12,7 @@ import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
 import org.springframework.data.redis.core.StringRedisTemplate;
 
 /**
-<<<<<<< HEAD
  * Classe di configurazione per redis access_list.
-=======
- * Classe di configurazione per redis.
->>>>>>> 93e00ee0e4ba6ecfc249d7737257dd55f21ca5fa
  * 
  * @author vincenzoingenito
  */
