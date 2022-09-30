@@ -1,7 +1,6 @@
 package it.finanze.sanita.fse2.ms.gtw.validator;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.io.File;
@@ -203,13 +202,10 @@ class SchemaTest extends AbstractTest {
 	}   
 
     @Test
-	@DisplayName("Update Singleton - Exception Test")
-	void updateSingletonExceptionTest() throws Exception {
-        assertThrows(Exception.class, () -> updateSingletonSRV.updateSingletonInstance()); 
-        
+	@DisplayName("Update Singleton - No Exception Test")
+	void updateSingletonNoExceptionTest() throws Exception {
+        assertDoesNotThrow(() -> updateSingletonSRV.updateSingletonInstance());
 	}
-
-    
     
     void deleteSchema() {
 		mongoTemplate.remove(new Query(), SchemaETY.class);
