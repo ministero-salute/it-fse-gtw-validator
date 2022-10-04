@@ -154,7 +154,6 @@ class ValidationTest extends AbstractTest {
 	void validateSemanticInvalidSchematronTest() {
 
 		final String cda = new String(getFileFromInternalResources("Files" + File.separator + "cda.xml"), StandardCharsets.UTF_8);
-		String version = "1.3";
 		
 		SchematronETY ety = new SchematronETY(); 
 		ety.setId("TEST_ID"); 

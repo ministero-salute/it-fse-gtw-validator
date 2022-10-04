@@ -35,7 +35,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import it.finanze.sanita.fse2.ms.gtw.validator.cda.ValidationResult;
 import it.finanze.sanita.fse2.ms.gtw.validator.config.Constants;
-import it.finanze.sanita.fse2.ms.gtw.validator.controller.impl.ValidationCTL;
 import it.finanze.sanita.fse2.ms.gtw.validator.dto.CDAValidationDTO;
 import it.finanze.sanita.fse2.ms.gtw.validator.dto.ExtractedInfoDTO;
 import it.finanze.sanita.fse2.ms.gtw.validator.dto.SchematronValidationResultDTO;
@@ -45,7 +44,6 @@ import it.finanze.sanita.fse2.ms.gtw.validator.enums.CDASeverityViolationEnum;
 import it.finanze.sanita.fse2.ms.gtw.validator.enums.CDAValidationStatusEnum;
 import it.finanze.sanita.fse2.ms.gtw.validator.exceptions.NoRecordFoundException;
 import it.finanze.sanita.fse2.ms.gtw.validator.repository.entity.SchemaETY;
-import it.finanze.sanita.fse2.ms.gtw.validator.service.impl.UpdateSingletonSRV;
 import it.finanze.sanita.fse2.ms.gtw.validator.service.impl.ValidationSRV; 
 
 
@@ -78,15 +76,6 @@ class ValidationControllerTest extends AbstractTest {
     
     @Autowired
     MockMvc mvc; 
-    
-    @Autowired
-    private UpdateSingletonSRV updateSingletonSrv; 
-    
-    @Autowired
-    private ValidationCTL validationController; 
-    
-    @Autowired
-    private ValidationSRV validationService; 
     
     @MockBean
     private ValidationSRV validationSrv; 
@@ -191,7 +180,7 @@ class ValidationControllerTest extends AbstractTest {
     	VocabularyResultDTO vocabularyResultDto = new VocabularyResultDTO(); 
     	vocabularyResultDto.setValid(true); 
     	validationRequest.setCda(cda); 
-    	SchematronValidationResultDTO schematronValidationResult = new SchematronValidationResultDTO(true, true, null); 
+    	new SchematronValidationResultDTO(true, true, null); 
     	ObjectMapper objectMapper = new ObjectMapper(); 
     	
     	
