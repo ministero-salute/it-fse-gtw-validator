@@ -27,5 +27,6 @@ public class ValidationRequestDTO extends AbstractDTO {
 	@Schema(description = "cda")
     private String cda;
      
-     
+    @Schema(description = "transformEngine")
+	private boolean callTransformEngine;
 }

@@ -23,6 +23,7 @@ import it.finanze.sanita.fse2.ms.gtw.validator.repository.entity.SchemaETY;
 import it.finanze.sanita.fse2.ms.gtw.validator.repository.entity.SchematronETY;
 import it.finanze.sanita.fse2.ms.gtw.validator.repository.mongo.ISchemaRepo;
 import it.finanze.sanita.fse2.ms.gtw.validator.repository.mongo.ISchematronRepo;
+import it.finanze.sanita.fse2.ms.gtw.validator.repository.mongo.IXslTransformRepo;
 import it.finanze.sanita.fse2.ms.gtw.validator.service.ISchemaSRV;
 import it.finanze.sanita.fse2.ms.gtw.validator.service.IValidationSRV;
 import it.finanze.sanita.fse2.ms.gtw.validator.service.IVocabulariesSRV;
@@ -46,6 +47,9 @@ public class ValidationSRV implements IValidationSRV {
     
     @Autowired
     private ISchemaSRV schemaSRV;
+
+	@Autowired
+	private IXslTransformRepo xsltTransformRepo;
       
     
     @Override
@@ -138,6 +142,22 @@ public class ValidationSRV implements IValidationSRV {
 			throw new BusinessException("Error while executing validation on schematron", ex);
 		}
 		return output;
+	}
+
+	@Override
+	public String getTransformObjectID (boolean callTransformEngine,  String templateId){
+		String objectId;
+		try{
+			if (callTransformEngine){
+				throw new Exception("not implemented");
+			} else{
+				objectId = xsltTransformRepo.getXsltByTemplateId(templateId).getId();
+			}
+		} catch(Exception ex){
+			log.error("Error while getting objectID", ex);
+			throw new BusinessException("Error while getting objectID", ex);
+		}
+		return objectId;
 	}
      
 }

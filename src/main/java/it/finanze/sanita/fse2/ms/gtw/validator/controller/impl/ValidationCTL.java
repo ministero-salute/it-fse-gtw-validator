@@ -50,6 +50,8 @@ public class ValidationCTL extends AbstractCTL implements IValidationCTL {
 	@Override
 	public ValidationResponseDTO validation(ValidationRequestDTO requestBody, HttpServletRequest request) {
 
+		//recupera object id e mettilo nella risposta
+		boolean callTransformEngine = requestBody.isCallTransformEngine();
 		List<String> messages = new ArrayList<>();
 		Validation.notNull(requestBody.getCda());
 		
@@ -104,7 +106,9 @@ public class ValidationCTL extends AbstractCTL implements IValidationCTL {
 			}
 		}
 
-		ValidationInfoDTO out = ValidationInfoDTO.builder().result(outcome).message(messages).build();
+		String objectID = validationSRV.getTransformObjectID(callTransformEngine, infoDTO.getTemplateIdSchematron());
+
+		ValidationInfoDTO out = ValidationInfoDTO.builder().result(outcome).message(messages).objectID(objectID).build();
 		return new ValidationResponseDTO(getLogTraceInfo(), out);
 	}
 	 

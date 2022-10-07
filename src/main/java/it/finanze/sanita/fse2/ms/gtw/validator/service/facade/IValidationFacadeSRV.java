@@ -38,4 +38,6 @@ public interface IValidationFacadeSRV {
      */
     SchematronValidationResultDTO validateSemantic(String cdaToValidate,ExtractedInfoDTO extractedInfoDTO);
     
+    public String getTransformObjectID(boolean callTransformEngine, String templateIDRoot);
+    
 }
