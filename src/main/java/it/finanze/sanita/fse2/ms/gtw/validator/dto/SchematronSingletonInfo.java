@@ -15,7 +15,7 @@ public class SchematronSingletonInfo {
 
 	private String templateIdRoot;
 	
-    private String templateIdExtension;
+    private String version;
 
     private Date dataUltimoAggiornamento;
     

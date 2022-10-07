@@ -50,7 +50,7 @@ public class SingletonInspectorCTL extends AbstractCTL implements ISingletonInsp
             for (Map.Entry<String, SchematronValidatorSingleton> entry : schematronInstance.entrySet()) {
                 schematrons.add(SchematronSingletonInfo.builder()
                 		.templateIdRoot(entry.getValue().getTemplateIdRoot())
-                        .templateIdExtension(entry.getValue().getTemplateIdExtension())
+                        .version(entry.getValue().getVersion())
                         .dataUltimoAggiornamento(entry.getValue().getDataUltimoAggiornamento())
                         .build());
             }

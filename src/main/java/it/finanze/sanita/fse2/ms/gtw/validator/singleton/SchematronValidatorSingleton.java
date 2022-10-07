@@ -28,7 +28,7 @@ public final class SchematronValidatorSingleton {
 
 	private String templateIdRoot;
 	
-	private String templateIdExtension;
+	private String version;
 	
 	private Date dataUltimoAggiornamento;
 	
@@ -48,7 +48,7 @@ public final class SchematronValidatorSingleton {
 					IReadableResource readableResource = new ReadableResourceInputStream(StringUtility.generateUUID(), schematronBytes);
 					SchematronResourceSCH schematronResourceSCH = new SchematronResourceSCH(readableResource);
 					instance = new SchematronValidatorSingleton(inSchematronETY.getTemplateIdRoot(), 
-						inSchematronETY.getTemplateIdExtension(), inSchematronETY.getLastUpdateDate(), schematronResourceSCH);
+						inSchematronETY.getVersion(), inSchematronETY.getLastUpdateDate(), schematronResourceSCH);
 	
 					mapInstance.put(instance.getTemplateIdRoot(), instance);
 				} catch (Exception e) {
@@ -62,12 +62,12 @@ public final class SchematronValidatorSingleton {
 		return instance;
 	}
 
-	private SchematronValidatorSingleton(final String inTemplateIdRoot,final String inTemplateIdExtension,
+	private SchematronValidatorSingleton(final String inTemplateIdRoot,final String inVersion,
 			final Date inDataUltimoAggiornamento,final SchematronResourceSCH inSchematronResource) {
 		templateIdRoot = inTemplateIdRoot;
 		dataUltimoAggiornamento = inDataUltimoAggiornamento;
 		schematronResourceSCH = inSchematronResource;
-		templateIdExtension = inTemplateIdExtension;
+		version = inVersion;
 	}
 
 
@@ -83,8 +83,8 @@ public final class SchematronValidatorSingleton {
 		return templateIdRoot;
 	}
 	
-	public String getTemplateIdExtension() {
-		return templateIdExtension;
+	public String getVersion() {
+		return version;
 	}
 
 	public static Map<String,SchematronValidatorSingleton> getMapInstance() {
