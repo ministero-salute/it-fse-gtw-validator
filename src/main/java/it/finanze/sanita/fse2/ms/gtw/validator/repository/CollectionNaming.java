@@ -52,6 +52,14 @@ public class CollectionNaming {
         }
         return Constants.ComponentScan.Collections.SCHEMATRON;
     }
+    
+    @Bean("structureMapBean")
+    public String getStructureMapCollection() {
+        if (profileUtility.isTestProfile()) {
+            return Constants.Profile.TEST_PREFIX + Constants.ComponentScan.Collections.STRUCTURE_MAP;
+        }
+        return Constants.ComponentScan.Collections.STRUCTURE_MAP;
+    }
 
     @Bean("terminologyBean")
     public String getTerminologyCollection() {

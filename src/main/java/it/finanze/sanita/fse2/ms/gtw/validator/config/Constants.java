@@ -56,6 +56,8 @@ public final class Constants {
 			public static final String TERMINOLOGY = "terminology";
 
 			public static final String XSL_TRANSFORM = "xsl_transform";
+			
+			public static final String STRUCTURE_MAP = "structure_map";
 
 			private Collections() {
 
