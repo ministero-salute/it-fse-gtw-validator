@@ -96,7 +96,7 @@ class ValidationControllerTest extends AbstractTest {
     	VocabularyResultDTO vocabularyResultDto = new VocabularyResultDTO(); 
     	vocabularyResultDto.setValid(true); 
     	validationRequest.setCda(cda); 
-    	SchematronValidationResultDTO schematronValidationResult = new SchematronValidationResultDTO(true, true, null); 
+    	SchematronValidationResultDTO schematronValidationResult = new SchematronValidationResultDTO(true, true, null, null); 
     	ObjectMapper objectMapper = new ObjectMapper(); 
     	
     	
@@ -138,7 +138,7 @@ class ValidationControllerTest extends AbstractTest {
     	VocabularyResultDTO vocabularyResultDto = new VocabularyResultDTO(); 
     	vocabularyResultDto.setValid(true); 
     	validationRequest.setCda(cda); 
-    	SchematronValidationResultDTO schematronValidationResult = new SchematronValidationResultDTO(true, true, null); 
+    	SchematronValidationResultDTO schematronValidationResult = new SchematronValidationResultDTO(true, true, null, null); 
     	ObjectMapper objectMapper = new ObjectMapper(); 
     	
     	
@@ -180,7 +180,7 @@ class ValidationControllerTest extends AbstractTest {
     	VocabularyResultDTO vocabularyResultDto = new VocabularyResultDTO(); 
     	vocabularyResultDto.setValid(true); 
     	validationRequest.setCda(cda); 
-    	new SchematronValidationResultDTO(true, true, null); 
+    	new SchematronValidationResultDTO(true, true, null, null); 
     	ObjectMapper objectMapper = new ObjectMapper(); 
     	
     	

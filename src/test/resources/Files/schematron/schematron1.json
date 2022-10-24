@@ -10,7 +10,7 @@
   },
   "name_schematron": "schematron_RSA_v6.sch",
   "template_id_root": "2.16.840.1.113883.2.9.10.1.9.1",
-  "template_id_extension": "1.0",
+  "version": "1.0",
   "last_update_date": {
     "$date": "2022-07-26T16:01:14.479Z"
   }
