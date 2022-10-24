@@ -142,7 +142,7 @@ class ValidationTest extends AbstractTest {
 		ety.setNameSchematron("schematronFSE_LDO_V3.5.sch");
 		ety.setContentSchematron(new Binary("SGVsbG8gV29ybGQh".getBytes())); 
 		ety.setTemplateIdRoot("2.16.840.1.113883.2.9.10.1.5");
-		ety.setTemplateIdExtension("1.0"); 
+		ety.setVersion("1.0"); 
 		
 		when(schematronRepo.findByTemplateIdRoot(anyString())).thenReturn(ety); 
 		when(aResSCH.isValidSchematron()).thenReturn(true); 
@@ -160,7 +160,7 @@ class ValidationTest extends AbstractTest {
 		ety.setNameSchematron("TEST_NAME");
 		ety.setContentSchematron(new Binary("Hello World!".getBytes())); 
 		ety.setTemplateIdRoot("TEST_ROOT");
-		ety.setTemplateIdExtension("1.2"); 
+		ety.setVersion("1.2"); 
 		
 		ExtractedInfoDTO infoDTO = CDAHelper.extractInfo(cda); 
 		

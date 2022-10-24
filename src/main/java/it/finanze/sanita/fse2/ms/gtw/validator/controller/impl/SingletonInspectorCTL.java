@@ -1,3 +1,6 @@
+/*
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ */
 package it.finanze.sanita.fse2.ms.gtw.validator.controller.impl;
 
 import java.util.ArrayList;
@@ -50,7 +53,7 @@ public class SingletonInspectorCTL extends AbstractCTL implements ISingletonInsp
             for (Map.Entry<String, SchematronValidatorSingleton> entry : schematronInstance.entrySet()) {
                 schematrons.add(SchematronSingletonInfo.builder()
                 		.templateIdRoot(entry.getValue().getTemplateIdRoot())
-                        .templateIdExtension(entry.getValue().getTemplateIdExtension())
+                        .version(entry.getValue().getVersion())
                         .dataUltimoAggiornamento(entry.getValue().getDataUltimoAggiornamento())
                         .build());
             }

@@ -1,3 +1,6 @@
+/*
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ */
 package it.finanze.sanita.fse2.ms.gtw.validator.repository.entity;
 
 import java.util.Date;
@@ -30,8 +33,8 @@ public class SchematronETY {
 	@Field(name = "template_id_root")
 	private String templateIdRoot;
 	
-	@Field(name = "template_id_extension")
-	private String templateIdExtension;
+	@Field(name = "version")
+	private String version;
 	
 	@Field(name = "last_update_date")
 	private Date lastUpdateDate;

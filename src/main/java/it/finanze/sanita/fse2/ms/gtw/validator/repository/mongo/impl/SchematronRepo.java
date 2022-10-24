@@ -1,3 +1,6 @@
+/*
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ */
 package it.finanze.sanita.fse2.ms.gtw.validator.repository.mongo.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,7 +38,7 @@ public class SchematronRepo implements ISchematronRepo {
 		try {
 			Query query = new Query();
 			query.addCriteria(Criteria.where("template_id_root").is(templateIdRoot));
-			query.with(Sort.by(Sort.Direction.DESC, "template_id_extension"));
+			query.with(Sort.by(Sort.Direction.DESC, "version"));
 			output = mongoTemplate.findOne(query, SchematronETY.class);
 		} catch(Exception ex) {
 			log.error("Error while executing find by version on schematron ETY", ex);
@@ -50,8 +53,8 @@ public class SchematronRepo implements ISchematronRepo {
 		try {
 			Query query = new Query();
 			query.addCriteria(Criteria.where("template_id_root").is(system).
-					and("template_id_extension").gt(version));
-			query.with(Sort.by(Sort.Direction.DESC, "template_id_extension"));
+					and("version").gt(version));
+			query.with(Sort.by(Sort.Direction.DESC, "version"));
 			output = mongoTemplate.findOne(query, SchematronETY.class);
 		} catch(Exception ex) {
 			log.error("Error while executing find by version on schematron ETY", ex);
