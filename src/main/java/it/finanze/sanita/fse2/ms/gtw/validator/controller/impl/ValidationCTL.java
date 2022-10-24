@@ -76,8 +76,8 @@ public class ValidationCTL extends AbstractCTL implements IValidationCTL {
 		}	
 
 		if(RawValidationEnum.OK.equals(outcome)) {
-			try {
-				SchematronValidationResultDTO semanticValidation = validationSRV.validateSemantic(requestBody.getCda(),infoDTO);
+			SchematronValidationResultDTO semanticValidation = validationSRV.validateSemantic(requestBody.getCda(),infoDTO);
+			if(StringUtility.isNullOrEmpty(semanticValidation.getMessage())){
 				if(Boolean.FALSE.equals(semanticValidation.getValidSchematron())) {
 					messages.add("Invalid schematron");
 					outcome = RawValidationEnum.SEMANTIC_ERROR;
@@ -90,8 +90,8 @@ public class ValidationCTL extends AbstractCTL implements IValidationCTL {
 						outcome = RawValidationEnum.SEMANTIC_ERROR;
 					}
 				}
-			} catch(NoRecordFoundException ex) {
-				messages.add(ex.getMessage());
+			} else {
+				messages.add(semanticValidation.getMessage());
 				outcome = RawValidationEnum.SEMANTIC_ERROR;
 			}
 
