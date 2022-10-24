@@ -42,7 +42,8 @@ public class SchemaRepo implements ISchemaRepo {
 		List<SchemaETY> output = new ArrayList<>();
 		try {
 			Query query = new Query();
-			query.addCriteria(Criteria.where("type_id_extension").is(typeIdExtension).and("last_update_date").gt(lastUpdateDate));
+			query.addCriteria(Criteria.where("type_id_extension").is(typeIdExtension).and("last_update_date").gt(lastUpdateDate)
+					.and("deleted").is(false));
 			query.with(Sort.by(Sort.Direction.DESC, "last_update_date"));
 			output = mongoTemplate.find(query, SchemaETY.class);
 		} catch(Exception ex) {
@@ -57,7 +58,8 @@ public class SchemaRepo implements ISchemaRepo {
 		List<SchemaETY> output;
 		try {
 			Query query = new Query();
-			query.addCriteria(Criteria.where("root_schema").is(false).and("type_id_extension").is(version));
+			query.addCriteria(Criteria.where("root_schema").is(false).and("type_id_extension").is(version)
+						.and("deleted").is(false));
 			output = mongoTemplate.find(query, SchemaETY.class);
 		} catch(Exception ex) {
 			log.error("Error while searching for child schemes" , ex);
@@ -71,7 +73,8 @@ public class SchemaRepo implements ISchemaRepo {
 		SchemaETY output;
 		try {
 			Query query = new Query();
-			query.addCriteria(Criteria.where("root_schema").is(true).and("type_id_extension").is(version));
+			query.addCriteria(Criteria.where("root_schema").is(true).and("type_id_extension").is(version)
+					.and("deleted").is(false));
 			output = mongoTemplate.findOne(query, SchemaETY.class);
 		} catch(Exception ex) {
 			log.error("Error while searching for father schema" , ex);
@@ -85,7 +88,7 @@ public class SchemaRepo implements ISchemaRepo {
 		SchemaETY output;
 		try {
 			Query query = new Query();
-			query.addCriteria(Criteria.where("root_schema").is(true));
+			query.addCriteria(Criteria.where("root_schema").is(true).and("deleted").is(false));
 			output = mongoTemplate.findOne(query, SchemaETY.class);
 		} catch(Exception ex) {
 			log.error("Error while searching for father schema" , ex);
@@ -99,7 +102,8 @@ public class SchemaRepo implements ISchemaRepo {
 		SchemaETY output;
 		try {
 			Query query = new Query();
-			query.addCriteria(Criteria.where("name_schema").is(nameSchema).and("type_id_extension").is(version));
+			query.addCriteria(Criteria.where("name_schema").is(nameSchema).and("type_id_extension").is(version)
+					.and("deleted").is(false));
 			output = mongoTemplate.findOne(query, SchemaETY.class);
 		} catch(Exception ex) {
 			log.error("Error while searching for find by name and version" , ex);
@@ -113,7 +117,7 @@ public class SchemaRepo implements ISchemaRepo {
 		List<SchemaETY> output;
 		try {
 			Query query = new Query();
-			query.addCriteria(Criteria.where("type_id_extension").is(version));
+			query.addCriteria(Criteria.where("type_id_extension").is(version).and("deleted").is(false));
 			output = mongoTemplate.find(query, SchemaETY.class);
 		} catch(Exception ex) {
 			log.error(String.format("Error while running find by version: %s", ex));
@@ -127,7 +131,7 @@ public class SchemaRepo implements ISchemaRepo {
 		SchemaETY output;
 		try {
 			Query query = new Query();
-			query.addCriteria(Criteria.where("type_id_extension").is(typeIdExtension));
+			query.addCriteria(Criteria.where("type_id_extension").is(typeIdExtension).and("deleted").is(false));
 			query.with(Sort.by(Sort.Direction.DESC, "last_update_date"));
 			output = mongoTemplate.findOne(query, SchemaETY.class);
 		} catch(Exception ex) {

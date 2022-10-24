@@ -76,6 +76,7 @@ public abstract class AbstractTest {
 			for (File file : folder.listFiles()) {
 				final String schemaJson = new String(Files.readAllBytes(Paths.get(file.getCanonicalPath())), StandardCharsets.UTF_8);
 				final Document schema = Document.parse(schemaJson);
+				schema.put("deleted", false); 
 				String targetCollection = item;
 				if (profileUtility.isTestProfile()) {
 					targetCollection = Constants.Profile.TEST_PREFIX + item;

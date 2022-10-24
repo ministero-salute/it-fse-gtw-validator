@@ -31,7 +31,7 @@ public class XslTransformRepo implements IXslTransformRepo {
         XslTransformETY xslt = null;
         try {
             final Query query = new Query();
-            query.addCriteria(Criteria.where("template_id_root").is(templateId));
+            query.addCriteria(Criteria.where("template_id_root").is(templateId).and("deleted").is(false));
             query.with(Sort.by(Direction.DESC, "template_id_extension"));
 
             xslt = mongoTemplate.findOne(query, XslTransformETY.class);

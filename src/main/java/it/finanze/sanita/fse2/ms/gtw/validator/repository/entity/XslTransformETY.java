@@ -36,4 +36,7 @@ public class XslTransformETY {
 	@Field(name = "last_update_date")
     private Date lastUpdateDate;
 
+	@Field(name = "deleted")
+	private Boolean deleted; 
+	
 }

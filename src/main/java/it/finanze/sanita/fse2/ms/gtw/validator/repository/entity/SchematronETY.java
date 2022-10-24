@@ -37,6 +37,9 @@ public class SchematronETY {
 	private String version;
 	
 	@Field(name = "last_update_date")
-	private Date lastUpdateDate;
+	private Date lastUpdateDate; 
+	
+	@Field(name = "deleted")
+	private Boolean deleted;
 	 
 }

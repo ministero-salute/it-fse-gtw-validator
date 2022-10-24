@@ -30,6 +30,9 @@ public class DictionaryETY {
 	private Binary contentFile;
 	
 	@Field(name = "version")
-	private String version;
+	private String version; 
+	
+	@Field(name = "deleted")
+	private Boolean deleted; 
 	 
 }

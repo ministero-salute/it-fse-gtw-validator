@@ -31,7 +31,7 @@ public class DictionaryRepo implements IDictionaryRepo {
 		DictionaryETY out;
 		try {
 			Query query = new Query();
-			query.addCriteria(Criteria.where("filename").is(filename));
+			query.addCriteria(Criteria.where("filename").is(filename).and("deleted").is(false));
 			out = mongoTemplate.findOne(query, DictionaryETY.class);
 		} catch(Exception ex) {
 			log.error("Error while perform find by filename : " , ex);

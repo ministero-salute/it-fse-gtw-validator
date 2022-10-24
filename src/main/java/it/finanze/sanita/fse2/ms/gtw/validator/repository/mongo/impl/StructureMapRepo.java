@@ -31,7 +31,8 @@ public class StructureMapRepo implements IStructureMapRepo {
 		StructureMapETY out = null;
 		try {
 			Query query = new Query();
-			query.addCriteria(Criteria.where("template_id_root").is(templateIdRoot));
+			query.addCriteria(Criteria.where("template_id_root").is(templateIdRoot)
+					.and("deleted").is(false));
 			out = mongoTemplate.findOne(query, StructureMapETY.class);
 		} catch(Exception ex) {
 			log.error("Error while perform find structure map by name : " , ex);
@@ -45,7 +46,8 @@ public class StructureMapRepo implements IStructureMapRepo {
 		StructureMapETY out = null;
 		try {
 			Query query = new Query();
-			query.addCriteria(Criteria.where("name_structure_map").regex(Pattern.compile("^"+mapName, Pattern.CASE_INSENSITIVE)));  
+			query.addCriteria(Criteria.where("name_structure_map").regex(Pattern.compile("^"+mapName, Pattern.CASE_INSENSITIVE))
+					.and("deleted").is(false));  
 			out = mongoTemplate.findOne(query, StructureMapETY.class);
 		} catch(Exception ex) {
 			log.error("Error while perform find structure map by name : " , ex);
