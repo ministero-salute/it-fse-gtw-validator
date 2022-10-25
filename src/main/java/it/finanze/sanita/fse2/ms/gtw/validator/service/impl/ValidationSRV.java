@@ -109,7 +109,7 @@ public class ValidationSRV implements IValidationSRV {
  
 	@Override
 	public SchematronValidationResultDTO validateSemantic(final String cdaToValidate,final ExtractedInfoDTO extractedInfoDTO) {
-		SchematronValidationResultDTO output = null;
+		SchematronValidationResultDTO output = new SchematronValidationResultDTO(false, false, null, null);
 		try { 
 			ISchematronResource schematronResource = null;
 			
@@ -135,11 +135,11 @@ public class ValidationSRV implements IValidationSRV {
 			
 			output = CDAHelper.validateXMLViaSchematronFull(schematronResource, cdaToValidate.getBytes());
 		} catch(NoRecordFoundException nEx) {
-			throw nEx;
+			output.setMessage(nEx.getMessage());
     	} catch(Exception ex) {
-			log.error("Error while executing validation on schematron", ex);
-			throw new BusinessException("Error while executing validation on schematron", ex);
-		}
+    		log.error("Error while executing validation on sch schematron", ex);
+    		output.setMessage("Error while executing validation on sch schematron");
+    	}
 		return output;
 	}
      

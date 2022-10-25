@@ -94,7 +94,7 @@ public class CDAHelper {
 			}
 		}
 		
-		return new SchematronValidationResultDTO(validST,validXML,assertions);
+		return new SchematronValidationResultDTO(validST, validXML, null, assertions);
 	}
 	 
 }
