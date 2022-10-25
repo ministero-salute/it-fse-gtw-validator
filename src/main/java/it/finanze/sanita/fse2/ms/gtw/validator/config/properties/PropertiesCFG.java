@@ -29,6 +29,10 @@ public class PropertiesCFG {
      */
     @Value("${vocabulary.find-specific-error}")
     private boolean findSpecificErrorVocabulary;
-    
 
+    /**
+     * Vocabulary specific config to check whether system exists indipendently from codes
+     */
+    @Value("${vocabulary.find-system-code-independence}")
+    private boolean findSystemAndCodesIndependence;
 }

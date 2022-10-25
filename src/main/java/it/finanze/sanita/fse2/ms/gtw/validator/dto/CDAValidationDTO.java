@@ -8,7 +8,7 @@ import it.finanze.sanita.fse2.ms.gtw.validator.enums.CDASeverityViolationEnum;
 import it.finanze.sanita.fse2.ms.gtw.validator.enums.CDAValidationStatusEnum;
 import lombok.Data;
 
-import java.util.HashMap;
+import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 
@@ -27,7 +27,7 @@ public class CDAValidationDTO {
 
 	public CDAValidationDTO(ValidationResult result) {
 		status = CDAValidationStatusEnum.NOT_VALID;
-		violations = new HashMap<>();
+		violations = new EnumMap<>(CDASeverityViolationEnum.class);
 		violations.put(CDASeverityViolationEnum.WARN, result.getWarnings());
 		violations.put(CDASeverityViolationEnum.ERROR, result.getErrors());
 		violations.put(CDASeverityViolationEnum.FATAL, result.getFatals());

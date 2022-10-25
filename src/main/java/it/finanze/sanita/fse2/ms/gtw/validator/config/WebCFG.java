@@ -9,7 +9,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
-import it.finanze.sanita.fse2.ms.gtw.validator.interceptor.LogInterceptor;
+import it.finanze.sanita.fse2.ms.gtw.validator.filter.interceptor.LogInterceptor;
 
 @Configuration
 @ConditionalOnProperty("ms.validator.audit.enabled")

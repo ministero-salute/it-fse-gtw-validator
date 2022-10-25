@@ -3,6 +3,7 @@
  */
 package it.finanze.sanita.fse2.ms.gtw.validator.repository.entity;
 
+import it.finanze.sanita.fse2.ms.gtw.validator.config.Constants;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -22,10 +23,10 @@ public class TerminologyETY {
 	@Id
 	private String id;
 	
-	@Field(name = "system")
+	@Field(name = Constants.App.SYSTEM_KEY)
 	private String system;
 	
-	@Field(name = "code")
+	@Field(name = Constants.App.CODE_KEY)
 	private String code;
 	
 	@Field(name = "description")

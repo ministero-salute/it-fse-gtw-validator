@@ -1,8 +1,6 @@
 package it.finanze.sanita.fse2.ms.gtw.validator;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.doThrow;
 
@@ -13,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import it.finanze.sanita.fse2.ms.gtw.validator.cda.ValidationResult;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
@@ -25,7 +24,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Description;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 
 import it.finanze.sanita.fse2.ms.gtw.validator.config.Constants;
@@ -37,7 +38,8 @@ import it.finanze.sanita.fse2.ms.gtw.validator.repository.mongo.ITerminologyRepo
 import it.finanze.sanita.fse2.ms.gtw.validator.repository.redis.IVocabulariesRedisRepo;
 import it.finanze.sanita.fse2.ms.gtw.validator.service.IVocabulariesSRV;
 import lombok.extern.slf4j.Slf4j;
-
+import org.springframework.test.context.DynamicPropertyRegistry;
+import org.springframework.test.context.DynamicPropertySource;
 
 
 @Slf4j
@@ -63,7 +65,7 @@ class TerminologyValidationTest {
 
     @BeforeEach
     void setup() {
-        given(propsCFG.getValidationTTL()).willReturn(120l);
+        given(propsCFG.getValidationTTL()).willReturn(120L);
         given(propsCFG.isRedisEnabled()).willReturn(true);
     }
 
@@ -124,7 +126,7 @@ class TerminologyValidationTest {
     void redisOnOff() {
 
         given(propsCFG.isRedisEnabled()).willReturn(false);
-        given(propsCFG.getValidationTTL()).willReturn(120l);
+        given(propsCFG.getValidationTTL()).willReturn(120L);
         
         final Map<String, List<String>> terminology = generateRandomTerminology(10, 1000);
 
@@ -149,7 +151,7 @@ class TerminologyValidationTest {
 
         @BeforeEach
         void setup() {
-            given(propsCFG.getValidationTTL()).willReturn(120l);
+            given(propsCFG.getValidationTTL()).willReturn(120L);
             given(propsCFG.isRedisEnabled()).willReturn(true);
         }
 
@@ -234,7 +236,7 @@ class TerminologyValidationTest {
         @Disabled("This test evaluates the performance of the Redis solution")
         @RepeatedTest(value = 5, name = "Massive collection on Mongo, missing keys on Redis")
         void t3() {
-            given(propsCFG.getValidationTTL()).willReturn(120l);
+            given(propsCFG.getValidationTTL()).willReturn(120L);
 
             final int numSystems = 10;
             final int numCodesEachSystem = 1000;
@@ -256,7 +258,74 @@ class TerminologyValidationTest {
             log.info("Time elapsed: {}", end.getTime() - start.getTime());
         }
     }
-    
+
+    @Nested
+    @DirtiesContext
+    class CodeSystemIndependent {
+
+        @BeforeEach
+        void setup() {
+            given(propsCFG.getValidationTTL()).willReturn(120L);
+            given(propsCFG.isRedisEnabled()).willReturn(false);
+            given(propsCFG.isFindSpecificErrorVocabulary()).willReturn(false);
+            given(propsCFG.isFindSystemAndCodesIndependence()).willReturn(true);
+            mongoTemplate.dropCollection(TerminologyETY.class);
+        }
+
+        @ParameterizedTest
+        @Description("Returns success if nothing found")
+        @CsvSource({ "10, 100"})
+        void findBySystemAndNotCodesSuccessTest(int numSystems, int numCodesEachSystem) {
+            final Map<String, List<String>> terminology = generateRandomTerminology(numSystems, numCodesEachSystem);
+            insertTerminologyOnMongo(terminology);
+            VocabularyResultDTO res = vocabulariesSRV.vocabulariesExists(terminology);
+            assertEquals(true, res.getValid());
+        }
+
+        @ParameterizedTest
+        @Description("Returns false if system found and no codes found associated")
+        @CsvSource({ "10, 100"})
+        void findBySystemAndNotCodesNotFoundTest(int numSystems, int numCodesEachSystem) {
+            final Map<String, List<String>> terminology = generateRandomTerminology(numSystems, numCodesEachSystem);
+            Map<String, List<String>> terminology2 = new HashMap<>();
+            for (Map.Entry<String, List<String>> entry : terminology.entrySet()) {
+                List<String> codes = new ArrayList<>();
+                for (int j = 0; j < numCodesEachSystem; j++) {
+                    codes.add("code_" + Math.random());
+                }
+                terminology2.put(entry.getKey(), codes);
+            }
+
+            // terminology2 will have same systems of terminology1, with different codes
+
+            insertTerminologyOnMongo(terminology);
+            VocabularyResultDTO res = vocabulariesSRV.vocabulariesExists(terminology2);
+            assertEquals(false, res.getValid());
+        }
+
+        @ParameterizedTest
+        @Description("Returns success if nothing found")
+        @CsvSource({ "1, 5"})
+        void findBySpecialSystemAndNotCodesSuccessTest(int numSystems, int numCodesEachSystem) {
+            final Map<String, List<String>> terminology = generateRandomTerminology(numSystems, numCodesEachSystem);
+            List<String> codes = new ArrayList<>();
+            for (int j = 0; j < numCodesEachSystem; j++) {
+                codes.add("code_" + Math.random());
+            }
+            terminology.put("2.5.999.6", codes);
+            terminology.put("2.5.9999.6.8", codes);
+            terminology.put("999.5.999.6", codes);
+            terminology.put("9999.5.999.6", codes);
+            terminology.put("4.5.4.6.999", codes);
+            terminology.put("4.5.4.6.9999", codes);
+            terminology.put("999.999.4.6.9999", codes);
+            terminology.put("998.997.4.6.996", codes);  // not special char but will pass again
+            insertTerminologyOnMongo(terminology);
+            VocabularyResultDTO res = vocabulariesSRV.vocabulariesExists(terminology);
+            assertEquals(true, res.getValid());
+        }
+    }
+
     boolean validateWithMongo(Map<String, List<String>> terminology) {
         boolean exists = true;
         for (String system : terminology.keySet()) {
@@ -312,5 +381,4 @@ class TerminologyValidationTest {
         }
         return terminology;
     }
-    
 }

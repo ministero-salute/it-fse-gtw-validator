@@ -24,7 +24,7 @@ public class DictionaryRepo implements IDictionaryRepo {
 	private static final long serialVersionUID = -5236847076186265946L;
 
 	@Autowired
-	private MongoTemplate mongoTemplate;
+	private transient MongoTemplate mongoTemplate;
 	
 	@Override
 	public DictionaryETY findByFilename(String filename) {

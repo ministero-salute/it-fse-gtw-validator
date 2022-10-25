@@ -9,7 +9,7 @@ import it.finanze.sanita.fse2.ms.gtw.validator.dto.response.LogTraceInfoDTO;
 import it.finanze.sanita.fse2.ms.gtw.validator.dto.response.ResponseDTO;
 import it.finanze.sanita.fse2.ms.gtw.validator.enums.ResultLogEnum;
 
-public class EnumsTest {
+class EnumsTest {
 	
     @Test
     @DisplayName("ResultLogEnum test")
@@ -31,8 +31,8 @@ public class EnumsTest {
     	assertEquals(responseDto.getTraceID().getClass(), String.class); 
     	assertEquals(responseDto.getSpanID().getClass(), String.class); 
     	
-    	assertEquals(responseDto.getTraceID(), "TEST_TRACE_ID"); 
-    	assertEquals(responseDto.getSpanID(), "TEST_SPAN_ID"); 
+    	assertEquals("TEST_TRACE_ID", responseDto.getTraceID());
+    	assertEquals("TEST_SPAN_ID", responseDto.getSpanID());
 
     } 
     

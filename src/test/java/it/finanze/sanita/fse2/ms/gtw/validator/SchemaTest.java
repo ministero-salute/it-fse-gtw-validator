@@ -12,6 +12,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import it.finanze.sanita.fse2.ms.gtw.validator.repository.entity.SchematronETY;
+import it.finanze.sanita.fse2.ms.gtw.validator.singleton.SchematronValidatorSingleton;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -62,7 +64,7 @@ class SchemaTest extends AbstractTest {
     void setup() {
 		deleteSchema();
 		clearConfigurationItems();
-    }
+	}
 
     @Test
 	@DisplayName("Schema Validator Singleton")
@@ -204,7 +206,10 @@ class SchemaTest extends AbstractTest {
     @Test
 	@DisplayName("Update Singleton - No Exception Test")
 	void updateSingletonNoExceptionTest() throws Exception {
-        assertDoesNotThrow(() -> updateSingletonSRV.updateSingletonInstance());
+		insertSchematron();
+		SchematronETY schematronETY = mongoTemplate.findOne(Query.query(Criteria.where("template_id_root").is("2.16.840.1.113883.2.9.10.1.9.1")), SchematronETY.class);
+		SchematronValidatorSingleton.getInstance(true, schematronETY);
+		assertDoesNotThrow(() -> updateSingletonSRV.updateSingletonInstance());
 	}
     
     void deleteSchema() {

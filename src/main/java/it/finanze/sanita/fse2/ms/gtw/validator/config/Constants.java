@@ -82,12 +82,25 @@ public final class Constants {
 		}
 
 	}
-  
+
+	public static final class Logs {
+		public static final String ERR_NOT_ALL_CODES_FOUND = "Not all codes for system {} are present on Mongo";
+        public static final String ERR_VOCABULARY_VALIDATION = "Error while executing validation on vocabularies for system %s";
+
+        private Logs() {}
+	}
+
+	public static final class App {
+        public static final String SYSTEM_KEY = "system";
+		public static final String CODE_KEY = "code";
+
+		private App() {}
+	}
+
 	/**
 	 *	Constants.
 	 */
 	private Constants() {
 
 	}
-
 }

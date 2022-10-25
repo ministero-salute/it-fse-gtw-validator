@@ -24,7 +24,7 @@ public abstract class AbstractCTL implements Serializable {
 	private static final long serialVersionUID = -3077780100650268134L;
 	
 	@Autowired
-	private Tracer tracer;
+	private transient Tracer tracer;
 
 	protected LogTraceInfoDTO getLogTraceInfo() {
 		LogTraceInfoDTO out = new LogTraceInfoDTO(null, null);

@@ -167,7 +167,7 @@ public abstract class AbstractTest {
 				String system = el.getKey();
 
 				Query query = new Query();
-				query.addCriteria(Criteria.where("system").is(system));
+				query.addCriteria(Criteria.where(Constants.App.SYSTEM_KEY).is(system));
 				mongoTemplate.remove(query, TerminologyETY.class);
 				
 				TerminologyETY terminology = null;

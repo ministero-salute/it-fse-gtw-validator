@@ -11,6 +11,7 @@ import java.util.Map;
 
 import javax.xml.transform.stream.StreamSource;
 
+import it.finanze.sanita.fse2.ms.gtw.validator.config.Constants;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
@@ -43,7 +44,7 @@ public class CDAHelper {
         	if (codes == null) {
         		codes = new ArrayList<>();
         	}
-        	String code = t.attr("code");
+        	String code = t.attr(Constants.App.CODE_KEY);
         	codes.add(code);
         	terminology.put(system, codes);
         }

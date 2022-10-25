@@ -19,5 +19,15 @@ public interface ITerminologyRepo {
     List<String> findAllCodesExists(String system, List<String> codes);
     
     boolean existBySystemAndCode(String system, String code);
-    
+
+    /**
+     * Check whether code_system and codes exist on mongo using the following flow
+     * query checks "where system and not in codes"
+     * result = false -> system and codes exist || system not found -> validation succeeded
+     * result = true -> system found, codes not found                -> validation failed
+     * @param system
+     * @param codes
+     * @return
+     */
+    boolean existBySystemAndNotCodes(String system, List<String> codes);
 }

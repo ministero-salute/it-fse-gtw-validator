@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import it.finanze.sanita.fse2.ms.gtw.validator.config.Constants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -31,12 +32,12 @@ public class TerminologyRepo implements ITerminologyRepo {
         boolean validationSuccess = true;
         try {
             Query query = new Query();
-            query.addCriteria(Criteria.where("system").is(system).and("code").in(codes));
+            query.addCriteria(Criteria.where(Constants.App.SYSTEM_KEY).is(system).and(Constants.App.CODE_KEY).in(codes));
 
             validationSuccess = mongoTemplate.exists(query, TerminologyETY.class);
          } catch (Exception e) {
-            log.error(String.format("Error while executing validation on vocabularies for system %s", system), e);
-            throw new BusinessException(String.format("Error while executing validation on vocabularies for system %s", system), e);
+            log.error(String.format(Constants.Logs.ERR_VOCABULARY_VALIDATION, system), e);
+            throw new BusinessException(String.format(Constants.Logs.ERR_VOCABULARY_VALIDATION, system), e);
         }
 
         return validationSuccess;
@@ -48,15 +49,15 @@ public class TerminologyRepo implements ITerminologyRepo {
     	List<String> output = new ArrayList<>();
         try {
             Query query = new Query();
-            query.addCriteria(Criteria.where("system").is(system).and("code").in(codes));
+            query.addCriteria(Criteria.where(Constants.App.SYSTEM_KEY).is(system).and(Constants.App.CODE_KEY).in(codes));
 
             List<TerminologyETY> etys = mongoTemplate.find(query, TerminologyETY.class);
             if(!etys.isEmpty()) {
-            	output = etys.stream().map(e-> e.getCode()).collect(Collectors.toList());
+            	output = etys.stream().map(TerminologyETY::getCode).collect(Collectors.toList());
             }
          } catch (Exception e) {
-            log.error(String.format("Error while executing validation on vocabularies for system %s", system), e);
-            throw new BusinessException(String.format("Error while executing validation on vocabularies for system %s", system), e);
+            log.error(String.format(Constants.Logs.ERR_VOCABULARY_VALIDATION, system), e);
+            throw new BusinessException(String.format(Constants.Logs.ERR_VOCABULARY_VALIDATION, system), e);
         }
 
         return output;
@@ -67,7 +68,7 @@ public class TerminologyRepo implements ITerminologyRepo {
     	 boolean exists = false;
          try {
              Query query = new Query();
-             query.addCriteria(Criteria.where("system").is(system).and("code").is(code));
+             query.addCriteria(Criteria.where(Constants.App.SYSTEM_KEY).is(system).and(Constants.App.CODE_KEY).is(code));
 
              exists = mongoTemplate.exists(query, TerminologyETY.class);
           } catch (Exception ex) {
@@ -76,5 +77,17 @@ public class TerminologyRepo implements ITerminologyRepo {
          }
 
          return exists;
+    }
+
+    @Override
+    public boolean existBySystemAndNotCodes(String system, List<String> codes) {
+        try {
+            Query query = new Query();
+            query.addCriteria(Criteria.where(Constants.App.SYSTEM_KEY).is(system).and(Constants.App.CODE_KEY).not().in(codes));
+            return mongoTemplate.exists(query, TerminologyETY.class);
+        } catch (Exception e) {
+            log.error("", e);
+            throw new BusinessException("", e);
+        }
     }
 }
