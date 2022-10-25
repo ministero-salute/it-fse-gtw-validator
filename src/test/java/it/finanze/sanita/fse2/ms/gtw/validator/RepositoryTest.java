@@ -29,6 +29,7 @@ import static com.mongodb.assertions.Assertions.assertFalse;
 import static com.mongodb.assertions.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when; 
 
@@ -41,6 +42,11 @@ public class RepositoryTest extends AbstractTest {
 
     public static final String TEST_TYPE_ID_EXTENSION = "1.3";
     public static final String TEST_ROOT_NAME_FILE = "CDA.xsd";
+    public static final String TEST_ID_DELETED = "test_del";
+    public static final String TEST_NAME_SCHEMA_DELETED = "CDAdel.xsd";
+    public static final String TEST_TEMPLATE_ID_ROOT_DELETED = "2.16.840.1.113883.2.9.10.1.11.2.5";
+    public static final String TEST_NAME_SCHEMATRON_DELETED = "schematron_del";
+    public static final String TEST_TYPE_ID_EXTENSION_DELETED = "1.4";
     public static final int TEST_FILES_SIZE = 10;
 
     @Autowired
@@ -54,6 +60,9 @@ public class RepositoryTest extends AbstractTest {
     
     @Autowired
     private DictionaryRepo dictionaryRepo; 
+    
+    @Autowired
+	protected MongoTemplate mongoTemplate;
     
     @Autowired
     private AuditRepo auditRepo; 
@@ -79,7 +88,24 @@ public class RepositoryTest extends AbstractTest {
         // Exceptions
         when(mongo).thenThrow(new MongoException("Test"));
         assertThrows(BusinessException.class, () -> repository.findFatherXsd(TEST_TYPE_ID_EXTENSION));
-    }
+    } 
+    
+    @Test
+    void findFatherXsdDeletedElement() {
+    	SchemaETY ety = new SchemaETY(); 
+    	ety.setId(TEST_ID_DELETED);
+    	ety.setNameSchema(TEST_NAME_SCHEMA_DELETED); 
+    	ety.setRootSchema(true); 
+    	ety.setTypeIdExtension(TEST_TYPE_ID_EXTENSION_DELETED); 
+    	ety.setDeleted(true); 
+    	
+    	mongoTemplate.insert(ety, Constants.Profile.TEST_PREFIX + "schema"); 
+    	
+    	
+        SchemaETY res = repository.findFatherXsd(TEST_TYPE_ID_EXTENSION_DELETED);
+
+        assertNull(res); 
+    }  
 
     @Test
     void findChildrenXsdTest() {
@@ -138,6 +164,23 @@ public class RepositoryTest extends AbstractTest {
     	assertEquals(ety.getTemplateIdRoot(), "2.16.840.1.113883.2.9.10.1.11.1.2"); 
     	
     } 
+    
+    @Test
+    void findBySystemAndVersionDeletedTest() {
+    	SchematronETY ety = new SchematronETY(); 
+    	ety.setNameSchematron(TEST_NAME_SCHEMATRON_DELETED); 
+    	ety.setTemplateIdRoot(TEST_TEMPLATE_ID_ROOT_DELETED); 
+    	ety.setVersion(TEST_TYPE_ID_EXTENSION_DELETED); 
+    	ety.setDeleted(true); 
+    	
+    	mongoTemplate.insert(ety, Constants.Profile.TEST_PREFIX + "schematron"); 
+    	
+    	
+    	SchematronETY res = schematronRepository.findBySystemAndVersion(TEST_TEMPLATE_ID_ROOT_DELETED, TEST_TYPE_ID_EXTENSION_DELETED); 
+    	
+    	assertNull(res); 
+    	
+    }
     
     @Test
     void existsBySystemAndCodeTest() {         
