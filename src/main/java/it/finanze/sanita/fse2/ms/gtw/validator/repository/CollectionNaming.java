@@ -16,40 +16,40 @@ public class CollectionNaming {
     @Bean("dictionaryBean")
     public String getDictionaryCollection() {
         if (profileUtility.isTestProfile()) {
-            return Constants.Profile.TEST_PREFIX + Constants.ComponentScan.Collections.DICTIONARY;
+            return Constants.Profile.TEST_PREFIX + Constants.Collections.DICTIONARY;
         }
-        return Constants.ComponentScan.Collections.DICTIONARY;
+        return Constants.Collections.DICTIONARY;
     }
 
     @Bean("gtwDbRulesBean")
     public String getGtwDbRulesCollection() {
         if (profileUtility.isTestProfile()) {
-            return Constants.Profile.TEST_PREFIX + Constants.ComponentScan.Collections.GTW_DB_RULES;
+            return Constants.Profile.TEST_PREFIX + Constants.Collections.GTW_DB_RULES;
         }
-        return Constants.ComponentScan.Collections.GTW_DB_RULES;
+        return Constants.Collections.GTW_DB_RULES;
     }
 
     @Bean("schemaBean")
     public String getSchemaCollection() {
         if (profileUtility.isTestProfile()) {
-            return Constants.Profile.TEST_PREFIX + Constants.ComponentScan.Collections.SCHEMA;
+            return Constants.Profile.TEST_PREFIX + Constants.Collections.SCHEMA;
         }
-        return Constants.ComponentScan.Collections.SCHEMA;
+        return Constants.Collections.SCHEMA;
     }
 
     @Bean("schematronBean")
     public String getSchematronCollection() {
         if (profileUtility.isTestProfile()) {
-            return Constants.Profile.TEST_PREFIX + Constants.ComponentScan.Collections.SCHEMATRON;
+            return Constants.Profile.TEST_PREFIX + Constants.Collections.SCHEMATRON;
         }
-        return Constants.ComponentScan.Collections.SCHEMATRON;
+        return Constants.Collections.SCHEMATRON;
     }
 
     @Bean("terminologyBean")
     public String getTerminologyCollection() {
         if (profileUtility.isTestProfile()) {
-            return Constants.Profile.TEST_PREFIX + Constants.ComponentScan.Collections.TERMINOLOGY;
+            return Constants.Profile.TEST_PREFIX + Constants.Collections.TERMINOLOGY;
         }
-        return Constants.ComponentScan.Collections.TERMINOLOGY;
+        return Constants.Collections.TERMINOLOGY;
     }
 }
