@@ -6,10 +6,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-
-import static org.mockito.Mockito.when; 
-import static org.mockito.ArgumentMatchers.anyString; 
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.when;
 
 import java.io.File;
 import java.nio.charset.StandardCharsets;
@@ -31,9 +29,9 @@ import it.finanze.sanita.fse2.ms.gtw.validator.cda.CDAHelper;
 import it.finanze.sanita.fse2.ms.gtw.validator.config.Constants;
 import it.finanze.sanita.fse2.ms.gtw.validator.dto.CDAValidationDTO;
 import it.finanze.sanita.fse2.ms.gtw.validator.dto.ExtractedInfoDTO;
+import it.finanze.sanita.fse2.ms.gtw.validator.dto.SchematronValidationResultDTO;
 import it.finanze.sanita.fse2.ms.gtw.validator.dto.VocabularyResultDTO;
 import it.finanze.sanita.fse2.ms.gtw.validator.enums.CDAValidationStatusEnum;
-import it.finanze.sanita.fse2.ms.gtw.validator.exceptions.NoRecordFoundException;
 import it.finanze.sanita.fse2.ms.gtw.validator.repository.entity.SchematronETY;
 import it.finanze.sanita.fse2.ms.gtw.validator.repository.mongo.impl.SchematronRepo;
 import it.finanze.sanita.fse2.ms.gtw.validator.service.facade.IValidationFacadeSRV;
@@ -174,17 +172,18 @@ class ValidationTest extends AbstractTest {
 	} 
 	
 	@Test
-	void validateSemanticExceptionTest() {
+	void noSchematronFoundSemanticExceptionTest() {
 
 		final String cda = new String(getFileFromInternalResources("Files" + File.separator + "cda.xml"), StandardCharsets.UTF_8);
 		String version = "1.3";
 		
 		ExtractedInfoDTO infoDTO = CDAHelper.extractInfo(cda); 
 		
-		
 		log.info("Testing with version {}", version);
 		
-		assertThrows(NoRecordFoundException.class, () -> validationSRV.validateSemantic(cda, infoDTO)); 
+		SchematronValidationResultDTO res = validationSRV.validateSemantic(cda, infoDTO);
+		assertEquals("Schematron with template id root 2.16.840.1.113883.2.9.2.80.3.1.10.4 not found on database.", res.getMessage());
+		assertEquals(false, res.getValidSchematron());
 	} 
 
 }
