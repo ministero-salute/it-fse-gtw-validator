@@ -5,8 +5,7 @@ package it.finanze.sanita.fse2.ms.gtw.validator.singleton;
 
 import java.io.ByteArrayInputStream;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.springframework.util.CollectionUtils;
 
@@ -23,42 +22,42 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public final class SchematronValidatorSingleton {
 
-	private static Map<String,SchematronValidatorSingleton> mapInstance;
-	
+	private static ConcurrentHashMap<String,SchematronValidatorSingleton> mapInstance;
+
 	private static SchematronValidatorSingleton instance;
 
 	private SchematronResourceSCH schematronResourceSCH;
 
 	private String templateIdRoot;
-	
+
 	private String version;
-	
+
 	private Date dataUltimoAggiornamento;
-	
+
 	public static SchematronValidatorSingleton getInstance(final boolean forceUpdate, final SchematronETY inSchematronETY) {
 		if (mapInstance != null && !mapInstance.isEmpty()) {
 			instance = mapInstance.get(inSchematronETY.getTemplateIdRoot());
 		} else {
-			mapInstance = new HashMap<>();
+			mapInstance = new ConcurrentHashMap<>();
 		}
-		
+
 		boolean getInstanceCondition = instance == null  || CollectionUtils.isEmpty(mapInstance) || Boolean.TRUE.equals(forceUpdate);
 
 		synchronized(SchematronValidatorSingleton.class) {
 			if (getInstanceCondition) {
 				try (ByteArrayInputStream schematronBytes = new ByteArrayInputStream(inSchematronETY.getContentSchematron().getData());) {
-					
+
 					IReadableResource readableResource = new ReadableResourceInputStream(StringUtility.generateUUID(), schematronBytes);
 					SchematronResourceSCH schematronResourceSCH = new SchematronResourceSCH(readableResource);
 					instance = new SchematronValidatorSingleton(inSchematronETY.getTemplateIdRoot(), 
-						inSchematronETY.getVersion(), inSchematronETY.getLastUpdateDate(), schematronResourceSCH);
-	
+							inSchematronETY.getVersion(), inSchematronETY.getLastUpdateDate(), schematronResourceSCH);
+
 					mapInstance.put(instance.getTemplateIdRoot(), instance);
 				} catch (Exception e) {
 					log.error("Error encountered while updating schematron singleton", e);
 					throw new BusinessException("Error encountered while updating schematron singleton", e);
 				}
-				
+
 			}
 		}
 
@@ -81,16 +80,16 @@ public final class SchematronValidatorSingleton {
 	public Date getDataUltimoAggiornamento() {
 		return dataUltimoAggiornamento;
 	}
-	
+
 	public String getTemplateIdRoot() {
 		return templateIdRoot;
 	}
-	
+
 	public String getVersion() {
 		return version;
 	}
 
-	public static Map<String,SchematronValidatorSingleton> getMapInstance() {
+	public static ConcurrentHashMap<String,SchematronValidatorSingleton> getMapInstance() {
 		return mapInstance;
 	}
 }

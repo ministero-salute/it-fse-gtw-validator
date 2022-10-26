@@ -7,6 +7,7 @@ import java.io.ByteArrayInputStream;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import javax.xml.XMLConstants;
 import javax.xml.transform.Source;
@@ -30,7 +31,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public final class SchemaValidatorSingleton {
 
-	private static Map<String,SchemaValidatorSingleton> mapInstance;
+	private static ConcurrentHashMap<String,SchemaValidatorSingleton> mapInstance;
 	
 	private static SchemaValidatorSingleton instance;
 
@@ -53,7 +54,7 @@ public final class SchemaValidatorSingleton {
 		if (mapInstance != null && !mapInstance.isEmpty()) {
 			instance = mapInstance.get(inSchema.getTypeIdExtension());
 		} else {
-			mapInstance = new HashMap<>();
+			mapInstance = new ConcurrentHashMap<>();
 		}
 		
 		boolean getInstanceCondition = instance == null || CollectionUtils.isEmpty(mapInstance) || Boolean.TRUE.equals(forceUpdate);
@@ -93,8 +94,8 @@ public final class SchemaValidatorSingleton {
 		return dataUltimoAggiornamento;
 	}
 
-	public static Map<String,SchemaValidatorSingleton> getMapInstance() {
-		return mapInstance;
+	public static ConcurrentHashMap<String,SchemaValidatorSingleton> getMapInstance() {
+			return mapInstance;
 	}
 
 }
