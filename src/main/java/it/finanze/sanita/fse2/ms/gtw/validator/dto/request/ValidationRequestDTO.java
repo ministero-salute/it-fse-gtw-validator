@@ -29,6 +29,5 @@ public class ValidationRequestDTO extends AbstractDTO {
 
 	@Schema(description = "cda")
     private String cda;
-     
-     
+
 }

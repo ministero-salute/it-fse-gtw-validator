@@ -31,4 +31,7 @@ public class TerminologyETY {
 	
 	@Field(name = "description")
 	private String description;
+	
+	@Field(name = "deleted")
+	private Boolean deleted;
 }

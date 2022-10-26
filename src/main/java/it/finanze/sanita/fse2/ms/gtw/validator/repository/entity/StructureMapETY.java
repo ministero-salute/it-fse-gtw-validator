@@ -1,6 +1,3 @@
-/*
- * SPDX-License-Identifier: AGPL-3.0-or-later
- */
 package it.finanze.sanita.fse2.ms.gtw.validator.repository.entity;
 
 import java.util.Date;
@@ -10,34 +7,36 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
+import it.finanze.sanita.fse2.ms.gtw.validator.repository.entity.StructureMapETY;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 /**
- * Model to save schematron.
+ * @author vincenzoingenito
+ * Model to save map.
  */
-@Document(collection = "#{@schematronBean}")
+@Document(collection = "#{@structureMapBean}")
 @Data
 @NoArgsConstructor
-public class SchematronETY {
-
+public class StructureMapETY {
+ 
 	@Id
 	private String id;
 	
-	@Field(name = "content_schematron")
-	private Binary contentSchematron;
+	@Field(name = "content_structure_map")
+	private Binary contentStructureMap;
 
-	@Field(name = "name_schematron")
-	private String nameSchematron;
+	@Field(name = "name_structure_map")
+	private String nameStructureMap;
 
 	@Field(name = "template_id_root")
 	private String templateIdRoot;
 	
-	@Field(name = "version")
-	private String version;
+	@Field(name = "template_id_extension")
+	private String templateIdExtension;
 	
 	@Field(name = "last_update_date")
-	private Date lastUpdateDate; 
+	private Date lastUpdateDate;
 	
 	@Field(name = "deleted")
 	private Boolean deleted;

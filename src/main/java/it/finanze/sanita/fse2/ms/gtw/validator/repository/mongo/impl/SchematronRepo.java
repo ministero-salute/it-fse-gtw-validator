@@ -37,7 +37,7 @@ public class SchematronRepo implements ISchematronRepo {
 		SchematronETY output;
 		try {
 			Query query = new Query();
-			query.addCriteria(Criteria.where("template_id_root").is(templateIdRoot));
+			query.addCriteria(Criteria.where("template_id_root").is(templateIdRoot).and("deleted").is(false));
 			query.with(Sort.by(Sort.Direction.DESC, "version"));
 			output = mongoTemplate.findOne(query, SchematronETY.class);
 		} catch(Exception ex) {
@@ -52,8 +52,9 @@ public class SchematronRepo implements ISchematronRepo {
 		SchematronETY output;
 		try {
 			Query query = new Query();
-			query.addCriteria(Criteria.where("template_id_root").is(system).
-					and("version").gt(version));
+			query.addCriteria(Criteria.where("template_id_root").is(system)
+					.and("version").gt(version)
+					.and("deleted").is(false));
 			query.with(Sort.by(Sort.Direction.DESC, "version"));
 			output = mongoTemplate.findOne(query, SchematronETY.class);
 		} catch(Exception ex) {

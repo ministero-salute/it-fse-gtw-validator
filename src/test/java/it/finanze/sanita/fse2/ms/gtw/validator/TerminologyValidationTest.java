@@ -361,6 +361,7 @@ class TerminologyValidationTest {
                 TerminologyETY vocabularyETY = new TerminologyETY();
                 vocabularyETY.setCode(code);
                 vocabularyETY.setSystem(system);
+                vocabularyETY.setDeleted(false); 
                 vocabularies.add(vocabularyETY);
             }
         }

@@ -8,6 +8,7 @@
 	},
 	"type_id_extension": "1.3",
 	"root_schema": true,
+	"deleted": false,
 	"data_ultimo_aggiornamento": {
 		"$date": {
 			"$numberLong": "1653053472990"

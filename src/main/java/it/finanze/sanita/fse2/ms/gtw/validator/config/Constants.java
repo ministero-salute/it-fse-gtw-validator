@@ -54,16 +54,23 @@ public final class Constants {
 	}
 	
 	public static final class Collections {
+  
+   
 
 		public static final String DICTIONARY = "dictionary";
 
-		public static final String GTW_DB_RULES = "gtw-db-rules";
+			public static final String GTW_DB_RULES = "gtw-db-rules";
 
-		public static final String SCHEMA = "schema";
+			public static final String SCHEMA = "schema";
 
-		public static final String SCHEMATRON = "schematron";
+			public static final String SCHEMATRON = "schematron";
 
-		public static final String TERMINOLOGY = "terminology";
+			public static final String TERMINOLOGY = "terminology";
+
+			public static final String XSL_TRANSFORM = "xsl_transform";
+			
+			public static final String STRUCTURE_MAP = "structure_map";
+
 
 		private Collections() {
 

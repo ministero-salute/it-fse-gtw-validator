@@ -32,6 +32,14 @@ public class CollectionNaming {
         return Constants.Collections.GTW_DB_RULES;
     }
 
+    @Bean("xslTransformBean")
+    public String getXslTransformCollection() {
+        if (profileUtility.isTestProfile()) {
+            return Constants.Profile.TEST_PREFIX + Constants.ComponentScan.Collections.XSL_TRANSFORM;
+        }
+        return Constants.ComponentScan.Collections.XSL_TRANSFORM;
+    }
+
     @Bean("schemaBean")
     public String getSchemaCollection() {
         if (profileUtility.isTestProfile()) {
@@ -46,6 +54,14 @@ public class CollectionNaming {
             return Constants.Profile.TEST_PREFIX + Constants.Collections.SCHEMATRON;
         }
         return Constants.Collections.SCHEMATRON;
+    }
+    
+    @Bean("structureMapBean")
+    public String getStructureMapCollection() {
+        if (profileUtility.isTestProfile()) {
+            return Constants.Profile.TEST_PREFIX + Constants.ComponentScan.Collections.STRUCTURE_MAP;
+        }
+        return Constants.ComponentScan.Collections.STRUCTURE_MAP;
     }
 
     @Bean("terminologyBean")

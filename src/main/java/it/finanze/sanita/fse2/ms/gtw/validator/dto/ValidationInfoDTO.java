@@ -20,4 +20,10 @@ public class ValidationInfoDTO {
 	private RawValidationEnum result;
 	
 	private List<String> message;
+
+	private String objectID; 
+	
+	private String structureID; 
+	
+	private String transformID; 
 }

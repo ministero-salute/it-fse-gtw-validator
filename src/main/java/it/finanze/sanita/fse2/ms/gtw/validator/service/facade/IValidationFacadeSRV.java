@@ -41,4 +41,9 @@ public interface IValidationFacadeSRV {
      */
     SchematronValidationResultDTO validateSemantic(String cdaToValidate,ExtractedInfoDTO extractedInfoDTO);
     
+    public String getTransformObjectID(String templateIDRoot);
+    
+    public String getStructureObjectID(String templateIDRoot);
+
+    
 }

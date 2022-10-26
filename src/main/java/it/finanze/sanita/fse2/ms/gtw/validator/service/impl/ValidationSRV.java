@@ -26,6 +26,8 @@ import it.finanze.sanita.fse2.ms.gtw.validator.repository.entity.SchemaETY;
 import it.finanze.sanita.fse2.ms.gtw.validator.repository.entity.SchematronETY;
 import it.finanze.sanita.fse2.ms.gtw.validator.repository.mongo.ISchemaRepo;
 import it.finanze.sanita.fse2.ms.gtw.validator.repository.mongo.ISchematronRepo;
+import it.finanze.sanita.fse2.ms.gtw.validator.repository.mongo.IStructureMapRepo;
+import it.finanze.sanita.fse2.ms.gtw.validator.repository.mongo.IXslTransformRepo;
 import it.finanze.sanita.fse2.ms.gtw.validator.service.ISchemaSRV;
 import it.finanze.sanita.fse2.ms.gtw.validator.service.IValidationSRV;
 import it.finanze.sanita.fse2.ms.gtw.validator.service.IVocabulariesSRV;
@@ -49,6 +51,12 @@ public class ValidationSRV implements IValidationSRV {
     
     @Autowired
     private ISchemaSRV schemaSRV;
+
+	@Autowired
+	private IXslTransformRepo xsltTransformRepo; 
+	
+	@Autowired
+	private IStructureMapRepo structureMapRepo; 
       
     
     @Override
@@ -141,6 +149,31 @@ public class ValidationSRV implements IValidationSRV {
     		output.setMessage("Error while executing validation on sch schematron");
     	}
 		return output;
+	}
+
+	@Override
+	public String getTransformObjectID (String templateId){
+		String objectId;
+		try{
+				objectId = xsltTransformRepo.getXsltByTemplateId(templateId).getId();
+			}
+		 catch(Exception ex){
+			log.error("Error while getting objectID", ex);
+			throw new BusinessException("Error while getting objectID", ex);
+		}
+		return objectId;
+	} 
+	
+	@Override
+	public String getStructureObjectID (String templateId){
+		String structureId;
+		try{
+			structureId = structureMapRepo.findMapByTemplateIdRoot(templateId).getId(); 
+		} catch(Exception ex){
+			log.error("Error while getting structureId", ex);
+			throw new BusinessException("Error while getting structureId", ex);
+		}
+		return structureId;
 	}
      
 }

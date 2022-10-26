@@ -32,7 +32,8 @@ public class TerminologyRepo implements ITerminologyRepo {
         boolean validationSuccess = true;
         try {
             Query query = new Query();
-            query.addCriteria(Criteria.where(Constants.App.SYSTEM_KEY).is(system).and(Constants.App.CODE_KEY).in(codes));
+            query.addCriteria(Criteria.where("system").is(system).and("code").in(codes)
+            		.and("deleted").is(false));
 
             validationSuccess = mongoTemplate.exists(query, TerminologyETY.class);
          } catch (Exception e) {
@@ -49,7 +50,8 @@ public class TerminologyRepo implements ITerminologyRepo {
     	List<String> output = new ArrayList<>();
         try {
             Query query = new Query();
-            query.addCriteria(Criteria.where(Constants.App.SYSTEM_KEY).is(system).and(Constants.App.CODE_KEY).in(codes));
+            query.addCriteria(Criteria.where("system").is(system).and("code").in(codes)
+            		.and("deleted").is(false)); 
 
             List<TerminologyETY> etys = mongoTemplate.find(query, TerminologyETY.class);
             if(!etys.isEmpty()) {
@@ -68,7 +70,8 @@ public class TerminologyRepo implements ITerminologyRepo {
     	 boolean exists = false;
          try {
              Query query = new Query();
-             query.addCriteria(Criteria.where(Constants.App.SYSTEM_KEY).is(system).and(Constants.App.CODE_KEY).is(code));
+             query.addCriteria(Criteria.where("system").is(system).and("code").is(code)
+            		 .and("deleted").is(false));
 
              exists = mongoTemplate.exists(query, TerminologyETY.class);
           } catch (Exception ex) {
