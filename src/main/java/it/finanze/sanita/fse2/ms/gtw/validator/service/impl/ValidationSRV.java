@@ -24,6 +24,8 @@ import it.finanze.sanita.fse2.ms.gtw.validator.exceptions.BusinessException;
 import it.finanze.sanita.fse2.ms.gtw.validator.exceptions.NoRecordFoundException;
 import it.finanze.sanita.fse2.ms.gtw.validator.repository.entity.SchemaETY;
 import it.finanze.sanita.fse2.ms.gtw.validator.repository.entity.SchematronETY;
+import it.finanze.sanita.fse2.ms.gtw.validator.repository.entity.StructureMapETY;
+import it.finanze.sanita.fse2.ms.gtw.validator.repository.entity.XslTransformETY;
 import it.finanze.sanita.fse2.ms.gtw.validator.repository.mongo.ISchemaRepo;
 import it.finanze.sanita.fse2.ms.gtw.validator.repository.mongo.ISchematronRepo;
 import it.finanze.sanita.fse2.ms.gtw.validator.repository.mongo.IStructureMapRepo;
@@ -152,12 +154,14 @@ public class ValidationSRV implements IValidationSRV {
 	}
 
 	@Override
-	public String getTransformObjectID (String templateId){
-		String objectId;
+	public String getTransformObjectID(final String templateId) {
+		String objectId = "";
 		try{
-				objectId = xsltTransformRepo.getXsltByTemplateId(templateId).getId();
+			XslTransformETY xslETY = xsltTransformRepo.getXsltByTemplateId(templateId); 
+			if(xslETY!=null) {
+				objectId = xslETY.getId();
 			}
-		 catch(Exception ex){
+		} catch(Exception ex){
 			log.error("Error while getting objectID", ex);
 			throw new BusinessException("Error while getting objectID", ex);
 		}
@@ -165,10 +169,13 @@ public class ValidationSRV implements IValidationSRV {
 	} 
 	
 	@Override
-	public String getStructureObjectID (String templateId){
-		String structureId;
+	public String getStructureObjectID(final String templateId){
+		String structureId = "";
 		try{
-			structureId = structureMapRepo.findMapByTemplateIdRoot(templateId).getId(); 
+			StructureMapETY structureMap = structureMapRepo.findMapByTemplateIdRoot(templateId);
+			if(structureMap!=null) {
+				structureId = structureMap.getId(); 
+			}
 		} catch(Exception ex){
 			log.error("Error while getting structureId", ex);
 			throw new BusinessException("Error while getting structureId", ex);

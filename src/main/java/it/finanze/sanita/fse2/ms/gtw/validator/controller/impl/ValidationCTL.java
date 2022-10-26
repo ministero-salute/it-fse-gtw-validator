@@ -108,8 +108,12 @@ public class ValidationCTL extends AbstractCTL implements IValidationCTL {
 			}
 		}
 
-		String objectID = validationSRV.getTransformObjectID(infoDTO.getTemplateIdSchematron()); 
-		String transformID = validationSRV.getStructureObjectID(infoDTO.getTemplateIdSchematron()); 
+		String objectID = "";
+		String transformID = "";
+		if(RawValidationEnum.OK.equals(outcome)) {
+			objectID = validationSRV.getTransformObjectID(infoDTO.getTemplateIdSchematron());
+			transformID = validationSRV.getStructureObjectID(infoDTO.getTemplateIdSchematron());
+		}
 
 		ValidationInfoDTO out = ValidationInfoDTO.builder().result(outcome).message(messages).
 				structureID(objectID).transformID(transformID).build(); 
