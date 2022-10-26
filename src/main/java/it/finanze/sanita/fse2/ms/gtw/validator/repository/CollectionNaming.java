@@ -35,9 +35,9 @@ public class CollectionNaming {
     @Bean("xslTransformBean")
     public String getXslTransformCollection() {
         if (profileUtility.isTestProfile()) {
-            return Constants.Profile.TEST_PREFIX + Constants.ComponentScan.Collections.XSL_TRANSFORM;
+            return Constants.Profile.TEST_PREFIX + Constants.Collections.XSL_TRANSFORM;
         }
-        return Constants.ComponentScan.Collections.XSL_TRANSFORM;
+        return Constants.Collections.XSL_TRANSFORM;
     }
 
     @Bean("schemaBean")
@@ -59,9 +59,9 @@ public class CollectionNaming {
     @Bean("structureMapBean")
     public String getStructureMapCollection() {
         if (profileUtility.isTestProfile()) {
-            return Constants.Profile.TEST_PREFIX + Constants.ComponentScan.Collections.STRUCTURE_MAP;
+            return Constants.Profile.TEST_PREFIX + Constants.Collections.STRUCTURE_MAP;
         }
-        return Constants.ComponentScan.Collections.STRUCTURE_MAP;
+        return Constants.Collections.STRUCTURE_MAP;
     }
 
     @Bean("terminologyBean")
