@@ -26,7 +26,6 @@ import it.finanze.sanita.fse2.ms.gtw.validator.dto.response.ValidationResponseDT
 import it.finanze.sanita.fse2.ms.gtw.validator.enums.CDASeverityViolationEnum;
 import it.finanze.sanita.fse2.ms.gtw.validator.enums.CDAValidationStatusEnum;
 import it.finanze.sanita.fse2.ms.gtw.validator.enums.RawValidationEnum;
-import it.finanze.sanita.fse2.ms.gtw.validator.exceptions.NoRecordFoundException;
 import it.finanze.sanita.fse2.ms.gtw.validator.service.facade.IValidationFacadeSRV;
 import it.finanze.sanita.fse2.ms.gtw.validator.utility.StringUtility;
 import lombok.extern.slf4j.Slf4j;
@@ -108,15 +107,15 @@ public class ValidationCTL extends AbstractCTL implements IValidationCTL {
 			}
 		}
 
-		String objectID = "";
+		String xsltId = "";
 		String transformID = "";
 		if(RawValidationEnum.OK.equals(outcome)) {
-			objectID = validationSRV.getTransformObjectID(infoDTO.getTemplateIdSchematron());
+			xsltId = validationSRV.getTransformObjectID(infoDTO.getTemplateIdSchematron());
 			transformID = validationSRV.getStructureObjectID(infoDTO.getTemplateIdSchematron());
 		}
 
 		ValidationInfoDTO out = ValidationInfoDTO.builder().result(outcome).message(messages).
-				structureID(objectID).transformID(transformID).build(); 
+				xsltID(xsltId).transformID(transformID).build(); 
 		return new ValidationResponseDTO(getLogTraceInfo(), out);
 	}
 	 
