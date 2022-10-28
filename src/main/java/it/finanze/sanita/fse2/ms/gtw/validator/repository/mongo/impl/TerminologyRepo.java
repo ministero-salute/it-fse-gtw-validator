@@ -7,13 +7,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import it.finanze.sanita.fse2.ms.gtw.validator.config.Constants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Repository;
 
+import it.finanze.sanita.fse2.ms.gtw.validator.config.Constants;
 import it.finanze.sanita.fse2.ms.gtw.validator.exceptions.BusinessException;
 import it.finanze.sanita.fse2.ms.gtw.validator.repository.entity.TerminologyETY;
 import it.finanze.sanita.fse2.ms.gtw.validator.repository.mongo.ITerminologyRepo;
@@ -93,4 +93,17 @@ public class TerminologyRepo implements ITerminologyRepo {
             throw new BusinessException("", e);
         }
     }
+
+	@Override
+	public List<TerminologyETY> getAllUniqueCodeSystemsAndVersions() {
+		try {
+//            return mongoTemplate.aggregate(null, null);
+            return new ArrayList<>();
+        } catch (Exception e) {
+        	log.error("Error while retriev all codeSystems: " , e);
+            throw new BusinessException("", e);
+        }
+	}
+    
+    
 }

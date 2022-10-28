@@ -26,7 +26,6 @@ import it.finanze.sanita.fse2.ms.gtw.validator.dto.response.ValidationResponseDT
 import it.finanze.sanita.fse2.ms.gtw.validator.enums.CDASeverityViolationEnum;
 import it.finanze.sanita.fse2.ms.gtw.validator.enums.CDAValidationStatusEnum;
 import it.finanze.sanita.fse2.ms.gtw.validator.enums.RawValidationEnum;
-import it.finanze.sanita.fse2.ms.gtw.validator.exceptions.NoRecordFoundException;
 import it.finanze.sanita.fse2.ms.gtw.validator.service.facade.IValidationFacadeSRV;
 import it.finanze.sanita.fse2.ms.gtw.validator.utility.StringUtility;
 import lombok.extern.slf4j.Slf4j;

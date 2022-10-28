@@ -3,9 +3,6 @@
  */
 package it.finanze.sanita.fse2.ms.gtw.validator.service.impl;
 
-import java.util.List;
-import java.util.Map;
-
 import javax.xml.validation.Validator;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +13,7 @@ import com.helger.schematron.ISchematronResource;
 import it.finanze.sanita.fse2.ms.gtw.validator.cda.CDAHelper;
 import it.finanze.sanita.fse2.ms.gtw.validator.cda.ValidationResult;
 import it.finanze.sanita.fse2.ms.gtw.validator.dto.CDAValidationDTO;
+import it.finanze.sanita.fse2.ms.gtw.validator.dto.CodeSystemSnapshotDTO;
 import it.finanze.sanita.fse2.ms.gtw.validator.dto.ExtractedInfoDTO;
 import it.finanze.sanita.fse2.ms.gtw.validator.dto.SchematronValidationResultDTO;
 import it.finanze.sanita.fse2.ms.gtw.validator.dto.VocabularyResultDTO;
@@ -31,6 +29,7 @@ import it.finanze.sanita.fse2.ms.gtw.validator.repository.mongo.ISchematronRepo;
 import it.finanze.sanita.fse2.ms.gtw.validator.repository.mongo.IStructureMapRepo;
 import it.finanze.sanita.fse2.ms.gtw.validator.repository.mongo.IXslTransformRepo;
 import it.finanze.sanita.fse2.ms.gtw.validator.service.ISchemaSRV;
+import it.finanze.sanita.fse2.ms.gtw.validator.service.ITerminologySRV;
 import it.finanze.sanita.fse2.ms.gtw.validator.service.IValidationSRV;
 import it.finanze.sanita.fse2.ms.gtw.validator.service.IVocabulariesSRV;
 import it.finanze.sanita.fse2.ms.gtw.validator.singleton.SchemaValidatorSingleton;
@@ -43,7 +42,10 @@ import lombok.extern.slf4j.Slf4j;
 public class ValidationSRV implements IValidationSRV {
 
     @Autowired
-    private IVocabulariesSRV vocabulariesRV;
+    private IVocabulariesSRV vocabulariesSRV;
+
+    @Autowired
+    private ITerminologySRV terminologySRV;
 
     @Autowired
     private ISchematronRepo schematronRepo;
@@ -63,18 +65,17 @@ public class ValidationSRV implements IValidationSRV {
     
     @Override
     public VocabularyResultDTO validateVocabularies(final String cda) {
-    	VocabularyResultDTO output = null;
-        
         try {
-            Map<String, List<String>> vocabularies = CDAHelper.extractTerminology(cda);
-            log.debug("Validating {} systems...", vocabularies.size());
-            output = vocabulariesRV.vocabulariesExists(vocabularies);
+//            Map<String, List<String>> vocabularies = CDAHelper.extractTerminology(cda);
+//            log.debug("Validating {} systems...", vocabularies.size());
+//            return vocabulariesSRV.vocabulariesExists(vocabularies);
+        	CodeSystemSnapshotDTO snapshot = CDAHelper.extractAllCodeSystems(cda);
+            log.debug("Validating {} systems...", snapshot.getCodeSystems().size());
+            return terminologySRV.validateCodeSystems(snapshot);
         } catch (Exception e) {
             log.error("Error while executing validation on vocabularies", e);
             throw new BusinessException("Error while executing validation on vocabularies", e);
         }
-
-        return output;
     }
 
     @Override

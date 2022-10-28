@@ -8,10 +8,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 import javax.xml.transform.stream.StreamSource;
 
-import it.finanze.sanita.fse2.ms.gtw.validator.config.Constants;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
@@ -21,6 +22,9 @@ import com.helger.schematron.svrl.jaxb.FailedAssert;
 import com.helger.schematron.svrl.jaxb.SchematronOutputType;
 import com.helger.schematron.svrl.jaxb.SuccessfulReport;
 
+import it.finanze.sanita.fse2.ms.gtw.validator.config.Constants;
+import it.finanze.sanita.fse2.ms.gtw.validator.dto.CodeDTO;
+import it.finanze.sanita.fse2.ms.gtw.validator.dto.CodeSystemSnapshotDTO;
 import it.finanze.sanita.fse2.ms.gtw.validator.dto.ExtractedInfoDTO;
 import it.finanze.sanita.fse2.ms.gtw.validator.dto.SchematronFailedAssertionDTO;
 import it.finanze.sanita.fse2.ms.gtw.validator.dto.SchematronValidationResultDTO;
@@ -31,7 +35,7 @@ import lombok.extern.slf4j.Slf4j;
 public class CDAHelper {
 
 	private CDAHelper(){}
-
+	
 	public static Map<String, List<String>> extractTerminology(String cda) {
         org.jsoup.nodes.Document docT = Jsoup.parse(cda);
         Elements terms = docT.select("[codeSystem]"); 
@@ -49,6 +53,30 @@ public class CDAHelper {
         	terminology.put(system, codes);
         }
         return terminology;
+	}
+	
+	public static CodeSystemSnapshotDTO extractAllCodeSystems(String cda) {
+		List<CodeDTO> codes = extractAllCodes(cda);
+		return new CodeSystemSnapshotDTO(codes);
+	}
+
+	private static List<CodeDTO> extractAllCodes(String cda) {
+		 String codeSystemKey = "[" + Constants.App.CODE_SYSTEM_KEY + "]";
+		 return Jsoup
+		 	.parse(cda)
+		 	.select(codeSystemKey)
+		 	.stream()
+		 	.map(element -> getCode(element))
+		 	.filter(Objects::nonNull)
+		 	.collect(Collectors.toList());
+	}
+
+	private static CodeDTO getCode(Element element) {
+		if (element == null) return null;
+		String codeSystem = element.attr(Constants.App.CODE_SYSTEM_KEY);
+		String codeSystemVersion = element.attr(Constants.App.CODE_SYSTEM_VERSION_KEY);
+		String code = element.attr(Constants.App.CODE_KEY);
+		return new CodeDTO(codeSystem, codeSystemVersion, code);
 	}
 	
 	public static ExtractedInfoDTO extractInfo(final String cda) {
