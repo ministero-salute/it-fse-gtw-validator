@@ -66,6 +66,31 @@ public class TerminologyRepo implements ITerminologyRepo {
     }
     
     @Override
+    public List<String> findAllCodesExistsForVersion(String system, String version, List<String> codes) {
+        
+    	List<String> output = new ArrayList<>();
+        try {
+            Criteria criteria = Criteria
+            		.where("system").is(system)
+            		.and("version").is(version)
+            		.and("code").in(codes)
+            		.and("deleted").is(false);
+            Query query = new Query();
+            query.addCriteria(criteria); 
+
+            List<TerminologyETY> etys = mongoTemplate.find(query, TerminologyETY.class);
+            if(!etys.isEmpty()) {
+            	output = etys.stream().map(TerminologyETY::getCode).collect(Collectors.toList());
+            }
+         } catch (Exception e) {
+            log.error(String.format(Constants.Logs.ERR_VOCABULARY_VALIDATION, system), e);
+            throw new BusinessException(String.format(Constants.Logs.ERR_VOCABULARY_VALIDATION, system), e);
+        }
+
+        return output;
+    }
+    
+    @Override
     public boolean existBySystemAndCode(final String system, final String code) {
     	 boolean exists = false;
          try {
@@ -94,16 +119,5 @@ public class TerminologyRepo implements ITerminologyRepo {
         }
     }
 
-	@Override
-	public List<TerminologyETY> getAllUniqueCodeSystemsAndVersions() {
-		try {
-//            return mongoTemplate.aggregate(null, null);
-            return new ArrayList<>();
-        } catch (Exception e) {
-        	log.error("Error while retriev all codeSystems: " , e);
-            throw new BusinessException("", e);
-        }
-	}
-    
     
 }

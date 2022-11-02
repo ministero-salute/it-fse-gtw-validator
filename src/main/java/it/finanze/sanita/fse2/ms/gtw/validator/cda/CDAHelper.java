@@ -24,7 +24,7 @@ import com.helger.schematron.svrl.jaxb.SuccessfulReport;
 
 import it.finanze.sanita.fse2.ms.gtw.validator.config.Constants;
 import it.finanze.sanita.fse2.ms.gtw.validator.dto.CodeDTO;
-import it.finanze.sanita.fse2.ms.gtw.validator.dto.CodeSystemSnapshotDTO;
+import it.finanze.sanita.fse2.ms.gtw.validator.dto.TerminologyExtractionDTO;
 import it.finanze.sanita.fse2.ms.gtw.validator.dto.ExtractedInfoDTO;
 import it.finanze.sanita.fse2.ms.gtw.validator.dto.SchematronFailedAssertionDTO;
 import it.finanze.sanita.fse2.ms.gtw.validator.dto.SchematronValidationResultDTO;
@@ -55,9 +55,9 @@ public class CDAHelper {
         return terminology;
 	}
 	
-	public static CodeSystemSnapshotDTO extractAllCodeSystems(String cda) {
+	public static TerminologyExtractionDTO extractAllCodeSystems(String cda) {
 		List<CodeDTO> codes = extractAllCodes(cda);
-		return new CodeSystemSnapshotDTO(codes);
+		return new TerminologyExtractionDTO(codes);
 	}
 
 	private static List<CodeDTO> extractAllCodes(String cda) {

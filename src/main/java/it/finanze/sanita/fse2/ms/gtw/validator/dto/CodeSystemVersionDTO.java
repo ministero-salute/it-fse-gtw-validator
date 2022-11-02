@@ -11,7 +11,7 @@ import lombok.Getter;
 public class CodeSystemVersionDTO {
 	
 	private String codeSystem;
-	private String codeSystemVersion;
+	private String version;
 	
     @Override
     public boolean equals(Object obj) { 
@@ -23,17 +23,22 @@ public class CodeSystemVersionDTO {
         if (this.codeSystem == null && dto.codeSystem != null) return false;
         if (dto.codeSystem == null && this.codeSystem != null) return false;
         
-        if (this.codeSystemVersion == null && dto.codeSystemVersion != null) return false;
-        if (dto.codeSystemVersion == null && this.codeSystemVersion != null) return false;		
+        if (this.version == null && dto.version != null) return false;
+        if (dto.version == null && this.version != null) return false;		
         		
-        return this.codeSystem.equals(dto.codeSystem) && this.codeSystemVersion.equals(dto.codeSystemVersion);
+        return this.codeSystem.equals(dto.codeSystem) && this.version.equals(dto.version);
     }
  
     @Override
     public int hashCode() {
     	int hashCode = 0;
     	hashCode += this.codeSystem == null ? 0 : this.codeSystem.hashCode();
-    	hashCode += this.codeSystemVersion == null ? 0 : this.codeSystemVersion.hashCode();
+    	hashCode += this.version == null ? 0 : this.version.hashCode();
     	return hashCode;
+    }
+    
+    @Override
+    public String toString() {
+    	return codeSystem + " v" + version;
     }
 }

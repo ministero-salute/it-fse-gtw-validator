@@ -1,79 +1,93 @@
-/*
- * SPDX-License-Identifier: AGPL-3.0-or-later
- */
 package it.finanze.sanita.fse2.ms.gtw.validator.dto;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
-import lombok.AllArgsConstructor;
+import it.finanze.sanita.fse2.ms.gtw.validator.repository.entity.CodeSystemVersionETY;
 
-//@Data
-@AllArgsConstructor
 public class CodeSystemSnapshotDTO {
 
-	private List<CodeDTO> codes;
+	private List<CodeSystemVersionDTO> codeSystemVersions;
+	private Map<String, String> codeSystemMaxVersions;
+	private List<String> codeSystems;
+	private List<String> whiteList;
 	
-	public List<CodeDTO> getCodes() {
-		if (codes == null) codes = new ArrayList<>();
-		return codes;
+	// terminologies is an array containing all and only codeSystems and versions
+	public CodeSystemSnapshotDTO(List<CodeSystemVersionETY> codeSystemVersionsETY) {
+		if (codeSystemVersions == null) codeSystemVersions = new ArrayList<>();
+		this.whiteList = getWhiteList(codeSystemVersionsETY);
+		this.codeSystemVersions = getCodeSystemVersions(codeSystemVersionsETY);
+		this.codeSystemMaxVersions = getCodeSystemMaxVersions(codeSystemVersions); 
+		this.codeSystems = getCodeSystems(codeSystemVersions);
 	}
-	
-	public List<String> getCodeSystems() {
-		return getCodes()
-			.stream()
-			.map(code -> code.getCodeSystem())
-			.distinct()
-			.collect(Collectors.toList());
-	}
-	
+
 	public List<CodeSystemVersionDTO> getCodeSystemVersions() {
-		return getCodes()
-			.stream()
-			.map(code -> new CodeSystemVersionDTO(code.getCodeSystem(), code.getCodeSystemVersion()))
-			.distinct()
-			.collect(Collectors.toList());
+		if (codeSystemVersions == null) codeSystemVersions = new ArrayList<>();
+		return Collections.unmodifiableList(codeSystemVersions);
 	}
 
-	public List<String> filterCodeSystems(List<String> codeSystems) {
-		return getCodeSystems()
-			.stream()
-			.filter(cs -> codeSystems.contains(cs))
-			.collect(Collectors.toList());
+	public List<String> getCodeSystems() {
+		if (codeSystems == null) codeSystems = new ArrayList<>();
+		return Collections.unmodifiableList(codeSystems);
 	}
 
-	public List<CodeSystemVersionDTO> filterCodeSystemVersions(List<CodeSystemVersionDTO> codeSystemVersions) {
+	public List<String> getWhiteList() {
+		if (whiteList == null) whiteList = new ArrayList<>();
+		return Collections.unmodifiableList(whiteList);
+	}
+
+	public Map<String, String> getCodeSystemMaxVersions() {
+		if (codeSystemMaxVersions == null) codeSystemMaxVersions = new HashMap<>();
+		return Collections.unmodifiableMap(codeSystemMaxVersions);
+	}
+	
+	private List<CodeSystemVersionDTO> getCodeSystemVersions(List<CodeSystemVersionETY> codeSystemVersionsETY) {
+		return codeSystemVersionsETY
+				.stream()
+				.map(ety -> new CodeSystemVersionDTO(ety.getCodeSystem(), ety.getVersion()))
+				.collect(Collectors.toList());
+	}
+	
+	private List<String> getCodeSystems(List<CodeSystemVersionDTO> codeSystemVersions) {
 		return getCodeSystemVersions()
-			.stream()
-			.filter(cs -> codeSystemVersions.contains(cs))
-			.collect(Collectors.toList());
+				.stream()
+				.map(csv -> csv.getCodeSystem())
+				.distinct()
+				.collect(Collectors.toList());
 	}
 	
-	public List<String> rejectCodeSystems(List<String> codeSystems) {
-		return getCodeSystems()
-			.stream()
-			.filter(cs -> !codeSystems.contains(cs))
-			.collect(Collectors.toList());
+	private List<String> getWhiteList(List<CodeSystemVersionETY> codeSystemVersions) {
+		return codeSystemVersions
+				.stream()
+				.filter(ety -> ety.isWhiteListed())
+				.map(ety -> ety.getCodeSystem())
+				.distinct()
+				.collect(Collectors.toList());
 	}
 	
-	public List<CodeSystemVersionDTO> rejectCodeSystemVersions(List<CodeSystemVersionDTO> codeSystemVersions) {
-		return getCodeSystemVersions()
-			.stream()
-			.filter(cs -> !codeSystemVersions.contains(cs))
-			.collect(Collectors.toList());
+	private Map<String, String> getCodeSystemMaxVersions(List<CodeSystemVersionDTO> codeSystemVersions) {
+		return codeSystemVersions
+				.stream()
+				.collect(Collectors.groupingBy(dto -> dto.getCodeSystem()))
+				.values()
+				.stream()
+				.map(this::getMaxCodeSystemVersion)
+				.filter(Objects::nonNull)
+				.collect(Collectors.toMap(CodeSystemVersionDTO::getCodeSystem, CodeSystemVersionDTO::getVersion));
 	}
 
-	public void removeCodes(List<CodeDTO> codes) {
-		getCodes().removeIf(code -> codes.contains(code));
+	private CodeSystemVersionDTO getMaxCodeSystemVersion(List<CodeSystemVersionDTO> codeSystemVersions) {
+		if (codeSystemVersions.isEmpty()) return null;
+		String codeSystem = codeSystemVersions.get(0).getCodeSystem();
+		return new CodeSystemVersionDTO(codeSystem, getMax(codeSystemVersions));
 	}
-	
-	public void removeCodeSystems(List<String> codeSystems) {
-		getCodes().removeIf(code -> codeSystems.contains(code.getCodeSystem()));
-	}
-//
-//	public void removeCodeSystemVersions(List<CodeSystemVersionDTO> codeSystemVersions) {
-//		getCodes().removeIf(code -> codeSystemVersions.contains(code.getCodeSystemVersion()));
-//	}
 
+	private String getMax(List<CodeSystemVersionDTO> codeSystemVersions) {
+		return null;
+	}
 }

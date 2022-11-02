@@ -13,9 +13,9 @@ import com.helger.schematron.ISchematronResource;
 import it.finanze.sanita.fse2.ms.gtw.validator.cda.CDAHelper;
 import it.finanze.sanita.fse2.ms.gtw.validator.cda.ValidationResult;
 import it.finanze.sanita.fse2.ms.gtw.validator.dto.CDAValidationDTO;
-import it.finanze.sanita.fse2.ms.gtw.validator.dto.CodeSystemSnapshotDTO;
 import it.finanze.sanita.fse2.ms.gtw.validator.dto.ExtractedInfoDTO;
 import it.finanze.sanita.fse2.ms.gtw.validator.dto.SchematronValidationResultDTO;
+import it.finanze.sanita.fse2.ms.gtw.validator.dto.TerminologyExtractionDTO;
 import it.finanze.sanita.fse2.ms.gtw.validator.dto.VocabularyResultDTO;
 import it.finanze.sanita.fse2.ms.gtw.validator.enums.CDAValidationStatusEnum;
 import it.finanze.sanita.fse2.ms.gtw.validator.exceptions.BusinessException;
@@ -69,9 +69,9 @@ public class ValidationSRV implements IValidationSRV {
 //            Map<String, List<String>> vocabularies = CDAHelper.extractTerminology(cda);
 //            log.debug("Validating {} systems...", vocabularies.size());
 //            return vocabulariesSRV.vocabulariesExists(vocabularies);
-        	CodeSystemSnapshotDTO snapshot = CDAHelper.extractAllCodeSystems(cda);
-            log.debug("Validating {} systems...", snapshot.getCodeSystems().size());
-            return terminologySRV.validateCodeSystems(snapshot);
+        	TerminologyExtractionDTO terminologies = CDAHelper.extractAllCodeSystems(cda);
+            log.debug("Validating {} systems...", terminologies.getCodeSystems().size());
+            return terminologySRV.validateTerminologies(terminologies);
         } catch (Exception e) {
             log.error("Error while executing validation on vocabularies", e);
             throw new BusinessException("Error while executing validation on vocabularies", e);
