@@ -24,11 +24,11 @@ import it.finanze.sanita.fse2.ms.gtw.validator.exceptions.BusinessException;
 import it.finanze.sanita.fse2.ms.gtw.validator.exceptions.NoRecordFoundException;
 import it.finanze.sanita.fse2.ms.gtw.validator.repository.entity.SchemaETY;
 import it.finanze.sanita.fse2.ms.gtw.validator.repository.entity.SchematronETY;
-import it.finanze.sanita.fse2.ms.gtw.validator.repository.entity.StructureMapETY;
+import it.finanze.sanita.fse2.ms.gtw.validator.repository.entity.TransformETY;
 import it.finanze.sanita.fse2.ms.gtw.validator.repository.entity.XslTransformETY;
 import it.finanze.sanita.fse2.ms.gtw.validator.repository.mongo.ISchemaRepo;
 import it.finanze.sanita.fse2.ms.gtw.validator.repository.mongo.ISchematronRepo;
-import it.finanze.sanita.fse2.ms.gtw.validator.repository.mongo.IStructureMapRepo;
+import it.finanze.sanita.fse2.ms.gtw.validator.repository.mongo.ITransformRepo;
 import it.finanze.sanita.fse2.ms.gtw.validator.repository.mongo.IXslTransformRepo;
 import it.finanze.sanita.fse2.ms.gtw.validator.service.ISchemaSRV;
 import it.finanze.sanita.fse2.ms.gtw.validator.service.IValidationSRV;
@@ -58,7 +58,7 @@ public class ValidationSRV implements IValidationSRV {
 	private IXslTransformRepo xsltTransformRepo; 
 	
 	@Autowired
-	private IStructureMapRepo structureMapRepo; 
+	private ITransformRepo structureMapRepo; 
       
     
     @Override
@@ -172,7 +172,7 @@ public class ValidationSRV implements IValidationSRV {
 	public String getStructureObjectID(final String templateId){
 		String structureId = "";
 		try{
-			StructureMapETY structureMap = structureMapRepo.findMapByTemplateIdRoot(templateId);
+			TransformETY structureMap = structureMapRepo.findMapByTemplateIdRoot(templateId);
 			if(structureMap!=null) {
 				structureId = structureMap.getId(); 
 			}

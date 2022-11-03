@@ -35,41 +35,37 @@ public final class Constants {
 		 * Configuration path.
 		 */
 		public static final String CONFIG = "it.finanze.sanita.fse2.ms.gtw.validator.config";
-		
+
 		/**
 		 * Configuration mongo path.
 		 */
 		public static final String CONFIG_MONGO = "it.finanze.sanita.fse2.ms.gtw.validator.config.mongo";
-		
+
 		/**
 		 * Configuration mongo repository path.
 		 */
 		public static final String REPOSITORY_MONGO = "it.finanze.sanita.fse2.ms.gtw.validator.repository";
 
-				
+
 		private ComponentScan() {
 			//This method is intentionally left blank.
 		}
 
 	}
-	
+
 	public static final class Collections {
-  
-   
 
 		public static final String DICTIONARY = "dictionary";
 
-			public static final String GTW_DB_RULES = "gtw-db-rules";
+		public static final String SCHEMA = "schema";
 
-			public static final String SCHEMA = "schema";
+		public static final String SCHEMATRON = "schematron";
 
-			public static final String SCHEMATRON = "schematron";
+		public static final String TERMINOLOGY = "terminology";
 
-			public static final String TERMINOLOGY = "terminology";
+		public static final String XSL_TRANSFORM = "xsl_transform";
 
-			public static final String XSL_TRANSFORM = "xsl_transform";
-			
-			public static final String STRUCTURE_MAP = "structure_map";
+		public static final String TRANSFORM = "transform";
 
 
 		private Collections() {
@@ -77,7 +73,7 @@ public final class Constants {
 		}
 	}
 
- 
+
 	public static final class Profile {
 		public static final String TEST = "test";
 
@@ -94,13 +90,13 @@ public final class Constants {
 
 	public static final class Logs {
 		public static final String ERR_NOT_ALL_CODES_FOUND = "Not all codes for system {} are present on Mongo";
-        public static final String ERR_VOCABULARY_VALIDATION = "Error while executing validation on vocabularies for system %s";
+		public static final String ERR_VOCABULARY_VALIDATION = "Error while executing validation on vocabularies for system %s";
 
-        private Logs() {}
+		private Logs() {}
 	}
 
 	public static final class App {
-        public static final String SYSTEM_KEY = "system";
+		public static final String SYSTEM_KEY = "system";
 		public static final String CODE_KEY = "code";
 
 		private App() {}

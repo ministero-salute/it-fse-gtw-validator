@@ -24,14 +24,6 @@ public class CollectionNaming {
         return Constants.Collections.DICTIONARY;
     }
 
-    @Bean("gtwDbRulesBean")
-    public String getGtwDbRulesCollection() {
-        if (profileUtility.isTestProfile()) {
-            return Constants.Profile.TEST_PREFIX + Constants.Collections.GTW_DB_RULES;
-        }
-        return Constants.Collections.GTW_DB_RULES;
-    }
-
     @Bean("xslTransformBean")
     public String getXslTransformCollection() {
         if (profileUtility.isTestProfile()) {
@@ -56,12 +48,12 @@ public class CollectionNaming {
         return Constants.Collections.SCHEMATRON;
     }
     
-    @Bean("structureMapBean")
+    @Bean("transformBean")
     public String getStructureMapCollection() {
         if (profileUtility.isTestProfile()) {
-            return Constants.Profile.TEST_PREFIX + Constants.Collections.STRUCTURE_MAP;
+            return Constants.Profile.TEST_PREFIX + Constants.Collections.TRANSFORM;
         }
-        return Constants.Collections.STRUCTURE_MAP;
+        return Constants.Collections.TRANSFORM;
     }
 
     @Bean("terminologyBean")
