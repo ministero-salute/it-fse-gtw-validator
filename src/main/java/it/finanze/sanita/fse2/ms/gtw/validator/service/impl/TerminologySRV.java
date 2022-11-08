@@ -1,8 +1,5 @@
 package it.finanze.sanita.fse2.ms.gtw.validator.service.impl;
 
-import static it.finanze.sanita.fse2.ms.gtw.validator.utility.StringUtility.isNullOrEmpty;
-
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -16,10 +13,11 @@ import it.finanze.sanita.fse2.ms.gtw.validator.dto.CodeSystemVersionDTO;
 import it.finanze.sanita.fse2.ms.gtw.validator.dto.TerminologyExtractionDTO;
 import it.finanze.sanita.fse2.ms.gtw.validator.dto.VocabularyResultDTO;
 import it.finanze.sanita.fse2.ms.gtw.validator.exceptions.BusinessException;
-import it.finanze.sanita.fse2.ms.gtw.validator.repository.entity.CodeSystemVersionETY;
-import it.finanze.sanita.fse2.ms.gtw.validator.repository.mongo.ICodeSystemVersionRepo;
+import it.finanze.sanita.fse2.ms.gtw.validator.repository.entity.DictionaryETY;
+import it.finanze.sanita.fse2.ms.gtw.validator.repository.mongo.IDictionaryRepo;
 import it.finanze.sanita.fse2.ms.gtw.validator.repository.mongo.ITerminologyRepo;
 import it.finanze.sanita.fse2.ms.gtw.validator.service.ITerminologySRV;
+import it.finanze.sanita.fse2.ms.gtw.validator.utility.CodeSystemUtility;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -28,13 +26,11 @@ public class TerminologySRV implements ITerminologySRV {
 
     private static final long serialVersionUID = 4152763404310972229L;
 
-	private static final List<String> INVALID_VALUES = Arrays.asList("999", "9999");
-
     @Autowired
     private transient ITerminologyRepo terminologyRepo;
     
     @Autowired
-    private transient ICodeSystemVersionRepo codeSystemRepo;
+    private transient IDictionaryRepo codeSystemRepo;
 
     @Override
     public VocabularyResultDTO validateTerminologies(TerminologyExtractionDTO terminologies) {
@@ -52,8 +48,8 @@ public class TerminologySRV implements ITerminologySRV {
     }
 
 	private CodeSystemSnapshotDTO retrieveManagedCodeSystems() {
-		List<CodeSystemVersionETY> codeSystems = codeSystemRepo.getCodeSystems();
-		throwExceptionForEmptyDatabase(codeSystems);
+		List<DictionaryETY> codeSystems = codeSystemRepo.getCodeSystems();
+		if (codeSystems.isEmpty()) throwExceptionForEmptyDatabase(codeSystems);
 		return new CodeSystemSnapshotDTO(codeSystems);
 	}
 
@@ -65,7 +61,8 @@ public class TerminologySRV implements ITerminologySRV {
     }
 
 	private void consumeBlackList(TerminologyExtractionDTO terminologies) {
-        List<String> blackListed = getBlackList(terminologies.getCodeSystems());
+        List<String> blackListed = CodeSystemUtility.getBlackList(terminologies.getCodeSystems());
+        terminologies.removeCodeSystems(blackListed);
         sendLogForBlackList(blackListed);
         throwExceptionForBlackList(blackListed);
     }
@@ -78,11 +75,13 @@ public class TerminologySRV implements ITerminologySRV {
     }
 
 	private void sanitizeMissingVersion(TerminologyExtractionDTO terminologies, CodeSystemSnapshotDTO snapshot) {
-		List<CodeDTO> codes = sanitizeMissingVersion(terminologies.getCodes(), snapshot);
-		terminologies.getCodes().clear();
+		List<CodeDTO> codes = CodeSystemUtility.sanitizeMissingVersion(terminologies.getCodes(), snapshot);
+		if (codes.isEmpty()) return;
+		log.warn("Sanitizing missing CodeSystemVersions: {}", codes.toString());
+		terminologies.getCodes().removeAll(codes);
 		terminologies.getCodes().addAll(codes);
 	}
-	
+
     private void consumeInvalidVersion(TerminologyExtractionDTO terminologies, CodeSystemSnapshotDTO snapshot) {
     	List<CodeSystemVersionDTO> managed = snapshot.getCodeSystemVersions();
         List<CodeSystemVersionDTO> invalid = terminologies.rejectCodeSystemVersions(managed);
@@ -91,7 +90,7 @@ public class TerminologySRV implements ITerminologySRV {
 	}
 
 	private void consumeCodes(TerminologyExtractionDTO terminologies) {
-		Map<CodeSystemVersionDTO, List<String>> groupedCodes = groupByCodeSystemVersion(terminologies);
+		Map<CodeSystemVersionDTO, List<CodeDTO>> groupedCodes = groupByCodeSystemVersion(terminologies);
 		List<CodeDTO> managedCodes = groupedCodes
 				.keySet()
 				.stream()
@@ -100,83 +99,45 @@ public class TerminologySRV implements ITerminologySRV {
 		terminologies.removeCodes(managedCodes);
 	}
 	
-	private Map<CodeSystemVersionDTO, List<String>> groupByCodeSystemVersion(TerminologyExtractionDTO terminologies) {
+	private Map<CodeSystemVersionDTO, List<CodeDTO>> groupByCodeSystemVersion(TerminologyExtractionDTO terminologies) {
 		return terminologies
 				.getCodes()
 				.stream()
-				.collect(Collectors.groupingBy(CodeDTO::getCodeSystemVersion, Collectors.mapping(CodeDTO::getCode, Collectors.toList())));
+				.collect(Collectors.groupingBy(this::getCodeSystemVersionGroupKey));
 	}
 	
-	private List<CodeDTO> findByCodeSystemVersion(CodeSystemVersionDTO codeSystemVersion, List<String> codes) {
+	private List<CodeDTO> findByCodeSystemVersion(CodeSystemVersionDTO codeSystemVersion, List<CodeDTO> codeDTOs) {
+		List<String> codes = codeDTOs.stream().map(CodeDTO::getCode).collect(Collectors.toList());
 		List<String> foundCodes = terminologyRepo.findAllCodesExistsForVersion(codeSystemVersion.getCodeSystem(), codeSystemVersion.getVersion(), codes); 
-		return getManagedCodes(codeSystemVersion, foundCodes);
-	}
-
-	private List<CodeDTO> getManagedCodes(CodeSystemVersionDTO codeSystemVersion, List<String> codes) {
-		return codes
-				.stream()
-				.map(code -> new CodeDTO(codeSystemVersion.getCodeSystem(), codeSystemVersion.getVersion(), code))
-				.collect(Collectors.toList());
+		codeDTOs.removeIf(code -> !foundCodes.contains(code.getCode()));
+		return codeDTOs;
 	}
 
 	private void manageRemainingCodes(TerminologyExtractionDTO terminologies) {
 		if (terminologies.getCodes().isEmpty()) return;
-        log.warn("CodeSystem not found on Mongo, Terminology Validation Failed!");
-		sendLogForInvalidCodes(terminologies.getCodes());
+        log.warn("One or more CodeSystems were not found on Mongo, Terminology Validation Failed!");
+        sendLogForInvalidCodes(terminologies.getCodes());
 	}
 	
-	private List<CodeDTO> sanitizeMissingVersion(List<CodeDTO> codes, CodeSystemSnapshotDTO snapshot) {
-		return codes
-				.stream()
-				.peek(code -> sanitizeMissingVersion(code, snapshot))
-				.collect(Collectors.toList());	
-	}
-
-	private void sanitizeMissingVersion(CodeDTO code, CodeSystemSnapshotDTO snapshot) {
-		if (!isNullOrEmpty(code.getVersion())) return;
-		String codeSystem = code.getCodeSystem();
-		String maxVersion = snapshot.getCodeSystemMaxVersions().get(codeSystem);	
-		code.setVersion(maxVersion);
-	}
-	
-	private List<String> getBlackList(List<String> codeSystems) {
-		return codeSystems
-				.stream()
-				.filter(this::isBlacklisted)
-				.collect(Collectors.toList());
-	}
-	
-    private boolean isBlacklisted(String codeSystem) {
-        if (isNullOrEmpty(codeSystem)) return false;
-        return Arrays
-            .stream(codeSystem.split("\\."))
-            .anyMatch(INVALID_VALUES::contains);
-    }
-    
 	private VocabularyResultDTO getResult(TerminologyExtractionDTO terminologies) {
 		boolean isValid = terminologies.getCodes().isEmpty();
-		String message = getRemainingCodeSystemMessage(terminologies);
+		String message = CodeSystemUtility.getGroupedMessage(terminologies);
 		return new VocabularyResultDTO(isValid, message);
 	}
 
-	private String getRemainingCodeSystemMessage(TerminologyExtractionDTO terminologies) {
-		return terminologies.getCodes().toString();
-		//"[Dizionario : " + system + " ,Vocaboli:" + String.join(",", differences) + "]
-	}
-
-   	private void sendLogForWhiteList(List<String> codeSystems) {
+	private void sendLogForWhiteList(List<String> codeSystems) {
     	if (codeSystems.isEmpty()) return;
-    	log.warn("Whitelisted CodeSystems found during the validation: [{}]", codeSystems);
+    	log.warn("Whitelisted CodeSystems found during the validation: {}", codeSystems);
     }
 
     private void sendLogForBlackList(List<String> codeSystems) {
     	if (codeSystems.isEmpty()) return;
-    	log.error("Blacklisted CodeSystems found during the validation: [{}]", codeSystems);
+    	log.error("Blacklisted CodeSystems found during the validation: {}", codeSystems);
     }
 
     private void sendLogForUnknown(List<String> codeSystems) {
 		if (codeSystems.isEmpty()) return;
-		log.warn("Unknown CodeSystems found during the validation: [{}]", codeSystems);
+		log.warn("Unknown CodeSystems found during the validation: {}", codeSystems);
 	}
 	
 	private void sendLogForInvalidVersions(List<CodeSystemVersionDTO> codeSystemVersions) {
@@ -185,19 +146,19 @@ public class TerminologySRV implements ITerminologySRV {
 				.stream()
 				.map(CodeSystemVersionDTO::toString)
 				.collect(Collectors.toList());
-		log.error("Invalid CodeSystemVersions found during the validation: [{}]", versions);
+		log.error("Invalid CodeSystemVersions found during the validation: {}", versions);
 	}
 
 	private void sendLogForInvalidCodes(List<CodeDTO> codes) {
 		if (codes.isEmpty()) return;
 		List<String> versions = codes
 				.stream()
-				.map(CodeDTO::getCode)
+				.map(CodeDTO::toString)
 				.collect(Collectors.toList());
-		log.warn("Invalid Codes found during the validation: [{}]", versions);
+		log.warn("Invalid Codes found during the validation: {}", versions);
 	}
 
-	private void throwExceptionForEmptyDatabase(List<CodeSystemVersionETY> codeSystems) {
+	private void throwExceptionForEmptyDatabase(List<DictionaryETY> codeSystems) {
 		if (codeSystems.isEmpty()) return;
         log.error("Managed CodeSystems not found in database");
         throw new BusinessException("Managed CodeSystems not found in database");
@@ -205,11 +166,18 @@ public class TerminologySRV implements ITerminologySRV {
 	
 	private void throwExceptionForBlackList(List<String> blackListed) {
 		if (blackListed.isEmpty()) return;
-        throw new BusinessException("BlackListed CodeSystems found during the validation");
+//        throw new BusinessException("BlackListed CodeSystems found during the validation");
 	}
 
 	private void throwExceptionForInvalidVersions(List<CodeSystemVersionDTO> invalid) {
 		if (invalid.isEmpty()) return;
-        throw new BusinessException("Invalid CodeSystemVersions found during the validation");		
+//        throw new BusinessException("Invalid CodeSystemVersions found during the validation");		
 	}
+
+	private CodeSystemVersionDTO getCodeSystemVersionGroupKey(CodeDTO code) {
+		CodeSystemVersionDTO codeSystemVersion = code.getCodeSystemVersion();
+		if (!code.isAnswerList()) return codeSystemVersion; 
+		return CodeSystemUtility.getAnswerList(codeSystemVersion);
+	}
+	
 }

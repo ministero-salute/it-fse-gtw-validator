@@ -5,8 +5,10 @@ package it.finanze.sanita.fse2.ms.gtw.validator.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.Setter;
 
 @Getter
+@Setter
 @AllArgsConstructor
 public class CodeSystemVersionDTO {
 	
@@ -26,6 +28,9 @@ public class CodeSystemVersionDTO {
         if (this.version == null && dto.version != null) return false;
         if (dto.version == null && this.version != null) return false;		
         		
+        if (this.codeSystem == null && this.version == null) return true;
+        if (this.version == null) return this.codeSystem.equals(dto.codeSystem);
+        
         return this.codeSystem.equals(dto.codeSystem) && this.version.equals(dto.version);
     }
  
@@ -39,6 +44,7 @@ public class CodeSystemVersionDTO {
     
     @Override
     public String toString() {
+    	if (version == null) return codeSystem;
     	return codeSystem + " v" + version;
     }
 }

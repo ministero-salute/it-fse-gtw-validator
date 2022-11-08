@@ -105,6 +105,7 @@ public final class Constants {
 		public static final String CODE_SYSTEM_KEY = "codeSystem";
 		public static final String CODE_SYSTEM_VERSION_KEY = "codeSystemVersion";
 		public static final String WHITELIST_KEY = "whitelist";
+		public static final String OBSERVATION_KEY = "observation";
 
 		private App() {}
 	}

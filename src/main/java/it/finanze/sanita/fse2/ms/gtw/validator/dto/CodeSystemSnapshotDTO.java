@@ -2,13 +2,14 @@ package it.finanze.sanita.fse2.ms.gtw.validator.dto;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import it.finanze.sanita.fse2.ms.gtw.validator.repository.entity.CodeSystemVersionETY;
+import it.finanze.sanita.fse2.ms.gtw.validator.repository.entity.DictionaryETY;
 
 public class CodeSystemSnapshotDTO {
 
@@ -18,11 +19,11 @@ public class CodeSystemSnapshotDTO {
 	private List<String> whiteList;
 	
 	// terminologies is an array containing all and only codeSystems and versions
-	public CodeSystemSnapshotDTO(List<CodeSystemVersionETY> codeSystemVersionsETY) {
+	public CodeSystemSnapshotDTO(List<DictionaryETY> dictionaries) {
 		if (codeSystemVersions == null) codeSystemVersions = new ArrayList<>();
-		this.whiteList = getWhiteList(codeSystemVersionsETY);
-		this.codeSystemVersions = getCodeSystemVersions(codeSystemVersionsETY);
-		this.codeSystemMaxVersions = getCodeSystemMaxVersions(codeSystemVersions); 
+		this.whiteList = getWhiteList(dictionaries);
+		this.codeSystemVersions = getCodeSystemVersions(dictionaries);
+		this.codeSystemMaxVersions = getCodeSystemMaxVersions(dictionaries); 
 		this.codeSystems = getCodeSystems(codeSystemVersions);
 	}
 
@@ -46,10 +47,10 @@ public class CodeSystemSnapshotDTO {
 		return Collections.unmodifiableMap(codeSystemMaxVersions);
 	}
 	
-	private List<CodeSystemVersionDTO> getCodeSystemVersions(List<CodeSystemVersionETY> codeSystemVersionsETY) {
-		return codeSystemVersionsETY
+	private List<CodeSystemVersionDTO> getCodeSystemVersions(List<DictionaryETY> dictionaries) {
+		return dictionaries
 				.stream()
-				.map(ety -> new CodeSystemVersionDTO(ety.getCodeSystem(), ety.getVersion()))
+				.map(ety -> new CodeSystemVersionDTO(ety.getSystem(), ety.getVersion()))
 				.collect(Collectors.toList());
 	}
 	
@@ -61,33 +62,64 @@ public class CodeSystemSnapshotDTO {
 				.collect(Collectors.toList());
 	}
 	
-	private List<String> getWhiteList(List<CodeSystemVersionETY> codeSystemVersions) {
-		return codeSystemVersions
+	private List<String> getWhiteList(List<DictionaryETY> dictionaries) {
+		return dictionaries
 				.stream()
-				.filter(ety -> ety.isWhiteListed())
-				.map(ety -> ety.getCodeSystem())
+				.filter(ety -> ety.isWhiteList())
+				.map(ety -> ety.getSystem())
 				.distinct()
 				.collect(Collectors.toList());
 	}
 	
-	private Map<String, String> getCodeSystemMaxVersions(List<CodeSystemVersionDTO> codeSystemVersions) {
-		return codeSystemVersions
+	private Map<String, String> getCodeSystemMaxVersions(List<DictionaryETY> dictionaries) {
+		return dictionaries
 				.stream()
-				.collect(Collectors.groupingBy(dto -> dto.getCodeSystem()))
+				.collect(Collectors.groupingBy(dto -> dto.getSystem()))
 				.values()
 				.stream()
 				.map(this::getMaxCodeSystemVersion)
 				.filter(Objects::nonNull)
-				.collect(Collectors.toMap(CodeSystemVersionDTO::getCodeSystem, CodeSystemVersionDTO::getVersion));
+		        .collect(HashMap::new, (m,v)->m.put(v.getCodeSystem(), v.getVersion()), HashMap::putAll);
 	}
 
-	private CodeSystemVersionDTO getMaxCodeSystemVersion(List<CodeSystemVersionDTO> codeSystemVersions) {
-		if (codeSystemVersions.isEmpty()) return null;
-		String codeSystem = codeSystemVersions.get(0).getCodeSystem();
-		return new CodeSystemVersionDTO(codeSystem, getMax(codeSystemVersions));
+	private CodeSystemVersionDTO getMaxCodeSystemVersion(List<DictionaryETY> dictionaries) {
+		if (dictionaries.isEmpty()) return null;
+		String codeSystem = dictionaries.get(0).getSystem();
+		return new CodeSystemVersionDTO(codeSystem, getMax(dictionaries));
 	}
 
-	private String getMax(List<CodeSystemVersionDTO> codeSystemVersions) {
-		return null;
+	private String getMax(List<DictionaryETY> dictionaries) {
+		if (dictionaries.isEmpty()) return null;
+		DictionaryETY firstDictionary = dictionaries.get(0);
+		if (firstDictionary.getReleaseDate() != null) return getMaxForReleaseDate(dictionaries);
+		if (firstDictionary.getCreationDate() != null) return getMaxForCreationDate(dictionaries);
+		return getMaxForLast(dictionaries);
+	}
+
+	private String getMaxForReleaseDate(List<DictionaryETY> dictionaries) {
+		return dictionaries
+				.stream()
+				.sorted(Comparator.comparing(DictionaryETY::getReleaseDate, Comparator.nullsLast(Comparator.reverseOrder())))
+				.findFirst()
+				.map(DictionaryETY::getVersion)				
+				.orElse(null);
+	}
+
+	private String getMaxForCreationDate(List<DictionaryETY> dictionaries) {
+		return dictionaries
+				.stream()
+				.sorted(Comparator.comparing(DictionaryETY::getCreationDate, Comparator.nullsLast(Comparator.reverseOrder())))
+				.findFirst()
+				.map(DictionaryETY::getVersion)				
+				.orElse(null);
+	}
+
+	private String getMaxForLast(List<DictionaryETY> dictionaries) {
+		Collections.reverse(dictionaries);
+		return dictionaries
+				.stream()
+				.findFirst()
+				.map(DictionaryETY::getVersion)
+				.orElse(null);
 	}
 }

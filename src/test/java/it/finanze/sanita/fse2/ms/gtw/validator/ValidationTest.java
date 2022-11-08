@@ -63,7 +63,6 @@ class ValidationTest extends AbstractTest {
 		clearConfigurationItems();
 		insertSchema();
 		insertSchematron();
-		saveDictionaryFiles();
 	}
 
 	@Test

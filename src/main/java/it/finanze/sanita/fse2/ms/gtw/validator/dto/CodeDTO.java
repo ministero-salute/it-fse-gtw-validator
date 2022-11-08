@@ -3,16 +3,21 @@
  */
 package it.finanze.sanita.fse2.ms.gtw.validator.dto;
 
+import static org.apache.commons.lang3.StringUtils.isEmpty;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @AllArgsConstructor
+@NoArgsConstructor
 @Data
 public class CodeDTO {
 
 	private String code;
 	private String codeSystem;
 	private String version;
+	private boolean isAnswerList;
 	
     @Override
     public boolean equals(Object obj) { 
@@ -30,10 +35,15 @@ public class CodeDTO {
         if (this.version == null && dto.version != null) return false;
         if (dto.version == null && this.version != null) return false;		
         		
+        if (this.code == null && codeSystem == null && this.version == null) return true;
+        if (this.code != null && codeSystem == null && this.version == null) return this.code.equals(dto.code);
+        if (this.code != null && codeSystem != null && this.version == null) return this.code.equals(dto.code) && this.codeSystem.equals(dto.codeSystem);
+
         return 
         		this.code.equals(dto.code) && 
         		this.codeSystem.equals(dto.codeSystem) &&
-        		this.version.equals(dto.version);
+        		this.version.equals(dto.version) &&
+        		this.isAnswerList == dto.isAnswerList;
     }
  
     @Override
@@ -42,6 +52,7 @@ public class CodeDTO {
     	hashCode += this.code == null ? 0 : this.code.hashCode();
     	hashCode += this.codeSystem == null ? 0 : this.codeSystem.hashCode();
     	hashCode += this.version == null ? 0 : this.version.hashCode();
+    	hashCode += this.isAnswerList ? 1 : 0;
     	return hashCode;
     }
     
@@ -51,6 +62,9 @@ public class CodeDTO {
     
     @Override
     public String toString() {
+    	String code = isEmpty(this.code) ? "?" : this.code;
+    	String codeSystem = isEmpty(this.codeSystem) ? "?" : this.codeSystem;
+    	if (isEmpty(this.version)) return code + " [" + codeSystem + "]";
     	return code + " [" + codeSystem + " v" + version + "]";
     }
     

@@ -3,6 +3,10 @@
  */
 package it.finanze.sanita.fse2.ms.gtw.validator.service.impl;
 
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+
 import javax.xml.validation.Validator;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -66,12 +70,21 @@ public class ValidationSRV implements IValidationSRV {
     @Override
     public VocabularyResultDTO validateVocabularies(final String cda) {
         try {
+        	long startTime = new Date().getTime();
+            TerminologyExtractionDTO terminologies = CDAHelper.extractAllCodeSystems(cda);
+            log.info("Validating {} systems...", terminologies.getCodeSystems().size());
+            VocabularyResultDTO validateTerminologies = terminologySRV.validateTerminologies(terminologies);
+            long endDate = new Date().getTime() - startTime;
+            log.info("END DATE TERMINOLOGY QUERY TIME : " + endDate + " ms");
+            
+//            long startTime = new Date().getTime();
 //            Map<String, List<String>> vocabularies = CDAHelper.extractTerminology(cda);
-//            log.debug("Validating {} systems...", vocabularies.size());
-//            return vocabulariesSRV.vocabulariesExists(vocabularies);
-        	TerminologyExtractionDTO terminologies = CDAHelper.extractAllCodeSystems(cda);
-            log.debug("Validating {} systems...", terminologies.getCodeSystems().size());
-            return terminologySRV.validateTerminologies(terminologies);
+//            log.info("Validating {} systems...", vocabularies.size());
+//            VocabularyResultDTO validateTerminologies = vocabulariesSRV.vocabulariesExists(vocabularies);
+//            long endDate = new Date().getTime() - startTime;
+//            log.info("END DATE VOCABULARY QUERY TIME : " + endDate + " ms");
+            
+            return validateTerminologies;
         } catch (Exception e) {
             log.error("Error while executing validation on vocabularies", e);
             throw new BusinessException("Error while executing validation on vocabularies", e);

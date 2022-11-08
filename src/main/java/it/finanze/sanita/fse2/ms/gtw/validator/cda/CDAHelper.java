@@ -3,6 +3,8 @@
  */
 package it.finanze.sanita.fse2.ms.gtw.validator.cda;
 
+import static org.apache.commons.lang3.StringUtils.isEmpty;
+
 import java.io.ByteArrayInputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -24,11 +26,12 @@ import com.helger.schematron.svrl.jaxb.SuccessfulReport;
 
 import it.finanze.sanita.fse2.ms.gtw.validator.config.Constants;
 import it.finanze.sanita.fse2.ms.gtw.validator.dto.CodeDTO;
-import it.finanze.sanita.fse2.ms.gtw.validator.dto.TerminologyExtractionDTO;
 import it.finanze.sanita.fse2.ms.gtw.validator.dto.ExtractedInfoDTO;
 import it.finanze.sanita.fse2.ms.gtw.validator.dto.SchematronFailedAssertionDTO;
 import it.finanze.sanita.fse2.ms.gtw.validator.dto.SchematronValidationResultDTO;
+import it.finanze.sanita.fse2.ms.gtw.validator.dto.TerminologyExtractionDTO;
 import it.finanze.sanita.fse2.ms.gtw.validator.exceptions.BusinessException;
+import it.finanze.sanita.fse2.ms.gtw.validator.utility.CodeSystemUtility;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -73,10 +76,34 @@ public class CDAHelper {
 
 	private static CodeDTO getCode(Element element) {
 		if (element == null) return null;
+		String code = element.attr(Constants.App.CODE_KEY);
 		String codeSystem = element.attr(Constants.App.CODE_SYSTEM_KEY);
 		String codeSystemVersion = element.attr(Constants.App.CODE_SYSTEM_VERSION_KEY);
-		String code = element.attr(Constants.App.CODE_KEY);
-		return new CodeDTO(codeSystem, codeSystemVersion, code);
+		boolean requiresAnswerList = requiresAnswerList(codeSystem, element);
+		CodeDTO codeDTO = new CodeDTO();
+		if (!isEmpty(code)) codeDTO.setCode(code);
+		if (!isEmpty(codeSystem)) codeDTO.setCodeSystem(codeSystem);
+		if (!isEmpty(codeSystemVersion)) codeDTO.setVersion(codeSystemVersion);
+		codeDTO.setAnswerList(requiresAnswerList);
+		return codeDTO;
+	}
+	
+	private static boolean requiresAnswerList(String codeSystem, Element element) {
+		if (isCodeNode(element)) return false;
+		Element parent = element.parent();
+		if (parent == null) return false;
+		if (!isObservationNode(parent)) return false;
+		Elements codeElement = parent.select("code");
+		String code = codeElement.attr(Constants.App.CODE_KEY);
+		return CodeSystemUtility.isLoinc(codeSystem) && CodeSystemUtility.requiresAnswerList(code);
+	}
+
+	private static boolean isObservationNode(Element element) {
+		return (element.nodeName().equalsIgnoreCase(Constants.App.OBSERVATION_KEY));
+	}
+
+	private static boolean isCodeNode(Element element) {
+		return (element.nodeName().equalsIgnoreCase(Constants.App.CODE_KEY));
 	}
 	
 	public static ExtractedInfoDTO extractInfo(final String cda) {

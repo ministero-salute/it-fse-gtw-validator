@@ -72,11 +72,11 @@ public class TerminologyRepo implements ITerminologyRepo {
         try {
             Criteria criteria = Criteria
             		.where("system").is(system)
-            		.and("version").is(version)
             		.and("code").in(codes)
             		.and("deleted").is(false);
+            if (version != null) criteria = criteria.and("version").is(version);
             Query query = new Query();
-            query.addCriteria(criteria); 
+            query.addCriteria(criteria);
 
             List<TerminologyETY> etys = mongoTemplate.find(query, TerminologyETY.class);
             if(!etys.isEmpty()) {
