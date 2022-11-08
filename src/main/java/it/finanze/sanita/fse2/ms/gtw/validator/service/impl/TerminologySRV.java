@@ -166,12 +166,12 @@ public class TerminologySRV implements ITerminologySRV {
 	
 	private void throwExceptionForBlackList(List<String> blackListed) {
 		if (blackListed.isEmpty()) return;
-//        throw new BusinessException("BlackListed CodeSystems found during the validation");
+        throw new BusinessException("BlackListed CodeSystems found during the validation");
 	}
 
 	private void throwExceptionForInvalidVersions(List<CodeSystemVersionDTO> invalid) {
 		if (invalid.isEmpty()) return;
-//        throw new BusinessException("Invalid CodeSystemVersions found during the validation");		
+        throw new BusinessException("Invalid CodeSystemVersions found during the validation");		
 	}
 
 	private CodeSystemVersionDTO getCodeSystemVersionGroupKey(CodeDTO code) {
