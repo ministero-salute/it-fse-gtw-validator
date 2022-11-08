@@ -66,7 +66,10 @@ public final class Constants {
 		public static final String XSL_TRANSFORM = "xsl_transform";
 
 		public static final String TRANSFORM = "transform";
+  
+		public static final String CODE_SYSTEM= "code_system";
 
+		public static final String GTW_DB_RULES = "gtw-db-rules";
 
 		private Collections() {
 
@@ -98,6 +101,10 @@ public final class Constants {
 	public static final class App {
 		public static final String SYSTEM_KEY = "system";
 		public static final String CODE_KEY = "code";
+		public static final String CODE_SYSTEM_KEY = "codeSystem";
+		public static final String CODE_SYSTEM_VERSION_KEY = "codeSystemVersion";
+		public static final String WHITELIST_KEY = "whitelist";
+		public static final String OBSERVATION_KEY = "observation";
 
 		private App() {}
 	}

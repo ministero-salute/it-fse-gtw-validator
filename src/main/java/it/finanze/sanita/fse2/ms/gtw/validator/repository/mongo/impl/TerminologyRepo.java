@@ -7,13 +7,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import it.finanze.sanita.fse2.ms.gtw.validator.config.Constants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Repository;
 
+import it.finanze.sanita.fse2.ms.gtw.validator.config.Constants;
 import it.finanze.sanita.fse2.ms.gtw.validator.exceptions.BusinessException;
 import it.finanze.sanita.fse2.ms.gtw.validator.repository.entity.TerminologyETY;
 import it.finanze.sanita.fse2.ms.gtw.validator.repository.mongo.ITerminologyRepo;
@@ -66,6 +66,31 @@ public class TerminologyRepo implements ITerminologyRepo {
     }
     
     @Override
+    public List<String> findAllCodesExistsForVersion(String system, String version, List<String> codes) {
+        
+    	List<String> output = new ArrayList<>();
+        try {
+            Criteria criteria = Criteria
+            		.where("system").is(system)
+            		.and("code").in(codes)
+            		.and("deleted").is(false);
+            if (version != null) criteria = criteria.and("version").is(version);
+            Query query = new Query();
+            query.addCriteria(criteria);
+
+            List<TerminologyETY> etys = mongoTemplate.find(query, TerminologyETY.class);
+            if(!etys.isEmpty()) {
+            	output = etys.stream().map(TerminologyETY::getCode).collect(Collectors.toList());
+            }
+         } catch (Exception e) {
+            log.error(String.format(Constants.Logs.ERR_VOCABULARY_VALIDATION, system), e);
+            throw new BusinessException(String.format(Constants.Logs.ERR_VOCABULARY_VALIDATION, system), e);
+        }
+
+        return output;
+    }
+    
+    @Override
     public boolean existBySystemAndCode(final String system, final String code) {
     	 boolean exists = false;
          try {
@@ -93,4 +118,6 @@ public class TerminologyRepo implements ITerminologyRepo {
             throw new BusinessException("", e);
         }
     }
+
+    
 }

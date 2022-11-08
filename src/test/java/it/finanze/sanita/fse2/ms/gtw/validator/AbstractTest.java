@@ -6,16 +6,13 @@ import java.io.File;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
 import org.apache.commons.lang3.exception.ExceptionUtils;
-import org.bson.BsonBinarySubType;
 import org.bson.Document;
-import org.bson.types.Binary;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -128,36 +125,6 @@ public abstract class AbstractTest {
     	mongoTemplate.dropCollection(DictionaryETY.class);
     }
     
-	protected void saveDictionaryFiles() {
-		try {
-			File directory = new File("src\\test\\resources\\Files\\dictionary");
-			
-			//only first level files.
-			String[] actualFiles = directory.list();
-			List<DictionaryETY> dictionaryList = new ArrayList<>();
-			if (actualFiles!=null && actualFiles.length>0) {
-				for (String namefile : actualFiles) {
-					File file = new File("src\\test\\resources\\Files\\dictionary\\"+namefile);
-					byte[] content = Files.readAllBytes(file.toPath());
-					DictionaryETY dic = new DictionaryETY();
-					dic.setContentFile(new Binary(BsonBinarySubType.BINARY, content));
-					dic.setFileName(namefile);
-					dictionaryList.add(dic);
-				}
-				insertAllDictionary(dictionaryList);
-			}
-			
-			
-		} catch(Exception ex) {
-			log.error("Error while save dictionary file : " + ex);
-			throw new BusinessException("Error while save dictionary file : " + ex);
-		}
-	}
-    
-    private void insertAllDictionary(List<DictionaryETY> list) {
-    	mongoTemplate.insertAll(list);
-    }
-
 	protected String getTestCda() {
 		return new String(getFileFromInternalResources("Files" + File.separator + "cda1.xml"), StandardCharsets.UTF_8);
 	}

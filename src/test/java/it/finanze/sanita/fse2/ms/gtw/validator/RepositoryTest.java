@@ -1,18 +1,17 @@
 package it.finanze.sanita.fse2.ms.gtw.validator;
 
-import com.mongodb.MongoException;
-import it.finanze.sanita.fse2.ms.gtw.validator.config.Constants;
-import it.finanze.sanita.fse2.ms.gtw.validator.exceptions.BusinessException;
-import it.finanze.sanita.fse2.ms.gtw.validator.repository.entity.SchemaETY;
-import it.finanze.sanita.fse2.ms.gtw.validator.repository.entity.SchematronETY;
-import it.finanze.sanita.fse2.ms.gtw.validator.repository.mongo.ISchemaRepo;
-import it.finanze.sanita.fse2.ms.gtw.validator.repository.mongo.ISchematronRepo;
-import it.finanze.sanita.fse2.ms.gtw.validator.repository.mongo.impl.AuditRepo;
-import it.finanze.sanita.fse2.ms.gtw.validator.repository.mongo.impl.DictionaryRepo;
-import it.finanze.sanita.fse2.ms.gtw.validator.repository.mongo.impl.TerminologyRepo;
+import static com.mongodb.assertions.Assertions.assertFalse;
+import static com.mongodb.assertions.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.when;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,17 +21,16 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.test.context.ActiveProfiles;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import com.mongodb.MongoException;
 
-import static com.mongodb.assertions.Assertions.assertFalse;
-import static com.mongodb.assertions.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.when; 
+import it.finanze.sanita.fse2.ms.gtw.validator.config.Constants;
+import it.finanze.sanita.fse2.ms.gtw.validator.exceptions.BusinessException;
+import it.finanze.sanita.fse2.ms.gtw.validator.repository.entity.SchemaETY;
+import it.finanze.sanita.fse2.ms.gtw.validator.repository.entity.SchematronETY;
+import it.finanze.sanita.fse2.ms.gtw.validator.repository.mongo.ISchemaRepo;
+import it.finanze.sanita.fse2.ms.gtw.validator.repository.mongo.ISchematronRepo;
+import it.finanze.sanita.fse2.ms.gtw.validator.repository.mongo.impl.AuditRepo;
+import it.finanze.sanita.fse2.ms.gtw.validator.repository.mongo.impl.TerminologyRepo; 
 
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -58,10 +56,7 @@ class RepositoryTest extends AbstractTest {
 
     @Autowired
     private TerminologyRepo terminologyRepo; 
-    
-    @Autowired
-    private DictionaryRepo dictionaryRepo; 
-    
+     
     @Autowired
 	protected MongoTemplate mongoTemplate;
     
@@ -198,28 +193,6 @@ class RepositoryTest extends AbstractTest {
          assertThrows(BusinessException.class, 
         		 () -> terminologyRepo.findAllCodesExists("test", null)); 
                  
-     } 
-    
-    @Test
-    void findByFilenameTest() {         
-         assertDoesNotThrow(() -> dictionaryRepo.findByFilename("test"));  
-         
-         when(mongo).thenThrow(new MongoException("Test")); 
-         
-         assertThrows(BusinessException.class, 
-        		 () -> dictionaryRepo.findByFilename("test")); 
-                 
-     }
-    
-    @Test
-    void saveExceptionTest() {                
-         assertDoesNotThrow(() -> dictionaryRepo.findByFilename("test"));  
-
-         when(mongo).thenThrow(new MongoException("Test")); 
-         
-         assertThrows(BusinessException.class, () -> auditRepo.save(null));  
-               
-     }
-    
+     }   
 
 }
