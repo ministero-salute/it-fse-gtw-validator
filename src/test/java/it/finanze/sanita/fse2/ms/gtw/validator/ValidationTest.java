@@ -115,11 +115,9 @@ class ValidationTest extends AbstractTest {
 	@Test
 	void shouldReturnWhenCDAVocabularyIsInvalid() {
 		final String cda = new String(getFileFromInternalResources(
-			"Files/cda_ok/Esempio_CDA_001.xml"
+			"Files/cda_ok/Esempio_CDA_003.xml"
 		), StandardCharsets.UTF_8);
-		String version = "1.3";
 
-		log.info("Testing with version {}", version);
 		VocabularyResultDTO res = validationSRV.validateVocabularies(cda);
 		assertFalse(res.getValid(), "The vocabulary validation should be falsy");
 
