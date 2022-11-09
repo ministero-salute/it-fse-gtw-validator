@@ -12,7 +12,7 @@ import it.finanze.sanita.fse2.ms.gtw.validator.dto.CodeSystemSnapshotDTO;
 import it.finanze.sanita.fse2.ms.gtw.validator.dto.CodeSystemVersionDTO;
 import it.finanze.sanita.fse2.ms.gtw.validator.dto.TerminologyExtractionDTO;
 import it.finanze.sanita.fse2.ms.gtw.validator.dto.VocabularyResultDTO;
-import it.finanze.sanita.fse2.ms.gtw.validator.exceptions.BusinessException;
+import it.finanze.sanita.fse2.ms.gtw.validator.exceptions.VocabularyException;
 import it.finanze.sanita.fse2.ms.gtw.validator.repository.entity.DictionaryETY;
 import it.finanze.sanita.fse2.ms.gtw.validator.repository.mongo.IDictionaryRepo;
 import it.finanze.sanita.fse2.ms.gtw.validator.repository.mongo.ITerminologyRepo;
@@ -34,22 +34,26 @@ public class TerminologySRV implements ITerminologySRV {
 
     @Override
     public VocabularyResultDTO validateTerminologies(TerminologyExtractionDTO terminologies) {
-        log.debug("Terminology Validation Stated!");
-        CodeSystemSnapshotDTO snapshot = retrieveManagedCodeSystems();
-        consumeWhiteList(terminologies, snapshot);
-        consumeBlackList(terminologies);
-        consumeUnknown(terminologies, snapshot);
-        sanitizeMissingVersion(terminologies, snapshot);
-        consumeInvalidVersion(terminologies, snapshot);
-        consumeCodes(terminologies);
-        manageRemainingCodes(terminologies);
-        log.debug("Terminology Validation Ended!");
-        return getResult(terminologies);
+    	try {
+	        log.debug("Terminology Validation Stated!");
+	        CodeSystemSnapshotDTO snapshot = retrieveManagedCodeSystems();
+	        consumeWhiteList(terminologies, snapshot);
+	        consumeBlackList(terminologies);
+	        consumeUnknown(terminologies, snapshot);
+	        sanitizeMissingVersion(terminologies, snapshot);
+	        consumeInvalidVersion(terminologies, snapshot);
+	        consumeCodes(terminologies);
+	        manageRemainingCodes(terminologies);
+	        log.debug("Terminology Validation Ended!");
+	        return getResult(terminologies);
+    	} catch (VocabularyException e) {
+         	return new VocabularyResultDTO(false, e.getMessage());
+ 		}
     }
 
 	private CodeSystemSnapshotDTO retrieveManagedCodeSystems() {
 		List<DictionaryETY> codeSystems = codeSystemRepo.getCodeSystems();
-		if (codeSystems.isEmpty()) throwExceptionForEmptyDatabase(codeSystems);
+		throwExceptionForEmptyDatabase(codeSystems);
 		return new CodeSystemSnapshotDTO(codeSystems);
 	}
 
@@ -159,19 +163,19 @@ public class TerminologySRV implements ITerminologySRV {
 	}
 
 	private void throwExceptionForEmptyDatabase(List<DictionaryETY> codeSystems) {
-		if (codeSystems.isEmpty()) return;
+		if (!codeSystems.isEmpty()) return;
         log.error("Managed CodeSystems not found in database");
-        throw new BusinessException("Managed CodeSystems not found in database");
+        throw new VocabularyException("Non è stato trovato alcun dizionario gestito su FSE");
 	}
 	
 	private void throwExceptionForBlackList(List<String> blackListed) {
 		if (blackListed.isEmpty()) return;
-        throw new BusinessException("BlackListed CodeSystems found during the validation");
+        throw new VocabularyException("È stato trovato almeno un dizionario presente in Blacklist: " + blackListed.toString());
 	}
 
 	private void throwExceptionForInvalidVersions(List<CodeSystemVersionDTO> invalid) {
 		if (invalid.isEmpty()) return;
-        throw new BusinessException("Invalid CodeSystemVersions found during the validation");		
+        throw new VocabularyException("È stato trovato almeno una versione non gestita di un dizionario: " + invalid.toString());		
 	}
 
 	private CodeSystemVersionDTO getCodeSystemVersionGroupKey(CodeDTO code) {

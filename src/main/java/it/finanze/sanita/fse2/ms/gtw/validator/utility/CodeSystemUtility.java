@@ -65,12 +65,14 @@ public class CodeSystemUtility {
 	}
 
 	public static String getGroupedMessage(TerminologyExtractionDTO terminologies) {
+		String message = "Almeno uno dei seguenti vocaboli non è censito: ";
 		Map<CodeSystemVersionDTO, List<CodeDTO>> groupedCodeSystems = getGroupedCodeSystems(terminologies);
-		return groupedCodeSystems
+		String groupedMessage = groupedCodeSystems
 				.keySet()
 				.stream()
 				.map(key -> getCodeSystemMessage(key, groupedCodeSystems.get(key)))
 				.collect(Collectors.joining(", "));
+		return message + groupedMessage;
 	}
 
 	private static Map<CodeSystemVersionDTO, List<CodeDTO>> getGroupedCodeSystems(TerminologyExtractionDTO terminologies) {
@@ -85,7 +87,7 @@ public class CodeSystemUtility {
 				.stream()
 				.map(CodeDTO::getCode)
 				.distinct()
-				.collect(Collectors.joining(", "));
+				.collect(Collectors.joining(", ")); 
 		return "[CodeSystem: " + codeSystemVersion + ", Codes: " + codesString + "]";
 	}
 	
