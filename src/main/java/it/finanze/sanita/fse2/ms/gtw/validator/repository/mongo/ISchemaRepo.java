@@ -10,7 +10,6 @@ import java.util.List;
 import it.finanze.sanita.fse2.ms.gtw.validator.repository.entity.SchemaETY;
 
 /**
- * @author vincenzoingenito
  *
  * Schema interface repository.
  */

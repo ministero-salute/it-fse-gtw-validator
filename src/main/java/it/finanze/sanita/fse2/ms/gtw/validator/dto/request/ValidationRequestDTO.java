@@ -12,7 +12,6 @@ import lombok.Setter;
 
 /**
  * 
- * @author CPIERASC
  *
  *	Request body validazione.
  */

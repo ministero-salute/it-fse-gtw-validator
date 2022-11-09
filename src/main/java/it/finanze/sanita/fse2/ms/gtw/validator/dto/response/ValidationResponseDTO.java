@@ -9,7 +9,6 @@ import lombok.Setter;
 
 /**
  * 
- * @author CPIERASC
  *
  *	DTO used to return validation result.
  */

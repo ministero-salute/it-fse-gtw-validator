@@ -21,7 +21,6 @@ import it.finanze.sanita.fse2.ms.gtw.validator.dto.response.ValidationResponseDT
 
 /**
  * 
- * @author CPIERASC
  *
  *	Controller validation.
  */

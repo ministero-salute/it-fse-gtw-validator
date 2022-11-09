@@ -24,7 +24,6 @@ import lombok.extern.slf4j.Slf4j;
 /**
  * Implementation of Redis repository for vocabulary.
  * 
- * @author Simone Lungarella
  */
 @Slf4j
 @Repository

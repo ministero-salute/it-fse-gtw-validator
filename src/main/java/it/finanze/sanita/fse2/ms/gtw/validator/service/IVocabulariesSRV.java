@@ -12,7 +12,6 @@ import it.finanze.sanita.fse2.ms.gtw.validator.service.facade.IVocabulariesFacad
 /**
  * Interface of Vocabulary Service.
  * 
- * @author Simone Lungarella
  */
 public interface IVocabulariesSRV extends IVocabulariesFacadeSRV {
 

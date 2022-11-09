@@ -22,7 +22,6 @@ import it.finanze.sanita.fse2.ms.gtw.validator.service.ISchemaSRV;
 import lombok.extern.slf4j.Slf4j;
 
 /**
- *	@author vincenzoingenito
  *
  *	Schema service.
  */

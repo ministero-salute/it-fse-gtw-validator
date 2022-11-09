@@ -9,7 +9,6 @@ import it.finanze.sanita.fse2.ms.gtw.validator.utility.StringUtility;
 
 /**
  * 
- * @author CPIERASC
  *
  *	Validation class.
  */

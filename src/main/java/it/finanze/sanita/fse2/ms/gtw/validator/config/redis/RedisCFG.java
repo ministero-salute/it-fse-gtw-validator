@@ -17,7 +17,6 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 /**
  * Classe di configurazione per redis access_list.
  * 
- * @author vincenzoingenito
  */
 @Configuration
 public class RedisCFG {

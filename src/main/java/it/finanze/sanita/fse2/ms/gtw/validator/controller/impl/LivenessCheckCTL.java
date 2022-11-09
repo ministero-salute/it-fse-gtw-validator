@@ -18,7 +18,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 /**
  * The Class LivenessCheckController.
  *
- * @author AndreaPerquoti
  */
 @RestController
 @Tag(name = "Health check Status Actuator")

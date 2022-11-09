@@ -1,3 +1,6 @@
+/*
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ */
 package it.finanze.sanita.fse2.ms.gtw.validator.repository.mongo.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +19,6 @@ import lombok.extern.slf4j.Slf4j;
 /**
  * Repository used to retrieve xslt data to execute transformation of cda documents.
  * 
- * @author Simone Lungarella
  */
 @Slf4j
 @Repository

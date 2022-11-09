@@ -11,7 +11,6 @@ import it.finanze.sanita.fse2.ms.gtw.validator.dto.VocabularyResultDTO;
 /**
  * Interface of Validation Service.
  * 
- * @author Simone Lungarella
  */
 public interface IValidationFacadeSRV {
 

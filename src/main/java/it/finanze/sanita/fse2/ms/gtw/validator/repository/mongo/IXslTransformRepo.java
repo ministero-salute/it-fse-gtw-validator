@@ -1,3 +1,6 @@
+/*
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ */
 package it.finanze.sanita.fse2.ms.gtw.validator.repository.mongo;
 
 import it.finanze.sanita.fse2.ms.gtw.validator.repository.entity.XslTransformETY;
@@ -5,7 +8,6 @@ import it.finanze.sanita.fse2.ms.gtw.validator.repository.entity.XslTransformETY
 /**
  * Interface of repository that consent to fetch and elaborate data from xsl_transform.
  * 
- * @author Simone Lungarella 
  */
 public interface IXslTransformRepo {
     

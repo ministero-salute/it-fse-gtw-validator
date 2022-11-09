@@ -23,7 +23,6 @@ import org.springframework.util.CollectionUtils;
 /**
  * The Service to handle the Vocabularies on Redis.
  * 
- * @author Simone Lungarella
  */
 @Slf4j
 @Service

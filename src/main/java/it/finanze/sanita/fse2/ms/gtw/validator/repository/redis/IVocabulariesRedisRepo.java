@@ -9,7 +9,6 @@ import java.util.Map;
 /**
  * Interface of Vocabulary Repository.
  * 
- * @author Simone Lungarella
  */
 public interface IVocabulariesRedisRepo {
 
