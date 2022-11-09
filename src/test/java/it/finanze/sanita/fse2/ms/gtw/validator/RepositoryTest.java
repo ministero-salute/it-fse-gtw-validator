@@ -29,7 +29,6 @@ import it.finanze.sanita.fse2.ms.gtw.validator.repository.entity.SchemaETY;
 import it.finanze.sanita.fse2.ms.gtw.validator.repository.entity.SchematronETY;
 import it.finanze.sanita.fse2.ms.gtw.validator.repository.mongo.ISchemaRepo;
 import it.finanze.sanita.fse2.ms.gtw.validator.repository.mongo.ISchematronRepo;
-import it.finanze.sanita.fse2.ms.gtw.validator.repository.mongo.impl.AuditRepo;
 import it.finanze.sanita.fse2.ms.gtw.validator.repository.mongo.impl.TerminologyRepo; 
 
 
@@ -59,9 +58,6 @@ class RepositoryTest extends AbstractTest {
      
     @Autowired
 	protected MongoTemplate mongoTemplate;
-    
-    @Autowired
-    private AuditRepo auditRepo; 
     
     @SpyBean
     private MongoTemplate mongo;

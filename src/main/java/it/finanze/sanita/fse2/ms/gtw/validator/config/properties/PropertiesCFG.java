@@ -12,17 +12,6 @@ import lombok.Getter;
 @Component
 public class PropertiesCFG {
     
-    /**
-     * Vocabulary validation ttl.
-     */
-    @Value("${redis.vocabulary-ttl-seconds}")
-    private Long validationTTL;
-
-    /**
-     * Vocabulary validation ttl.
-     */
-    @Value("${redis.vocabulary-enabled}")
-    private boolean redisEnabled;
     
     /**
      * Vocabulary find specific error.

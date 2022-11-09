@@ -4,8 +4,6 @@
 package it.finanze.sanita.fse2.ms.gtw.validator.service.impl;
 
 import java.util.Date;
-import java.util.List;
-import java.util.Map;
 
 import javax.xml.validation.Validator;
 
@@ -24,7 +22,6 @@ import it.finanze.sanita.fse2.ms.gtw.validator.dto.VocabularyResultDTO;
 import it.finanze.sanita.fse2.ms.gtw.validator.enums.CDAValidationStatusEnum;
 import it.finanze.sanita.fse2.ms.gtw.validator.exceptions.BusinessException;
 import it.finanze.sanita.fse2.ms.gtw.validator.exceptions.NoRecordFoundException;
-import it.finanze.sanita.fse2.ms.gtw.validator.exceptions.VocabularyException;
 import it.finanze.sanita.fse2.ms.gtw.validator.repository.entity.SchemaETY;
 import it.finanze.sanita.fse2.ms.gtw.validator.repository.entity.SchematronETY;
 import it.finanze.sanita.fse2.ms.gtw.validator.repository.entity.TransformETY;
@@ -36,7 +33,6 @@ import it.finanze.sanita.fse2.ms.gtw.validator.repository.mongo.IXslTransformRep
 import it.finanze.sanita.fse2.ms.gtw.validator.service.ISchemaSRV;
 import it.finanze.sanita.fse2.ms.gtw.validator.service.ITerminologySRV;
 import it.finanze.sanita.fse2.ms.gtw.validator.service.IValidationSRV;
-import it.finanze.sanita.fse2.ms.gtw.validator.service.IVocabulariesSRV;
 import it.finanze.sanita.fse2.ms.gtw.validator.singleton.SchemaValidatorSingleton;
 import it.finanze.sanita.fse2.ms.gtw.validator.singleton.SchematronValidatorSingleton;
 import it.finanze.sanita.fse2.ms.gtw.validator.utility.StringUtility;
@@ -45,9 +41,6 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Service
 public class ValidationSRV implements IValidationSRV {
-
-    @Autowired
-    private IVocabulariesSRV vocabulariesSRV;
 
     @Autowired
     private ITerminologySRV terminologySRV;
@@ -76,15 +69,7 @@ public class ValidationSRV implements IValidationSRV {
             log.info("Validating {} systems...", terminologies.getCodeSystems().size());
             VocabularyResultDTO validateTerminologies = terminologySRV.validateTerminologies(terminologies);
             long endDate = new Date().getTime() - startTime;
-            log.info("END DATE TERMINOLOGY QUERY TIME : " + endDate + " ms");
-            
-//            long startTime = new Date().getTime();
-//            Map<String, List<String>> vocabularies = CDAHelper.extractTerminology(cda);
-//            log.info("Validating {} systems...", vocabularies.size());
-//            VocabularyResultDTO validateTerminologies = vocabulariesSRV.vocabulariesExists(vocabularies);
-//            long endDate = new Date().getTime() - startTime;
-//            log.info("END DATE VOCABULARY QUERY TIME : " + endDate + " ms");
-            
+            log.info("END DATE TERMINOLOGY QUERY TIME : " + endDate + " ms"); 
             return validateTerminologies;
         } catch (Exception e) {
             log.error("Error while executing validation on vocabularies", e);
