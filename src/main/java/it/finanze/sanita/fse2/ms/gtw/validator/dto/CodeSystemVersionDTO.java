@@ -31,7 +31,10 @@ public class CodeSystemVersionDTO {
         if (this.codeSystem == null && this.version == null) return true;
         if (this.version == null) return this.codeSystem.equals(dto.codeSystem);
         
-        return this.codeSystem.equals(dto.codeSystem) && this.version.equals(dto.version);
+        if(this.codeSystem != null)
+        	return this.codeSystem.equals(dto.codeSystem) && this.version.equals(dto.version);
+        else
+        	return false;
     }
  
     @Override

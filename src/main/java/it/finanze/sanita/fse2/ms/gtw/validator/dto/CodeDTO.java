@@ -38,12 +38,15 @@ public class CodeDTO {
         if (this.code == null && codeSystem == null && this.version == null) return true;
         if (this.code != null && codeSystem == null && this.version == null) return this.code.equals(dto.code);
         if (this.code != null && codeSystem != null && this.version == null) return this.code.equals(dto.code) && this.codeSystem.equals(dto.codeSystem);
-
-        return 
-        		this.code.equals(dto.code) && 
-        		this.codeSystem.equals(dto.codeSystem) &&
-        		this.version.equals(dto.version) &&
-        		this.isAnswerList == dto.isAnswerList;
+        
+        if(this.code != null && this.codeSystem != null)
+	        return 
+	        		this.code.equals(dto.code) && 
+	        		this.codeSystem.equals(dto.codeSystem) &&
+	        		this.version.equals(dto.version) &&
+	        		this.isAnswerList == dto.isAnswerList;
+        else
+        	return false;
     }
  
     @Override
