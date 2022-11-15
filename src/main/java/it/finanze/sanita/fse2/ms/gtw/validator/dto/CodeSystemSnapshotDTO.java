@@ -19,12 +19,12 @@ public class CodeSystemSnapshotDTO {
 	private List<CodeSystemVersionDTO> codeSystemVersions;
 	private Map<String, String> codeSystemMaxVersions;
 	private List<String> codeSystems;
-	private List<String> whiteList;
+	private List<String> allowList;
 	
 	// terminologies is an array containing all and only codeSystems and versions
 	public CodeSystemSnapshotDTO(List<DictionaryETY> dictionaries) {
 		if (codeSystemVersions == null) codeSystemVersions = new ArrayList<>();
-		this.whiteList = getWhiteList(dictionaries);
+		this.allowList = getAllowList(dictionaries);
 		this.codeSystemVersions = getCodeSystemVersions(dictionaries);
 		this.codeSystemMaxVersions = getCodeSystemMaxVersions(dictionaries); 
 		this.codeSystems = getCodeSystems(codeSystemVersions);
@@ -40,9 +40,9 @@ public class CodeSystemSnapshotDTO {
 		return Collections.unmodifiableList(codeSystems);
 	}
 
-	public List<String> getWhiteList() {
-		if (whiteList == null) whiteList = new ArrayList<>();
-		return Collections.unmodifiableList(whiteList);
+	public List<String> getAllowList() {
+		if (allowList == null) allowList = new ArrayList<>();
+		return Collections.unmodifiableList(allowList);
 	}
 
 	public Map<String, String> getCodeSystemMaxVersions() {
@@ -65,7 +65,7 @@ public class CodeSystemSnapshotDTO {
 				.collect(Collectors.toList());
 	}
 	
-	private List<String> getWhiteList(List<DictionaryETY> dictionaries) {
+	private List<String> getAllowList(List<DictionaryETY> dictionaries) {
 		return dictionaries
 				.stream()
 				.filter(ety -> ety.isWhiteList())

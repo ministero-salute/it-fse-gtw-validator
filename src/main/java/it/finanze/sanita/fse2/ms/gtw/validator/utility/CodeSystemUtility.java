@@ -31,10 +31,10 @@ public class CodeSystemUtility {
 				.collect(Collectors.toList());	
 	}
 
-	public static List<String> getBlackList(List<String> codeSystems) {
+	public static List<String> getBlockList(List<String> codeSystems) {
 		return codeSystems
 				.stream()
-				.filter(CodeSystemUtility::isBlacklisted)
+				.filter(CodeSystemUtility::isBlocklisted)
 				.collect(Collectors.toList());
 	}
 	
@@ -45,7 +45,7 @@ public class CodeSystemUtility {
 		code.setVersion(maxVersion);
 	}
 	
-    private static boolean isBlacklisted(String codeSystem) {
+    private static boolean isBlocklisted(String codeSystem) {
         if (isNullOrEmpty(codeSystem)) return false;
         return Arrays
             .stream(codeSystem.split("\\."))

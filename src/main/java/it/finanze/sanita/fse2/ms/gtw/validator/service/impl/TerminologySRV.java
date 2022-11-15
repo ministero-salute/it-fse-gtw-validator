@@ -40,8 +40,8 @@ public class TerminologySRV implements ITerminologySRV {
     	try {
 	        log.debug("Terminology Validation Stated!");
 	        CodeSystemSnapshotDTO snapshot = retrieveManagedCodeSystems();
-	        consumeWhiteList(terminologies, snapshot);
-	        consumeBlackList(terminologies);
+	        consumeAllowList(terminologies, snapshot);
+	        consumeBlockList(terminologies);
 	        consumeUnknown(terminologies, snapshot);
 	        sanitizeMissingVersion(terminologies, snapshot);
 	        consumeInvalidVersion(terminologies, snapshot);
@@ -60,18 +60,18 @@ public class TerminologySRV implements ITerminologySRV {
 		return new CodeSystemSnapshotDTO(codeSystems);
 	}
 
-	private void consumeWhiteList(TerminologyExtractionDTO terminologies, CodeSystemSnapshotDTO snapshot) {
-        List<String> whiteList = snapshot.getWhiteList();
-        List<String> whiteListed = terminologies.filterCodeSystems(whiteList);
-        terminologies.removeCodeSystems(whiteListed);
-        sendLogForWhiteList(whiteListed);
+	private void consumeAllowList(TerminologyExtractionDTO terminologies, CodeSystemSnapshotDTO snapshot) {
+        List<String> allowList = snapshot.getAllowList();
+        List<String> allowListed = terminologies.filterCodeSystems(allowList);
+        terminologies.removeCodeSystems(allowListed);
+        sendLogForAllowList(allowListed);
     }
 
-	private void consumeBlackList(TerminologyExtractionDTO terminologies) {
-        List<String> blackListed = CodeSystemUtility.getBlackList(terminologies.getCodeSystems());
-        terminologies.removeCodeSystems(blackListed);
-        sendLogForBlackList(blackListed);
-        throwExceptionForBlackList(blackListed);
+	private void consumeBlockList(TerminologyExtractionDTO terminologies) {
+        List<String> blockListed = CodeSystemUtility.getBlockList(terminologies.getCodeSystems());
+        terminologies.removeCodeSystems(blockListed);
+        sendLogForBlockList(blockListed);
+        throwExceptionForBlockList(blockListed);
     }
 
 	private void consumeUnknown(TerminologyExtractionDTO terminologies, CodeSystemSnapshotDTO snapshot) {
@@ -132,14 +132,14 @@ public class TerminologySRV implements ITerminologySRV {
 		return new VocabularyResultDTO(isValid, message);
 	}
 
-	private void sendLogForWhiteList(List<String> codeSystems) {
+	private void sendLogForAllowList(List<String> codeSystems) {
     	if (codeSystems.isEmpty()) return;
-    	log.warn("Whitelisted CodeSystems found during the validation: {}", codeSystems);
+    	log.warn("Allowlisted CodeSystems found during the validation: {}", codeSystems);
     }
 
-    private void sendLogForBlackList(List<String> codeSystems) {
+    private void sendLogForBlockList(List<String> codeSystems) {
     	if (codeSystems.isEmpty()) return;
-    	log.error("Blacklisted CodeSystems found during the validation: {}", codeSystems);
+    	log.error("Blocklisted CodeSystems found during the validation: {}", codeSystems);
     }
 
     private void sendLogForUnknown(List<String> codeSystems) {
@@ -171,9 +171,9 @@ public class TerminologySRV implements ITerminologySRV {
         throw new VocabularyException("Non è stato trovato alcun dizionario gestito su FSE");
 	}
 	
-	private void throwExceptionForBlackList(List<String> blackListed) {
-		if (blackListed.isEmpty()) return;
-        throw new VocabularyException("È stato trovato almeno un dizionario presente in Blacklist: " + blackListed.toString());
+	private void throwExceptionForBlockList(List<String> blockListed) {
+		if (blockListed.isEmpty()) return;
+        throw new VocabularyException("È stato trovato almeno un dizionario presente in Blocklist: " + blockListed.toString());
 	}
 
 	private void throwExceptionForInvalidVersions(List<CodeSystemVersionDTO> invalid) {
