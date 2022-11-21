@@ -26,8 +26,6 @@ import it.finanze.sanita.fse2.ms.gtw.validator.config.Constants;
  
 
 /**
- * 
- *
  *	Configuration for MongoDB.
  */
 @Configuration
