@@ -20,30 +20,11 @@ public final class Constants {
 		 */
 		public static final String BASE = "it.finanze.sanita.fse2.ms.gtw.validator";
 
-		/**
-		 * Controller path.
-		 */
-		public static final String CONTROLLER = "it.finanze.sanita.fse2.ms.gtw.validator.controller";
-
-		/**
-		 * Service path.
-		 */
-		public static final String SERVICE = "it.finanze.sanita.fse2.ms.gtw.validator.service";
-
-		/**
-		 * Configuration path.
-		 */
-		public static final String CONFIG = "it.finanze.sanita.fse2.ms.gtw.validator.config";
 
 		/**
 		 * Configuration mongo path.
 		 */
 		public static final String CONFIG_MONGO = "it.finanze.sanita.fse2.ms.gtw.validator.config.mongo";
-
-		/**
-		 * Configuration mongo repository path.
-		 */
-		public static final String REPOSITORY_MONGO = "it.finanze.sanita.fse2.ms.gtw.validator.repository";
 
 
 		private ComponentScan() {
@@ -68,7 +49,6 @@ public final class Constants {
   
 		public static final String CODE_SYSTEM= "code_system";
 
-		public static final String GTW_DB_RULES = "gtw-db-rules";
 
 		private Collections() {
 
