@@ -53,7 +53,7 @@ public class TerminologySRV implements ITerminologySRV {
          	return new VocabularyResultDTO(false, e.getMessage());
  		}
     }
-
+    
 	private CodeSystemSnapshotDTO retrieveManagedCodeSystems() {
 		List<DictionaryETY> codeSystems = codeSystemRepo.getCodeSystems();
 		throwExceptionForEmptyDatabase(codeSystems);
@@ -110,7 +110,7 @@ public class TerminologySRV implements ITerminologySRV {
 		return terminologies
 				.getCodes()
 				.stream()
-				.collect(Collectors.groupingBy(this::getCodeSystemVersionGroupKey));
+				.collect(Collectors.groupingBy(CodeDTO::getCodeSystemVersion));
 	}
 	
 	private List<CodeDTO> findByCodeSystemVersion(CodeSystemVersionDTO codeSystemVersion, List<CodeDTO> codeDTOs) {
@@ -181,10 +181,4 @@ public class TerminologySRV implements ITerminologySRV {
         throw new VocabularyException("È stato trovato almeno una versione non gestita di un dizionario: " + invalid.toString());		
 	}
 
-	private CodeSystemVersionDTO getCodeSystemVersionGroupKey(CodeDTO code) {
-		CodeSystemVersionDTO codeSystemVersion = code.getCodeSystemVersion();
-		if (!code.isAnswerList()) return codeSystemVersion; 
-		return CodeSystemUtility.getAnswerList(codeSystemVersion);
-	}
-	
 }

@@ -8,12 +8,20 @@ import static it.finanze.sanita.fse2.ms.gtw.validator.utility.StringUtility.isNu
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
+
+import it.finanze.sanita.fse2.ms.gtw.validator.config.Constants.App;
 import it.finanze.sanita.fse2.ms.gtw.validator.dto.CodeDTO;
 import it.finanze.sanita.fse2.ms.gtw.validator.dto.CodeSystemSnapshotDTO;
 import it.finanze.sanita.fse2.ms.gtw.validator.dto.CodeSystemVersionDTO;
 import it.finanze.sanita.fse2.ms.gtw.validator.dto.TerminologyExtractionDTO;
+import it.finanze.sanita.fse2.ms.gtw.validator.enums.CodeSystemChangeEnum;
 
 public class CodeSystemUtility {
 	
@@ -93,5 +101,27 @@ public class CodeSystemUtility {
 				.collect(Collectors.joining(", ")); 
 		return "[CodeSystem: " + codeSystemVersion + ", Codes: " + codesString + "]";
 	}
+
+
+    public static String sanitizeCda(String cda) {
+    	Document document = Jsoup.parse(cda);
+    	CodeSystemChangeEnum.getAll().forEach(change -> changeCodeSystem(document, change));		
+    	return document.toString();
+	}
+	
+    private static void changeCodeSystem(Document document, CodeSystemChangeEnum change) {
+    	List<Elements> values = getValues(document, change.getSelector());
+    	values.forEach(value -> value.attr(App.CODE_SYSTEM_KEY, change.getCodeSystem()));
+    }
+
+    private static List<Elements> getValues(Document document, String selector) {
+    	return document
+    			.select(selector)
+    			.stream()
+    			.map(Element::parent)
+    			.filter(Objects::nonNull)
+    			.map(elem -> elem.select(App.VALUE_KEY))
+    			.collect(Collectors.toList());
+    }
 	
 }

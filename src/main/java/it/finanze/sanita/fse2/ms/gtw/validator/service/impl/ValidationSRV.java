@@ -35,6 +35,7 @@ import it.finanze.sanita.fse2.ms.gtw.validator.service.ITerminologySRV;
 import it.finanze.sanita.fse2.ms.gtw.validator.service.IValidationSRV;
 import it.finanze.sanita.fse2.ms.gtw.validator.singleton.SchemaValidatorSingleton;
 import it.finanze.sanita.fse2.ms.gtw.validator.singleton.SchematronValidatorSingleton;
+import it.finanze.sanita.fse2.ms.gtw.validator.utility.CodeSystemUtility;
 import it.finanze.sanita.fse2.ms.gtw.validator.utility.StringUtility;
 import lombok.extern.slf4j.Slf4j;
 
@@ -65,7 +66,8 @@ public class ValidationSRV implements IValidationSRV {
     public VocabularyResultDTO validateVocabularies(final String cda) {
         try {
         	long startTime = new Date().getTime();
-            TerminologyExtractionDTO terminologies = CDAHelper.extractAllCodeSystems(cda);
+        	String sanitizedCda = CodeSystemUtility.sanitizeCda(cda);
+            TerminologyExtractionDTO terminologies = CDAHelper.extractAllCodeSystems(sanitizedCda);
             log.info("Validating {} systems...", terminologies.getCodeSystems().size());
             VocabularyResultDTO validateTerminologies = terminologySRV.validateTerminologies(terminologies);
             long endDate = new Date().getTime() - startTime;

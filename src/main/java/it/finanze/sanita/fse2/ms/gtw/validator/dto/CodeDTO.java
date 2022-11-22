@@ -17,7 +17,6 @@ public class CodeDTO {
 	private String code;
 	private String codeSystem;
 	private String version;
-	private boolean isAnswerList;
 	
     @Override
     public boolean equals(Object obj) { 
@@ -43,8 +42,7 @@ public class CodeDTO {
 	        return 
 	        		this.code.equals(dto.code) && 
 	        		this.codeSystem.equals(dto.codeSystem) &&
-	        		this.version.equals(dto.version) &&
-	        		this.isAnswerList == dto.isAnswerList;
+	        		this.version.equals(dto.version);
         else
         	return false;
     }
@@ -55,7 +53,6 @@ public class CodeDTO {
     	hashCode += this.code == null ? 0 : this.code.hashCode();
     	hashCode += this.codeSystem == null ? 0 : this.codeSystem.hashCode();
     	hashCode += this.version == null ? 0 : this.version.hashCode();
-    	hashCode += this.isAnswerList ? 1 : 0;
     	return hashCode;
     }
     
