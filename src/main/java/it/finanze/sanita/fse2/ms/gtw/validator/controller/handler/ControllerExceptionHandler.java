@@ -16,6 +16,7 @@ import brave.Tracer;
 import it.finanze.sanita.fse2.ms.gtw.validator.dto.response.LogTraceInfoDTO;
 import it.finanze.sanita.fse2.ms.gtw.validator.dto.response.ResponseDTO;
 import it.finanze.sanita.fse2.ms.gtw.validator.exceptions.NoRecordFoundException;
+import it.finanze.sanita.fse2.ms.gtw.validator.exceptions.ServerResponseException;
 
 /**
  *	Exceptions Handler.
@@ -67,4 +68,9 @@ public class ControllerExceptionHandler extends ResponseEntityExceptionHandler {
 				tracer.currentSpan().context().traceIdString());
 	}
 	
+	@ExceptionHandler(value = {ServerResponseException.class})
+	protected ResponseEntity<ResponseDTO> handleServerResponseException(ServerResponseException ex) {
+		return handleException(ex, HttpStatus.INTERNAL_SERVER_ERROR);
+	}
+
 }

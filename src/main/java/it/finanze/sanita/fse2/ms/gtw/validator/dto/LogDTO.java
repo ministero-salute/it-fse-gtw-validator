@@ -26,6 +26,12 @@ public class LogDTO {
 	
 	private String op_error_description;
 
-	private String op_issuer;
+	private String op_warning;
 	
+	private String op_warning_description;
+
+	private String gateway_name;
+
+	private String microservice_name;
+
 }

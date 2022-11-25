@@ -5,11 +5,9 @@ package it.finanze.sanita.fse2.ms.gtw.validator.enums;
 
 import lombok.Getter;
 
-public enum ResultLogEnum {
+public enum OperationLogEnum {
 
-	OK("OK", "Operation completed successfully"),
-	WARN("WARN", "Operation completed with warnings"),
-	KO("KO", "Error encountered while processing operation"); 
+	TERMINOLOGY_VALIDATION("VAL-TERMINOLOGY-CDA2", "Validazione terminology CDA2");
 
 	@Getter
 	private String code;
@@ -17,7 +15,7 @@ public enum ResultLogEnum {
 	@Getter
 	private String description;
 
-	private ResultLogEnum(String inCode, String inDescription) {
+	private OperationLogEnum(String inCode, String inDescription) {
 		code = inCode;
 		description = inDescription;
 	}

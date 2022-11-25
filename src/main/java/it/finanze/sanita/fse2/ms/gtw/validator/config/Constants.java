@@ -57,7 +57,10 @@ public final class Constants {
 
 
 	public static final class Profile {
+
 		public static final String TEST = "test";
+		public static final String DEV = "dev";
+		public static final String DOCKER = "docker";
 
 		public static final String TEST_PREFIX = "test_";
 
@@ -86,6 +89,17 @@ public final class Constants {
 		public static final String VALUE_KEY = "value";
 
 		private App() {}
+	}
+
+	public static final class Config {
+		
+		private Config() {}
+
+		public static final String WHOIS_PATH = "/v1/whois";
+		
+		public static final String STATUS_PATH = "/status";
+	
+		public static final String MOCKED_GATEWAY_NAME = "mocked-gateway";
 	}
 
 	/**

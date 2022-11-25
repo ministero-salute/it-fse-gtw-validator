@@ -5,8 +5,6 @@ package it.finanze.sanita.fse2.ms.gtw.validator.singleton;
 
 import java.io.ByteArrayInputStream;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import javax.xml.XMLConstants;

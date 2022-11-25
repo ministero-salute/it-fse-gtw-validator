@@ -5,11 +5,12 @@ package it.finanze.sanita.fse2.ms.gtw.validator.enums;
 
 import lombok.Getter;
 
-public enum ResultLogEnum {
+public enum WarnLogEnum {
 
-	OK("OK", "Operation completed successfully"),
-	WARN("WARN", "Operation completed with warnings"),
-	KO("KO", "Error encountered while processing operation"); 
+	GENERIC_WARN("WARNING", "Generic warning"),
+	INVALID_CODE("WARNING", "Invalid codes"),
+	UNKNOWN("WARNING", "Code Unknown"),
+	ALLOWED("WARNING", "Code Allowed");
 
 	@Getter
 	private String code;
@@ -17,7 +18,7 @@ public enum ResultLogEnum {
 	@Getter
 	private String description;
 
-	private ResultLogEnum(String inCode, String inDescription) {
+	private WarnLogEnum(String inCode, String inDescription) {
 		code = inCode;
 		description = inDescription;
 	}
