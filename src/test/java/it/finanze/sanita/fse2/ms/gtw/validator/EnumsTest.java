@@ -18,7 +18,7 @@ class EnumsTest {
     @DisplayName("ResultLogEnum test")
     void resultLogEnumTest() {
         String code = "OK";
-        String description = "Operazione eseguita con successo";
+        String description = "Operation completed successfully";
         assertEquals(code, ResultLogEnum.OK.getCode());
         assertEquals(description, ResultLogEnum.OK.getDescription());
     } 
