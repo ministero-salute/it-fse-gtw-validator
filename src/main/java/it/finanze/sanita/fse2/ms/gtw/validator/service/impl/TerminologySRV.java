@@ -192,7 +192,7 @@ public class TerminologySRV implements ITerminologySRV {
 
 	private void throwExceptionForInvalidVersions(List<CodeSystemVersionDTO> invalid) {
 		if (invalid.isEmpty()) return;
-        throw new VocabularyException("È stato trovato almeno una versione non gestita di un dizionario: " + invalid.toString());		
+        throw new VocabularyException("È stata trovata almeno una versione non gestita di un dizionario: " + invalid.toString());		
 	}
 
 }
