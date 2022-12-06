@@ -3,7 +3,11 @@
  */
 package it.finanze.sanita.fse2.ms.gtw.validator.controller.impl;
 
+import static it.finanze.sanita.fse2.ms.gtw.validator.enums.RawValidationEnum.OK;
+import static it.finanze.sanita.fse2.ms.gtw.validator.enums.RawValidationEnum.SEMANTIC_WARNING;
+
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map.Entry;
 
@@ -108,7 +112,7 @@ public class ValidationCTL extends AbstractCTL implements IValidationCTL {
 
 		String xsltId = "";
 		String transformID = "";
-		if(RawValidationEnum.OK.equals(outcome)) {
+		if(Arrays.asList(OK, SEMANTIC_WARNING).contains(outcome)) {
 			xsltId = validationSRV.getTransformObjectID(infoDTO.getTemplateIdSchematron());
 			transformID = validationSRV.getStructureObjectID(infoDTO.getTemplateIdSchematron());
 		}
