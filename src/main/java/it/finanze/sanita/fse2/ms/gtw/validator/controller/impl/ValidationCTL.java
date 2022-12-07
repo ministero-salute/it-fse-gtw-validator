@@ -35,18 +35,12 @@ import it.finanze.sanita.fse2.ms.gtw.validator.utility.StringUtility;
 import lombok.extern.slf4j.Slf4j;
 
 /**
- * 
- *
  *	Validation controller.
  */
 @Slf4j
 @RestController
 public class ValidationCTL extends AbstractCTL implements IValidationCTL {
 	
-	/**
-	 * Serial version uid.
-	 */
-	private static final long serialVersionUID = 1705931913494895399L;
 	
 	@Autowired
 	private IValidationFacadeSRV validationSRV;

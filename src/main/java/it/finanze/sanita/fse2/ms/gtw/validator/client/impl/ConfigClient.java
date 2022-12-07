@@ -11,6 +11,7 @@ import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestTemplate;
 
+import it.finanze.sanita.fse2.ms.gtw.validator.client.IConfigClient;
 import it.finanze.sanita.fse2.ms.gtw.validator.config.Constants;
 import it.finanze.sanita.fse2.ms.gtw.validator.dto.response.WhoIsResponseDTO;
 import it.finanze.sanita.fse2.ms.gtw.validator.exceptions.BusinessException;
@@ -23,12 +24,7 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Slf4j
 @Component
-public class ConfigClient implements it.finanze.sanita.fse2.ms.gtw.validator.client.IConfigClient {
-
-    /**
-     * Serial version uid.
-     */
-    private static final long serialVersionUID = -923144320301638618L;
+public class ConfigClient implements IConfigClient {
 
     /**
      * Config host.
@@ -37,7 +33,7 @@ public class ConfigClient implements it.finanze.sanita.fse2.ms.gtw.validator.cli
     private String configHost;
 
     @Autowired
-    private transient RestTemplate restTemplate;
+    private RestTemplate restTemplate;
 
     @Autowired
     private ProfileUtility profileUtility;

@@ -3,9 +3,7 @@
  */
 package it.finanze.sanita.fse2.ms.gtw.validator.service.facade;
 
-import java.io.Serializable;
-
-public interface ITerminologyFacadeSRV extends Serializable {
+public interface ITerminologyFacadeSRV {
 
 	boolean existBySystemAndCode(String system, String code);
 }

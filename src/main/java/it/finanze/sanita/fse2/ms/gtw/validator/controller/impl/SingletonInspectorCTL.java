@@ -20,16 +20,10 @@ import it.finanze.sanita.fse2.ms.gtw.validator.singleton.SchemaValidatorSingleto
 import it.finanze.sanita.fse2.ms.gtw.validator.singleton.SchematronValidatorSingleton;
 
 /**
- *
  *	Singleton Inspector controller.
  */
 @RestController
 public class SingletonInspectorCTL extends AbstractCTL implements ISingletonInspectorCTL {
-    
-    /**
-	 * Serial version uid.
-	 */
-	private static final long serialVersionUID = 5923354311703725437L;
 
 	@Override
     public SingletonInspectorResponseDTO getSingletons(HttpServletRequest request) {

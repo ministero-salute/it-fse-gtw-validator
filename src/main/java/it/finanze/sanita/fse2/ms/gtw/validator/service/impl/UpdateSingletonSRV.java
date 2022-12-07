@@ -24,11 +24,6 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class UpdateSingletonSRV implements IUpdateSingletonSRV {
 
-	/**
-	 * Serial version uid.
-	 */
-	private static final long serialVersionUID = -4694648997894072254L;
-
 	@Autowired
 	private ISchemaRepo schemaRepo;
 

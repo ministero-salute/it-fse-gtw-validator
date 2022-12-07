@@ -9,7 +9,10 @@ import lombok.Getter;
 @Getter
 @Builder
 public class SchematronFailedAssertionDTO {
+	
 	private String location;
+	
 	private String text;
+	
 	private String test;
 }

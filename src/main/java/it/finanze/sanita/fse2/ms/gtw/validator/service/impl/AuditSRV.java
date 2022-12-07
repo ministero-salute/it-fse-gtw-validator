@@ -23,13 +23,9 @@ import java.util.Map;
 @ConditionalOnProperty("ms.validator.audit.enabled")
 public class AuditSRV implements IAuditSRV {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -4177751094060797214L;
 
 	@Autowired
-	private transient IAuditRepo auditServiceRepo;
+	private IAuditRepo auditServiceRepo;
 
 	/*
 	 * Metodo di utility per l'audit dei servizi. 

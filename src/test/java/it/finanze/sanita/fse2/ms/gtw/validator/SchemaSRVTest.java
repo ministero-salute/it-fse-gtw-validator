@@ -14,7 +14,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.test.context.ActiveProfiles;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
@@ -29,12 +28,12 @@ import it.finanze.sanita.fse2.ms.gtw.validator.service.ISchemaSRV;
 import it.finanze.sanita.fse2.ms.gtw.validator.singleton.SchemaValidatorSingleton;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@ComponentScan(basePackages = { Constants.ComponentScan.BASE })
 @ActiveProfiles(Constants.Profile.TEST)
-public class SchemaSRVTest extends AbstractTest {
+class SchemaSRVTest extends AbstractTest {
 
     @Autowired
     private ISchemaSRV service;
+    
     @Autowired
     private ISchemaRepo repository;
 

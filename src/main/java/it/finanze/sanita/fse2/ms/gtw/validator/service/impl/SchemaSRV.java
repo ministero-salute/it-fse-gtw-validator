@@ -22,18 +22,12 @@ import it.finanze.sanita.fse2.ms.gtw.validator.service.ISchemaSRV;
 import lombok.extern.slf4j.Slf4j;
 
 /**
- *
  *	Schema service.
  */
 @Service
 @Slf4j
 public class SchemaSRV implements ISchemaSRV {
 
-	/**
-	 * Serial version uid.
-	 */
-	private static final long serialVersionUID = 1491502156280529977L;
-	
 
 	@Override
 	public ValidationResult validateXsd(final Validator validator, final String objToValidate) {

@@ -23,7 +23,6 @@ import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.test.context.ActiveProfiles;
 
 import com.helger.schematron.ISchematronResource;
@@ -42,7 +41,6 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@ComponentScan(basePackages = { Constants.ComponentScan.BASE })
 @ActiveProfiles(Constants.Profile.TEST)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class ValidationTest extends AbstractTest {

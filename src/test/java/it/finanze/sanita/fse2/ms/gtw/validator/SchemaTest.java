@@ -3,7 +3,8 @@
  */
 package it.finanze.sanita.fse2.ms.gtw.validator;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.io.File;
@@ -15,8 +16,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import it.finanze.sanita.fse2.ms.gtw.validator.repository.entity.SchematronETY;
-import it.finanze.sanita.fse2.ms.gtw.validator.singleton.SchematronValidatorSingleton;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -24,7 +23,6 @@ import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
@@ -36,10 +34,12 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import it.finanze.sanita.fse2.ms.gtw.validator.config.Constants;
 import it.finanze.sanita.fse2.ms.gtw.validator.repository.entity.SchemaETY;
+import it.finanze.sanita.fse2.ms.gtw.validator.repository.entity.SchematronETY;
 import it.finanze.sanita.fse2.ms.gtw.validator.service.IUpdateSingletonSRV;
 import it.finanze.sanita.fse2.ms.gtw.validator.service.IValidationSRV;
 import it.finanze.sanita.fse2.ms.gtw.validator.singleton.ResetSingleton;
 import it.finanze.sanita.fse2.ms.gtw.validator.singleton.SchemaValidatorSingleton;
+import it.finanze.sanita.fse2.ms.gtw.validator.singleton.SchematronValidatorSingleton;
 import it.finanze.sanita.fse2.ms.gtw.validator.utility.FileUtility;
 import lombok.extern.slf4j.Slf4j;
 
@@ -47,7 +47,6 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@ComponentScan(basePackages = { Constants.ComponentScan.BASE })
 @ActiveProfiles(Constants.Profile.TEST)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @AutoConfigureMockMvc

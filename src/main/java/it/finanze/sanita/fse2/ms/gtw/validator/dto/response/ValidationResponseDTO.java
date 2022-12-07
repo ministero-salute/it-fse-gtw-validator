@@ -8,18 +8,12 @@ import lombok.Getter;
 import lombok.Setter;
 
 /**
- * 
- *
  *	DTO used to return validation result.
  */
 @Getter
 @Setter
 public class ValidationResponseDTO extends ResponseDTO {
 
-	/**
-	 * Serial version uid.
-	 */
-	private static final long serialVersionUID = -2144353497297675698L;
 	
 	private final ValidationInfoDTO result;
 

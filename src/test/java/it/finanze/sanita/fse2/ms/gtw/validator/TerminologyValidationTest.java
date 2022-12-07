@@ -20,7 +20,6 @@ import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Description;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.test.annotation.DirtiesContext;
@@ -35,7 +34,6 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@ComponentScan(basePackages = { Constants.ComponentScan.BASE })
 @ActiveProfiles(Constants.Profile.TEST)
 class TerminologyValidationTest {
 

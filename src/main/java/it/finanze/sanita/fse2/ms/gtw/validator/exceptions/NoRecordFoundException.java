@@ -4,8 +4,6 @@
 package it.finanze.sanita.fse2.ms.gtw.validator.exceptions;
 
 /**
- * 
- *
  *	Eccezione di record not found.
  */
 public class NoRecordFoundException extends RuntimeException {

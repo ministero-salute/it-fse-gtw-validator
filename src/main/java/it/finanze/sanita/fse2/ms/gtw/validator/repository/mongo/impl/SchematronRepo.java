@@ -16,20 +16,14 @@ import it.finanze.sanita.fse2.ms.gtw.validator.repository.mongo.ISchematronRepo;
 import lombok.extern.slf4j.Slf4j;
 
 /**
- *
  *	Schema repository.
  */
 @Slf4j
 @Repository
 public class SchematronRepo implements ISchematronRepo {
 	
-	/**
-	 * Serial version uid. 
-	 */
-	private static final long serialVersionUID = 8948529146857638945L;
-
 	@Autowired
-	private transient MongoTemplate mongoTemplate;
+	private MongoTemplate mongoTemplate;
 	
 	@Override
 	public SchematronETY findByTemplateIdRoot(final String templateIdRoot) {

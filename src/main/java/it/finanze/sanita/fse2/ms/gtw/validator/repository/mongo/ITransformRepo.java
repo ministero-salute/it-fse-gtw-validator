@@ -3,13 +3,9 @@
  */
 package it.finanze.sanita.fse2.ms.gtw.validator.repository.mongo;
 
-import java.io.Serializable;
-
 import it.finanze.sanita.fse2.ms.gtw.validator.repository.entity.TransformETY;
 
-
-
-public interface ITransformRepo extends Serializable {
+public interface ITransformRepo {
 
 	TransformETY findMapByTemplateIdRoot(String templateIdRoot);
 	

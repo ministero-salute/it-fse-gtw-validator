@@ -9,7 +9,6 @@ import java.util.stream.Collectors;
 
 import lombok.AllArgsConstructor;
 
-//@Data
 @AllArgsConstructor
 public class TerminologyExtractionDTO {
 

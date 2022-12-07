@@ -3,15 +3,12 @@
  */
 package it.finanze.sanita.fse2.ms.gtw.validator.repository.mongo;
 
-import java.io.Serializable;
-
 import it.finanze.sanita.fse2.ms.gtw.validator.repository.entity.SchematronETY;
 
 /**
- *
  *	Schemamatron interface repository.
  */
-public interface ISchematronRepo extends Serializable {
+public interface ISchematronRepo {
 	
 	/**
 	 * Returns a Schematron identified by its {@code version}.

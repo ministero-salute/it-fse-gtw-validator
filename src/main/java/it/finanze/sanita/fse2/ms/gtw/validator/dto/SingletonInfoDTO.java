@@ -17,6 +17,7 @@ import lombok.NoArgsConstructor;
 public class SingletonInfoDTO {
 
     private List<SchematronSingletonInfo> schematrons;
+    
     private List<SchemaSingletonInfo> schemas;
     
 }

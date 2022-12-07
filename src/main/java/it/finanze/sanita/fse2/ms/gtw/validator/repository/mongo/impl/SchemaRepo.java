@@ -20,17 +20,11 @@ import it.finanze.sanita.fse2.ms.gtw.validator.repository.mongo.ISchemaRepo;
 import lombok.extern.slf4j.Slf4j;
 
 /**
- *
  *	Schema repository.
  */
 @Slf4j
 @Repository
 public class SchemaRepo implements ISchemaRepo {
-	
-	/**
-	 * Serial version uid.
-	 */
-	private static final long serialVersionUID = -4017623557412046071L;
 	
 	@Autowired
 	private MongoTemplate mongoTemplate;

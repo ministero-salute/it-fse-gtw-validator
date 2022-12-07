@@ -33,13 +33,11 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 public class TerminologySRV implements ITerminologySRV {
 
-    private static final long serialVersionUID = 4152763404310972229L;
-
     @Autowired
-    private transient ITerminologyRepo terminologyRepo;
+    private ITerminologyRepo terminologyRepo;
     
     @Autowired
-    private transient IDictionaryRepo codeSystemRepo;
+    private IDictionaryRepo codeSystemRepo;
 
 	@Autowired
 	private LoggerHelper logger;

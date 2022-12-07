@@ -18,7 +18,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import it.finanze.sanita.fse2.ms.gtw.validator.dto.response.SingletonInspectorResponseDTO;
 
 /**
- *
  *	Controller singleton inspector.
  */
 @RequestMapping(path = "/v1")

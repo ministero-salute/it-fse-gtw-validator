@@ -3,27 +3,18 @@
  */
 package it.finanze.sanita.fse2.ms.gtw.validator.controller.impl;
 
-import java.io.Serializable;
-
 import org.springframework.beans.factory.annotation.Autowired;
 
 import brave.Tracer;
 import it.finanze.sanita.fse2.ms.gtw.validator.dto.response.LogTraceInfoDTO;
 
 /**
- * 
- *
  *	Abstract controller.
  */
-public abstract class AbstractCTL implements Serializable {
+public abstract class AbstractCTL {
 
-	/**
-	 * Serial version uid.
-	 */
-	private static final long serialVersionUID = -3077780100650268134L;
-	
 	@Autowired
-	private transient Tracer tracer;
+	private Tracer tracer;
 
 	protected LogTraceInfoDTO getLogTraceInfo() {
 		LogTraceInfoDTO out = new LogTraceInfoDTO(null, null);

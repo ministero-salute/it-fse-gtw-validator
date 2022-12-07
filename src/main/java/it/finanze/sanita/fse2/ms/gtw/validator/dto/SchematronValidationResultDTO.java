@@ -15,8 +15,11 @@ import lombok.Setter;
 public class SchematronValidationResultDTO {
 
 	private Boolean validSchematron;
+	
 	private Boolean validXML;
+	
 	private String message;
+	
 	private List<SchematronFailedAssertionDTO> failedAssertions;
 	
 }

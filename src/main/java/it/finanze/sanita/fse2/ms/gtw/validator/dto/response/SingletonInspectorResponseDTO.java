@@ -8,19 +8,14 @@ import lombok.Getter;
 import lombok.Setter;
 
 /**
- *
  *	DTO used to return singleton inspection result.
  */
 @Getter
 @Setter
 public class SingletonInspectorResponseDTO extends ResponseDTO {
 
-	/**
-	 * Serial version uid.
-	 */
-	private static final long serialVersionUID = -2144353495597675698L;
 	
-	private final transient SingletonInfoDTO result;
+	private final SingletonInfoDTO result;
 
 	public SingletonInspectorResponseDTO(final LogTraceInfoDTO traceInfo, final SingletonInfoDTO inResult) {
 		super(traceInfo);

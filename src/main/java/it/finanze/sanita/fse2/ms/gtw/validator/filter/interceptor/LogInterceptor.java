@@ -16,6 +16,7 @@ import org.springframework.web.servlet.ModelAndView;
 @Component
 @ConditionalOnProperty("ms.validator.audit.enabled")
 public class LogInterceptor implements HandlerInterceptor{
+	
 	@Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) { 
         request.setAttribute("START_TIME", new Date());  

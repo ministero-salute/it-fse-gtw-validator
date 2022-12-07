@@ -3,18 +3,15 @@
  */
 package it.finanze.sanita.fse2.ms.gtw.validator.dto.response;
 
-import it.finanze.sanita.fse2.ms.gtw.validator.dto.AbstractDTO;
 import lombok.Getter;
 import lombok.Setter;
 
 /**
- * 
- *
  *	Base response.
  */
 @Getter
 @Setter
-public class ResponseDTO extends AbstractDTO {
+public class ResponseDTO {
 
 	/**
 	 * Trace id log.

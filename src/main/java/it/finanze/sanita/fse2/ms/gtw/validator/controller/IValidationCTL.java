@@ -20,8 +20,6 @@ import it.finanze.sanita.fse2.ms.gtw.validator.dto.request.ValidationRequestDTO;
 import it.finanze.sanita.fse2.ms.gtw.validator.dto.response.ValidationResponseDTO;
 
 /**
- * 
- *
  *	Controller validation.
  */
 @RequestMapping(path = "/v1")

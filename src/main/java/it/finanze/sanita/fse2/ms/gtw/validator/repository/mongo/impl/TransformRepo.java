@@ -21,10 +21,6 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class TransformRepo implements ITransformRepo {
 
-	/**
-	 * Serial version uid.
-	 */
-	private static final long serialVersionUID = -5816251263943368882L;
 	
 	@Autowired
 	private MongoTemplate mongoTemplate;

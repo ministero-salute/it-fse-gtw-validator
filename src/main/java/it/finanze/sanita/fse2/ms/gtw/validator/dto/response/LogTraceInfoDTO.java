@@ -3,13 +3,12 @@
  */
 package it.finanze.sanita.fse2.ms.gtw.validator.dto.response;
 
-import it.finanze.sanita.fse2.ms.gtw.validator.dto.AbstractDTO;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 @Data
 @EqualsAndHashCode(callSuper = false)
-public class LogTraceInfoDTO extends AbstractDTO {
+public class LogTraceInfoDTO {
 
 	/**
 	 * Span.

@@ -20,7 +20,6 @@ import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.SpyBean;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.test.context.ActiveProfiles;
 
@@ -37,7 +36,6 @@ import it.finanze.sanita.fse2.ms.gtw.validator.repository.mongo.impl.Terminology
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles(Constants.Profile.TEST)
-@ComponentScan(basePackages = { Constants.ComponentScan.BASE })
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class RepositoryTest extends AbstractTest {
 
