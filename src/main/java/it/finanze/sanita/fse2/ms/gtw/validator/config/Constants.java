@@ -19,8 +19,6 @@ public final class Constants {
 
 		public static final String TERMINOLOGY = "terminology";
 
-		public static final String XSL_TRANSFORM = "xsl_transform";
-
 		public static final String TRANSFORM = "transform";
   
 		public static final String CODE_SYSTEM= "code_system";

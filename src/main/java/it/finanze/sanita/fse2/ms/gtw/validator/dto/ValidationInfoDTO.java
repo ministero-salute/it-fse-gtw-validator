@@ -23,7 +23,5 @@ public class ValidationInfoDTO {
 
 	private String objectID; 
 	
-	private String xsltID; 
-	
 	private String transformID; 
 }

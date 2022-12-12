@@ -32,14 +32,6 @@ public class CollectionNaming {
         return Constants.Collections.DICTIONARY;
     }
 
-    @Bean("xslTransformBean")
-    public String getXslTransformCollection() {
-        if (profileUtility.isTestProfile()) {
-            return Constants.Profile.TEST_PREFIX + Constants.Collections.XSL_TRANSFORM;
-        }
-        return Constants.Collections.XSL_TRANSFORM;
-    }
-
     @Bean("schemaBean")
     public String getSchemaCollection() {
         if (profileUtility.isTestProfile()) {

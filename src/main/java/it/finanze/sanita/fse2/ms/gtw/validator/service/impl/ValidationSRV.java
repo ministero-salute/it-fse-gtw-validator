@@ -25,11 +25,9 @@ import it.finanze.sanita.fse2.ms.gtw.validator.exceptions.NoRecordFoundException
 import it.finanze.sanita.fse2.ms.gtw.validator.repository.entity.SchemaETY;
 import it.finanze.sanita.fse2.ms.gtw.validator.repository.entity.SchematronETY;
 import it.finanze.sanita.fse2.ms.gtw.validator.repository.entity.TransformETY;
-import it.finanze.sanita.fse2.ms.gtw.validator.repository.entity.XslTransformETY;
 import it.finanze.sanita.fse2.ms.gtw.validator.repository.mongo.ISchemaRepo;
 import it.finanze.sanita.fse2.ms.gtw.validator.repository.mongo.ISchematronRepo;
 import it.finanze.sanita.fse2.ms.gtw.validator.repository.mongo.ITransformRepo;
-import it.finanze.sanita.fse2.ms.gtw.validator.repository.mongo.IXslTransformRepo;
 import it.finanze.sanita.fse2.ms.gtw.validator.service.ISchemaSRV;
 import it.finanze.sanita.fse2.ms.gtw.validator.service.ITerminologySRV;
 import it.finanze.sanita.fse2.ms.gtw.validator.service.IValidationSRV;
@@ -54,9 +52,6 @@ public class ValidationSRV implements IValidationSRV {
     
     @Autowired
     private ISchemaSRV schemaSRV;
-
-	@Autowired
-	private IXslTransformRepo xsltTransformRepo; 
 	
 	@Autowired
 	private ITransformRepo structureMapRepo; 
@@ -154,21 +149,6 @@ public class ValidationSRV implements IValidationSRV {
     	}
 		return output;
 	}
-
-	@Override
-	public String getTransformObjectID(final String templateId) {
-		String objectId = "";
-		try{
-			XslTransformETY xslETY = xsltTransformRepo.getXsltByTemplateId(templateId); 
-			if(xslETY!=null) {
-				objectId = xslETY.getId();
-			}
-		} catch(Exception ex){
-			log.error("Error while getting objectID", ex);
-			throw new BusinessException("Error while getting objectID", ex);
-		}
-		return objectId;
-	} 
 	
 	@Override
 	public String getStructureObjectID(final String templateId){

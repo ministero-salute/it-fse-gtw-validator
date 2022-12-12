@@ -104,15 +104,13 @@ public class ValidationCTL extends AbstractCTL implements IValidationCTL {
 			}
 		}
 
-		String xsltId = "";
 		String transformID = "";
 		if(Arrays.asList(OK, SEMANTIC_WARNING).contains(outcome)) {
-			xsltId = validationSRV.getTransformObjectID(infoDTO.getTemplateIdSchematron());
 			transformID = validationSRV.getStructureObjectID(infoDTO.getTemplateIdSchematron());
 		}
 
 		ValidationInfoDTO out = ValidationInfoDTO.builder().result(outcome).message(messages).
-				xsltID(xsltId).transformID(transformID).build(); 
+				transformID(transformID).build(); 
 		return new ValidationResponseDTO(getLogTraceInfo(), out);
 	}
 	 
