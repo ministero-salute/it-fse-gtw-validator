@@ -5,7 +5,6 @@ package it.finanze.sanita.fse2.ms.gtw.validator.service.impl;
 
 import java.util.Date;
 
-import javax.xml.transform.stream.StreamSource;
 import javax.xml.validation.Validator;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,7 +34,6 @@ import it.finanze.sanita.fse2.ms.gtw.validator.service.IValidationSRV;
 import it.finanze.sanita.fse2.ms.gtw.validator.singleton.SchemaValidatorSingleton;
 import it.finanze.sanita.fse2.ms.gtw.validator.singleton.SchematronValidatorSingleton;
 import it.finanze.sanita.fse2.ms.gtw.validator.utility.CodeSystemUtility;
-import it.finanze.sanita.fse2.ms.gtw.validator.utility.StringUtility;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
