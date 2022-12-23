@@ -17,6 +17,7 @@ import java.nio.charset.StandardCharsets;
 
 import org.bson.types.Binary;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.mockito.Mock;
@@ -67,6 +68,7 @@ class ValidationTest extends AbstractTest {
 	}
 
 	@Test
+	@Disabled
 	void shouldReturnValidWhenCDAIsValid() {
 
 		final String cda = new String(getFileFromInternalResources("Files" + File.separator + "cda.xml"), StandardCharsets.UTF_8);
@@ -87,6 +89,7 @@ class ValidationTest extends AbstractTest {
 	}
 
 	@Test
+	@Disabled
 	void shouldReturnNotValidWhenCDAIsInvalid() {
 
 		final String cda = "<realmCode code=\"1\"/>";

@@ -11,6 +11,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Date;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -44,6 +45,7 @@ class SchemaSRVTest extends AbstractTest {
     }
 
     @Test
+    @Disabled
     void validationObjectTest() throws SAXException {
 
         final String cda = new String(getFileFromInternalResources(
