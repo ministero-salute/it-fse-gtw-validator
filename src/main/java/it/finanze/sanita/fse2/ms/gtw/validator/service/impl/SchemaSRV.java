@@ -11,10 +11,10 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.validation.Validator;
 
-import com.helger.commons.io.stream.StringInputStream;
-
 import org.springframework.stereotype.Service;
 import org.w3c.dom.Document;
+
+import com.helger.commons.io.stream.StringInputStream;
 
 import it.finanze.sanita.fse2.ms.gtw.validator.cda.ValidationResult;
 import it.finanze.sanita.fse2.ms.gtw.validator.exceptions.BusinessException;
@@ -35,12 +35,14 @@ public class SchemaSRV implements ISchemaSRV {
 		Document document = null;
 		try (StringInputStream si = new StringInputStream(objToValidate, StandardCharsets.UTF_8)){
 			DocumentBuilderFactory builderFactory = DocumentBuilderFactory.newInstance();
+			builderFactory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
 			builderFactory.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, "");
 			builderFactory.setAttribute(XMLConstants.ACCESS_EXTERNAL_SCHEMA, "");
 
 			builderFactory.setNamespaceAware(true);
 
 			DocumentBuilder parser = builderFactory.newDocumentBuilder();
+			
 
 			// parse the XML into a document object
 			document = parser.parse(si);

@@ -5,6 +5,7 @@ package it.finanze.sanita.fse2.ms.gtw.validator.service.impl;
 
 import java.util.Date;
 
+import javax.xml.transform.stream.StreamSource;
 import javax.xml.validation.Validator;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -97,8 +98,7 @@ public class ValidationSRV implements IValidationSRV {
     			SchemaValidatorSingleton instance = SchemaValidatorSingleton.getInstance(false, schema, schemaRepo,lastUpdated.getLastUpdateDate());
     			validator = instance.getValidator();
     		} 	
-
-    		ValidationResult validationResult = schemaSRV.validateXsd(validator, StringUtility.sanitizeCDA(cda));
+    		ValidationResult validationResult = schemaSRV.validateXsd(validator, cda);
     		if(validationResult!=null && !validationResult.isSuccess()) {
     			out  = new CDAValidationDTO(validationResult);
     		}
