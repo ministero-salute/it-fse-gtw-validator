@@ -10,7 +10,7 @@ import lombok.Data;
 @Data
 public class LogDTO {
 
-	final String log_type = "gateway-control-structured-log";
+	final String log_type = "control-structured-log";
 	
 	private String message;
 	
