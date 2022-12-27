@@ -57,13 +57,13 @@ public class ValidationSRV implements IValidationSRV {
       
     
     @Override
-    public VocabularyResultDTO validateVocabularies(final String cda) {
+    public VocabularyResultDTO validateVocabularies(final String cda, final String workflowInstanceId) {
         try {
         	long startTime = new Date().getTime();
         	String sanitizedCda = CodeSystemUtility.sanitizeCda(cda);
             TerminologyExtractionDTO terminologies = CDAHelper.extractAllCodeSystems(sanitizedCda);
             log.info("Validating {} systems...", terminologies.getCodeSystems().size());
-            VocabularyResultDTO validateTerminologies = terminologySRV.validateTerminologies(terminologies);
+            VocabularyResultDTO validateTerminologies = terminologySRV.validateTerminologies(terminologies,workflowInstanceId);
             long endDate = new Date().getTime() - startTime;
             log.info("END DATE TERMINOLOGY QUERY TIME : " + endDate + " ms"); 
             return validateTerminologies;

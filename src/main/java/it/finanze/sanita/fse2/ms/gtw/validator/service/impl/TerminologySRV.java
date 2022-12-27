@@ -43,17 +43,17 @@ public class TerminologySRV implements ITerminologySRV {
 	private LoggerHelper logger;
 
     @Override
-    public VocabularyResultDTO validateTerminologies(TerminologyExtractionDTO terminologies) {
+    public VocabularyResultDTO validateTerminologies(TerminologyExtractionDTO terminologies, final String workflowInstanceId) {
     	try {
 	        log.debug("Terminology Validation Stated!");
 	        CodeSystemSnapshotDTO snapshot = retrieveManagedCodeSystems();
-	        consumeAllowList(terminologies, snapshot);
-	        consumeBlockList(terminologies);
-	        consumeUnknown(terminologies, snapshot);
+	        consumeAllowList(terminologies, snapshot,workflowInstanceId);
+	        consumeBlockList(terminologies,workflowInstanceId);
+	        consumeUnknown(terminologies, snapshot,workflowInstanceId);
 	        sanitizeMissingVersion(terminologies, snapshot);
-	        consumeInvalidVersion(terminologies, snapshot);
+	        consumeInvalidVersion(terminologies, snapshot,workflowInstanceId);
 	        consumeCodes(terminologies);
-	        manageRemainingCodes(terminologies);
+	        manageRemainingCodes(terminologies,workflowInstanceId);
 	        log.debug("Terminology Validation Ended!");
 	        return getResult(terminologies);
     	} catch (VocabularyException e) {
@@ -67,28 +67,28 @@ public class TerminologySRV implements ITerminologySRV {
 		return new CodeSystemSnapshotDTO(codeSystems);
 	}
 
-	private void consumeAllowList(TerminologyExtractionDTO terminologies, CodeSystemSnapshotDTO snapshot) {
+	private void consumeAllowList(TerminologyExtractionDTO terminologies, CodeSystemSnapshotDTO snapshot, final String workflowInstanceId) {
 		Date startOperation = new Date();
         List<String> allowList = snapshot.getAllowList();
         List<String> allowListed = terminologies.filterCodeSystems(allowList);
         terminologies.removeCodeSystems(allowListed);
-        sendLogForAllowList(allowListed, startOperation);
+        sendLogForAllowList(allowListed, startOperation, workflowInstanceId);
     }
 
-	private void consumeBlockList(TerminologyExtractionDTO terminologies) {
+	private void consumeBlockList(TerminologyExtractionDTO terminologies, final String workflowInstanceId) {
 		Date startOperation = new Date();
         List<String> blockListed = CodeSystemUtility.getBlockList(terminologies.getCodeSystems());
         terminologies.removeCodeSystems(blockListed);
-        sendLogForBlockList(blockListed, startOperation);
+        sendLogForBlockList(blockListed, startOperation,workflowInstanceId);
         throwExceptionForBlockList(blockListed);
     }
 
-	private void consumeUnknown(TerminologyExtractionDTO terminologies, CodeSystemSnapshotDTO snapshot) {
+	private void consumeUnknown(TerminologyExtractionDTO terminologies, CodeSystemSnapshotDTO snapshot, final String worfklowInstanceId) {
 		Date startOperation = new Date();
         List<String> managed = snapshot.getCodeSystems();
         List<String> unknown = terminologies.rejectCodeSystems(managed);
         terminologies.removeCodeSystems(unknown);
-        sendLogForUnknown(unknown, startOperation);
+        sendLogForUnknown(unknown, startOperation,worfklowInstanceId);
     }
 
 	private void sanitizeMissingVersion(TerminologyExtractionDTO terminologies, CodeSystemSnapshotDTO snapshot) {
@@ -99,11 +99,11 @@ public class TerminologySRV implements ITerminologySRV {
 		terminologies.getCodes().addAll(codes);
 	}
 
-    private void consumeInvalidVersion(TerminologyExtractionDTO terminologies, CodeSystemSnapshotDTO snapshot) {
+    private void consumeInvalidVersion(TerminologyExtractionDTO terminologies, CodeSystemSnapshotDTO snapshot, final String workflowInstanceId) {
 		Date startOperation = new Date();
     	List<CodeSystemVersionDTO> managed = snapshot.getCodeSystemVersions();
         List<CodeSystemVersionDTO> invalid = terminologies.rejectCodeSystemVersions(managed);
-        sendLogForInvalidVersions(invalid, startOperation);
+        sendLogForInvalidVersions(invalid, startOperation,workflowInstanceId);
         throwExceptionForInvalidVersions(invalid);
 	}
 
@@ -131,11 +131,11 @@ public class TerminologySRV implements ITerminologySRV {
 		return codeDTOs;
 	}
 
-	private void manageRemainingCodes(TerminologyExtractionDTO terminologies) {
+	private void manageRemainingCodes(TerminologyExtractionDTO terminologies, final String workflowInstanceId) {
 		Date startOperation = new Date();
 		if (terminologies.getCodes().isEmpty()) return;
         log.warn("One or more CodeSystems were not found on Mongo, Terminology Validation Failed!");
-        sendLogForInvalidCodes(terminologies.getCodes(), startOperation);
+        sendLogForInvalidCodes(terminologies.getCodes(), startOperation,workflowInstanceId);
 	}
 	
 	private VocabularyResultDTO getResult(TerminologyExtractionDTO terminologies) {
@@ -144,37 +144,37 @@ public class TerminologySRV implements ITerminologySRV {
 		return new VocabularyResultDTO(isValid, message);
 	}
 
-	private void sendLogForAllowList(List<String> codeSystems, Date startOperation) {
+	private void sendLogForAllowList(List<String> codeSystems, Date startOperation, final String workflowInstanceId) {
     	if (codeSystems.isEmpty()) return;
-		logger.warn(String.format("Allowlisted CodeSystems found during the validation: [%s]", codeSystems.stream().collect(Collectors.joining(", "))), OperationLogEnum.TERMINOLOGY_VALIDATION, ResultLogEnum.WARN, startOperation, WarnLogEnum.ALLOWED);
+		logger.warn(workflowInstanceId,String.format("Allowlisted CodeSystems found during the validation: [%s]", codeSystems.stream().collect(Collectors.joining(", "))), OperationLogEnum.TERMINOLOGY_VALIDATION, ResultLogEnum.WARN, startOperation, WarnLogEnum.ALLOWED);
     }
 
-    private void sendLogForBlockList(List<String> codeSystems, Date startOperation) {
+    private void sendLogForBlockList(List<String> codeSystems, Date startOperation, final String workflowInstanceId) {
     	if (codeSystems.isEmpty()) return;
-		logger.error(String.format("Blocklisted CodeSystems found during the validation: [%s]", codeSystems.stream().collect(Collectors.joining(", "))), OperationLogEnum.TERMINOLOGY_VALIDATION, ResultLogEnum.KO, startOperation, ErrorLogEnum.BLOCKLIST_ERROR);
+		logger.error(workflowInstanceId,String.format("Blocklisted CodeSystems found during the validation: [%s]", codeSystems.stream().collect(Collectors.joining(", "))), OperationLogEnum.TERMINOLOGY_VALIDATION, ResultLogEnum.KO, startOperation, ErrorLogEnum.BLOCKLIST_ERROR);
     }
 
-    private void sendLogForUnknown(List<String> codeSystems, Date startOperation) {
+    private void sendLogForUnknown(List<String> codeSystems, Date startOperation, final String workflowInstanceId) {
 		if (codeSystems.isEmpty()) return;
-		logger.warn(String.format("Unknown CodeSystems found during the validation: [%s]", codeSystems.stream().collect(Collectors.joining(", "))), OperationLogEnum.TERMINOLOGY_VALIDATION, ResultLogEnum.WARN, startOperation, WarnLogEnum.UNKNOWN);
+		logger.warn(workflowInstanceId,String.format("Unknown CodeSystems found during the validation: [%s]", codeSystems.stream().collect(Collectors.joining(", "))), OperationLogEnum.TERMINOLOGY_VALIDATION, ResultLogEnum.WARN, startOperation, WarnLogEnum.UNKNOWN);
 	}
 	
-	private void sendLogForInvalidVersions(List<CodeSystemVersionDTO> codeSystemVersions, Date startOperation) {
+	private void sendLogForInvalidVersions(List<CodeSystemVersionDTO> codeSystemVersions, Date startOperation, final String workflowInstanceId) {
 		if (codeSystemVersions.isEmpty()) return;
 		List<String> versions = codeSystemVersions
 				.stream()
 				.map(CodeSystemVersionDTO::toString)
 				.collect(Collectors.toList());
-		logger.error(String.format("Invalid CodeSystemVersions found during the validation: [%s]", versions.stream().collect(Collectors.joining(", "))), OperationLogEnum.TERMINOLOGY_VALIDATION, ResultLogEnum.KO, startOperation, ErrorLogEnum.INVALID_VERSION);
+		logger.error(workflowInstanceId,String.format("Invalid CodeSystemVersions found during the validation: [%s]", versions.stream().collect(Collectors.joining(", "))), OperationLogEnum.TERMINOLOGY_VALIDATION, ResultLogEnum.KO, startOperation, ErrorLogEnum.INVALID_VERSION);
 	}
 
-	private void sendLogForInvalidCodes(List<CodeDTO> codes, Date startOperation) {
+	private void sendLogForInvalidCodes(List<CodeDTO> codes, Date startOperation, final String workflowInstanceId) {
 		if (codes.isEmpty()) return;
 		List<String> versions = codes
 				.stream()
 				.map(CodeDTO::toString)
 				.collect(Collectors.toList());
-		logger.warn(String.format("Invalid Codes found during the validation: [%s]", versions.stream().collect(Collectors.joining(", "))), OperationLogEnum.TERMINOLOGY_VALIDATION, ResultLogEnum.WARN, startOperation, WarnLogEnum.INVALID_CODE);
+		logger.warn(workflowInstanceId,String.format("Invalid Codes found during the validation: [%s]", versions.stream().collect(Collectors.joining(", "))), OperationLogEnum.TERMINOLOGY_VALIDATION, ResultLogEnum.WARN, startOperation, WarnLogEnum.INVALID_CODE);
 	}
 
 	private void throwExceptionForEmptyDatabase(List<DictionaryETY> codeSystems) {

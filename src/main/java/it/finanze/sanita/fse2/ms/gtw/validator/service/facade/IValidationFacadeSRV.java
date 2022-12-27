@@ -20,7 +20,7 @@ public interface IValidationFacadeSRV {
      * @param cda CDA to validate.
      * @return The result of the validation.
      */
-    VocabularyResultDTO validateVocabularies(String cda);
+    VocabularyResultDTO validateVocabularies(String cda, String workflowInstanceId);
     
     /**
      * Execute validation on the given terminology and version.

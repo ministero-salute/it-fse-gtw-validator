@@ -8,6 +8,5 @@ import it.finanze.sanita.fse2.ms.gtw.validator.dto.VocabularyResultDTO;
 
 public interface ITerminologySRV {
 
-	VocabularyResultDTO validateTerminologies(TerminologyExtractionDTO snapshot);
-	
+	VocabularyResultDTO validateTerminologies(TerminologyExtractionDTO terminologies, String workflowInstanceId);
 }

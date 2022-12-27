@@ -109,7 +109,7 @@ class ValidationControllerTest extends AbstractTest {
     	when(validationSrv.validateSemantic(anyString(), any(ExtractedInfoDTO.class)))
     		.thenReturn(schematronValidationResult); 
     	
-    	when(validationSrv.validateVocabularies(anyString()))
+    	when(validationSrv.validateVocabularies(anyString(),anyString()))
 			.thenReturn(vocabularyResultDto); 
     	
 	    
@@ -151,7 +151,7 @@ class ValidationControllerTest extends AbstractTest {
     	when(validationSrv.validateSemantic(anyString(), any(ExtractedInfoDTO.class)))
     		.thenReturn(schematronValidationResult); 
     	
-    	when(validationSrv.validateVocabularies(anyString()))
+    	when(validationSrv.validateVocabularies(anyString(),anyString()))
 			.thenReturn(vocabularyResultDto); 
     	
 	    
@@ -193,7 +193,7 @@ class ValidationControllerTest extends AbstractTest {
     	when(validationSrv.validateSemantic(anyString(), any(ExtractedInfoDTO.class)))
     		.thenThrow(new NoRecordFoundException("Error")); 
     	
-    	when(validationSrv.validateVocabularies(anyString()))
+    	when(validationSrv.validateVocabularies(anyString(),anyString()))
 			.thenReturn(vocabularyResultDto); 
     	
 	    

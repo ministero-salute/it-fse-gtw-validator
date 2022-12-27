@@ -18,8 +18,10 @@ import lombok.Setter;
 @AllArgsConstructor
 public class ValidationRequestDTO {
 
-
 	@Schema(description = "cda")
     private String cda;
+	
+	@Schema(description = "workflow_instance_id")
+    private String workflowInstanceId;
 
 }

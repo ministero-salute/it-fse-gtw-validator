@@ -47,18 +47,17 @@ public class LoggerHelper {
 	/* 
 	 * Implements structured logs, at all logging levels
 	 */
-	public void trace(String message, OperationLogEnum operation, ResultLogEnum result, Date startDateOperation) {
+	public void trace(String workflowInstanceId, String message, OperationLogEnum operation, ResultLogEnum result, Date startDateOperation) {
 
-		final String gtwName = getGatewayName();
-		
 		LogDTO logDTO = LogDTO.builder().
 				message(message).
 				operation(operation.getCode()).
 				op_result(result.getCode()).
 				op_timestamp_start(dateFormat.format(startDateOperation)).
 				op_timestamp_end(dateFormat.format(new Date())).
-				gateway_name(gtwName).
+				gateway_name(getGatewayName()).
 				microservice_name(msName).
+				workflow_instance_id(workflowInstanceId).
 				build();
 
 		final String logMessage = StringUtility.toJSON(logDTO);
@@ -69,18 +68,17 @@ public class LoggerHelper {
 		}
 	}
 
-	public void debug(String message, OperationLogEnum operation, ResultLogEnum result, Date startDateOperation) {
+	public void debug(String workflowInstanceId, String message, OperationLogEnum operation, ResultLogEnum result, Date startDateOperation) {
 		
-		final String gtwName = getGatewayName();
-
 		LogDTO logDTO = LogDTO.builder().
 				message(message).
 				operation(operation.getCode()).
 				op_result(result.getCode()).
 				op_timestamp_start(dateFormat.format(startDateOperation)).
 				op_timestamp_end(dateFormat.format(new Date())).
-				gateway_name(gtwName).
+				gateway_name(getGatewayName()).
 				microservice_name(msName).
+				workflow_instance_id(workflowInstanceId).
 				build();
 		
 		final String logMessage = StringUtility.toJSON(logDTO);
@@ -90,18 +88,17 @@ public class LoggerHelper {
 		}
 	} 
 	 
-	public void info(String message, OperationLogEnum operation, ResultLogEnum result, Date startDateOperation) {
+	public void info(String workflowInstanceId, String message, OperationLogEnum operation, ResultLogEnum result, Date startDateOperation) {
 
-		final String gtwName = getGatewayName();
-		
 		LogDTO logDTO = LogDTO.builder().
 				message(message).
 				operation(operation.getCode()).
 				op_result(result.getCode()).
 				op_timestamp_start(dateFormat.format(startDateOperation)).
 				op_timestamp_end(dateFormat.format(new Date())).
-				gateway_name(gtwName).
+				gateway_name(getGatewayName()).
 				microservice_name(msName).
+				workflow_instance_id(workflowInstanceId).
 				build();
 		
 		final String logMessage = StringUtility.toJSON(logDTO);
@@ -112,10 +109,8 @@ public class LoggerHelper {
 		}
 	} 
 	
-	public void warn(String message, OperationLogEnum operation, ResultLogEnum result, Date startDateOperation, WarnLogEnum warning) {
+	public void warn(String workflowInstanceId, String message, OperationLogEnum operation, ResultLogEnum result, Date startDateOperation, WarnLogEnum warning) {
 		
-		final String gtwName = getGatewayName();
-
 		LogDTO logDTO = LogDTO.builder().
 				message(message).
 				operation(operation.getCode()).
@@ -124,8 +119,9 @@ public class LoggerHelper {
 				op_timestamp_end(dateFormat.format(new Date())).
 				op_warning(warning.getCode()).
 				op_warning_description(warning.getDescription()).
-				gateway_name(gtwName).
+				gateway_name(getGatewayName()).
 				microservice_name(msName).
+				workflow_instance_id(workflowInstanceId).
 				build();
 		
 		final String logMessage = StringUtility.toJSON(logDTO);
@@ -136,9 +132,8 @@ public class LoggerHelper {
  
 	} 
 	
-	public void error(String message, OperationLogEnum operation, ResultLogEnum result, Date startDateOperation, ErrorLogEnum error) {
+	public void error(String workflowInstanceId, String message, OperationLogEnum operation, ResultLogEnum result, Date startDateOperation, ErrorLogEnum error) {
 		
-		final String gtwName = getGatewayName();
 
 		LogDTO logDTO = LogDTO.builder().
 				message(message).
@@ -148,8 +143,9 @@ public class LoggerHelper {
 				op_timestamp_end(dateFormat.format(new Date())).
 				op_error(error.getCode()).
 				op_error_description(error.getDescription()).
-				gateway_name(gtwName).
+				gateway_name(getGatewayName()).
 				microservice_name(msName).
+				workflow_instance_id(workflowInstanceId).
 				build();
 		
 		final String logMessage = StringUtility.toJSON(logDTO);

@@ -10,7 +10,7 @@ import lombok.Data;
 @Data
 public class LogDTO {
 
-	final String log_type = "gateway-structured-log";
+	final String log_type = "gateway-control-structured-log";
 	
 	private String message;
 	
@@ -33,5 +33,7 @@ public class LogDTO {
 	private String gateway_name;
 
 	private String microservice_name;
+	
+	private String workflow_instance_id;
 
 }
