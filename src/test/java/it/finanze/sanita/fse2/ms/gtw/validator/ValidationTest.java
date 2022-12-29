@@ -9,11 +9,15 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
 import java.io.File;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 import org.bson.types.Binary;
 import org.junit.jupiter.api.BeforeEach;
@@ -24,6 +28,8 @@ import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.boot.test.mock.mockito.SpyBean;
+import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.test.context.ActiveProfiles;
 
 import com.helger.schematron.ISchematronResource;
@@ -31,13 +37,21 @@ import com.helger.schematron.ISchematronResource;
 import it.finanze.sanita.fse2.ms.gtw.validator.cda.CDAHelper;
 import it.finanze.sanita.fse2.ms.gtw.validator.config.Constants;
 import it.finanze.sanita.fse2.ms.gtw.validator.dto.CDAValidationDTO;
+import it.finanze.sanita.fse2.ms.gtw.validator.dto.CodeSystemSnapshotDTO;
+import it.finanze.sanita.fse2.ms.gtw.validator.dto.CodeSystemVersionDTO;
 import it.finanze.sanita.fse2.ms.gtw.validator.dto.ExtractedInfoDTO;
 import it.finanze.sanita.fse2.ms.gtw.validator.dto.SchematronValidationResultDTO;
 import it.finanze.sanita.fse2.ms.gtw.validator.dto.VocabularyResultDTO;
 import it.finanze.sanita.fse2.ms.gtw.validator.enums.CDAValidationStatusEnum;
+import it.finanze.sanita.fse2.ms.gtw.validator.exceptions.BusinessException;
+import it.finanze.sanita.fse2.ms.gtw.validator.repository.entity.DictionaryETY;
 import it.finanze.sanita.fse2.ms.gtw.validator.repository.entity.SchematronETY;
+import it.finanze.sanita.fse2.ms.gtw.validator.repository.entity.TransformETY;
+import it.finanze.sanita.fse2.ms.gtw.validator.repository.mongo.IDictionaryRepo;
+import it.finanze.sanita.fse2.ms.gtw.validator.repository.mongo.ITransformRepo;
 import it.finanze.sanita.fse2.ms.gtw.validator.repository.mongo.impl.SchematronRepo;
 import it.finanze.sanita.fse2.ms.gtw.validator.service.facade.IValidationFacadeSRV;
+import it.finanze.sanita.fse2.ms.gtw.validator.service.impl.TerminologySRV;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -49,9 +63,18 @@ class ValidationTest extends AbstractTest {
 	@Autowired
 	IValidationFacadeSRV validationSRV;
 	
+	@SpyBean
+	TerminologySRV terminologySRV; 
+	
+	@SpyBean
+	private IDictionaryRepo codeSystemRepo; 
+	
+	@SpyBean
+	private ITransformRepo structureMapRepo;
 	
 	@MockBean
 	private SchematronRepo schematronRepo; 
+	
 	
 	@MockBean
 	private CDAHelper cdaHelper; 
@@ -186,5 +209,54 @@ class ValidationTest extends AbstractTest {
 		assertEquals("Schematron with template id root 2.16.840.1.113883.2.9.2.80.3.1.10.4 not found on database.", res.getMessage());
 		assertEquals(false, res.getValidSchematron());
 	} 
+	
+	@Test
+	void validationTest() {
+        final String cda = new String(getFileFromInternalResources(
+                "Files/cda_ok/Esempio CDA_002.xml"
+            ), StandardCharsets.UTF_8);
+            String version = "1.3"; 
+            
+            DictionaryETY ety = new DictionaryETY(); 
+            ety.setSystem("2.16.840.1.113883.6.1");
+            ety.setVersion("1.3");
+            ety.setReleaseDate(new Date()); 
+            
+            List<DictionaryETY> dictionaries = new ArrayList<DictionaryETY>(); 
+            dictionaries.add(ety); 
+            
+            
+            List<CodeSystemVersionDTO> codeSystemDtoList = new ArrayList<CodeSystemVersionDTO>(); 
+            CodeSystemVersionDTO cs = new CodeSystemVersionDTO("2.16.840.1.113883.6.1", "1.3"); 
+            codeSystemDtoList.add(cs); 
+
+            
+            CodeSystemSnapshotDTO snapshotDto = new CodeSystemSnapshotDTO(dictionaries); 
+            
+            //when(terminologySRV.retrieveManagedCodeSystems()).thenReturn(snapshotDto); 
+            when(codeSystemRepo.getCodeSystems()).thenReturn(dictionaries); 
+            
+            assertDoesNotThrow(() -> validationSRV.validateVocabularies(cda, "wid")); 
+            assertDoesNotThrow(() -> CDAHelper.extractTerminology(cda)); 
+            
+            // --------- Test - Throws Exception --------- 
+            assertThrows(Exception.class, () -> validationSRV.validateVocabularies(null, "wid")); 
+
+            
+            
+            
+            // --------- Test - Validation SRV --------- 
+            TransformETY transformEty = new TransformETY(); 
+            transformEty.setId("2.16.840.1.113883.6.1");
+            
+            when(structureMapRepo.findMapByTemplateIdRoot(anyString())).thenReturn(transformEty); 
+            assertDoesNotThrow(() -> validationSRV.getStructureObjectID("2.16.840.1.113883.6.1")); 
+
+            
+            when(structureMapRepo.findMapByTemplateIdRoot(anyString()))
+            	.thenThrow(new BusinessException("Error")); 
+            assertThrows(BusinessException.class, () 
+            		-> validationSRV.getStructureObjectID("2.16.840.1.113883.6.1")); 
+	}
 
 }

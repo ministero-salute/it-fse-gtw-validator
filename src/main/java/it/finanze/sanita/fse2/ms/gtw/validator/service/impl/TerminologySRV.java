@@ -61,7 +61,7 @@ public class TerminologySRV implements ITerminologySRV {
  		}
     }
     
-	private CodeSystemSnapshotDTO retrieveManagedCodeSystems() {
+	public CodeSystemSnapshotDTO retrieveManagedCodeSystems() {
 		List<DictionaryETY> codeSystems = codeSystemRepo.getCodeSystems();
 		throwExceptionForEmptyDatabase(codeSystems);
 		return new CodeSystemSnapshotDTO(codeSystems);

@@ -5,10 +5,14 @@ package it.finanze.sanita.fse2.ms.gtw.validator;
 
 import static com.mongodb.assertions.Assertions.assertFalse;
 import static com.mongodb.assertions.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.eq;
+
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -29,9 +33,11 @@ import it.finanze.sanita.fse2.ms.gtw.validator.config.Constants;
 import it.finanze.sanita.fse2.ms.gtw.validator.exceptions.BusinessException;
 import it.finanze.sanita.fse2.ms.gtw.validator.repository.entity.SchemaETY;
 import it.finanze.sanita.fse2.ms.gtw.validator.repository.entity.SchematronETY;
+import it.finanze.sanita.fse2.ms.gtw.validator.repository.entity.TerminologyETY;
 import it.finanze.sanita.fse2.ms.gtw.validator.repository.mongo.ISchemaRepo;
 import it.finanze.sanita.fse2.ms.gtw.validator.repository.mongo.ISchematronRepo;
-import it.finanze.sanita.fse2.ms.gtw.validator.repository.mongo.impl.TerminologyRepo; 
+import it.finanze.sanita.fse2.ms.gtw.validator.repository.mongo.impl.TerminologyRepo;
+import it.finanze.sanita.fse2.ms.gtw.validator.repository.mongo.impl.TransformRepo; 
 
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -57,6 +63,9 @@ class RepositoryTest extends AbstractTest {
     @Autowired
     private TerminologyRepo terminologyRepo; 
      
+    @Autowired
+    private TransformRepo transformRepo; 
+    
     @Autowired
 	protected MongoTemplate mongoTemplate;
     
@@ -176,6 +185,11 @@ class RepositoryTest extends AbstractTest {
     }
     
     @Test
+    void findMapByNameTest() {
+    	assertDoesNotThrow(() -> transformRepo.findMapByName("test")); 
+    }
+    
+    @Test
     void existsBySystemAndCodeTest() {         
          assertFalse(terminologyRepo.existBySystemAndCode("2.16.840.1.113883.2.9.10.1.11.1.2", "0.0")); 
          
@@ -189,7 +203,8 @@ class RepositoryTest extends AbstractTest {
          
          assertThrows(BusinessException.class, 
         		 () -> terminologyRepo.findAllCodesExists("test", null)); 
-                 
+         
+
      }   
 
 }
