@@ -122,10 +122,10 @@ class ValidationTest extends AbstractTest {
 			"Files/cda_ok/Esempio_CDA_003.xml"
 		), StandardCharsets.UTF_8);
 
-		VocabularyResultDTO res = validationSRV.validateVocabularies(cda,anyString());
+		VocabularyResultDTO res = validationSRV.validateVocabularies(cda, "wid");
 		assertFalse(res.getValid(), "The vocabulary validation should be falsy");
 
-		res = validationSRV.validateVocabularies(cda,anyString());
+		res = validationSRV.validateVocabularies("", "");
 		assertFalse(res.getValid(), "Repeating vocabulary validation should be falsy");
 	}
 	
