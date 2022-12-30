@@ -15,14 +15,7 @@ public class CollectionNaming {
 
     @Autowired
     private ProfileUtility profileUtility;
-    
-    @Bean("codeSystemBean")
-    public String getCodeSystemCollection() {
-        if (profileUtility.isTestProfile()) {
-            return Constants.Profile.TEST_PREFIX + Constants.Collections.CODE_SYSTEM;
-        }
-        return Constants.Collections.CODE_SYSTEM;
-    }
+ 
     
     @Bean("dictionaryBean")
     public String getDictionaryCollection() {

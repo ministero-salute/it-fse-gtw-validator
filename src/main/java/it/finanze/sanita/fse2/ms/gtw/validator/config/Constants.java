@@ -21,8 +21,6 @@ public final class Constants {
 
 		public static final String TRANSFORM = "transform";
   
-		public static final String CODE_SYSTEM= "code_system";
-
 
 		private Collections() {
 
