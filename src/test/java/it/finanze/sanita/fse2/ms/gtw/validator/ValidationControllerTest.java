@@ -99,6 +99,7 @@ class ValidationControllerTest extends AbstractTest {
     	VocabularyResultDTO vocabularyResultDto = new VocabularyResultDTO(); 
     	vocabularyResultDto.setValid(true); 
     	validationRequest.setCda(cda); 
+    	validationRequest.setWorkflowInstanceId("wid");
     	SchematronValidationResultDTO schematronValidationResult = new SchematronValidationResultDTO(true, true, null, null); 
     	ObjectMapper objectMapper = new ObjectMapper(); 
     	

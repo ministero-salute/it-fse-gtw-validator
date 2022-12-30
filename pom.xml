@@ -26,10 +26,11 @@
 		<container.output>target/container</container.output>
 		<container.output.runtime>${container.output}/runtime</container.output.runtime>
 		<!-- Sonar integration -->
-		<sonar.organization>ministero-salute</sonar.organization>
-		<sonar.host.url>https://sonarcloud.io</sonar.host.url>
+		<!--  <sonar.organization>ministero-salute</sonar.organization>
+		<sonar.host.url>https://sonarcloud.io</sonar.host.url> --> 
 		<sonar.exclusions>
 			src/main/java/it/finanze/sanita/fse2/ms/gtw/validator/config/OpenApiCFG.java,
+			src/main/java/it/finanze/sanita/fse2/ms/gtw/validator/client/impl/ConfigClient.java,
 			src/main/java/it/finanze/sanita/fse2/ms/gtw/validator/xmlresolver/Input.java,
 			src/main/java/it/finanze/sanita/fse2/ms/gtw/validator/logging/**/*.*
 		</sonar.exclusions>

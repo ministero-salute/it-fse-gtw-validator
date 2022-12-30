@@ -53,7 +53,7 @@ public class CodeSystemUtility {
 		code.setVersion(maxVersion);
 	}
 	
-    private static boolean isBlocklisted(String codeSystem) {
+    public static boolean isBlocklisted(String codeSystem) {
         if (isNullOrEmpty(codeSystem)) return false;
         return Arrays
             .stream(codeSystem.split("\\."))
@@ -93,7 +93,7 @@ public class CodeSystemUtility {
 				.collect(Collectors.groupingBy(CodeDTO::getCodeSystemVersion));
 	}
 	
-	private static String getCodeSystemMessage(CodeSystemVersionDTO codeSystemVersion, List<CodeDTO> codes) {
+	public static String getCodeSystemMessage(CodeSystemVersionDTO codeSystemVersion, List<CodeDTO> codes) {
 		String codesString = codes
 				.stream()
 				.map(CodeDTO::getCode)

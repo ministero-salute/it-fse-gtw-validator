@@ -108,7 +108,7 @@ public class CodeSystemSnapshotDTO {
 				.orElse(null);
 	}
 
-	private String getMaxForCreationDate(List<DictionaryETY> dictionaries) {
+	public String getMaxForCreationDate(List<DictionaryETY> dictionaries) {
 		return dictionaries
 				.stream()
 				.sorted(Comparator.comparing(DictionaryETY::getCreationDate, Comparator.nullsLast(Comparator.reverseOrder())))
@@ -117,7 +117,7 @@ public class CodeSystemSnapshotDTO {
 				.orElse(null);
 	}
 
-	private String getMaxForLast(List<DictionaryETY> dictionaries) {
+	public String getMaxForLast(List<DictionaryETY> dictionaries) {
 		Collections.reverse(dictionaries);
 		return dictionaries
 				.stream()
