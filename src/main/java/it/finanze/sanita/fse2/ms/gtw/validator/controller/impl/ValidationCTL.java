@@ -93,12 +93,13 @@ public class ValidationCTL extends AbstractCTL implements IValidationCTL {
 			}
 
 
-			if(RawValidationEnum.OK.equals(outcome)) {
+			if(RawValidationEnum.OK.equals(outcome) || RawValidationEnum.SEMANTIC_WARNING.equals(outcome)) {
 				VocabularyResultDTO result =  validationSRV.validateVocabularies(requestBody.getCda(), requestBody.getWorkflowInstanceId());
 				if(Boolean.TRUE.equals(result.getValid())) {
 					log.debug("Validation completed successfully!");
 				} else {
 					outcome = RawValidationEnum.VOCABULARY_ERROR;
+					messages = new ArrayList<>();
 					messages.add(result.getMessage());
 				}
 			}
