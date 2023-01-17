@@ -3,6 +3,8 @@
  */
 package it.finanze.sanita.fse2.ms.gtw.validator.config;
 
+import java.util.regex.Pattern;
+
 import org.springdoc.core.customizers.OpenApiCustomiser;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -12,12 +14,12 @@ import io.swagger.v3.oas.annotations.extensions.Extension;
 import io.swagger.v3.oas.annotations.extensions.ExtensionProperty;
 import io.swagger.v3.oas.annotations.info.Contact;
 import io.swagger.v3.oas.annotations.info.Info;
-import io.swagger.v3.oas.annotations.servers.Server;
 import io.swagger.v3.oas.models.media.Content;
 import io.swagger.v3.oas.models.media.MediaType;
 import io.swagger.v3.oas.models.media.Schema;
 import io.swagger.v3.oas.models.responses.ApiResponse;
 import io.swagger.v3.oas.models.responses.ApiResponses;
+import io.swagger.v3.oas.models.servers.Server;
 
 @Configuration
 @OpenAPIDefinition(
@@ -32,18 +34,7 @@ import io.swagger.v3.oas.models.responses.ApiResponses;
 			version = "1.0.0", 
 			description = "Validate the CDA's received",
 			termsOfService = "${docs.info.termsOfService}", 
-			contact = @Contact(name = "${docs.info.contact.name}", url = "${docs.info.contact.url}", email = "${docs.info.contact.mail}")),
-	servers = {
-		@Server(
-			description = "Gateway Validator Development URL",
-			url = "http://localhost:8012",
-			extensions = {
-				@Extension(properties = {
-					@ExtensionProperty(name = "x-sandbox", parseValue = true, value = "true")
-				})
-			}
-		)
-	})
+			contact = @Contact(name = "${docs.info.contact.name}", url = "${docs.info.contact.url}", email = "${docs.info.contact.mail}")))
 public class OpenApiCFG {
 
 
@@ -58,6 +49,13 @@ public class OpenApiCFG {
 	@Bean
 	public OpenApiCustomiser customerGlobalHeaderOpenApiCustomiser() {
 		return openApi -> {
+			for (final Server server : openApi.getServers()) {
+                final Pattern pattern = Pattern.compile("^https://.*");
+                if (!pattern.matcher(server.getUrl()).matches()) {
+                    server.addExtension("x-sandbox", true);
+                }
+            }
+			
 			openApi.getPaths().values().forEach(pathItem -> pathItem.readOperations().forEach(operation -> {
 				ApiResponses apiResponses = operation.getResponses();
 				
