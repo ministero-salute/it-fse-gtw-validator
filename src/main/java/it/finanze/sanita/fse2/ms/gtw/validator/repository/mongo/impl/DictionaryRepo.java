@@ -7,6 +7,8 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Repository;
 
 import it.finanze.sanita.fse2.ms.gtw.validator.exceptions.BusinessException;
@@ -24,7 +26,8 @@ public class DictionaryRepo implements IDictionaryRepo {
 	@Override
 	public List<DictionaryETY> getCodeSystems() {
 		try {
-			return mongoTemplate.findAll(DictionaryETY.class);
+			Query query = new Query().addCriteria(Criteria.where("deleted").is(false)); 
+			return mongoTemplate.find(query, DictionaryETY.class);
 		} catch (Exception e) {
 			log.error("Error while retrieving all codeSystemVersions from Mongo", e);
 			throw new BusinessException("Error while retrieving all codeSystemVersions from Mongo", e);
