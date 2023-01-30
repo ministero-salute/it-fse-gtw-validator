@@ -6,7 +6,7 @@
 	<groupId>it.finanze.sanita.fse2</groupId>
 	<artifactId>gtw-validator-ms</artifactId>
 	<name>gtw-validator-ms</name>
-	<version>0.2.0-SNAPSHOT</version> <!-- IPPOCRATE -->
+	<version>0.2.0-RELEASE</version>
 	<description>Gateway Validator FSE</description>
 
 	<parent>
@@ -26,8 +26,8 @@
 		<container.output>target/container</container.output>
 		<container.output.runtime>${container.output}/runtime</container.output.runtime>
 		<!-- Sonar integration -->
-		<!--  <sonar.organization>ministero-salute</sonar.organization>
-		<sonar.host.url>https://sonarcloud.io</sonar.host.url> --> 
+		 <sonar.organization>ministero-salute</sonar.organization>
+		<sonar.host.url>https://sonarcloud.io</sonar.host.url> 
 		<sonar.exclusions>
 			src/main/java/it/finanze/sanita/fse2/ms/gtw/validator/config/OpenApiCFG.java,
 			src/main/java/it/finanze/sanita/fse2/ms/gtw/validator/client/impl/ConfigClient.java,
