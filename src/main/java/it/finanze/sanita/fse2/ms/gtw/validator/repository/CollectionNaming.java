@@ -41,12 +41,12 @@ public class CollectionNaming {
         return Constants.Collections.SCHEMATRON;
     }
     
-    @Bean("transformBean")
-    public String getStructureMapCollection() {
+    @Bean("engineBean")
+    public String getEngineCollection() {
         if (profileUtility.isTestProfile()) {
-            return Constants.Profile.TEST_PREFIX + Constants.Collections.TRANSFORM;
+            return Constants.Profile.TEST_PREFIX + Constants.Collections.ENGINES;
         }
-        return Constants.Collections.TRANSFORM;
+        return Constants.Collections.ENGINES;
     }
 
     @Bean("terminologyBean")

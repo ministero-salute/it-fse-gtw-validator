@@ -3,21 +3,15 @@
  */
 package it.finanze.sanita.fse2.ms.gtw.validator;
 
-import static com.mongodb.assertions.Assertions.assertFalse;
-import static com.mongodb.assertions.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.any;
-import static org.mockito.Mockito.when;
-import static org.mockito.Mockito.eq;
-
-
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
+import com.mongodb.MongoException;
+import it.finanze.sanita.fse2.ms.gtw.validator.config.Constants;
+import it.finanze.sanita.fse2.ms.gtw.validator.exceptions.BusinessException;
+import it.finanze.sanita.fse2.ms.gtw.validator.repository.entity.SchemaETY;
+import it.finanze.sanita.fse2.ms.gtw.validator.repository.entity.SchematronETY;
+import it.finanze.sanita.fse2.ms.gtw.validator.repository.mongo.ISchemaRepo;
+import it.finanze.sanita.fse2.ms.gtw.validator.repository.mongo.ISchematronRepo;
+import it.finanze.sanita.fse2.ms.gtw.validator.repository.mongo.impl.EngineRepo;
+import it.finanze.sanita.fse2.ms.gtw.validator.repository.mongo.impl.TerminologyRepo;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
@@ -27,17 +21,14 @@ import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.test.context.ActiveProfiles;
 
-import com.mongodb.MongoException;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
-import it.finanze.sanita.fse2.ms.gtw.validator.config.Constants;
-import it.finanze.sanita.fse2.ms.gtw.validator.exceptions.BusinessException;
-import it.finanze.sanita.fse2.ms.gtw.validator.repository.entity.SchemaETY;
-import it.finanze.sanita.fse2.ms.gtw.validator.repository.entity.SchematronETY;
-import it.finanze.sanita.fse2.ms.gtw.validator.repository.entity.TerminologyETY;
-import it.finanze.sanita.fse2.ms.gtw.validator.repository.mongo.ISchemaRepo;
-import it.finanze.sanita.fse2.ms.gtw.validator.repository.mongo.ISchematronRepo;
-import it.finanze.sanita.fse2.ms.gtw.validator.repository.mongo.impl.TerminologyRepo;
-import it.finanze.sanita.fse2.ms.gtw.validator.repository.mongo.impl.TransformRepo; 
+import static com.mongodb.assertions.Assertions.assertFalse;
+import static com.mongodb.assertions.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.when;
 
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -64,7 +55,7 @@ class RepositoryTest extends AbstractTest {
     private TerminologyRepo terminologyRepo; 
      
     @Autowired
-    private TransformRepo transformRepo; 
+    private EngineRepo transformRepo;
     
     @Autowired
 	protected MongoTemplate mongoTemplate;
@@ -182,11 +173,6 @@ class RepositoryTest extends AbstractTest {
     	
     	assertNull(res); 
     	
-    }
-    
-    @Test
-    void findMapByNameTest() {
-    	assertDoesNotThrow(() -> transformRepo.findMapByName("test")); 
     }
     
     @Test

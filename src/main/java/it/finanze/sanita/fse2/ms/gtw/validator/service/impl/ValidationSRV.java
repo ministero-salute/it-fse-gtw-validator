@@ -3,31 +3,20 @@
  */
 package it.finanze.sanita.fse2.ms.gtw.validator.service.impl;
 
-import java.util.Date;
-
-import javax.xml.validation.Validator;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import com.helger.schematron.ISchematronResource;
-
 import it.finanze.sanita.fse2.ms.gtw.validator.cda.CDAHelper;
 import it.finanze.sanita.fse2.ms.gtw.validator.cda.ValidationResult;
-import it.finanze.sanita.fse2.ms.gtw.validator.dto.CDAValidationDTO;
-import it.finanze.sanita.fse2.ms.gtw.validator.dto.ExtractedInfoDTO;
-import it.finanze.sanita.fse2.ms.gtw.validator.dto.SchematronValidationResultDTO;
-import it.finanze.sanita.fse2.ms.gtw.validator.dto.TerminologyExtractionDTO;
-import it.finanze.sanita.fse2.ms.gtw.validator.dto.VocabularyResultDTO;
+import it.finanze.sanita.fse2.ms.gtw.validator.dto.*;
 import it.finanze.sanita.fse2.ms.gtw.validator.enums.CDAValidationStatusEnum;
 import it.finanze.sanita.fse2.ms.gtw.validator.exceptions.BusinessException;
 import it.finanze.sanita.fse2.ms.gtw.validator.exceptions.NoRecordFoundException;
 import it.finanze.sanita.fse2.ms.gtw.validator.repository.entity.SchemaETY;
 import it.finanze.sanita.fse2.ms.gtw.validator.repository.entity.SchematronETY;
-import it.finanze.sanita.fse2.ms.gtw.validator.repository.entity.TransformETY;
+import it.finanze.sanita.fse2.ms.gtw.validator.repository.entity.engine.EngineETY;
+import it.finanze.sanita.fse2.ms.gtw.validator.repository.entity.engine.sub.EngineMap;
+import it.finanze.sanita.fse2.ms.gtw.validator.repository.mongo.IEngineRepo;
 import it.finanze.sanita.fse2.ms.gtw.validator.repository.mongo.ISchemaRepo;
 import it.finanze.sanita.fse2.ms.gtw.validator.repository.mongo.ISchematronRepo;
-import it.finanze.sanita.fse2.ms.gtw.validator.repository.mongo.ITransformRepo;
 import it.finanze.sanita.fse2.ms.gtw.validator.service.ISchemaSRV;
 import it.finanze.sanita.fse2.ms.gtw.validator.service.ITerminologySRV;
 import it.finanze.sanita.fse2.ms.gtw.validator.service.IValidationSRV;
@@ -35,6 +24,12 @@ import it.finanze.sanita.fse2.ms.gtw.validator.singleton.SchemaValidatorSingleto
 import it.finanze.sanita.fse2.ms.gtw.validator.singleton.SchematronValidatorSingleton;
 import it.finanze.sanita.fse2.ms.gtw.validator.utility.CodeSystemUtility;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import javax.xml.validation.Validator;
+import java.util.Date;
+import java.util.Optional;
 
 @Slf4j
 @Service
@@ -53,7 +48,7 @@ public class ValidationSRV implements IValidationSRV {
     private ISchemaSRV schemaSRV;
 	
 	@Autowired
-	private ITransformRepo structureMapRepo; 
+	private IEngineRepo engines;
       
     
     @Override
@@ -150,16 +145,28 @@ public class ValidationSRV implements IValidationSRV {
 	
 	@Override
 	public String getStructureObjectID(final String templateId){
-		String structureId = "";
+
+		String structureId;
+
 		try{
-			TransformETY structureMap = structureMapRepo.findMapByTemplateIdRoot(templateId);
-			if(structureMap!=null) {
-				structureId = structureMap.getId(); 
+			EngineETY latest = engines.getLatestEngine();
+
+			if(latest == null) throw new NoRecordFoundException("Nessun engine disponibile");
+
+			Optional<EngineMap> map = latest.getRoots().stream().filter(r -> r.getRoot().equals(templateId)).findFirst();
+
+			if(!map.isPresent()) {
+				throw new NoRecordFoundException(
+					String.format("Nessuna mappa con id %s è stata trovata nell'engine %s", templateId, latest.getId())
+				);
 			}
+
+			structureId = String.format("%s|%s", latest.getId(), map.get().getOid());
+
 		} catch(Exception ex){
-			log.error("Error while getting structureId", ex);
-			throw new BusinessException("Error while getting structureId", ex);
+			throw new BusinessException("Impossibile recuperare la structure-map nell'engine associato", ex);
 		}
+
 		return structureId;
 	}
      

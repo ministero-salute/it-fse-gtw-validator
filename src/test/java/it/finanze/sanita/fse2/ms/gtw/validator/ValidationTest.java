@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import it.finanze.sanita.fse2.ms.gtw.validator.repository.entity.engine.EngineETY;
 import org.bson.types.Binary;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
@@ -29,7 +30,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.SpyBean;
-import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.test.context.ActiveProfiles;
 
 import com.helger.schematron.ISchematronResource;
@@ -46,9 +46,8 @@ import it.finanze.sanita.fse2.ms.gtw.validator.enums.CDAValidationStatusEnum;
 import it.finanze.sanita.fse2.ms.gtw.validator.exceptions.BusinessException;
 import it.finanze.sanita.fse2.ms.gtw.validator.repository.entity.DictionaryETY;
 import it.finanze.sanita.fse2.ms.gtw.validator.repository.entity.SchematronETY;
-import it.finanze.sanita.fse2.ms.gtw.validator.repository.entity.TransformETY;
 import it.finanze.sanita.fse2.ms.gtw.validator.repository.mongo.IDictionaryRepo;
-import it.finanze.sanita.fse2.ms.gtw.validator.repository.mongo.ITransformRepo;
+import it.finanze.sanita.fse2.ms.gtw.validator.repository.mongo.IEngineRepo;
 import it.finanze.sanita.fse2.ms.gtw.validator.repository.mongo.impl.SchematronRepo;
 import it.finanze.sanita.fse2.ms.gtw.validator.service.facade.IValidationFacadeSRV;
 import it.finanze.sanita.fse2.ms.gtw.validator.service.impl.TerminologySRV;
@@ -70,7 +69,7 @@ class ValidationTest extends AbstractTest {
 	private IDictionaryRepo codeSystemRepo; 
 	
 	@SpyBean
-	private ITransformRepo structureMapRepo;
+	private IEngineRepo structureMapRepo;
 	
 	@MockBean
 	private SchematronRepo schematronRepo; 
@@ -246,14 +245,14 @@ class ValidationTest extends AbstractTest {
             
             
             // --------- Test - Validation SRV --------- 
-            TransformETY transformEty = new TransformETY(); 
+            EngineETY transformEty = new EngineETY();
             transformEty.setId("2.16.840.1.113883.6.1");
             
-            when(structureMapRepo.findMapByTemplateIdRoot(anyString())).thenReturn(transformEty); 
+            when(structureMapRepo.getLatestEngine()).thenReturn(transformEty);
             assertDoesNotThrow(() -> validationSRV.getStructureObjectID("2.16.840.1.113883.6.1")); 
 
             
-            when(structureMapRepo.findMapByTemplateIdRoot(anyString()))
+            when(structureMapRepo.getLatestEngine())
             	.thenThrow(new BusinessException("Error")); 
             assertThrows(BusinessException.class, () 
             		-> validationSRV.getStructureObjectID("2.16.840.1.113883.6.1")); 
