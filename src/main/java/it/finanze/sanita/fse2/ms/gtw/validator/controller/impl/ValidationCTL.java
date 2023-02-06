@@ -13,6 +13,7 @@ import java.util.Map.Entry;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -105,13 +106,18 @@ public class ValidationCTL extends AbstractCTL implements IValidationCTL {
 			}
 		}
 
-		String transformID = "";
+		Pair<String, String> p = Pair.of("", "");
 		if(Arrays.asList(OK, SEMANTIC_WARNING).contains(outcome)) {
-			transformID = validationSRV.getStructureObjectID(infoDTO.getTemplateIdSchematron());
+			p = validationSRV.getStructureObjectID(infoDTO.getTemplateIdSchematron());
 		}
 
-		ValidationInfoDTO out = ValidationInfoDTO.builder().result(outcome).message(messages).
-				transformID(transformID).build(); 
+		ValidationInfoDTO out = ValidationInfoDTO.builder()
+			.result(outcome)
+			.message(messages)
+			.engineID(p.getKey())
+			.transformID(p.getValue()).
+			build();
+
 		return new ValidationResponseDTO(getLogTraceInfo(), out);
 	}
 	 

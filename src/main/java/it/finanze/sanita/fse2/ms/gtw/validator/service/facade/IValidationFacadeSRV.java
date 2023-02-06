@@ -7,6 +7,7 @@ import it.finanze.sanita.fse2.ms.gtw.validator.dto.CDAValidationDTO;
 import it.finanze.sanita.fse2.ms.gtw.validator.dto.ExtractedInfoDTO;
 import it.finanze.sanita.fse2.ms.gtw.validator.dto.SchematronValidationResultDTO;
 import it.finanze.sanita.fse2.ms.gtw.validator.dto.VocabularyResultDTO;
+import org.apache.commons.lang3.tuple.Pair;
 
 /**
  * Interface of Validation Service.
@@ -40,7 +41,7 @@ public interface IValidationFacadeSRV {
      */
     SchematronValidationResultDTO validateSemantic(String cdaToValidate,ExtractedInfoDTO extractedInfoDTO);
 
-    public String getStructureObjectID(String templateIDRoot);
+    Pair<String, String> getStructureObjectID(String templateIDRoot);
 
     
 }

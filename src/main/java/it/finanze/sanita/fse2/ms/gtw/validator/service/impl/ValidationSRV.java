@@ -24,6 +24,7 @@ import it.finanze.sanita.fse2.ms.gtw.validator.singleton.SchemaValidatorSingleto
 import it.finanze.sanita.fse2.ms.gtw.validator.singleton.SchematronValidatorSingleton;
 import it.finanze.sanita.fse2.ms.gtw.validator.utility.CodeSystemUtility;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -144,9 +145,9 @@ public class ValidationSRV implements IValidationSRV {
 	}
 	
 	@Override
-	public String getStructureObjectID(final String templateId){
+	public Pair<String, String> getStructureObjectID(final String templateId){
 
-		String structureId;
+		Pair<String, String> p;
 
 		try{
 			EngineETY latest = engines.getLatestEngine();
@@ -161,13 +162,13 @@ public class ValidationSRV implements IValidationSRV {
 				);
 			}
 
-			structureId = String.format("%s|%s", latest.getId(), map.get().getOid());
+			p = Pair.of(latest.getId(), map.get().getOid());
 
 		} catch(Exception ex){
 			throw new BusinessException("Impossibile recuperare la structure-map nell'engine associato", ex);
 		}
 
-		return structureId;
+		return p;
 	}
      
 }
