@@ -12,10 +12,10 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.aggregation.TypedAggregation;
 import org.springframework.stereotype.Repository;
 
-import static it.finanze.sanita.fse2.ms.gtw.validator.repository.entity.engine.EngineETY.FIELD_LAST_SYNC;
+import static it.finanze.sanita.fse2.ms.gtw.validator.repository.entity.engine.EngineETY.*;
 import static org.springframework.data.domain.Sort.Direction.DESC;
-import static org.springframework.data.mongodb.core.aggregation.Aggregation.limit;
-import static org.springframework.data.mongodb.core.aggregation.Aggregation.sort;
+import static org.springframework.data.mongodb.core.aggregation.Aggregation.*;
+import static org.springframework.data.mongodb.core.query.Criteria.where;
 
 @Repository
 @Slf4j
@@ -32,6 +32,7 @@ public class EngineRepo implements IEngineRepo {
 		TypedAggregation<EngineETY> q = new TypedAggregation<>(
 			EngineETY.class,
 			sort(DESC, FIELD_LAST_SYNC),
+			match(where(FIELD_AVAILABLE).is(true).and(FIELD_EXPIRED).is(false)),
 			limit(1)
 		);
 

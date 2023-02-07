@@ -20,6 +20,8 @@ public class EngineETY {
     public static final String FIELD_ROOTS = "roots";
     public static final String FIELD_FILES = "files";
     public static final String FIELD_LAST_SYNC = "last_sync";
+    public static final String FIELD_EXPIRED = "expired";
+    public static final String FIELD_AVAILABLE = "available";
 
     @Id
     private String id;
@@ -29,5 +31,9 @@ public class EngineETY {
     private List<ObjectId> files;
     @Field(FIELD_LAST_SYNC)
     private Date lastSync;
+    @Field(FIELD_AVAILABLE)
+    private boolean available;
+    @Field(FIELD_EXPIRED)
+    private boolean expired;
 
 }
