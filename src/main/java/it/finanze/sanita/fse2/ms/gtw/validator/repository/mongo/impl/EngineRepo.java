@@ -32,7 +32,7 @@ public class EngineRepo implements IEngineRepo {
 		TypedAggregation<EngineETY> q = new TypedAggregation<>(
 			EngineETY.class,
 			sort(DESC, FIELD_LAST_SYNC),
-			match(where(FIELD_AVAILABLE).is(true).and(FIELD_EXPIRED).is(false)),
+			match(where(FIELD_AVAILABLE).is(true)),
 			limit(1)
 		);
 
