@@ -154,7 +154,7 @@ public class ValidationSRV implements IValidationSRV {
 
 			if(latest == null) throw new NoRecordFoundException("Nessun engine disponibile");
 
-			Optional<EngineMap> map = latest.getRoots().stream().filter(r -> r.getRoot().equals(templateId)).findFirst();
+			Optional<EngineMap> map = latest.getRoots().stream().filter(r -> r.getRoot().contains(templateId)).findFirst();
 
 			if(!map.isPresent()) {
 				throw new NoRecordFoundException(
