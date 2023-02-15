@@ -16,6 +16,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import it.finanze.sanita.fse2.ms.gtw.validator.base.AbstractTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -180,14 +181,14 @@ class SchemaTest extends AbstractTest {
 
     void addSchemaVersion(){
 
-        List<SchemaETY> schemas = mongoTemplate.findAll(SchemaETY.class);
+        List<SchemaETY> schemas = mongo.findAll(SchemaETY.class);
 
         for(SchemaETY schema : schemas){
             schema.setId(null);
             schema.setTypeIdExtension("1.4");
         }
 
-        mongoTemplate.insertAll(schemas);
+        mongo.insertAll(schemas);
 
     }
 
@@ -201,7 +202,7 @@ class SchemaTest extends AbstractTest {
 
         Update update = new Update();
         update.set("last_update_date", newDate);
-        mongoTemplate.updateFirst(query, update, SchemaETY.class);
+        mongo.updateFirst(query, update, SchemaETY.class);
 
 	}   
 
@@ -209,13 +210,13 @@ class SchemaTest extends AbstractTest {
 	@DisplayName("Update Singleton - No Exception Test")
 	void updateSingletonNoExceptionTest() throws Exception {
 		insertSchematron();
-		SchematronETY schematronETY = mongoTemplate.findOne(Query.query(Criteria.where("template_id_root").is("2.16.840.1.113883.2.9.10.1.9.1")), SchematronETY.class);
+		SchematronETY schematronETY = mongo.findOne(Query.query(Criteria.where("template_id_root").is("2.16.840.1.113883.2.9.10.1.9.1")), SchematronETY.class);
 		SchematronValidatorSingleton.getInstance(true, schematronETY);
 		assertDoesNotThrow(() -> updateSingletonSRV.updateSingletonInstance());
 	}
     
     void deleteSchema() {
-		mongoTemplate.remove(new Query(), SchemaETY.class);
+		mongo.remove(new Query(), SchemaETY.class);
     }
 
     class SingletonThread extends Thread {

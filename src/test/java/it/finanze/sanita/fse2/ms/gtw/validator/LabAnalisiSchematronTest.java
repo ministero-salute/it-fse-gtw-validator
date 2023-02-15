@@ -11,6 +11,8 @@ import java.io.File;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import it.finanze.sanita.fse2.ms.gtw.validator.base.AbstractTest;
+import it.finanze.sanita.fse2.ms.gtw.validator.base.SchematronPath;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,7 +55,7 @@ class LabAnalisiSchematronTest extends AbstractTest {
 		try (ByteArrayInputStream bytes = new ByteArrayInputStream(schematron)) {
 			IReadableResource readableResource = new ReadableResourceInputStream("schematronFSEv17.sch", bytes);
 			SchematronResourceSCH schematronResource = new SchematronResourceSCH(readableResource);
-			Map<String,byte[]> cdasOK = getSchematronFiles("src\\test\\resources\\Files\\schematronFSE\\OK");
+			Map<String,byte[]> cdasOK = getSchematronFiles(SchematronPath.FSE.OK());
 			for(Entry<String, byte[]> cdaOK : cdasOK.entrySet()) {
 				log.debug("File analyzed :" + cdaOK.getKey());
 				SchematronValidationResultDTO resultDTO = CDAHelper.validateXMLViaSchematronFull(schematronResource, cdaOK.getValue());
@@ -72,7 +74,7 @@ class LabAnalisiSchematronTest extends AbstractTest {
 			IReadableResource readableResource = new ReadableResourceInputStream("schematronFSEv17.sch", bytes);
 			SchematronResourceSCH schematronResource = new SchematronResourceSCH(readableResource);
 			
-			Map<String,byte[]> cdasKO = getSchematronFiles("src\\test\\resources\\Files\\schematronFSE\\ERROR");
+			Map<String,byte[]> cdasKO = getSchematronFiles(SchematronPath.FSE.ERROR());
 			for(Entry<String, byte[]> cdaKO : cdasKO.entrySet()) {
 				
 				SchematronValidationResultDTO resultDTO = CDAHelper.validateXMLViaSchematronFull(schematronResource, cdaKO.getValue());

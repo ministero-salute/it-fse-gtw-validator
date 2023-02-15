@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import it.finanze.sanita.fse2.ms.gtw.validator.base.AbstractTest;
 import it.finanze.sanita.fse2.ms.gtw.validator.repository.entity.engine.EngineETY;
 import org.bson.types.Binary;
 import org.junit.jupiter.api.BeforeEach;

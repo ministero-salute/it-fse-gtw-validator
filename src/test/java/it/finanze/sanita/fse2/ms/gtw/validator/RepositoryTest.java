@@ -4,13 +4,13 @@
 package it.finanze.sanita.fse2.ms.gtw.validator;
 
 import com.mongodb.MongoException;
+import it.finanze.sanita.fse2.ms.gtw.validator.base.AbstractTest;
 import it.finanze.sanita.fse2.ms.gtw.validator.config.Constants;
 import it.finanze.sanita.fse2.ms.gtw.validator.exceptions.BusinessException;
 import it.finanze.sanita.fse2.ms.gtw.validator.repository.entity.SchemaETY;
 import it.finanze.sanita.fse2.ms.gtw.validator.repository.entity.SchematronETY;
 import it.finanze.sanita.fse2.ms.gtw.validator.repository.mongo.ISchemaRepo;
 import it.finanze.sanita.fse2.ms.gtw.validator.repository.mongo.ISchematronRepo;
-import it.finanze.sanita.fse2.ms.gtw.validator.repository.mongo.impl.EngineRepo;
 import it.finanze.sanita.fse2.ms.gtw.validator.repository.mongo.impl.TerminologyRepo;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -52,13 +52,7 @@ class RepositoryTest extends AbstractTest {
     private ISchematronRepo schematronRepository; 
 
     @Autowired
-    private TerminologyRepo terminologyRepo; 
-     
-    @Autowired
-    private EngineRepo transformRepo;
-    
-    @Autowired
-	protected MongoTemplate mongoTemplate;
+    private TerminologyRepo terminologyRepo;
     
     @SpyBean
     private MongoTemplate mongo;
@@ -92,7 +86,7 @@ class RepositoryTest extends AbstractTest {
     	ety.setTypeIdExtension(TEST_TYPE_ID_EXTENSION_DELETED); 
     	ety.setDeleted(true); 
     	
-    	mongoTemplate.insert(ety, Constants.Profile.TEST_PREFIX + "schema"); 
+    	mongo.insert(ety, Constants.Profile.TEST_PREFIX + "schema");
     	
     	
         SchemaETY res = repository.findFatherXsd(TEST_TYPE_ID_EXTENSION_DELETED);
@@ -166,7 +160,7 @@ class RepositoryTest extends AbstractTest {
     	ety.setVersion(TEST_TYPE_ID_EXTENSION_DELETED); 
     	ety.setDeleted(true); 
     	
-    	mongoTemplate.insert(ety, Constants.Profile.TEST_PREFIX + "schematron"); 
+    	mongo.insert(ety, Constants.Profile.TEST_PREFIX + "schematron");
     	
     	
     	SchematronETY res = schematronRepository.findBySystemAndVersion(TEST_TEMPLATE_ID_ROOT_DELETED, TEST_TYPE_ID_EXTENSION_DELETED); 

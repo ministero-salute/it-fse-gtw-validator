@@ -11,6 +11,8 @@ import java.io.File;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import it.finanze.sanita.fse2.ms.gtw.validator.base.AbstractTest;
+import it.finanze.sanita.fse2.ms.gtw.validator.base.SchematronPath;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,7 +57,7 @@ class PssSchematronTest extends AbstractTest {
 		try (ByteArrayInputStream bytes = new ByteArrayInputStream(schematron)) {
 			IReadableResource readableResource = new ReadableResourceInputStream("schematron_PSS_v2.7.sch", bytes);
 			SchematronResourceSCH schematronResource = new SchematronResourceSCH(readableResource);
-			Map<String,byte[]> cdasOK = getSchematronFiles("src\\test\\resources\\Files\\schematronPSS\\OK");
+			Map<String,byte[]> cdasOK = getSchematronFiles(SchematronPath.PSS.OK());
 			for(Entry<String, byte[]> cdaOK : cdasOK.entrySet()) {
 				log.info("File analyzed :" + cdaOK.getKey());
 				SchematronValidationResultDTO resultDTO = CDAHelper.validateXMLViaSchematronFull(schematronResource, cdaOK.getValue());
