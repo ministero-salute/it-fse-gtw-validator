@@ -24,6 +24,7 @@ import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
@@ -60,7 +61,10 @@ class SchemaTest extends AbstractTest {
 	IUpdateSingletonSRV updateSingletonSRV; 
 
     @Autowired
-    MockMvc mvc; 
+    MockMvc mvc;
+
+	@Autowired
+	MongoTemplate mongo;
 	
 
     @BeforeEach

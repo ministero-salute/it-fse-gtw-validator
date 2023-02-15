@@ -14,8 +14,6 @@ public enum SchematronPath {
     VPS(Paths.get(BASE_PATH.toString(), "schematronVPS")),
     VAC(Paths.get(BASE_PATH.toString(), "schematronVACC"));
 
-
-
     private final Path path;
 
     SchematronPath(Path path) {

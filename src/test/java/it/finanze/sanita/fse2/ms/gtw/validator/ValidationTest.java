@@ -3,27 +3,28 @@
  */
 package it.finanze.sanita.fse2.ms.gtw.validator;
 
-import static it.finanze.sanita.fse2.ms.gtw.validator.utility.FileUtility.getFileFromInternalResources;
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.when;
-
-import java.io.File;
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
+import com.helger.schematron.ISchematronResource;
 import it.finanze.sanita.fse2.ms.gtw.validator.base.AbstractTest;
+import it.finanze.sanita.fse2.ms.gtw.validator.cda.CDAHelper;
+import it.finanze.sanita.fse2.ms.gtw.validator.config.Constants;
+import it.finanze.sanita.fse2.ms.gtw.validator.dto.CDAValidationDTO;
+import it.finanze.sanita.fse2.ms.gtw.validator.dto.ExtractedInfoDTO;
+import it.finanze.sanita.fse2.ms.gtw.validator.dto.SchematronValidationResultDTO;
+import it.finanze.sanita.fse2.ms.gtw.validator.dto.VocabularyResultDTO;
+import it.finanze.sanita.fse2.ms.gtw.validator.enums.CDAValidationStatusEnum;
+import it.finanze.sanita.fse2.ms.gtw.validator.exceptions.BusinessException;
+import it.finanze.sanita.fse2.ms.gtw.validator.repository.entity.DictionaryETY;
+import it.finanze.sanita.fse2.ms.gtw.validator.repository.entity.SchematronETY;
 import it.finanze.sanita.fse2.ms.gtw.validator.repository.entity.engine.EngineETY;
+import it.finanze.sanita.fse2.ms.gtw.validator.repository.entity.engine.sub.EngineMap;
+import it.finanze.sanita.fse2.ms.gtw.validator.repository.mongo.IDictionaryRepo;
+import it.finanze.sanita.fse2.ms.gtw.validator.repository.mongo.IEngineRepo;
+import it.finanze.sanita.fse2.ms.gtw.validator.repository.mongo.impl.SchematronRepo;
+import it.finanze.sanita.fse2.ms.gtw.validator.service.facade.IValidationFacadeSRV;
+import it.finanze.sanita.fse2.ms.gtw.validator.service.impl.TerminologySRV;
+import lombok.extern.slf4j.Slf4j;
 import org.bson.types.Binary;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.mockito.Mock;
@@ -33,26 +34,16 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.test.context.ActiveProfiles;
 
-import com.helger.schematron.ISchematronResource;
+import java.io.File;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
-import it.finanze.sanita.fse2.ms.gtw.validator.cda.CDAHelper;
-import it.finanze.sanita.fse2.ms.gtw.validator.config.Constants;
-import it.finanze.sanita.fse2.ms.gtw.validator.dto.CDAValidationDTO;
-import it.finanze.sanita.fse2.ms.gtw.validator.dto.CodeSystemSnapshotDTO;
-import it.finanze.sanita.fse2.ms.gtw.validator.dto.CodeSystemVersionDTO;
-import it.finanze.sanita.fse2.ms.gtw.validator.dto.ExtractedInfoDTO;
-import it.finanze.sanita.fse2.ms.gtw.validator.dto.SchematronValidationResultDTO;
-import it.finanze.sanita.fse2.ms.gtw.validator.dto.VocabularyResultDTO;
-import it.finanze.sanita.fse2.ms.gtw.validator.enums.CDAValidationStatusEnum;
-import it.finanze.sanita.fse2.ms.gtw.validator.exceptions.BusinessException;
-import it.finanze.sanita.fse2.ms.gtw.validator.repository.entity.DictionaryETY;
-import it.finanze.sanita.fse2.ms.gtw.validator.repository.entity.SchematronETY;
-import it.finanze.sanita.fse2.ms.gtw.validator.repository.mongo.IDictionaryRepo;
-import it.finanze.sanita.fse2.ms.gtw.validator.repository.mongo.IEngineRepo;
-import it.finanze.sanita.fse2.ms.gtw.validator.repository.mongo.impl.SchematronRepo;
-import it.finanze.sanita.fse2.ms.gtw.validator.service.facade.IValidationFacadeSRV;
-import it.finanze.sanita.fse2.ms.gtw.validator.service.impl.TerminologySRV;
-import lombok.extern.slf4j.Slf4j;
+import static it.finanze.sanita.fse2.ms.gtw.validator.utility.FileUtility.getFileFromInternalResources;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.when;
 
 @Slf4j
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -73,11 +64,7 @@ class ValidationTest extends AbstractTest {
 	private IEngineRepo structureMapRepo;
 	
 	@MockBean
-	private SchematronRepo schematronRepo; 
-	
-	
-	@MockBean
-	private CDAHelper cdaHelper; 
+	private SchematronRepo schematronRepo;
 	
 	@Mock
 	private ISchematronResource aResSCH; 
@@ -91,7 +78,6 @@ class ValidationTest extends AbstractTest {
 	}
 
 	@Test
-	@Disabled
 	void shouldReturnValidWhenCDAIsValid() {
 
 		final String cda = new String(getFileFromInternalResources("Files" + File.separator + "cda.xml"), StandardCharsets.UTF_8);
@@ -112,7 +98,6 @@ class ValidationTest extends AbstractTest {
 	}
 
 	@Test
-	@Disabled
 	void shouldReturnNotValidWhenCDAIsInvalid() {
 
 		final String cda = "<realmCode code=\"1\"/>";
@@ -215,41 +200,32 @@ class ValidationTest extends AbstractTest {
         final String cda = new String(getFileFromInternalResources(
                 "Files/cda_ok/Esempio CDA_002.xml"
             ), StandardCharsets.UTF_8);
-            String version = "1.3"; 
-            
+
             DictionaryETY ety = new DictionaryETY(); 
             ety.setSystem("2.16.840.1.113883.6.1");
             ety.setVersion("1.3");
             ety.setReleaseDate(new Date()); 
             
-            List<DictionaryETY> dictionaries = new ArrayList<DictionaryETY>(); 
-            dictionaries.add(ety); 
-            
-            
-            List<CodeSystemVersionDTO> codeSystemDtoList = new ArrayList<CodeSystemVersionDTO>(); 
-            CodeSystemVersionDTO cs = new CodeSystemVersionDTO("2.16.840.1.113883.6.1", "1.3"); 
-            codeSystemDtoList.add(cs); 
+            List<DictionaryETY> dictionaries = new ArrayList<>();
+            dictionaries.add(ety);
 
-            
-            CodeSystemSnapshotDTO snapshotDto = new CodeSystemSnapshotDTO(dictionaries); 
-            
-            //when(terminologySRV.retrieveManagedCodeSystems()).thenReturn(snapshotDto); 
-            when(codeSystemRepo.getCodeSystems()).thenReturn(dictionaries); 
+            when(codeSystemRepo.getCodeSystems()).thenReturn(dictionaries);
             
             assertDoesNotThrow(() -> validationSRV.validateVocabularies(cda, "wid")); 
             assertDoesNotThrow(() -> CDAHelper.extractTerminology(cda)); 
             
             // --------- Test - Throws Exception --------- 
-            assertThrows(Exception.class, () -> validationSRV.validateVocabularies(null, "wid")); 
-
+            assertThrows(Exception.class, () -> validationSRV.validateVocabularies(null, "wid"));
             
+            // --------- Test - Validation SRV ---------
+			EngineMap map = new EngineMap();
+			map.setOid("TEST-OID");
+			map.setRoot("2.16.840.1.113883.6.1");
+			map.setVersion("0.1");
+            EngineETY engine = new EngineETY();
+            engine.setRoots(map);
             
-            
-            // --------- Test - Validation SRV --------- 
-            EngineETY transformEty = new EngineETY();
-            transformEty.setId("2.16.840.1.113883.6.1");
-            
-            when(structureMapRepo.getLatestEngine()).thenReturn(transformEty);
+            when(structureMapRepo.getLatestEngine()).thenReturn(engine);
             assertDoesNotThrow(() -> validationSRV.getStructureObjectID("2.16.840.1.113883.6.1")); 
 
             

@@ -31,7 +31,7 @@ public abstract class AbstractTest {
     @Autowired
     protected ServletWebServerApplicationContext context;
     @Autowired
-	protected MongoTemplate mongo;
+	private MongoTemplate mongo;
 	@Autowired
 	protected ProfileUtility profiles;
 

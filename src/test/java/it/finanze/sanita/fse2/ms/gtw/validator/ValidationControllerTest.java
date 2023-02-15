@@ -3,21 +3,20 @@
  */
 package it.finanze.sanita.fse2.ms.gtw.validator;
 
-import static it.finanze.sanita.fse2.ms.gtw.validator.utility.FileUtility.getFileFromInternalResources;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
-import java.io.File;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
+import com.fasterxml.jackson.databind.ObjectMapper;
 import it.finanze.sanita.fse2.ms.gtw.validator.base.AbstractTest;
+import it.finanze.sanita.fse2.ms.gtw.validator.cda.ValidationResult;
+import it.finanze.sanita.fse2.ms.gtw.validator.dto.CDAValidationDTO;
+import it.finanze.sanita.fse2.ms.gtw.validator.dto.ExtractedInfoDTO;
+import it.finanze.sanita.fse2.ms.gtw.validator.dto.SchematronValidationResultDTO;
+import it.finanze.sanita.fse2.ms.gtw.validator.dto.VocabularyResultDTO;
+import it.finanze.sanita.fse2.ms.gtw.validator.dto.request.ValidationRequestDTO;
+import it.finanze.sanita.fse2.ms.gtw.validator.enums.CDASeverityViolationEnum;
+import it.finanze.sanita.fse2.ms.gtw.validator.enums.CDAValidationStatusEnum;
+import it.finanze.sanita.fse2.ms.gtw.validator.exceptions.NoRecordFoundException;
+import it.finanze.sanita.fse2.ms.gtw.validator.repository.entity.SchemaETY;
+import it.finanze.sanita.fse2.ms.gtw.validator.service.impl.ValidationSRV;
+import org.apache.commons.lang3.tuple.Pair;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -29,33 +28,31 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.http.MediaType;
-import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import java.io.File;
+import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
-import it.finanze.sanita.fse2.ms.gtw.validator.cda.ValidationResult;
-import it.finanze.sanita.fse2.ms.gtw.validator.config.Constants;
-import it.finanze.sanita.fse2.ms.gtw.validator.dto.CDAValidationDTO;
-import it.finanze.sanita.fse2.ms.gtw.validator.dto.ExtractedInfoDTO;
-import it.finanze.sanita.fse2.ms.gtw.validator.dto.SchematronValidationResultDTO;
-import it.finanze.sanita.fse2.ms.gtw.validator.dto.VocabularyResultDTO;
-import it.finanze.sanita.fse2.ms.gtw.validator.dto.request.ValidationRequestDTO;
-import it.finanze.sanita.fse2.ms.gtw.validator.enums.CDASeverityViolationEnum;
-import it.finanze.sanita.fse2.ms.gtw.validator.enums.CDAValidationStatusEnum;
-import it.finanze.sanita.fse2.ms.gtw.validator.exceptions.NoRecordFoundException;
-import it.finanze.sanita.fse2.ms.gtw.validator.repository.entity.SchemaETY;
-import it.finanze.sanita.fse2.ms.gtw.validator.service.impl.ValidationSRV; 
+import static it.finanze.sanita.fse2.ms.gtw.validator.base.MockRequests.validate;
+import static it.finanze.sanita.fse2.ms.gtw.validator.config.Constants.Profile.TEST;
+import static it.finanze.sanita.fse2.ms.gtw.validator.utility.FileUtility.getFileFromInternalResources;
+import static org.junit.jupiter.api.TestInstance.Lifecycle.PER_CLASS;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.when;
+import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 
-
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
-@ActiveProfiles(Constants.Profile.TEST)
-@DirtiesContext
+@SpringBootTest(webEnvironment = RANDOM_PORT)
+@TestInstance(PER_CLASS)
+@ActiveProfiles(TEST)
 @AutoConfigureMockMvc
 class ValidationControllerTest extends AbstractTest {
 
@@ -65,27 +62,15 @@ class ValidationControllerTest extends AbstractTest {
         insertSchematron();
         insertSchema();
     }
-
-    public static final Path TEST_FILE = Paths.get(
-        "Files",
-        "cda1.xml"
-    );
-
-    public static final Path TEST_FILE_ERR = Paths.get(
-        "Files",
-        "cda_ok",
-        "Esempio CDA_002.xml"
-    ); 
-    
     
     @Autowired
-    MockMvc mvc; 
+    private MockMvc mvc;
     
     @MockBean
-    private ValidationSRV validationSrv; 
-    
+    private ValidationSRV service;
+
     @SpyBean
-    private MongoTemplate mongoTemplate; 
+    private MongoTemplate mongo;
     
     
     @Test
@@ -96,32 +81,26 @@ class ValidationControllerTest extends AbstractTest {
 				+ File.separator + "OK" + File.separator + "CDA2_Lettera_Dimissione_Ospedaliera_v2.2.xml"), StandardCharsets.UTF_8);
 		
     	CDAValidationDTO validation = new CDAValidationDTO(CDAValidationStatusEnum.VALID); 
-    	ValidationRequestDTO validationRequest = new ValidationRequestDTO(); 
+    	ValidationRequestDTO req = new ValidationRequestDTO();
     	VocabularyResultDTO vocabularyResultDto = new VocabularyResultDTO(); 
     	vocabularyResultDto.setValid(true); 
-    	validationRequest.setCda(cda); 
-    	validationRequest.setWorkflowInstanceId("wid");
+    	req.setCda(cda);
+    	req.setWorkflowInstanceId("wid");
     	SchematronValidationResultDTO schematronValidationResult = new SchematronValidationResultDTO(true, true, null, null); 
-    	ObjectMapper objectMapper = new ObjectMapper(); 
+
     	
-    	
-    	when(validationSrv.validateSyntactic(anyString(), anyString()))
+    	when(service.validateSyntactic(anyString(), anyString()))
     		.thenReturn(validation); 
     	
-    	when(validationSrv.validateSemantic(anyString(), any(ExtractedInfoDTO.class)))
+    	when(service.validateSemantic(anyString(), any(ExtractedInfoDTO.class)))
     		.thenReturn(schematronValidationResult); 
     	
-    	when(validationSrv.validateVocabularies(anyString(),anyString()))
-			.thenReturn(vocabularyResultDto); 
-    	
-	    
-    	MockHttpServletRequestBuilder builder =
-	            MockMvcRequestBuilders.post("http://localhost:8012/v1/validate").content(objectMapper.writeValueAsString(validationRequest)); 
-	    
-	    mvc.perform(builder
-	            .contentType(MediaType.APPLICATION_JSON_VALUE))
-	            .andExpect(status().is2xxSuccessful()); 
-    	
+    	when(service.validateVocabularies(anyString(),anyString()))
+			.thenReturn(vocabularyResultDto);
+
+		when(service.getStructureObjectID(anyString())).thenReturn(Pair.of("test", "test"));
+
+	    mvc.perform(validate(req)).andExpect(status().is2xxSuccessful());
     	
     } 
     
@@ -147,13 +126,13 @@ class ValidationControllerTest extends AbstractTest {
     	ObjectMapper objectMapper = new ObjectMapper(); 
     	
     	
-    	when(validationSrv.validateSyntactic(anyString(), anyString()))
+    	when(service.validateSyntactic(anyString(), anyString()))
     		.thenReturn(validation); 
     	
-    	when(validationSrv.validateSemantic(anyString(), any(ExtractedInfoDTO.class)))
+    	when(service.validateSemantic(anyString(), any(ExtractedInfoDTO.class)))
     		.thenReturn(schematronValidationResult); 
     	
-    	when(validationSrv.validateVocabularies(anyString(),anyString()))
+    	when(service.validateVocabularies(anyString(),anyString()))
 			.thenReturn(vocabularyResultDto); 
     	
 	    
@@ -189,13 +168,13 @@ class ValidationControllerTest extends AbstractTest {
     	ObjectMapper objectMapper = new ObjectMapper(); 
     	
     	
-    	when(validationSrv.validateSyntactic(anyString(), anyString()))
+    	when(service.validateSyntactic(anyString(), anyString()))
     		.thenReturn(validation); 
     	
-    	when(validationSrv.validateSemantic(anyString(), any(ExtractedInfoDTO.class)))
+    	when(service.validateSemantic(anyString(), any(ExtractedInfoDTO.class)))
     		.thenThrow(new NoRecordFoundException("Error")); 
     	
-    	when(validationSrv.validateVocabularies(anyString(),anyString()))
+    	when(service.validateVocabularies(anyString(),anyString()))
 			.thenReturn(vocabularyResultDto); 
     	
 	    
@@ -212,14 +191,14 @@ class ValidationControllerTest extends AbstractTest {
     
     void addSchemaVersion(){
 
-        List<SchemaETY> schemas = mongoTemplate.findAll(SchemaETY.class);
+        List<SchemaETY> schemas = mongo.findAll(SchemaETY.class);
 
         for(SchemaETY schema : schemas){
             schema.setId(null);
             schema.setTypeIdExtension("1.4");
         }
 
-        mongoTemplate.insertAll(schemas);
+        mongo.insertAll(schemas);
 
     } 
     

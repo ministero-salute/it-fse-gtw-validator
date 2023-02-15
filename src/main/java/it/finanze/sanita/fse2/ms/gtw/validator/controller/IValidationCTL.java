@@ -19,14 +19,15 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import it.finanze.sanita.fse2.ms.gtw.validator.dto.request.ValidationRequestDTO;
 import it.finanze.sanita.fse2.ms.gtw.validator.dto.response.ValidationResponseDTO;
 
+import static it.finanze.sanita.fse2.ms.gtw.validator.utility.RouteUtility.API_VALIDATE_FULL;
+
 /**
  *	Controller validation.
  */
-@RequestMapping(path = "/v1")
 @Tag(name = "Servizio validazione documenti")
 public interface IValidationCTL {
 
-	@PostMapping("/validate")
+	@PostMapping(API_VALIDATE_FULL)
 	@Operation(summary = "Validazione documenti", description = "Valida il CDA fornito in input.")
 	@ApiResponse(content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = ValidationResponseDTO.class)))
 	@ApiResponses(value = { @ApiResponse(responseCode = "200", description = "Validazione eseguita", content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE)),

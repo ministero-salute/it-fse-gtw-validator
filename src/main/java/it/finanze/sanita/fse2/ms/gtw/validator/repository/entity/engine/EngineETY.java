@@ -8,6 +8,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -33,4 +34,7 @@ public class EngineETY {
     @Field(FIELD_AVAILABLE)
     private boolean available;
 
+    public void setRoots(EngineMap ...roots) {
+        this.roots = Arrays.asList(roots);
+    }
 }

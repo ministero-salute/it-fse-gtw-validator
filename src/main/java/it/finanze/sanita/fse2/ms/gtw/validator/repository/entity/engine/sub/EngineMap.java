@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.mongodb.core.mapping.Field;
 
+import java.util.Arrays;
 import java.util.List;
 
 @Data
@@ -30,4 +31,7 @@ public class EngineMap {
     @Field(FIELD_VERSION)
     private String version;
 
+    public void setRoot(String ...roots) {
+        this.root = Arrays.asList(roots);
+    }
 }
