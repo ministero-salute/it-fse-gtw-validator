@@ -3,7 +3,6 @@
  */
 package it.finanze.sanita.fse2.ms.gtw.validator;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import it.finanze.sanita.fse2.ms.gtw.validator.base.AbstractTest;
 import it.finanze.sanita.fse2.ms.gtw.validator.cda.ValidationResult;
 import it.finanze.sanita.fse2.ms.gtw.validator.dto.CDAValidationDTO;
@@ -14,7 +13,6 @@ import it.finanze.sanita.fse2.ms.gtw.validator.dto.request.ValidationRequestDTO;
 import it.finanze.sanita.fse2.ms.gtw.validator.enums.CDASeverityViolationEnum;
 import it.finanze.sanita.fse2.ms.gtw.validator.enums.CDAValidationStatusEnum;
 import it.finanze.sanita.fse2.ms.gtw.validator.exceptions.NoRecordFoundException;
-import it.finanze.sanita.fse2.ms.gtw.validator.repository.entity.SchemaETY;
 import it.finanze.sanita.fse2.ms.gtw.validator.service.impl.ValidationSRV;
 import org.apache.commons.lang3.tuple.Pair;
 import org.junit.jupiter.api.BeforeEach;
@@ -25,8 +23,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.boot.test.mock.mockito.SpyBean;
-import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
@@ -68,10 +64,6 @@ class ValidationControllerTest extends AbstractTest {
     
     @MockBean
     private ValidationSRV service;
-
-    @SpyBean
-    private MongoTemplate mongo;
-    
     
     @Test
     @DisplayName("Validation Controller - Test Success")
@@ -112,19 +104,18 @@ class ValidationControllerTest extends AbstractTest {
 				+ File.separator + "OK" + File.separator + "CDA2_Lettera_Dimissione_Ospedaliera_v2.2.xml"), StandardCharsets.UTF_8);
 		
     	CDAValidationDTO validation = new CDAValidationDTO(CDAValidationStatusEnum.NOT_VALID); 
-    	Map<CDASeverityViolationEnum, List<String>> violations = new HashMap<CDASeverityViolationEnum, List<String>>(); 
+    	Map<CDASeverityViolationEnum, List<String>> violations = new HashMap<>();
     	ValidationResult vl = new ValidationResult(); 
     	vl.addWarning("testWarning"); 
     	violations.put(CDASeverityViolationEnum.WARN, vl.getWarnings()); 
     	validation.setViolations(violations); 
     	
-    	ValidationRequestDTO validationRequest = new ValidationRequestDTO(); 
+    	ValidationRequestDTO req = new ValidationRequestDTO();
     	VocabularyResultDTO vocabularyResultDto = new VocabularyResultDTO(); 
     	vocabularyResultDto.setValid(true); 
-    	validationRequest.setCda(cda); 
+    	req.setCda(cda);
     	SchematronValidationResultDTO schematronValidationResult = new SchematronValidationResultDTO(true, true, null, null); 
-    	ObjectMapper objectMapper = new ObjectMapper(); 
-    	
+
     	
     	when(service.validateSyntactic(anyString(), anyString()))
     		.thenReturn(validation); 
@@ -134,15 +125,8 @@ class ValidationControllerTest extends AbstractTest {
     	
     	when(service.validateVocabularies(anyString(),anyString()))
 			.thenReturn(vocabularyResultDto); 
-    	
-	    
-    	MockHttpServletRequestBuilder builder =
-	            MockMvcRequestBuilders.post("http://localhost:8012/v1/validate").content(objectMapper.writeValueAsString(validationRequest)); 
-	    
-	    mvc.perform(builder
-	            .contentType(MediaType.APPLICATION_JSON_VALUE))
-	            .andExpect(status().is2xxSuccessful()); 
-    	  	
+
+	    mvc.perform(validate(req)).andExpect(status().is2xxSuccessful());
     } 
     
     
@@ -154,19 +138,18 @@ class ValidationControllerTest extends AbstractTest {
 				+ File.separator + "OK" + File.separator + "CDA2_Lettera_Dimissione_Ospedaliera_v2.2.xml"), StandardCharsets.UTF_8);
 		
     	CDAValidationDTO validation = new CDAValidationDTO(CDAValidationStatusEnum.NOT_VALID); 
-    	Map<CDASeverityViolationEnum, List<String>> violations = new HashMap<CDASeverityViolationEnum, List<String>>(); 
+    	Map<CDASeverityViolationEnum, List<String>> violations = new HashMap<>();
     	ValidationResult vl = new ValidationResult(); 
     	vl.addWarning("testWarning"); 
     	violations.put(CDASeverityViolationEnum.WARN, vl.getWarnings()); 
     	validation.setViolations(violations); 
     	
-    	ValidationRequestDTO validationRequest = new ValidationRequestDTO(); 
+    	ValidationRequestDTO req = new ValidationRequestDTO();
     	VocabularyResultDTO vocabularyResultDto = new VocabularyResultDTO(); 
     	vocabularyResultDto.setValid(true); 
-    	validationRequest.setCda(cda); 
+    	req.setCda(cda);
     	new SchematronValidationResultDTO(true, true, null, null); 
-    	ObjectMapper objectMapper = new ObjectMapper(); 
-    	
+
     	
     	when(service.validateSyntactic(anyString(), anyString()))
     		.thenReturn(validation); 
@@ -175,33 +158,10 @@ class ValidationControllerTest extends AbstractTest {
     		.thenThrow(new NoRecordFoundException("Error")); 
     	
     	when(service.validateVocabularies(anyString(),anyString()))
-			.thenReturn(vocabularyResultDto); 
-    	
+			.thenReturn(vocabularyResultDto);
 	    
-    	MockHttpServletRequestBuilder builder =
-	            MockMvcRequestBuilders.post("http://localhost:8012/v1/validate").content(objectMapper.writeValueAsString(validationRequest)); 
-	    
-	    mvc.perform(builder
-	            .contentType(MediaType.APPLICATION_JSON_VALUE))
-	            .andExpect(status().is2xxSuccessful()); 
-    	
-    	
-    } 
-    
-    
-    void addSchemaVersion(){
-
-        List<SchemaETY> schemas = mongo.findAll(SchemaETY.class);
-
-        for(SchemaETY schema : schemas){
-            schema.setId(null);
-            schema.setTypeIdExtension("1.4");
-        }
-
-        mongo.insertAll(schemas);
-
-    } 
-    
+	    mvc.perform(validate(req)).andExpect(status().is2xxSuccessful());
+    }
     
     @Test
     @DisplayName("Inspect Singletons Test")

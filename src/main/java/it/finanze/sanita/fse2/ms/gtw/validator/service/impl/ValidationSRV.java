@@ -148,25 +148,25 @@ public class ValidationSRV implements IValidationSRV {
 	public Pair<String, String> getStructureObjectID(final String templateId){
 
 		Pair<String, String> p;
+		EngineETY latest;
 
 		try{
-			EngineETY latest = engines.getLatestEngine();
-
-			if(latest == null) throw new NoRecordFoundException("Nessun engine disponibile");
-
-			Optional<EngineMap> map = latest.getRoots().stream().filter(r -> r.getRoot().contains(templateId)).findFirst();
-
-			if(!map.isPresent()) {
-				throw new NoRecordFoundException(
-					String.format("Nessuna mappa con id %s è stata trovata nell'engine %s", templateId, latest.getId())
-				);
-			}
-
-			p = Pair.of(latest.getId(), map.get().getOid());
-
+			 latest = engines.getLatestEngine();
 		} catch(Exception ex){
 			throw new BusinessException("Impossibile recuperare la structure-map nell'engine associato", ex);
 		}
+
+		if(latest == null) throw new NoRecordFoundException("Nessun engine disponibile");
+
+		Optional<EngineMap> map = latest.getRoots().stream().filter(r -> r.getRoot().contains(templateId)).findFirst();
+
+		if(!map.isPresent()) {
+			throw new NoRecordFoundException(
+				String.format("Nessuna mappa con id %s è stata trovata nell'engine %s", templateId, latest.getId())
+			);
+		}
+
+		p = Pair.of(latest.getId(), map.get().getOid());
 
 		return p;
 	}

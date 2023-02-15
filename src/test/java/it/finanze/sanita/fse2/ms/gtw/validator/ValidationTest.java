@@ -4,6 +4,7 @@
 package it.finanze.sanita.fse2.ms.gtw.validator;
 
 import com.helger.schematron.ISchematronResource;
+import com.mongodb.MongoException;
 import it.finanze.sanita.fse2.ms.gtw.validator.base.AbstractTest;
 import it.finanze.sanita.fse2.ms.gtw.validator.cda.CDAHelper;
 import it.finanze.sanita.fse2.ms.gtw.validator.config.Constants;
@@ -13,6 +14,7 @@ import it.finanze.sanita.fse2.ms.gtw.validator.dto.SchematronValidationResultDTO
 import it.finanze.sanita.fse2.ms.gtw.validator.dto.VocabularyResultDTO;
 import it.finanze.sanita.fse2.ms.gtw.validator.enums.CDAValidationStatusEnum;
 import it.finanze.sanita.fse2.ms.gtw.validator.exceptions.BusinessException;
+import it.finanze.sanita.fse2.ms.gtw.validator.exceptions.NoRecordFoundException;
 import it.finanze.sanita.fse2.ms.gtw.validator.repository.entity.DictionaryETY;
 import it.finanze.sanita.fse2.ms.gtw.validator.repository.entity.SchematronETY;
 import it.finanze.sanita.fse2.ms.gtw.validator.repository.entity.engine.EngineETY;
@@ -23,6 +25,7 @@ import it.finanze.sanita.fse2.ms.gtw.validator.repository.mongo.impl.SchematronR
 import it.finanze.sanita.fse2.ms.gtw.validator.service.facade.IValidationFacadeSRV;
 import it.finanze.sanita.fse2.ms.gtw.validator.service.impl.TerminologySRV;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.tuple.Pair;
 import org.bson.types.Binary;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -52,7 +55,7 @@ import static org.mockito.Mockito.when;
 class ValidationTest extends AbstractTest {
 
 	@Autowired
-	IValidationFacadeSRV validationSRV;
+	IValidationFacadeSRV service;
 	
 	@SpyBean
 	TerminologySRV terminologySRV; 
@@ -61,7 +64,7 @@ class ValidationTest extends AbstractTest {
 	private IDictionaryRepo codeSystemRepo; 
 	
 	@SpyBean
-	private IEngineRepo structureMapRepo;
+	private IEngineRepo engines;
 	
 	@MockBean
 	private SchematronRepo schematronRepo;
@@ -84,16 +87,16 @@ class ValidationTest extends AbstractTest {
 		String version = "1.3";
 		
 		log.info("Testing with version {}", version);
-		CDAValidationDTO firstResult = validationSRV.validateSyntactic(cda, version);
+		CDAValidationDTO firstResult = service.validateSyntactic(cda, version);
 		assertEquals(CDAValidationStatusEnum.VALID, firstResult.getStatus(), "The validation should have been completed correctly");
 		
-		CDAValidationDTO secondResult = validationSRV.validateSyntactic(cda, version);
+		CDAValidationDTO secondResult = service.validateSyntactic(cda, version);
 		assertEquals(firstResult.getStatus(), secondResult.getStatus(), "Repeating validation should have not changed the result");
 
 		
 		log.info("Testing with version {}", version);
 		
-		CDAValidationDTO out = validationSRV.validateSyntactic(cda, "2.0.0");
+		CDAValidationDTO out = service.validateSyntactic(cda, "2.0.0");
 		assertNotNull(out.getMessage()); 
 	}
 
@@ -104,11 +107,11 @@ class ValidationTest extends AbstractTest {
 		String version = "1.3";
 		
 		log.info("Testing with version {}", version);
-		CDAValidationDTO firstResult = validationSRV.validateSyntactic(cda, version);
+		CDAValidationDTO firstResult = service.validateSyntactic(cda, version);
 		assertEquals(CDAValidationStatusEnum.NOT_VALID, firstResult.getStatus(), "The validation should have been completed correctly and result as Invalid");
 		assertNull(firstResult.getMessage());
 	
-		CDAValidationDTO secondResult = validationSRV.validateSyntactic(cda, version);
+		CDAValidationDTO secondResult = service.validateSyntactic(cda, version);
 		assertEquals(CDAValidationStatusEnum.NOT_VALID, secondResult.getStatus(), "The validation should have been completed correctly and result as Invalid");
 		assertNull(firstResult.getMessage());
 	}
@@ -119,7 +122,7 @@ class ValidationTest extends AbstractTest {
 		final String cda = new String(getFileFromInternalResources("Files" + File.separator + "cda.xml"), StandardCharsets.UTF_8);
 		final String version = "3.0.0";
 		
-		CDAValidationDTO res = validationSRV.validateSyntactic(cda, version);
+		CDAValidationDTO res = service.validateSyntactic(cda, version);
 		assertEquals(String.format("Schema with version %s not found on database.", version), res.getMessage());
 	}
  
@@ -130,10 +133,10 @@ class ValidationTest extends AbstractTest {
 			"Files/cda_ok/Esempio_CDA_003.xml"
 		), StandardCharsets.UTF_8);
 
-		VocabularyResultDTO res = validationSRV.validateVocabularies(cda, "wid");
+		VocabularyResultDTO res = service.validateVocabularies(cda, "wid");
 		assertFalse(res.getValid(), "The vocabulary validation should be falsy");
 
-		res = validationSRV.validateVocabularies("", "");
+		res = service.validateVocabularies("", "");
 		assertFalse(res.getValid(), "Repeating vocabulary validation should be falsy");
 	}
 	
@@ -154,7 +157,7 @@ class ValidationTest extends AbstractTest {
 		when(schematronRepo.findByTemplateIdRoot(anyString())).thenReturn(ety); 
 		when(aResSCH.isValidSchematron()).thenReturn(true); 
 		
-		assertDoesNotThrow(() -> validationSRV.validateSemantic(cda, infoDTO)); 
+		assertDoesNotThrow(() -> service.validateSemantic(cda, infoDTO));
 		
 	}
 	@Test
@@ -173,10 +176,10 @@ class ValidationTest extends AbstractTest {
 		
 		when(schematronRepo.findByTemplateIdRoot(anyString())).thenReturn(ety); 
 		
-		assertDoesNotThrow(() -> validationSRV.validateSemantic(cda, infoDTO)); 
+		assertDoesNotThrow(() -> service.validateSemantic(cda, infoDTO));
 		
 		// Now Singleton is valorized  
-		assertDoesNotThrow(() -> validationSRV.validateSemantic(cda, infoDTO)); 
+		assertDoesNotThrow(() -> service.validateSemantic(cda, infoDTO));
 		
 	} 
 	
@@ -190,7 +193,7 @@ class ValidationTest extends AbstractTest {
 		
 		log.info("Testing with version {}", version);
 		
-		SchematronValidationResultDTO res = validationSRV.validateSemantic(cda, infoDTO);
+		SchematronValidationResultDTO res = service.validateSemantic(cda, infoDTO);
 		assertEquals("Schematron with template id root 2.16.840.1.113883.2.9.2.80.3.1.10.4 not found on database.", res.getMessage());
 		assertEquals(false, res.getValidSchematron());
 	} 
@@ -211,11 +214,11 @@ class ValidationTest extends AbstractTest {
 
             when(codeSystemRepo.getCodeSystems()).thenReturn(dictionaries);
             
-            assertDoesNotThrow(() -> validationSRV.validateVocabularies(cda, "wid")); 
+            assertDoesNotThrow(() -> service.validateVocabularies(cda, "wid"));
             assertDoesNotThrow(() -> CDAHelper.extractTerminology(cda)); 
             
             // --------- Test - Throws Exception --------- 
-            assertThrows(Exception.class, () -> validationSRV.validateVocabularies(null, "wid"));
+            assertThrows(Exception.class, () -> service.validateVocabularies(null, "wid"));
             
             // --------- Test - Validation SRV ---------
 			EngineMap map = new EngineMap();
@@ -225,14 +228,44 @@ class ValidationTest extends AbstractTest {
             EngineETY engine = new EngineETY();
             engine.setRoots(map);
             
-            when(structureMapRepo.getLatestEngine()).thenReturn(engine);
-            assertDoesNotThrow(() -> validationSRV.getStructureObjectID("2.16.840.1.113883.6.1")); 
+            when(engines.getLatestEngine()).thenReturn(engine);
+            assertDoesNotThrow(() -> service.getStructureObjectID("2.16.840.1.113883.6.1"));
 
-            
-            when(structureMapRepo.getLatestEngine())
-            	.thenThrow(new BusinessException("Error")); 
-            assertThrows(BusinessException.class, () 
-            		-> validationSRV.getStructureObjectID("2.16.840.1.113883.6.1")); 
+            when(engines.getLatestEngine()).thenThrow(new BusinessException("Error"));
+            assertThrows(BusinessException.class, () -> service.getStructureObjectID("2.16.840.1.113883.6.1"));
+	}
+
+	@Test
+	void engineRetrievalTest() {
+		// Engine mock
+		EngineMap map = new EngineMap();
+		map.setRoot("2.16.840.1.113883.6.2"); // <= Erroneous
+		EngineETY engine = new EngineETY();
+		engine.setRoots(map);
+		// Mock knowledge
+		when(engines.getLatestEngine()).thenReturn(null);
+		// Execute
+		assertThrows(NoRecordFoundException.class, () -> service.getStructureObjectID("2.16.840.1.113883.6.1"));
+		// Mock knowledge
+		when(engines.getLatestEngine()).thenReturn(engine);
+		// Execute
+		assertThrows(NoRecordFoundException.class, () -> service.getStructureObjectID("2.16.840.1.113883.6.1"));
+		// Reset
+		engine.setId("engine-id");
+		map.setOid("map-id");
+		map.setRoot("2.16.840.1.113883.6.1");
+		// Mock knowledge
+		when(engines.getLatestEngine()).thenReturn(engine);
+		// Execute
+		assertDoesNotThrow(() -> {
+			Pair<String, String> id = service.getStructureObjectID("2.16.840.1.113883.6.1");
+			assertEquals(id.getKey(), engine.getId());
+			assertEquals(id.getValue(), map.getOid());
+		});
+		// Mock knowledge
+		when(engines.getLatestEngine()).thenThrow(new MongoException("Test error"));
+		// Execute
+		assertThrows(BusinessException.class, () -> service.getStructureObjectID("2.16.840.1.113883.6.1"));
 	}
 
 }
