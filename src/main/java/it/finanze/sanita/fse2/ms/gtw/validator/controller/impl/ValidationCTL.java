@@ -111,7 +111,9 @@ public class ValidationCTL extends AbstractCTL implements IValidationCTL {
 		}
 
 		ValidationInfoDTO out = ValidationInfoDTO.builder().result(outcome).message(messages).
-				transformID(transformID).build(); 
+				transformID(transformID).build();
+		
+		log.info("REQ CDA CTL:"+requestBody.getCda());
 		return new ValidationResponseDTO(getLogTraceInfo(), out);
 	}
 	 
