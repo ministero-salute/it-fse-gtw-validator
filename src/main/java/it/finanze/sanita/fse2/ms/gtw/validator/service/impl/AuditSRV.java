@@ -37,7 +37,6 @@ public class AuditSRV implements IAuditSRV {
 	public void saveAuditReqRes(HttpServletRequest httpServletRequest,Object body) {
 		try {
 			String requestBody = new String(((ContentCachingRequestWrapper) httpServletRequest).getContentAsByteArray(), StandardCharsets.UTF_8);
-			log.info("REQ_BODY IN AUDIT:" + requestBody);
 			if (!httpServletRequest.getRequestURI().contains("validate-terminology")) {
 				Map<String, Object> auditMap = new HashMap<>();
 				auditMap.put("servizio", httpServletRequest.getRequestURI());
