@@ -3,20 +3,23 @@
  */
 package it.finanze.sanita.fse2.ms.gtw.validator.service.impl;
 
-import it.finanze.sanita.fse2.ms.gtw.validator.exceptions.BusinessException;
-import it.finanze.sanita.fse2.ms.gtw.validator.repository.mongo.IAuditRepo;
-import it.finanze.sanita.fse2.ms.gtw.validator.service.IAuditSRV;
-import it.finanze.sanita.fse2.ms.gtw.validator.utility.StringUtility;
-import lombok.extern.slf4j.Slf4j;
+import java.nio.charset.StandardCharsets;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 import org.springframework.web.util.ContentCachingRequestWrapper;
 
-import javax.servlet.http.HttpServletRequest;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import it.finanze.sanita.fse2.ms.gtw.validator.exceptions.BusinessException;
+import it.finanze.sanita.fse2.ms.gtw.validator.repository.mongo.IAuditRepo;
+import it.finanze.sanita.fse2.ms.gtw.validator.service.IAuditSRV;
+import it.finanze.sanita.fse2.ms.gtw.validator.utility.StringUtility;
+import lombok.extern.slf4j.Slf4j;
 
 @Component 
 @Slf4j
@@ -33,7 +36,7 @@ public class AuditSRV implements IAuditSRV {
 	@Override
 	public void saveAuditReqRes(HttpServletRequest httpServletRequest,Object body) {
 		try {
-			String requestBody = new String(((ContentCachingRequestWrapper) httpServletRequest).getContentAsByteArray());
+			String requestBody = new String(((ContentCachingRequestWrapper) httpServletRequest).getContentAsByteArray(), StandardCharsets.UTF_8);
 			
 			if (!httpServletRequest.getRequestURI().contains("validate-terminology")) {
 				Map<String, Object> auditMap = new HashMap<>();
