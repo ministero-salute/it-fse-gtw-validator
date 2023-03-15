@@ -6,7 +6,7 @@
 	<groupId>it.finanze.sanita.fse2</groupId>
 	<artifactId>gtw-validator-ms</artifactId>
 	<name>gtw-validator-ms</name>
-	<version>0.2.0-RELEASE</version>
+	<version>0.3.0-RELEASE</version>
 	<description>Gateway Validator FSE</description>
 
 	<parent>
