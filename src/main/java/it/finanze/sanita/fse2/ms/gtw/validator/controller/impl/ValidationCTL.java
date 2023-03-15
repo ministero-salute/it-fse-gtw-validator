@@ -3,37 +3,31 @@
  */
 package it.finanze.sanita.fse2.ms.gtw.validator.controller.impl;
 
-import static it.finanze.sanita.fse2.ms.gtw.validator.enums.RawValidationEnum.OK;
-import static it.finanze.sanita.fse2.ms.gtw.validator.enums.RawValidationEnum.SEMANTIC_WARNING;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map.Entry;
-
-import javax.servlet.http.HttpServletRequest;
-
-import org.apache.commons.lang3.tuple.Pair;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RestController;
-
 import it.finanze.sanita.fse2.ms.gtw.validator.cda.CDAHelper;
 import it.finanze.sanita.fse2.ms.gtw.validator.controller.IValidationCTL;
 import it.finanze.sanita.fse2.ms.gtw.validator.controller.Validation;
-import it.finanze.sanita.fse2.ms.gtw.validator.dto.CDAValidationDTO;
-import it.finanze.sanita.fse2.ms.gtw.validator.dto.ExtractedInfoDTO;
-import it.finanze.sanita.fse2.ms.gtw.validator.dto.SchematronFailedAssertionDTO;
-import it.finanze.sanita.fse2.ms.gtw.validator.dto.SchematronValidationResultDTO;
-import it.finanze.sanita.fse2.ms.gtw.validator.dto.ValidationInfoDTO;
-import it.finanze.sanita.fse2.ms.gtw.validator.dto.VocabularyResultDTO;
+import it.finanze.sanita.fse2.ms.gtw.validator.dto.*;
 import it.finanze.sanita.fse2.ms.gtw.validator.dto.request.ValidationRequestDTO;
 import it.finanze.sanita.fse2.ms.gtw.validator.dto.response.ValidationResponseDTO;
 import it.finanze.sanita.fse2.ms.gtw.validator.enums.CDASeverityViolationEnum;
 import it.finanze.sanita.fse2.ms.gtw.validator.enums.CDAValidationStatusEnum;
 import it.finanze.sanita.fse2.ms.gtw.validator.enums.RawValidationEnum;
+import it.finanze.sanita.fse2.ms.gtw.validator.enums.SystemTypeEnum;
 import it.finanze.sanita.fse2.ms.gtw.validator.service.facade.IValidationFacadeSRV;
 import it.finanze.sanita.fse2.ms.gtw.validator.utility.StringUtility;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.tuple.Pair;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RestController;
+
+import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map.Entry;
+
+import static it.finanze.sanita.fse2.ms.gtw.validator.enums.RawValidationEnum.OK;
+import static it.finanze.sanita.fse2.ms.gtw.validator.enums.RawValidationEnum.SEMANTIC_WARNING;
 
 /**
  *	Validation controller.
@@ -56,7 +50,7 @@ public class ValidationCTL extends AbstractCTL implements IValidationCTL {
 		
 		RawValidationEnum outcome = RawValidationEnum.OK;
 
-		ExtractedInfoDTO infoDTO = CDAHelper.extractInfo(requestBody.getCda());
+		ExtractedInfoDTO infoDTO = CDAHelper.extractInfo(requestBody.getCda(), request.getHeader(SYSTEM_TYPE_HEADER));
 
 		CDAValidationDTO validationResult = validationSRV.validateSyntactic(requestBody.getCda(), infoDTO.getTypeIdExtension());
 		if(CDAValidationStatusEnum.NOT_VALID.equals(validationResult.getStatus())) {
@@ -93,16 +87,20 @@ public class ValidationCTL extends AbstractCTL implements IValidationCTL {
 				outcome = RawValidationEnum.SEMANTIC_ERROR;
 			}
 
-
-			if(RawValidationEnum.OK.equals(outcome) || RawValidationEnum.SEMANTIC_WARNING.equals(outcome)) {
-				VocabularyResultDTO result =  validationSRV.validateVocabularies(requestBody.getCda(), requestBody.getWorkflowInstanceId());
-				if(Boolean.TRUE.equals(result.getValid())) {
-					log.debug("Validation completed successfully!");
-				} else {
-					outcome = RawValidationEnum.VOCABULARY_ERROR;
-					messages = new ArrayList<>();
-					messages.add(result.getMessage());
+			if(infoDTO.getSystem() != SystemTypeEnum.TS) {
+				if(RawValidationEnum.OK.equals(outcome) || RawValidationEnum.SEMANTIC_WARNING.equals(outcome)) {
+					VocabularyResultDTO result =  validationSRV.validateVocabularies(requestBody.getCda(), requestBody.getWorkflowInstanceId());
+					if(Boolean.TRUE.equals(result.getValid())) {
+						log.debug("Validation completed successfully!");
+					} else {
+						outcome = RawValidationEnum.VOCABULARY_ERROR;
+						messages = new ArrayList<>();
+						messages.add(result.getMessage());
+					}
 				}
+			} else {
+				log.debug("Skipping vocabulary validation because system set as TS");
+				log.debug("Validation completed successfully!");
 			}
 		}
 

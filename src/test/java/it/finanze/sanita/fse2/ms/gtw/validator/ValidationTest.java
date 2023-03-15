@@ -145,7 +145,7 @@ class ValidationTest extends AbstractTest {
 		final String cda = new String(getFileFromInternalResources("Files" + File.separator + "schematronLDO"
 				+ File.separator + "OK" + File.separator + "CDA2_Lettera_Dimissione_Ospedaliera_v2.2.xml"), StandardCharsets.UTF_8); 
 		
-		ExtractedInfoDTO infoDTO = CDAHelper.extractInfo(cda); 
+		ExtractedInfoDTO infoDTO = CDAHelper.extractInfo(cda, null);
 		
 		SchematronETY ety = new SchematronETY(); 
 		ety.setId("TEST_ID"); 
@@ -172,7 +172,7 @@ class ValidationTest extends AbstractTest {
 		ety.setTemplateIdRoot("TEST_ROOT");
 		ety.setVersion("1.2"); 
 		
-		ExtractedInfoDTO infoDTO = CDAHelper.extractInfo(cda); 
+		ExtractedInfoDTO infoDTO = CDAHelper.extractInfo(cda, null);
 		
 		when(schematronRepo.findByTemplateIdRoot(anyString())).thenReturn(ety); 
 		
@@ -189,7 +189,7 @@ class ValidationTest extends AbstractTest {
 		final String cda = new String(getFileFromInternalResources("Files" + File.separator + "cda.xml"), StandardCharsets.UTF_8);
 		String version = "1.3";
 		
-		ExtractedInfoDTO infoDTO = CDAHelper.extractInfo(cda); 
+		ExtractedInfoDTO infoDTO = CDAHelper.extractInfo(cda, null);
 		
 		log.info("Testing with version {}", version);
 		

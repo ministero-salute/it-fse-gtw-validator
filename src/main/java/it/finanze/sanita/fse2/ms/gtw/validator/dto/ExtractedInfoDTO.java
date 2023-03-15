@@ -3,6 +3,7 @@
  */
 package it.finanze.sanita.fse2.ms.gtw.validator.dto;
 
+import it.finanze.sanita.fse2.ms.gtw.validator.enums.SystemTypeEnum;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
@@ -13,4 +14,6 @@ public class ExtractedInfoDTO {
 	private String templateIdSchematron; //Schematron
 	
 	private String typeIdExtension; //Schema
+
+	private SystemTypeEnum system;
 }

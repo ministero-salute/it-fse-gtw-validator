@@ -3,13 +3,6 @@
  */
 package it.finanze.sanita.fse2.ms.gtw.validator.controller;
 
-import javax.servlet.http.HttpServletRequest;
-
-import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -18,6 +11,11 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import it.finanze.sanita.fse2.ms.gtw.validator.dto.request.ValidationRequestDTO;
 import it.finanze.sanita.fse2.ms.gtw.validator.dto.response.ValidationResponseDTO;
+import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+
+import javax.servlet.http.HttpServletRequest;
 
 import static it.finanze.sanita.fse2.ms.gtw.validator.utility.RouteUtility.API_VALIDATE_FULL;
 
@@ -26,6 +24,8 @@ import static it.finanze.sanita.fse2.ms.gtw.validator.utility.RouteUtility.API_V
  */
 @Tag(name = "Servizio validazione documenti")
 public interface IValidationCTL {
+
+	String SYSTEM_TYPE_HEADER = "X-System-Type";
 
 	@PostMapping(API_VALIDATE_FULL)
 	@Operation(summary = "Validazione documenti", description = "Valida il CDA fornito in input.")
