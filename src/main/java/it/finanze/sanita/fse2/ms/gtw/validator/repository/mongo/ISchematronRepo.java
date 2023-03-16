@@ -13,10 +13,10 @@ public interface ISchematronRepo {
 	/**
 	 * Returns a Schematron identified by its {@code version}.
 	 * 
-	 * @param system of the Schematron to return.
+	 * @param root of the Schematron to return.
 	 * @return Schematron identified by its {@code version}.
 	 */
-	SchematronETY findByTemplateIdRoot(String templateIdRoot);
+	SchematronETY findByRootAndSystem(String root, String system);
 
-	SchematronETY findBySystemAndVersion(String system, String version);
+	SchematronETY findGreaterOne(String root, String system, String version);
 }

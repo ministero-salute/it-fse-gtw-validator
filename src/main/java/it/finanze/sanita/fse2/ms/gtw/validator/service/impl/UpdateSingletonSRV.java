@@ -3,14 +3,6 @@
  */
 package it.finanze.sanita.fse2.ms.gtw.validator.service.impl;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import it.finanze.sanita.fse2.ms.gtw.validator.repository.entity.SchemaETY;
 import it.finanze.sanita.fse2.ms.gtw.validator.repository.entity.SchematronETY;
 import it.finanze.sanita.fse2.ms.gtw.validator.repository.mongo.ISchemaRepo;
@@ -19,6 +11,13 @@ import it.finanze.sanita.fse2.ms.gtw.validator.service.IUpdateSingletonSRV;
 import it.finanze.sanita.fse2.ms.gtw.validator.singleton.SchemaValidatorSingleton;
 import it.finanze.sanita.fse2.ms.gtw.validator.singleton.SchematronValidatorSingleton;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 @Service
 @Slf4j
@@ -61,11 +60,12 @@ public class UpdateSingletonSRV implements IUpdateSingletonSRV {
 		Map<String,SchematronValidatorSingleton> mapSchema = SchematronValidatorSingleton.getMapInstance();
 		if (mapSchema != null && !mapSchema.isEmpty()) {
 			for(Entry<String, SchematronValidatorSingleton> map : mapSchema.entrySet()) {
-				String searchKey = map.getKey();
-				SchematronETY schematron = schematronRepo.findByTemplateIdRoot(searchKey);
+				String root = map.getValue().getTemplateIdRoot();
+				String system = map.getValue().getSystem();
+				SchematronETY schematron = schematronRepo.findByRootAndSystem(root, system);
 				if (schematron == null) {
 					log.warn("No schematron found on DB... singleton map will be reset");
-					mapSchema.remove(searchKey);
+					mapSchema.remove(SchematronValidatorSingleton.identifier(root, system));
 				} else {
 					boolean isDifferent = checkDataUltimoAggiornamento(map.getValue().getDataUltimoAggiornamento(), schematron.getLastUpdateDate());
 

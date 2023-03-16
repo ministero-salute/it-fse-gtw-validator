@@ -46,6 +46,7 @@ import java.util.List;
 import static it.finanze.sanita.fse2.ms.gtw.validator.utility.FileUtility.getFileFromInternalResources;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.nullable;
 import static org.mockito.Mockito.when;
 
 @Slf4j
@@ -154,7 +155,7 @@ class ValidationTest extends AbstractTest {
 		ety.setTemplateIdRoot("2.16.840.1.113883.2.9.10.1.5");
 		ety.setVersion("1.0"); 
 		
-		when(schematronRepo.findByTemplateIdRoot(anyString())).thenReturn(ety); 
+		when(schematronRepo.findByRootAndSystem(anyString(), nullable(String.class))).thenReturn(ety);
 		when(aResSCH.isValidSchematron()).thenReturn(true); 
 		
 		assertDoesNotThrow(() -> service.validateSemantic(cda, infoDTO));
@@ -174,7 +175,7 @@ class ValidationTest extends AbstractTest {
 		
 		ExtractedInfoDTO infoDTO = CDAHelper.extractInfo(cda, null);
 		
-		when(schematronRepo.findByTemplateIdRoot(anyString())).thenReturn(ety); 
+		when(schematronRepo.findByRootAndSystem(anyString(), nullable(String.class))).thenReturn(ety);
 		
 		assertDoesNotThrow(() -> service.validateSemantic(cda, infoDTO));
 		

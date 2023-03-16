@@ -5,7 +5,7 @@ import org.apache.commons.lang3.StringUtils;
 public enum SystemTypeEnum {
 
     TS("TS"),
-    NONE("NONE");
+    NONE(null);
 
     private final String name;
 
