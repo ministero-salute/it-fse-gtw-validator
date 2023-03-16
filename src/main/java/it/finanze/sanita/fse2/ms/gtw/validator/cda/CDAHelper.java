@@ -107,7 +107,8 @@ public class CDAHelper {
 		boolean validST = aResSCH.isValidSchematron();
 		boolean validXML = true;
 		if (validST) {
-			
+			List<SchematronFailedAssertionDTO> assertFailed = new ArrayList<>();
+			List<SchematronFailedAssertionDTO> assertWarning = new ArrayList<>();
 			SchematronOutputType type = null;
 			try (ByteArrayInputStream iStream = new ByteArrayInputStream(xml)){
 				type = aResSCH.applySchematronValidationToSVRL(new StreamSource(iStream));
@@ -119,13 +120,15 @@ public class CDAHelper {
 					validXML = false;
 					FailedAssert failedAssert = (FailedAssert) object;
 					SchematronFailedAssertionDTO failedAssertion = SchematronFailedAssertionDTO.builder().location(failedAssert.getLocation()).test(failedAssert.getTest()).text(failedAssert.getText().getContent().toString()).build();
-					assertions.add(failedAssertion);
+					assertFailed.add(failedAssertion);
 				} else if(object instanceof SuccessfulReport) {
 					SuccessfulReport warningAssert = (SuccessfulReport) object;
 					SchematronFailedAssertionDTO warningAssertion = SchematronFailedAssertionDTO.builder().location(warningAssert.getLocation()).test(warningAssert.getTest()).text(warningAssert.getText().getContent().toString()).build();
-					assertions.add(warningAssertion);
+					assertWarning.add(warningAssertion);
 				}
 			}
+			assertions.addAll(assertFailed);
+			assertions.addAll(assertWarning);
 		}
 		
 		return new SchematronValidationResultDTO(validST, validXML, null, assertions);
