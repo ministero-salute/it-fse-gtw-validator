@@ -3,11 +3,17 @@
  */
 package it.finanze.sanita.fse2.ms.gtw.validator.service.impl;
 
-import it.finanze.sanita.fse2.ms.gtw.validator.exceptions.BusinessException;
-import it.finanze.sanita.fse2.ms.gtw.validator.repository.mongo.IAuditRepo;
-import it.finanze.sanita.fse2.ms.gtw.validator.service.IAuditSRV;
-import it.finanze.sanita.fse2.ms.gtw.validator.utility.StringUtility;
-import lombok.extern.slf4j.Slf4j;
+import static java.nio.charset.StandardCharsets.UTF_8;
+
+import java.net.URLDecoder;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
+
+import javax.servlet.http.HttpServletRequest;
+
 import org.springdoc.core.SpringDocConfigProperties;
 import org.springdoc.core.SwaggerUiConfigProperties;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,11 +22,11 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 import org.springframework.web.util.ContentCachingRequestWrapper;
 
-import javax.servlet.http.HttpServletRequest;
-import java.net.URLDecoder;
-import java.util.*;
-
-import static java.nio.charset.StandardCharsets.UTF_8;
+import it.finanze.sanita.fse2.ms.gtw.validator.exceptions.BusinessException;
+import it.finanze.sanita.fse2.ms.gtw.validator.repository.mongo.IAuditRepo;
+import it.finanze.sanita.fse2.ms.gtw.validator.service.IAuditSRV;
+import it.finanze.sanita.fse2.ms.gtw.validator.utility.StringUtility;
+import lombok.extern.slf4j.Slf4j;
 
 @Component 
 @Slf4j
@@ -47,22 +53,24 @@ public class AuditSRV implements IAuditSRV {
 	@Override
 	public void saveAuditReqRes(HttpServletRequest request, Object body) {
 		try {
-			String requestBody = new String(((ContentCachingRequestWrapper) request).getContentAsByteArray(), UTF_8);
-			String service = request.getRequestURI();
-			if(service != null) service = URLDecoder.decode(service, UTF_8.name());
-
-			if(!skip(service)) {
-				if (!request.getRequestURI().contains("validate-terminology")) {
-					Map<String, Object> auditMap = new HashMap<>();
-					auditMap.put("servizio", service);
-					auditMap.put("start_time", request.getAttribute("START_TIME"));
-					auditMap.put("end_time", new Date());
-					auditMap.put("request", StringUtility.fromJSON(requestBody, Object.class));
-					auditMap.put("response", body);
-					auditServiceRepo.save(auditMap);
+			if( request instanceof ContentCachingRequestWrapper) {
+				String requestBody = new String(((ContentCachingRequestWrapper) request).getContentAsByteArray(), UTF_8);
+				String service = request.getRequestURI();
+				if(service != null) service = URLDecoder.decode(service, UTF_8.name());
+				
+				if(!skip(service)) {
+					if (!request.getRequestURI().contains("validate-terminology")) {
+						Map<String, Object> auditMap = new HashMap<>();
+						auditMap.put("servizio", service);
+						auditMap.put("start_time", request.getAttribute("START_TIME"));
+						auditMap.put("end_time", new Date());
+						auditMap.put("request", StringUtility.fromJSON(requestBody, Object.class));
+						auditMap.put("response", body);
+						auditServiceRepo.save(auditMap);
+					}
+				}else {
+					log.debug("Skipping audit on path: {}", service);
 				}
-			}else {
-				log.debug("Skipping audit on path: {}", service);
 			}
 		} catch(Exception ex) {
 			log.error("Errore nel salvataggio dell'audit : ", ex);
