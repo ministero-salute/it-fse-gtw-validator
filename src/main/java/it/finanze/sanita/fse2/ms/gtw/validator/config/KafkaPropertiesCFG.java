@@ -4,10 +4,16 @@
 package it.finanze.sanita.fse2.ms.gtw.validator.config;
 
 import java.io.Serializable;
+import java.util.Properties;
 
+import org.apache.kafka.clients.admin.AdminClient;
+import org.apache.kafka.clients.admin.AdminClientConfig;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 
+import it.finanze.sanita.fse2.ms.gtw.validator.utility.ProfileUtility;
 import lombok.Data;
 
 /**
@@ -15,7 +21,7 @@ import lombok.Data;
  *	Kafka properties configuration.
  */
 @Data
-@Component
+@Configuration
 public class KafkaPropertiesCFG implements Serializable {
   
 	/**
@@ -60,4 +66,20 @@ public class KafkaPropertiesCFG implements Serializable {
 	@Value("${kafka.properties.ssl.truststore.password}")
 	private transient char[] trustorePassword;
 	 
+	@Autowired
+	private ProfileUtility profileUtility;
+
+	@Bean
+	public AdminClient client() {
+		Properties configProperties = new Properties();
+    	configProperties.put(AdminClientConfig.BOOTSTRAP_SERVERS_CONFIG, producerBootstrapServers);
+    	if(!profileUtility.isDevOrDockerProfile() && !profileUtility.isTestProfile()) {
+    		configProperties.put("security.protocol", protocol);
+    		configProperties.put("sasl.mechanism", mechanism);
+    		configProperties.put("sasl.jaas.config", configJaas);
+    		configProperties.put("ssl.truststore.location", trustoreLocation);  
+    		configProperties.put("ssl.truststore.password", String.valueOf(trustorePassword)); 
+		}
+		return AdminClient.create(configProperties);
+	}
 }
