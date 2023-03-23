@@ -3,17 +3,11 @@
  */
 package it.finanze.sanita.fse2.ms.gtw.validator.service.impl;
 
-import static java.nio.charset.StandardCharsets.UTF_8;
-
-import java.net.URLDecoder;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
-
-import javax.servlet.http.HttpServletRequest;
-
+import it.finanze.sanita.fse2.ms.gtw.validator.exceptions.BusinessException;
+import it.finanze.sanita.fse2.ms.gtw.validator.repository.mongo.IAuditRepo;
+import it.finanze.sanita.fse2.ms.gtw.validator.service.IAuditSRV;
+import it.finanze.sanita.fse2.ms.gtw.validator.utility.StringUtility;
+import lombok.extern.slf4j.Slf4j;
 import org.springdoc.core.SpringDocConfigProperties;
 import org.springdoc.core.SwaggerUiConfigProperties;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,12 +15,13 @@ import org.springframework.boot.actuate.autoconfigure.endpoint.web.WebEndpointPr
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 import org.springframework.web.util.ContentCachingRequestWrapper;
+import org.springframework.web.util.UriComponentsBuilder;
 
-import it.finanze.sanita.fse2.ms.gtw.validator.exceptions.BusinessException;
-import it.finanze.sanita.fse2.ms.gtw.validator.repository.mongo.IAuditRepo;
-import it.finanze.sanita.fse2.ms.gtw.validator.service.IAuditSRV;
-import it.finanze.sanita.fse2.ms.gtw.validator.utility.StringUtility;
-import lombok.extern.slf4j.Slf4j;
+import javax.servlet.http.HttpServletRequest;
+import java.net.URLDecoder;
+import java.util.*;
+
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 @Component 
 @Slf4j
@@ -90,6 +85,8 @@ public class AuditSRV implements IAuditSRV {
 			Set<String> ep = endpoints.getExposure().getInclude();
 			// Retrieve mapping
 			Map<String, String> mapping = endpoints.getPathMapping();
+			// Retrive base path
+			String base = endpoints.getBasePath();
 			// Iterate
 			Iterator<String> iterator = ep.iterator();
 			// Until we find match
@@ -99,9 +96,11 @@ public class AuditSRV implements IAuditSRV {
 				// Retrieve associated mapping
 				// because it may have been re-defined (e.g live -> status ...)
 				// If it wasn't overwritten, it will return null therefore we are using the default mapping value
-				String path = mapping.getOrDefault(endpoint, endpoint);
+				String mapper = mapping.getOrDefault(endpoint, endpoint);
+				// Create root path
+				String path = UriComponentsBuilder.newInstance().pathSegment(base, mapper).toUriString();
 				// If path match, exit loop
-				if (uri.contains(path)) skip = true;
+				if (uri.startsWith(path)) skip = true;
 			}
 		}
 		return skip;
