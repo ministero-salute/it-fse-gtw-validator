@@ -23,6 +23,7 @@ public final class Constants {
 
 		public static final String ENGINES = "engines";
 
+		public static final String AUDIT = "audit";
 		private Collections() {
 
 		}

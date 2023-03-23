@@ -3,10 +3,10 @@
  */
 package it.finanze.sanita.fse2.ms.gtw.validator.repository.mongo;
 
-import java.util.Map;
+import it.finanze.sanita.fse2.ms.gtw.validator.repository.entity.AuditETY;
 
 public interface IAuditRepo {
 	
-	void save(Map<String, Object> auditMap);
+	void save(AuditETY entity);
 
 }
