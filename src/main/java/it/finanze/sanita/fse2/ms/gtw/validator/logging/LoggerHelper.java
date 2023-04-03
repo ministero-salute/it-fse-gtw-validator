@@ -3,16 +3,7 @@
  */
 package it.finanze.sanita.fse2.ms.gtw.validator.logging;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
-
+import com.fasterxml.jackson.core.JsonProcessingException;
 import it.finanze.sanita.fse2.ms.gtw.validator.client.IConfigClient;
 import it.finanze.sanita.fse2.ms.gtw.validator.dto.LogDTO;
 import it.finanze.sanita.fse2.ms.gtw.validator.enums.ErrorLogEnum;
@@ -21,6 +12,15 @@ import it.finanze.sanita.fse2.ms.gtw.validator.enums.ResultLogEnum;
 import it.finanze.sanita.fse2.ms.gtw.validator.enums.WarnLogEnum;
 import it.finanze.sanita.fse2.ms.gtw.validator.utility.StringUtility;
 import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
+
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
  
 @Service
 @Slf4j
@@ -60,7 +60,7 @@ public class LoggerHelper {
 				workflow_instance_id(workflowInstanceId).
 				build();
 
-		final String logMessage = StringUtility.toJSON(logDTO);
+		final String logMessage = asJsonDTO(logDTO);
 		log.trace(logMessage);
 
 		if (Boolean.TRUE.equals(kafkaLogEnable)) {
@@ -80,8 +80,8 @@ public class LoggerHelper {
 				microservice_name(msName).
 				workflow_instance_id(workflowInstanceId).
 				build();
-		
-		final String logMessage = StringUtility.toJSON(logDTO);
+
+		final String logMessage = asJsonDTO(logDTO);
 		log.debug(logMessage);
 		if (Boolean.TRUE.equals(kafkaLogEnable)) {
 			kafkaLog.debug(logMessage);
@@ -100,8 +100,8 @@ public class LoggerHelper {
 				microservice_name(msName).
 				workflow_instance_id(workflowInstanceId).
 				build();
-		
-		final String logMessage = StringUtility.toJSON(logDTO);
+
+		final String logMessage = asJsonDTO(logDTO);
 		log.info(logMessage);
 		if (Boolean.TRUE.equals(kafkaLogEnable)) {
 			kafkaLog.info(logMessage);
@@ -123,8 +123,8 @@ public class LoggerHelper {
 				microservice_name(msName).
 				workflow_instance_id(workflowInstanceId).
 				build();
-		
-		final String logMessage = StringUtility.toJSON(logDTO);
+
+		final String logMessage = asJsonDTO(logDTO);
 		log.warn(logMessage);
 		if (Boolean.TRUE.equals(kafkaLogEnable)) {
 			kafkaLog.warn(logMessage);
@@ -148,7 +148,7 @@ public class LoggerHelper {
 				workflow_instance_id(workflowInstanceId).
 				build();
 		
-		final String logMessage = StringUtility.toJSON(logDTO);
+		final String logMessage = asJsonDTO(logDTO);
 		log.error(logMessage);
 		if (Boolean.TRUE.equals(kafkaLogEnable)) {
 			kafkaLog.error(logMessage);
@@ -166,6 +166,16 @@ public class LoggerHelper {
 			gatewayName = configClient.getGatewayName();
 		}
 		return gatewayName;
+	}
+
+	private String asJsonDTO(LogDTO dto) {
+		String msg;
+		try {
+			msg = StringUtility.toJSON(dto);
+		} catch (JsonProcessingException e) {
+			msg = String.format("{\"error\": \"unable to deserialize due to %s\"}", e.getMessage());
+		}
+		return msg;
 	}
 	
 }
