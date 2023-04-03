@@ -3,10 +3,11 @@
  */
 package it.finanze.sanita.fse2.ms.gtw.validator.utility;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import java.nio.file.Paths;
 import java.util.UUID;
-
-import com.google.gson.Gson;
 
 public final class StringUtility {
 
@@ -49,8 +50,8 @@ public final class StringUtility {
 	 * @param cls	Object class to return
 	 * @return		object
 	 */
-	public static <T> T fromJSON(final String json, final Class<T> cls) {
-		return new Gson().fromJson(json, cls);
+	public static <T> T fromJSON(final String json, final Class<T> cls) throws JsonProcessingException {
+		return new ObjectMapper().readValue(json, cls);
 	}
 
 	/**
@@ -59,8 +60,9 @@ public final class StringUtility {
 	 * @param obj	object to transform
 	 * @return		json
 	 */
-	public static String toJSON(final Object obj) {
-		return new Gson().toJson(obj);
+
+	public static String toJSON(final Object obj) throws JsonProcessingException {
+		return new ObjectMapper().writeValueAsString(obj);
 	}
  
 }
