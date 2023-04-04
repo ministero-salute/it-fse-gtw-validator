@@ -38,9 +38,14 @@ public class AuditManager {
             // Check filter exists
             if(filter.isPresent()) {
                 // Retrieve audit
-                AuditETY entity = filter.get().apply(uri, req, body);
-                // Save
-                repository.save(entity);
+                AuditETY entity;
+                try {
+                    entity = filter.get().apply(uri, req, body);
+                    // Save
+                    repository.save(entity);
+                } catch (Exception e) {
+                    log.error("Unable to save audit entity due to: {}", e.getMessage());
+                }
             } else {
                 log.debug("No filter found matching the request type");
                 log.debug("Skipping audit on path: {}", uri);

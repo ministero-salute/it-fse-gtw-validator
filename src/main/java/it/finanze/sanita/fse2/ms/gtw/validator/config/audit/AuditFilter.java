@@ -7,5 +7,5 @@ import javax.servlet.http.HttpServletRequest;
 
 public interface AuditFilter {
     boolean match(HttpServletRequest req);
-    AuditETY apply(String uri, HttpServletRequest req, Object body);
+    AuditETY apply(String uri, HttpServletRequest req, Object body) throws Exception;
 }

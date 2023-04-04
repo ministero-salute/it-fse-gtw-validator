@@ -19,7 +19,7 @@ public class AnyNonTermsReqFilter implements AuditFilter {
     }
 
     @Override
-    public AuditETY apply(String uri, HttpServletRequest req, Object body) {
+    public AuditETY apply(String uri, HttpServletRequest req, Object body) throws Exception {
         String content = "{ \"message\": \"Unable to deserialize request body\"}";
         if (req instanceof ContentCachingRequestWrapper) {
             ContentCachingRequestWrapper wrapper = (ContentCachingRequestWrapper) req;
