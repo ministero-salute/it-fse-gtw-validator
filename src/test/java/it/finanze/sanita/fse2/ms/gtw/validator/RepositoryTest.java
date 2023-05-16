@@ -143,7 +143,7 @@ class RepositoryTest extends AbstractTest {
     
     @Test
     void findBySystemAndVersionTest() {
-    	SchematronETY ety = schematronRepository.findBySystemAndVersion("2.16.840.1.113883.2.9.10.1.11.1.2", "0.0");
+    	SchematronETY ety = schematronRepository.findGreaterOne("2.16.840.1.113883.2.9.10.1.11.1.2", "0.0", null);
     
     	assertEquals(ety.getClass(), SchematronETY.class);   	
     	assertEquals(ety.getId().getClass(), String.class); 
@@ -163,7 +163,7 @@ class RepositoryTest extends AbstractTest {
     	mongo.insert(ety, Constants.Profile.TEST_PREFIX + "schematron");
     	
     	
-    	SchematronETY res = schematronRepository.findBySystemAndVersion(TEST_TEMPLATE_ID_ROOT_DELETED, TEST_TYPE_ID_EXTENSION_DELETED); 
+    	SchematronETY res = schematronRepository.findGreaterOne(TEST_TEMPLATE_ID_ROOT_DELETED, TEST_TYPE_ID_EXTENSION_DELETED, null);
     	
     	assertNull(res); 
     	

@@ -3,14 +3,6 @@
  */
 package it.finanze.sanita.fse2.ms.gtw.validator.controller.impl;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-
-import org.springframework.web.bind.annotation.RestController;
-
 import it.finanze.sanita.fse2.ms.gtw.validator.controller.ISingletonInspectorCTL;
 import it.finanze.sanita.fse2.ms.gtw.validator.dto.SchemaSingletonInfo;
 import it.finanze.sanita.fse2.ms.gtw.validator.dto.SchematronSingletonInfo;
@@ -18,6 +10,12 @@ import it.finanze.sanita.fse2.ms.gtw.validator.dto.SingletonInfoDTO;
 import it.finanze.sanita.fse2.ms.gtw.validator.dto.response.SingletonInspectorResponseDTO;
 import it.finanze.sanita.fse2.ms.gtw.validator.singleton.SchemaValidatorSingleton;
 import it.finanze.sanita.fse2.ms.gtw.validator.singleton.SchematronValidatorSingleton;
+import org.springframework.web.bind.annotation.RestController;
+
+import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 /**
  *	Singleton Inspector controller.
@@ -48,6 +46,7 @@ public class SingletonInspectorCTL extends AbstractCTL implements ISingletonInsp
                 schematrons.add(SchematronSingletonInfo.builder()
                 		.templateIdRoot(entry.getValue().getTemplateIdRoot())
                         .version(entry.getValue().getVersion())
+                        .system(entry.getValue().getSystem())
                         .dataUltimoAggiornamento(entry.getValue().getDataUltimoAggiornamento())
                         .build());
             }

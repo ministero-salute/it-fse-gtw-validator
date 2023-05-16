@@ -3,15 +3,14 @@
  */
 package it.finanze.sanita.fse2.ms.gtw.validator.repository.entity;
 
-import java.util.Date;
-
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.bson.types.Binary;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import java.util.Date;
 
 /**
  * Model to save schematron.
@@ -35,6 +34,9 @@ public class SchematronETY {
 	
 	@Field(name = "version")
 	private String version;
+
+	@Field(name = "system")
+	private String system;
 	
 	@Field(name = "last_update_date")
 	private Date lastUpdateDate; 

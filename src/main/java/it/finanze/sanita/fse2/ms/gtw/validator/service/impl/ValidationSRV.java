@@ -109,26 +109,27 @@ public class ValidationSRV implements IValidationSRV {
     }
  
 	@Override
-	public SchematronValidationResultDTO validateSemantic(final String cdaToValidate,final ExtractedInfoDTO extractedInfoDTO) {
+	public SchematronValidationResultDTO validateSemantic(final String cdaToValidate,final ExtractedInfoDTO info) {
 		SchematronValidationResultDTO output = new SchematronValidationResultDTO(false, false, null, null);
-		try { 
+		String id = SchematronValidatorSingleton.identifier(info.getTemplateIdSchematron(), info.getSystem().value());
+		try {
 			ISchematronResource schematronResource = null;
 			
 			if(SchematronValidatorSingleton.getMapInstance()!=null && !SchematronValidatorSingleton.getMapInstance().isEmpty()) {
-				SchematronValidatorSingleton singleton = SchematronValidatorSingleton.getMapInstance().get(extractedInfoDTO.getTemplateIdSchematron());
-				if(singleton!=null) {
-					SchematronETY majorVersion = schematronRepo.findBySystemAndVersion(singleton.getTemplateIdRoot(), singleton.getVersion());
+				SchematronValidatorSingleton ss = SchematronValidatorSingleton.getMapInstance().get(id);
+				if(ss!=null) {
+					SchematronETY majorVersion = schematronRepo.findGreaterOne(ss.getTemplateIdRoot(), ss.getSystem(), ss.getVersion());
 					if(majorVersion!=null) {
-						singleton = SchematronValidatorSingleton.getInstance(true, majorVersion);
+						ss = SchematronValidatorSingleton.getInstance(true, majorVersion);
 					}
-					schematronResource = singleton.getSchematronResource();
+					schematronResource = ss.getSchematronResource();
 				}
 			}
 			
 			if(schematronResource==null) {
-				SchematronETY schematronETY = schematronRepo.findByTemplateIdRoot(extractedInfoDTO.getTemplateIdSchematron());
+				SchematronETY schematronETY = schematronRepo.findByRootAndSystem(info.getTemplateIdSchematron(), info.getSystem().value());
 				if (schematronETY == null) {
-					throw new NoRecordFoundException(String.format("Schematron with template id root %s not found on database.", extractedInfoDTO.getTemplateIdSchematron()));
+					throw new NoRecordFoundException(String.format("Schematron with template id root %s not found on database.", id));
 				}
 				SchematronValidatorSingleton schematron = SchematronValidatorSingleton.getInstance(false,schematronETY);
 				schematronResource = schematron.getSchematronResource();

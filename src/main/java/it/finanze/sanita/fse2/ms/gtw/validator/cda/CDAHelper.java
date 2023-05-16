@@ -3,35 +3,25 @@
  */
 package it.finanze.sanita.fse2.ms.gtw.validator.cda;
 
-import static org.apache.commons.lang3.StringUtils.isEmpty;
-
-import java.io.ByteArrayInputStream;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.stream.Collectors;
-
-import javax.xml.transform.stream.StreamSource;
-
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
-
 import com.helger.schematron.ISchematronResource;
 import com.helger.schematron.svrl.jaxb.FailedAssert;
 import com.helger.schematron.svrl.jaxb.SchematronOutputType;
 import com.helger.schematron.svrl.jaxb.SuccessfulReport;
-
 import it.finanze.sanita.fse2.ms.gtw.validator.config.Constants;
-import it.finanze.sanita.fse2.ms.gtw.validator.dto.CodeDTO;
-import it.finanze.sanita.fse2.ms.gtw.validator.dto.ExtractedInfoDTO;
-import it.finanze.sanita.fse2.ms.gtw.validator.dto.SchematronFailedAssertionDTO;
-import it.finanze.sanita.fse2.ms.gtw.validator.dto.SchematronValidationResultDTO;
-import it.finanze.sanita.fse2.ms.gtw.validator.dto.TerminologyExtractionDTO;
+import it.finanze.sanita.fse2.ms.gtw.validator.dto.*;
+import it.finanze.sanita.fse2.ms.gtw.validator.enums.SystemTypeEnum;
 import it.finanze.sanita.fse2.ms.gtw.validator.exceptions.BusinessException;
 import lombok.extern.slf4j.Slf4j;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
+
+import javax.xml.transform.stream.StreamSource;
+import java.io.ByteArrayInputStream;
+import java.util.*;
+import java.util.stream.Collectors;
+
+import static org.apache.commons.lang3.StringUtils.isEmpty;
 
 @Slf4j
 public class CDAHelper {
@@ -85,7 +75,7 @@ public class CDAHelper {
 		return codeDTO;
 	}
 	
-	public static ExtractedInfoDTO extractInfo(final String cda) {
+	public static ExtractedInfoDTO extractInfo(final String cda, String system) {
 		ExtractedInfoDTO out = null;
 		try {
 			org.jsoup.nodes.Document docT = Jsoup.parse(cda);
@@ -94,7 +84,7 @@ public class CDAHelper {
 			String templateIdSchematron = docT.select("templateid").get(0).attr("root");
 			//Schemaversion = extension 
 			String schemaVersion = docT.select("typeid").get(0).attr("extension");
-			out = new ExtractedInfoDTO(templateIdSchematron, schemaVersion);
+			out = new ExtractedInfoDTO(templateIdSchematron, schemaVersion, SystemTypeEnum.of(system));
 		} catch(Exception ex) {
 			log.error("Error while extracting info for schematron ", ex);
 			throw new BusinessException("Error while extracting info for schematron ", ex);
