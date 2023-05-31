@@ -36,9 +36,9 @@ public class UtilityTest {
     	DictionaryETY etySecond = new DictionaryETY(); 
     	
     	List<CodeDTO> codeList = new ArrayList<CodeDTO>(); 
-    	CodeDTO dto = new CodeDTO("code", "codeSystem", "version"); 
-    	CodeDTO dto2 = new CodeDTO("code2", "codeSystem2", "version2"); 
-    	CodeDTO dto3 = new CodeDTO("code3", "codeSystem3", "version2"); 
+    	CodeDTO dto = new CodeDTO("code", "codeSystem", "codeSystemName", "version", "displayName"); 
+    	CodeDTO dto2 = new CodeDTO("code2", "codeSystem2", "codeSystemName2", "version2", "displayName"); 
+    	CodeDTO dto3 = new CodeDTO("code3", "codeSystem3", "codeSystemName3", "version2", "displayName"); 
     	codeList.add(dto); 
     	codeList.add(dto2); 
     	codeList.add(dto3); 

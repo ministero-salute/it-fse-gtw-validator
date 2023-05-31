@@ -152,14 +152,14 @@ class EnumsTest {
     @Test
     @DisplayName("Code DTO Test")
     void codeDtoTest() {
-    	CodeDTO dto = new CodeDTO("code", "codeSystem", "version"); 
-    	CodeDTO dto2 = new CodeDTO("code2", "codeSystem2", "version2"); 
-    	CodeDTO dto3 = new CodeDTO("code3", "codeSystem3", "version2"); 
-    	CodeDTO dtoNullFirst = new CodeDTO(null, "codeSystem", "version"); 
-    	CodeDTO dtoNullSecond = new CodeDTO("code", null, "version"); 
-    	CodeDTO dtoNullFirstEq = new CodeDTO(null, "codeSystem", "version"); 
-    	CodeDTO dtoNullAll = new CodeDTO(null, null, null); 
-    	CodeDTO dtoNullAllSecond = new CodeDTO(null, null, null); 
+    	CodeDTO dto = new CodeDTO("code", "codeSystem", "codeSystemName", "version", "displayName"); 
+    	CodeDTO dto2 = new CodeDTO("code2", "codeSystem2", "codeSystemName2", "version2", "displayName2"); 
+    	CodeDTO dto3 = new CodeDTO("code3", "codeSystem3", "codeSystemName3", "version2", "displayName3"); 
+    	CodeDTO dtoNullFirst = new CodeDTO(null, "codeSystem", "codeSystemName", "version", "displayName"); 
+    	CodeDTO dtoNullSecond = new CodeDTO("code", null, "codeSystemName", "version", "displayName"); 
+    	CodeDTO dtoNullFirstEq = new CodeDTO(null, "codeSystem", "codeSystemName", "version", "displayName"); 
+    	CodeDTO dtoNullAll = new CodeDTO(null, null, null, null, null); 
+    	CodeDTO dtoNullAllSecond = new CodeDTO(null, null, null, null, null); 
 
     	assertFalse(dto.equals(dto2)); 
     	assertFalse(dto2.equals(dto3)); 
@@ -183,9 +183,9 @@ class EnumsTest {
     void terminologyExtractionDtoTest() {
     	List<CodeDTO> dictList = new ArrayList<CodeDTO>(); 
     	List<String> dictListFilt = new ArrayList<String>(); 
-    	dictList.add(new CodeDTO("code", "system", "version"));
-    	dictList.add(new CodeDTO("code2", "system2", "version2")); 
-    	dictList.add(new CodeDTO("code3", "system3", "version3")); 
+    	dictList.add(new CodeDTO("code", "system", "codeSystemName", "version", "displayName"));
+    	dictList.add(new CodeDTO("code2", "system2", "codeSystemName2", "version2", "displayName")); 
+    	dictList.add(new CodeDTO("code3", "system3", "codeSystemName3", "version3", "displayName")); 
     	dictListFilt.add("code"); 
 
     	TerminologyExtractionDTO dto = new TerminologyExtractionDTO(dictList); 

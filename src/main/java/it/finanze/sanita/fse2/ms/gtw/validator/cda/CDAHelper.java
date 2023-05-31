@@ -78,10 +78,14 @@ public class CDAHelper {
 		String code = element.attr(Constants.App.CODE_KEY);
 		String codeSystem = element.attr(Constants.App.CODE_SYSTEM_KEY);
 		String codeSystemVersion = element.attr(Constants.App.CODE_SYSTEM_VERSION_KEY);
+		String codeSystemName = element.attr(Constants.App.CODE_SYSTEM_NAME);
+		String displayName = element.attr(Constants.App.DISPLAY_NAME_KEY);
 		CodeDTO codeDTO = new CodeDTO();
 		if (!isEmpty(code)) codeDTO.setCode(code);
 		if (!isEmpty(codeSystem)) codeDTO.setCodeSystem(codeSystem);
 		if (!isEmpty(codeSystemVersion)) codeDTO.setVersion(codeSystemVersion);
+		if (!isEmpty(codeSystemName)) codeDTO.setCodeSystemName(codeSystemName);
+		if (!isEmpty(displayName)) codeDTO.setDisplayName(displayName);
 		return codeDTO;
 	}
 	
