@@ -11,15 +11,17 @@
  */
 package it.finanze.sanita.fse2.ms.gtw.validator;
 
-import com.mongodb.MongoException;
-import it.finanze.sanita.fse2.ms.gtw.validator.base.AbstractTest;
-import it.finanze.sanita.fse2.ms.gtw.validator.config.Constants;
-import it.finanze.sanita.fse2.ms.gtw.validator.exceptions.BusinessException;
-import it.finanze.sanita.fse2.ms.gtw.validator.repository.entity.SchemaETY;
-import it.finanze.sanita.fse2.ms.gtw.validator.repository.entity.SchematronETY;
-import it.finanze.sanita.fse2.ms.gtw.validator.repository.mongo.ISchemaRepo;
-import it.finanze.sanita.fse2.ms.gtw.validator.repository.mongo.ISchematronRepo;
-import it.finanze.sanita.fse2.ms.gtw.validator.repository.mongo.impl.TerminologyRepo;
+import static com.mongodb.assertions.Assertions.assertFalse;
+import static com.mongodb.assertions.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.when;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
@@ -29,14 +31,16 @@ import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.test.context.ActiveProfiles;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import com.mongodb.MongoException;
 
-import static com.mongodb.assertions.Assertions.assertFalse;
-import static com.mongodb.assertions.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.when;
+import it.finanze.sanita.fse2.ms.gtw.validator.base.AbstractTest;
+import it.finanze.sanita.fse2.ms.gtw.validator.config.Constants;
+import it.finanze.sanita.fse2.ms.gtw.validator.exceptions.BusinessException;
+import it.finanze.sanita.fse2.ms.gtw.validator.repository.entity.SchemaETY;
+import it.finanze.sanita.fse2.ms.gtw.validator.repository.entity.SchematronETY;
+import it.finanze.sanita.fse2.ms.gtw.validator.repository.mongo.ISchemaRepo;
+import it.finanze.sanita.fse2.ms.gtw.validator.repository.mongo.ISchematronRepo;
+import it.finanze.sanita.fse2.ms.gtw.validator.repository.mongo.impl.TerminologyRepo;
 
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -144,17 +148,17 @@ class RepositoryTest extends AbstractTest {
     
     @Test
     void findByExtensionAndLastUpdateTest() {
-    	List<SchemaETY> ety =repository.findByExtensionAndLastUpdateDate("1.3", new Date()); 
+    	List<SchemaETY> ety = repository.findByExtensionAndLastUpdateDate("1.3", new Date()); 
     	
     	assertEquals(ArrayList.class, ety.getClass()); 
     } 
     
     @Test
     void findBySystemAndVersionTest() {
-    	SchematronETY ety = schematronRepository.findGreaterOne("2.16.840.1.113883.2.9.10.1.11.1.2", "0.0", null);
+    	SchematronETY ety = schematronRepository.findGreaterOne("2.16.840.1.113883.2.9.10.1.11.1.2", null, "0.0");
     
-    	assertEquals(ety.getClass(), SchematronETY.class);   	
-    	assertEquals(ety.getId().getClass(), String.class); 
+    	assertEquals(SchematronETY.class, ety.getClass());   	
+    	assertEquals(String.class, ety.getId().getClass()); 
     	
     	assertEquals("2.16.840.1.113883.2.9.10.1.11.1.2", ety.getTemplateIdRoot());
     	
