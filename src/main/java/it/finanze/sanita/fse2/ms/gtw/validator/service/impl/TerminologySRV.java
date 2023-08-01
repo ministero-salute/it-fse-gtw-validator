@@ -179,9 +179,12 @@ public class TerminologySRV implements ITerminologySRV {
 
 	private List<String> logGroupedBySystem(List<CodeDTO> codes) {
 		Map<String, String> systems = new HashMap<>();
+		Map<String, String> versions = new HashMap<>();
 		List<String> logs = new ArrayList<>();
-		codes.forEach(dto -> systems.putIfAbsent(dto.getCodeSystem(), dto.getCodeSystemName()));
-		
+		codes.forEach(dto -> {
+			systems.putIfAbsent(dto.getCodeSystem(), dto.getCodeSystemName());
+			versions.putIfAbsent(dto.getCodeSystem(), dto.getVersion());
+		});
 		for (Map.Entry<String, String> entry : systems.entrySet()) {
 			List<String> innerCodes = new ArrayList<>();
 			innerCodes.addAll(codes.stream()
@@ -189,7 +192,7 @@ public class TerminologySRV implements ITerminologySRV {
 			.map(CodeDTO::toString)
 			.collect(Collectors.toList()));
 
-			String log = String.format("{\"system\":\"%s\",\"systemName\":\"%s\",\"codes\":\"[%s]}", entry.getKey(), entry.getValue(), innerCodes.stream().collect(Collectors.joining(", ")));
+			String log = String.format("{\"code\":\"%s\",\"display-name\":\"%s\",\"version\":\"%s\",\"codes\":\"[%s]}", entry.getKey(), entry.getValue(), versions.get(entry.getKey()), innerCodes.stream().collect(Collectors.joining(", ")));
 			logs.add(log);
 		} 
 		
