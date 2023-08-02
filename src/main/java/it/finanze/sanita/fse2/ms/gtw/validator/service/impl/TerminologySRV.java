@@ -192,7 +192,17 @@ public class TerminologySRV implements ITerminologySRV {
 			.map(CodeDTO::toString)
 			.collect(Collectors.toList()));
 
-			String log = String.format("{\"code\":\"%s\",\"display-name\":\"%s\",\"version\":\"%s\",\"codes\":\"[%s]}", entry.getKey(), entry.getValue(), versions.get(entry.getKey()), innerCodes.stream().collect(Collectors.joining(", ")));
+			String code = entry.getKey();
+			String displayName = entry.getValue();
+			String version = versions.get(code);
+			String inner = innerCodes.stream().collect(Collectors.joining(", "));
+			String log = "";
+			if (version != null) {
+			    log = String.format("{\"code\":\"%s\",\"display-name\":\"%s\",\"version\":\"%s\",\"codes\":\"[%s]\"}", code, displayName, version, inner);
+			} else {
+			    log = String.format("{\"code\":\"%s\",\"display-name\":\"%s\",\"codes\":\"[%s]\"}", code, displayName, inner);
+			}
+			
 			logs.add(log);
 		} 
 		
