@@ -20,13 +20,11 @@ import it.finanze.sanita.fse2.ms.gtw.validator.dto.CodeSystemSnapshotDTO;
 import it.finanze.sanita.fse2.ms.gtw.validator.dto.CodeSystemVersionDTO;
 import it.finanze.sanita.fse2.ms.gtw.validator.repository.entity.DictionaryETY;
 import it.finanze.sanita.fse2.ms.gtw.validator.utility.CodeSystemUtility;
-import lombok.extern.slf4j.Slf4j;
 
-@Slf4j
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles(Constants.Profile.TEST)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-public class UtilityTest {
+class UtilityTest {
 
 	@Test
 	@DisplayName("Code System Utility Test")
