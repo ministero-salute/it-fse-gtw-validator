@@ -11,14 +11,28 @@
  */
 package it.finanze.sanita.fse2.ms.gtw.validator;
 
+import static it.finanze.sanita.fse2.ms.gtw.validator.enums.OperationLogEnum.TERMINOLOGY_VALIDATION;
+import static it.finanze.sanita.fse2.ms.gtw.validator.enums.ResultLogEnum.WARN;
+import static it.finanze.sanita.fse2.ms.gtw.validator.enums.WarnLogEnum.INVALID_CODE;
+import static it.finanze.sanita.fse2.ms.gtw.validator.utility.FileUtility.getFileFromInternalResources;
+import static java.nio.charset.StandardCharsets.UTF_8;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.atLeastOnce;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.verify;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import org.bson.types.ObjectId;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -35,8 +49,13 @@ import org.springframework.test.context.ActiveProfiles;
 
 import it.finanze.sanita.fse2.ms.gtw.validator.config.Constants;
 import it.finanze.sanita.fse2.ms.gtw.validator.config.properties.PropertiesCFG;
+import it.finanze.sanita.fse2.ms.gtw.validator.dto.VocabularyResultDTO;
+import it.finanze.sanita.fse2.ms.gtw.validator.logging.LoggerHelper;
+import it.finanze.sanita.fse2.ms.gtw.validator.repository.entity.DictionaryETY;
 import it.finanze.sanita.fse2.ms.gtw.validator.repository.entity.TerminologyETY;
+import it.finanze.sanita.fse2.ms.gtw.validator.repository.mongo.IDictionaryRepo;
 import it.finanze.sanita.fse2.ms.gtw.validator.repository.mongo.ITerminologyRepo;
+import it.finanze.sanita.fse2.ms.gtw.validator.service.IValidationSRV;
 import lombok.extern.slf4j.Slf4j;
 
 
@@ -47,13 +66,22 @@ class TerminologyValidationTest {
 
 
     @Autowired
-    ITerminologyRepo vocabulariesMongoRepo;
+    private ITerminologyRepo vocabulariesMongoRepo;
     
     @MockBean
     private PropertiesCFG propsCFG;
     
     @Autowired
-    MongoTemplate mongoTemplate;
+    private MongoTemplate mongoTemplate;
+    
+    @Autowired
+    private IValidationSRV service;
+
+    @MockBean
+    private IDictionaryRepo repository;
+
+    @MockBean
+    private LoggerHelper logger;
 
     @Test
     @DisplayName("Test the Terminology Validation")
@@ -206,5 +234,54 @@ class TerminologyValidationTest {
             terminology.put(system, codes);
         }
         return terminology;
+    }
+    
+    @Test
+    void checkInvalidCSLog() {
+        // Mock repository to retrieve dictionaries
+        doReturn(getDictionaries()).when(repository).getCodeSystems();
+        // Run test
+        VocabularyResultDTO res = service.validateVocabularies(
+            getCDA(),
+            "TEST_WIF"
+        );
+        // Check it has been called with the right arguments
+        verify(logger, atLeastOnce()).warn(
+            eq("TEST_WIF"),
+            eq(getExpectedMsgFromFile()),
+            eq(TERMINOLOGY_VALIDATION),
+            eq(WARN),
+            any(Date.class),
+            eq(INVALID_CODE)
+        );
+        // Verify validation didn't pass
+        assertFalse(res.getValid());
+    }
+
+    private String getCDA() {
+        return new String(
+            getFileFromInternalResources("Files/inconsistency_log_test/lab_inconsistency_cs.xml"),
+            UTF_8
+        );
+    }
+
+    private List<DictionaryETY> getDictionaries() {
+        return Collections.singletonList(
+            new DictionaryETY(
+                new ObjectId().toHexString(),
+                "2.16.840.1.113883.6.1",
+                "1.0",
+                new Date(),
+                new Date(),
+                false
+            )
+        );
+    }
+
+    private String getExpectedMsgFromFile() {
+        return new String(
+            getFileFromInternalResources("Files/inconsistency_log_test/expected_log.txt"),
+            UTF_8
+        );
     }
 }

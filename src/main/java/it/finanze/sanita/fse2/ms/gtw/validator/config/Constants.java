@@ -67,6 +67,8 @@ public final class Constants {
 		public static final String CODE_KEY = "code";
 		public static final String CODE_SYSTEM_KEY = "codeSystem";
 		public static final String CODE_SYSTEM_VERSION_KEY = "codeSystemVersion";
+		public static final String CODE_SYSTEM_NAME = "codeSystemName";
+		public static final String DISPLAY_NAME_KEY = "displayName";
 		public static final String WHITELIST_KEY = "whitelist";
 		public static final String VALUE_KEY = "value";
 

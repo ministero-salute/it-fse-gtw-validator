@@ -11,14 +11,14 @@
  */
 package it.finanze.sanita.fse2.ms.gtw.validator.repository.entity;
 
-import java.util.Date;
-
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import java.util.Date;
 
 
 /**
@@ -27,6 +27,7 @@ import lombok.NoArgsConstructor;
 @Document(collection = "#{@dictionaryBean}")
 @Data
 @NoArgsConstructor
+@AllArgsConstructor
 public class DictionaryETY {
 
     public static final String FIELD_SYSTEM = "system";

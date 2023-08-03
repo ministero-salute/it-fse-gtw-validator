@@ -24,7 +24,9 @@ public class CodeDTO {
 
 	private String code;
 	private String codeSystem;
+    private String codeSystemName;
 	private String version;
+    private String displayName;
 	
     @Override
     public boolean equals(Object obj) { 
@@ -71,9 +73,9 @@ public class CodeDTO {
     @Override
     public String toString() {
     	String code = isEmpty(this.code) ? "?" : this.code;
-    	String codeSystem = isEmpty(this.codeSystem) ? "?" : this.codeSystem;
-    	if (isEmpty(this.version)) return code + " [" + codeSystem + "]";
-    	return code + " [" + codeSystem + " v" + version + "]";
+        String displayName = isEmpty(this.displayName) ? "?" : this.displayName;
+    	if (isEmpty(this.displayName)) return "{\"code\":\"" + code + "\"}";
+    	return "{\"code\":\"" + code + "\",\"display-name\":\"" + displayName + "\"}";
     }
     
 }

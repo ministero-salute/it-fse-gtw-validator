@@ -11,7 +11,9 @@
  */
 package it.finanze.sanita.fse2.ms.gtw.validator.service.impl;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -178,11 +180,41 @@ public class TerminologySRV implements ITerminologySRV {
 
 	private void sendLogForInvalidCodes(List<CodeDTO> codes, Date startOperation, final String workflowInstanceId) {
 		if (codes.isEmpty()) return;
-		List<String> versions = codes
-				.stream()
-				.map(CodeDTO::toString)
-				.collect(Collectors.toList());
+		List<String> versions = logGroupedBySystem(codes);
+		
 		logger.warn(workflowInstanceId,String.format("Invalid Codes found during the validation: [%s]", versions.stream().collect(Collectors.joining(", "))), OperationLogEnum.TERMINOLOGY_VALIDATION, ResultLogEnum.WARN, startOperation, WarnLogEnum.INVALID_CODE);
+	}
+
+	private List<String> logGroupedBySystem(List<CodeDTO> codes) {
+		Map<String, String> systems = new HashMap<>();
+		Map<String, String> versions = new HashMap<>();
+		List<String> logs = new ArrayList<>();
+		codes.forEach(dto -> {
+			systems.putIfAbsent(dto.getCodeSystem(), dto.getCodeSystemName());
+			versions.putIfAbsent(dto.getCodeSystem(), dto.getVersion());
+		});
+		for (Map.Entry<String, String> entry : systems.entrySet()) {
+			List<String> innerCodes = new ArrayList<>();
+			innerCodes.addAll(codes.stream()
+			.filter(dto -> dto.getCodeSystem().equals(entry.getKey()))
+			.map(CodeDTO::toString)
+			.collect(Collectors.toList()));
+
+			String code = entry.getKey();
+			String displayName = entry.getValue();
+			String version = versions.get(code);
+			String inner = innerCodes.stream().collect(Collectors.joining(", "));
+			String log = "";
+			if (version != null) {
+			    log = String.format("{\"code\":\"%s\",\"display-name\":\"%s\",\"version\":\"%s\",\"codes\":\"[%s]\"}", code, displayName, version, inner);
+			} else {
+			    log = String.format("{\"code\":\"%s\",\"display-name\":\"%s\",\"codes\":\"[%s]\"}", code, displayName, inner);
+			}
+			
+			logs.add(log);
+		} 
+		
+		return logs;
 	}
 
 	private void throwExceptionForEmptyDatabase(List<DictionaryETY> codeSystems) {
