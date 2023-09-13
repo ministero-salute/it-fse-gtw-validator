@@ -22,6 +22,7 @@ import org.springframework.web.client.RestTemplate;
 import it.finanze.sanita.fse2.ms.gtw.validator.client.IConfigClient;
 import it.finanze.sanita.fse2.ms.gtw.validator.config.Constants;
 import it.finanze.sanita.fse2.ms.gtw.validator.dto.response.WhoIsResponseDTO;
+import it.finanze.sanita.fse2.ms.gtw.validator.enums.EdsStrategyEnum;
 import it.finanze.sanita.fse2.ms.gtw.validator.exceptions.BusinessException;
 import it.finanze.sanita.fse2.ms.gtw.validator.exceptions.ServerResponseException;
 import it.finanze.sanita.fse2.ms.gtw.validator.utility.ProfileUtility;
@@ -94,6 +95,16 @@ public class ConfigClient implements IConfigClient {
         } catch (ResourceAccessException clientException) {
             return false;
         }
+    }
+    
+    @Override
+    public String getEDSStrategy() {
+        String output = EdsStrategyEnum.NO_EDS.name(); 
+        if(isReachable()) {
+            String endpoint = configHost + "/v1/config-items/props?type=GENERIC&props=eds-strategy";
+            output = restTemplate.getForObject(endpoint,String.class);
+        }
+        return output;
     }
 
 }

@@ -18,4 +18,5 @@ public interface IConfigClient {
 	
 	String getGatewayName();
 
+	String getEDSStrategy();
 }
