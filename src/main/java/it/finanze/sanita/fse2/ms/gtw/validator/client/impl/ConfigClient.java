@@ -99,7 +99,7 @@ public class ConfigClient implements IConfigClient {
     
     @Override
     public String getEDSStrategy() {
-        String output = EdsStrategyEnum.NO_EDS.name(); 
+        String output = EdsStrategyEnum.NO_EDS_WITH_LOG.name(); 
         if(isReachable()) {
             String endpoint = configHost + "/v1/config-items/props?type=GENERIC&props=eds-strategy";
             output = restTemplate.getForObject(endpoint,String.class);
