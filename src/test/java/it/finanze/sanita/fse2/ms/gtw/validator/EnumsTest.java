@@ -137,8 +137,7 @@ class EnumsTest {
     	CodeSystemVersionDTO dtoNullFirst = new CodeSystemVersionDTO(null, "version"); 
     	CodeSystemVersionDTO dtoNullSecond = new CodeSystemVersionDTO("codeSystem", null); 
     	CodeSystemVersionDTO dtoNullFirstEq = new CodeSystemVersionDTO(null, "version"); 
-    	CodeSystemVersionDTO dtoNullAll = new CodeSystemVersionDTO(null, null); 
-    	CodeSystemVersionDTO dtoNullAllSecond = new CodeSystemVersionDTO(null, null); 
+    	CodeSystemVersionDTO dtoNullAll = new CodeSystemVersionDTO(null, null);
 
     	assertFalse(dto.equals(dto2)); 
     	assertFalse(dto2.equals(dto3)); 
@@ -165,8 +164,7 @@ class EnumsTest {
     	CodeDTO dtoNullFirst = new CodeDTO(null, "codeSystem", "codeSystemName", "version", "displayName"); 
     	CodeDTO dtoNullSecond = new CodeDTO("code", null, "codeSystemName", "version", "displayName"); 
     	CodeDTO dtoNullFirstEq = new CodeDTO(null, "codeSystem", "codeSystemName", "version", "displayName"); 
-    	CodeDTO dtoNullAll = new CodeDTO(null, null, null, null, null); 
-    	CodeDTO dtoNullAllSecond = new CodeDTO(null, null, null, null, null); 
+    	CodeDTO dtoNullAll = new CodeDTO(null, null, null, null, null);
 
     	assertFalse(dto.equals(dto2)); 
     	assertFalse(dto2.equals(dto3)); 

@@ -14,7 +14,6 @@ package it.finanze.sanita.fse2.ms.gtw.validator.repository.mongo.impl;
 import it.finanze.sanita.fse2.ms.gtw.validator.exceptions.BusinessException;
 import it.finanze.sanita.fse2.ms.gtw.validator.repository.entity.engine.EngineETY;
 import it.finanze.sanita.fse2.ms.gtw.validator.repository.mongo.IEngineRepo;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.aggregation.TypedAggregation;
@@ -26,7 +25,6 @@ import static org.springframework.data.mongodb.core.aggregation.Aggregation.*;
 import static org.springframework.data.mongodb.core.query.Criteria.where;
 
 @Repository
-@Slf4j
 public class EngineRepo implements IEngineRepo {
 
 	@Autowired

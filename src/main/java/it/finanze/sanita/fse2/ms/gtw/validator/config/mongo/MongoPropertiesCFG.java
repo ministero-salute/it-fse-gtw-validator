@@ -29,4 +29,7 @@ public class MongoPropertiesCFG {
   
 	@Value("${data.mongodb.uri}")
 	private String uri;
+
+	@Value("${data.mongodb.schema-name}")
+	private String schemaName;
 }
