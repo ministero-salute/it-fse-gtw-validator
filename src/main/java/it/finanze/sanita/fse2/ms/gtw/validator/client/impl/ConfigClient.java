@@ -11,14 +11,6 @@
  */
 package it.finanze.sanita.fse2.ms.gtw.validator.client.impl;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Component;
-import org.springframework.web.client.HttpStatusCodeException;
-import org.springframework.web.client.ResourceAccessException;
-import org.springframework.web.client.RestTemplate;
-
 import it.finanze.sanita.fse2.ms.gtw.validator.client.IConfigClient;
 import it.finanze.sanita.fse2.ms.gtw.validator.config.Constants;
 import it.finanze.sanita.fse2.ms.gtw.validator.dto.response.WhoIsResponseDTO;
@@ -27,6 +19,14 @@ import it.finanze.sanita.fse2.ms.gtw.validator.exceptions.BusinessException;
 import it.finanze.sanita.fse2.ms.gtw.validator.exceptions.ServerResponseException;
 import it.finanze.sanita.fse2.ms.gtw.validator.utility.ProfileUtility;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Component;
+import org.springframework.web.client.HttpStatusCodeException;
+import org.springframework.web.client.ResourceAccessException;
+import org.springframework.web.client.RestTemplate;
 
 /**
  * Implementation of gtw-config Client.
@@ -103,6 +103,8 @@ public class ConfigClient implements IConfigClient {
         if(isReachable()) {
             String endpoint = configHost + "/v1/config-items/props?type=GENERIC&props=eds-strategy";
             output = restTemplate.getForObject(endpoint,String.class);
+            // If gtw-config answer but is not configured
+            if(StringUtils.isBlank(output)) output = EdsStrategyEnum.NO_EDS_WITH_LOG.name();
         }
         return output;
     }
