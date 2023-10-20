@@ -2,6 +2,7 @@ package it.finanze.sanita.fse2.ms.gtw.validator.service.impl;
 
 import java.util.Date;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.event.ApplicationStartedEvent;
 import org.springframework.context.event.EventListener;
@@ -50,8 +51,16 @@ public class ConfigSRV implements IConfigSRV {
 	}
 
 	@Override
+	public boolean isNoFhirEds() {
+		// Trigger refresh if necessary
+		String out = getEdsStrategy();
+		// Evaluate
+		return StringUtils.isNotBlank(out) && EdsStrategyEnum.NO_FHIR_EDS.name().equalsIgnoreCase(out);
+	}
+
+	@Override
 	public boolean isNoEds() {
 		String out = getEdsStrategy();
-		return !StringUtility.isNullOrEmpty(out) && EdsStrategyEnum.NO_EDS.name().equalsIgnoreCase(out);
+		return StringUtility.isNullOrEmpty(out) || EdsStrategyEnum.NO_EDS.name().equalsIgnoreCase(out);
 	}
 }

@@ -6,4 +6,5 @@ public interface IConfigSRV {
 
 	boolean isNoEds();
 	
+	boolean isNoFhirEds();
 }
