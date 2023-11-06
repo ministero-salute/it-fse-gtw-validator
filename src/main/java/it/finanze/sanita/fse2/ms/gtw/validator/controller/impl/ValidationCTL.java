@@ -11,10 +11,30 @@
  */
 package it.finanze.sanita.fse2.ms.gtw.validator.controller.impl;
 
+import static it.finanze.sanita.fse2.ms.gtw.validator.enums.RawValidationEnum.OK;
+import static it.finanze.sanita.fse2.ms.gtw.validator.enums.RawValidationEnum.SEMANTIC_WARNING;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map.Entry;
+
+import javax.servlet.http.HttpServletRequest;
+
+import org.apache.commons.lang3.tuple.Pair;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
+
 import it.finanze.sanita.fse2.ms.gtw.validator.cda.CDAHelper;
 import it.finanze.sanita.fse2.ms.gtw.validator.controller.IValidationCTL;
 import it.finanze.sanita.fse2.ms.gtw.validator.controller.Validation;
-import it.finanze.sanita.fse2.ms.gtw.validator.dto.*;
+import it.finanze.sanita.fse2.ms.gtw.validator.dto.CDAValidationDTO;
+import it.finanze.sanita.fse2.ms.gtw.validator.dto.ExtractedInfoDTO;
+import it.finanze.sanita.fse2.ms.gtw.validator.dto.SchematronFailedAssertionDTO;
+import it.finanze.sanita.fse2.ms.gtw.validator.dto.SchematronValidationResultDTO;
+import it.finanze.sanita.fse2.ms.gtw.validator.dto.ValidationInfoDTO;
+import it.finanze.sanita.fse2.ms.gtw.validator.dto.VocabularyResultDTO;
 import it.finanze.sanita.fse2.ms.gtw.validator.dto.request.ValidationRequestDTO;
 import it.finanze.sanita.fse2.ms.gtw.validator.dto.response.ValidationResponseDTO;
 import it.finanze.sanita.fse2.ms.gtw.validator.enums.CDASeverityViolationEnum;
@@ -24,18 +44,6 @@ import it.finanze.sanita.fse2.ms.gtw.validator.enums.SystemTypeEnum;
 import it.finanze.sanita.fse2.ms.gtw.validator.service.facade.IValidationFacadeSRV;
 import it.finanze.sanita.fse2.ms.gtw.validator.utility.StringUtility;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.tuple.Pair;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RestController;
-
-import javax.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map.Entry;
-
-import static it.finanze.sanita.fse2.ms.gtw.validator.enums.RawValidationEnum.OK;
-import static it.finanze.sanita.fse2.ms.gtw.validator.enums.RawValidationEnum.SEMANTIC_WARNING;
 
 /**
  *	Validation controller.
@@ -125,6 +133,13 @@ public class ValidationCTL extends AbstractCTL implements IValidationCTL {
 			build();
 
 		return new ValidationResponseDTO(getLogTraceInfo(), out);
+	}
+
+
+	@Override
+	public ValidationResponseDTO validationBundle(MultipartFile bundleFhir) {
+		// TODO - Service Method
+		return new ValidationResponseDTO(getLogTraceInfo(), null);
 	}
 	 
 	
