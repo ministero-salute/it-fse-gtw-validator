@@ -13,9 +13,9 @@ package it.finanze.sanita.fse2.ms.gtw.validator.adapter;
 
 import it.finanze.sanita.fse2.ms.gtw.validator.config.audit.AuditManager;
 import it.finanze.sanita.fse2.ms.gtw.validator.exceptions.BusinessException;
+import it.finanze.sanita.fse2.ms.gtw.validator.service.IConfigSRV;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.core.MethodParameter;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.HttpMessageConverter;
@@ -28,30 +28,45 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
 
 @Slf4j
 @ControllerAdvice
-@ConditionalOnProperty("ms.validator.audit.enabled")
 public class CustomResponseBodyAdviceAdapter implements ResponseBodyAdvice<Object> {
+
+	@Autowired
+	private IConfigSRV config;
 
 	@Autowired
 	private AuditManager manager;
 
 	@Override
-	public boolean supports(MethodParameter methodParameter, Class<? extends HttpMessageConverter<?>> aClass) { 
+	public boolean supports(MethodParameter param, Class<? extends HttpMessageConverter<?>> clazz) {
 		return true;
 	}
 
 	@Override
-	public Object beforeBodyWrite(Object o, MethodParameter methodParameter, MediaType mediaType,
-			Class<? extends HttpMessageConverter<?>> aClass, ServerHttpRequest serverHttpRequest, ServerHttpResponse serverHttpResponse) { 
-		if (serverHttpRequest instanceof ServletServerHttpRequest && serverHttpResponse instanceof ServletServerHttpResponse) {
+	public Object beforeBodyWrite(
+		Object body,
+		MethodParameter param,
+		MediaType type,
+		Class<? extends HttpMessageConverter<?>> clazz,
+		ServerHttpRequest req,
+		ServerHttpResponse res
+	) {
+		if (
+			req instanceof ServletServerHttpRequest &&
+				res instanceof ServletServerHttpResponse
+		) {
 			try {
-				manager.process(((ServletServerHttpRequest) serverHttpRequest).getServletRequest(), o);
+				if (config.isAuditEnable()) {
+					// Cast to HTTP request
+					ServletServerHttpRequest out = (ServletServerHttpRequest) req;
+					// Invoke processor
+					manager.process(out.getServletRequest(), body);
+				}
 			} catch(Exception ex) {
-				log.error("Errore nel before body write ", ex);
-				throw new BusinessException("Errore nel before body write " + ex);
+				log.error("Unable to invoke before-body write ", ex);
+				throw new BusinessException("Unable to invoke before-body write " + ex);
 			}
 		}
 
-		return o;
+		return body;
 	}
-	
 }

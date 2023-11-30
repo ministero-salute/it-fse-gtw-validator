@@ -11,15 +11,8 @@
  */
 package it.finanze.sanita.fse2.ms.gtw.validator.client.impl;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Component;
-import org.springframework.web.client.HttpStatusCodeException;
-import org.springframework.web.client.ResourceAccessException;
-import org.springframework.web.client.RestTemplate;
-
 import it.finanze.sanita.fse2.ms.gtw.validator.client.IConfigClient;
+import it.finanze.sanita.fse2.ms.gtw.validator.client.routes.ConfigClientRoutes;
 import it.finanze.sanita.fse2.ms.gtw.validator.config.Constants;
 import it.finanze.sanita.fse2.ms.gtw.validator.dto.response.WhoIsResponseDTO;
 import it.finanze.sanita.fse2.ms.gtw.validator.enums.EdsStrategyEnum;
@@ -27,6 +20,16 @@ import it.finanze.sanita.fse2.ms.gtw.validator.exceptions.BusinessException;
 import it.finanze.sanita.fse2.ms.gtw.validator.exceptions.ServerResponseException;
 import it.finanze.sanita.fse2.ms.gtw.validator.utility.ProfileUtility;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Component;
+import org.springframework.web.client.HttpStatusCodeException;
+import org.springframework.web.client.ResourceAccessException;
+import org.springframework.web.client.RestTemplate;
+
+import static it.finanze.sanita.fse2.ms.gtw.validator.client.routes.base.ClientRoutes.Config.PROPS_NAME_AUDIT_ENABLED;
+import static it.finanze.sanita.fse2.ms.gtw.validator.client.routes.base.ClientRoutes.Config.PROPS_NAME_EDS_STRATEGY;
+import static it.finanze.sanita.fse2.ms.gtw.validator.enums.ConfigItemTypeEnum.GENERIC;
 
 /**
  * Implementation of gtw-config Client.
@@ -35,26 +38,23 @@ import lombok.extern.slf4j.Slf4j;
 @Component
 public class ConfigClient implements IConfigClient {
 
-    /**
-     * Config host.
-     */
-    @Value("${ms.url.gtw-config}")
-    private String configHost;
+    @Autowired
+    private ConfigClientRoutes routes;
 
     @Autowired
-    private RestTemplate restTemplate;
+    private RestTemplate client;
 
     @Autowired
-    private ProfileUtility profileUtility;
+    private ProfileUtility profiles;
 
     @Override
     public String getGatewayName() {
-        String gatewayName = null;
+        String gatewayName;
         try {
             log.debug("Config Client - Calling Config Client to get Gateway Name");
-            final String endpoint = configHost + Constants.Config.WHOIS_PATH;
+            final String endpoint = routes.whois();
 
-            final boolean isTestEnvironment = profileUtility.isDevOrDockerProfile() || profileUtility.isTestProfile();
+            final boolean isTestEnvironment = profiles.isDevOrDockerProfile() || profiles.isTestProfile();
 
             // Check if the endpoint is reachable
             if (isTestEnvironment && !isReachable()) {
@@ -62,9 +62,7 @@ public class ConfigClient implements IConfigClient {
                 return Constants.Config.MOCKED_GATEWAY_NAME;
             }
 
-            final ResponseEntity<WhoIsResponseDTO> response = restTemplate.getForEntity(endpoint,
-                    WhoIsResponseDTO.class);
-
+            ResponseEntity<WhoIsResponseDTO> response = client.getForEntity(endpoint, WhoIsResponseDTO.class);
             WhoIsResponseDTO body = response.getBody();
 
             if (body != null) {
@@ -88,23 +86,44 @@ public class ConfigClient implements IConfigClient {
     }
 
     private boolean isReachable() {
+        boolean out;
         try {
-            final String endpoint = configHost + Constants.Config.STATUS_PATH;
-            restTemplate.getForEntity(endpoint, String.class);
-            return true;
+            client.getForEntity(routes.status(), String.class);
+            out = true;
         } catch (ResourceAccessException clientException) {
-            return false;
+            out = false;
         }
+        return out;
     }
     
     @Override
     public String getEDSStrategy() {
-        String output = EdsStrategyEnum.NO_EDS_WITH_LOG.name(); 
-        if(isReachable()) {
-            String endpoint = configHost + "/v1/config-items/props?type=GENERIC&props=eds-strategy";
-            output = restTemplate.getForObject(endpoint,String.class);
+        EdsStrategyEnum out = EdsStrategyEnum.NO_EDS_WITH_LOG;
+
+        String endpoint = routes.getConfigItem(GENERIC, PROPS_NAME_EDS_STRATEGY);
+        log.debug("{} - Executing request: {}", routes.identifier(), endpoint);
+
+        if(isReachable()){
+            ResponseEntity<String> response = client.getForEntity(endpoint, String.class);
+            out = EdsStrategyEnum.valueOf(response.getBody());
         }
-        return output;
+
+        return out.name();
+    }
+
+    @Override
+    public Boolean isAuditEnabled() {
+        boolean out = false;
+
+        String endpoint = routes.getConfigItem(GENERIC, PROPS_NAME_AUDIT_ENABLED);
+        log.debug("{} - Executing request: {}", routes.identifier(), endpoint);
+
+        if(isReachable()){
+            ResponseEntity<String> response = client.getForEntity(endpoint, String.class);
+            out = Boolean.parseBoolean(response.getBody());
+        }
+
+        return out;
     }
 
 }

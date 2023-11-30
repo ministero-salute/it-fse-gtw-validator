@@ -5,5 +5,7 @@ public interface IConfigSRV {
 	String getEdsStrategy();
 
 	boolean isNoEds();
+
+	Boolean isAuditEnable();
 	
 }
