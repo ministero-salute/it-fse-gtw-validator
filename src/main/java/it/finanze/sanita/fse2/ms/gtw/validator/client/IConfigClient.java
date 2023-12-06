@@ -11,15 +11,20 @@
  */
 package it.finanze.sanita.fse2.ms.gtw.validator.client;
 
+import it.finanze.sanita.fse2.ms.gtw.validator.dto.ConfigItemDTO;
+import it.finanze.sanita.fse2.ms.gtw.validator.enums.ConfigItemTypeEnum;
+
 /**
  * Interface of gtw-config Client.
  */
 public interface IConfigClient {
 	
+	ConfigItemDTO getConfigurationItems(ConfigItemTypeEnum type);
+	
 	String getGatewayName();
 
 	String getEDSStrategy();
 
-	Boolean isAuditEnabled();
+	Object getProps(ConfigItemTypeEnum type, String props, Object previous);
 
 }

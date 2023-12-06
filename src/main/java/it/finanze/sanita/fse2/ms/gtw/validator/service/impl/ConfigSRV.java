@@ -1,28 +1,35 @@
 package it.finanze.sanita.fse2.ms.gtw.validator.service.impl;
 
-import it.finanze.sanita.fse2.ms.gtw.validator.client.IConfigClient;
-import it.finanze.sanita.fse2.ms.gtw.validator.enums.EdsStrategyEnum;
-import it.finanze.sanita.fse2.ms.gtw.validator.service.IConfigSRV;
-import it.finanze.sanita.fse2.ms.gtw.validator.utility.StringUtility;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.tuple.Pair;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.context.event.ApplicationStartedEvent;
-import org.springframework.context.event.EventListener;
-import org.springframework.stereotype.Service;
+import static it.finanze.sanita.fse2.ms.gtw.validator.client.routes.base.ClientRoutes.Config.PROPS_NAME_AUDIT_ENABLED;
+import static it.finanze.sanita.fse2.ms.gtw.validator.client.routes.base.ClientRoutes.Config.PROPS_NAME_EDS_STRATEGY;
+import static it.finanze.sanita.fse2.ms.gtw.validator.client.routes.base.ClientRoutes.Config.PROPS_NAME_CONTROL_LOG_ENABLED;
+import static it.finanze.sanita.fse2.ms.gtw.validator.enums.ConfigItemTypeEnum.GENERIC;
+import static it.finanze.sanita.fse2.ms.gtw.validator.enums.ConfigItemTypeEnum.VALIDATOR;
 
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 
-import static it.finanze.sanita.fse2.ms.gtw.validator.client.routes.base.ClientRoutes.Config.PROPS_NAME_AUDIT_ENABLED;
-import static it.finanze.sanita.fse2.ms.gtw.validator.client.routes.base.ClientRoutes.Config.PROPS_NAME_EDS_STRATEGY;
+import javax.annotation.PostConstruct;
+
+import org.apache.commons.lang3.tuple.Pair;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import it.finanze.sanita.fse2.ms.gtw.validator.client.IConfigClient;
+import it.finanze.sanita.fse2.ms.gtw.validator.enums.ConfigItemTypeEnum;
+import it.finanze.sanita.fse2.ms.gtw.validator.service.IConfigSRV;
+import lombok.extern.slf4j.Slf4j;
+
 
 @Service
 @Slf4j
 public class ConfigSRV implements IConfigSRV {
 
-	private static final Long DELTA_MS = 300000L;
+	private static final long DELTA_MS = 300_000L;
+
+	private long lastUpdate;
 
 	private final Map<String, Pair<Long, Object>> props;
 
@@ -33,48 +40,43 @@ public class ConfigSRV implements IConfigSRV {
 		this.props = new HashMap<>();
 	}
 
-	@EventListener(ApplicationStartedEvent.class)
-	void initialize() {
-		refreshAuditEnabled();
-		refreshEdsStrategy();
-		runningConfiguration();
+	@PostConstruct
+	public void postConstruct() {
+		for(ConfigItemTypeEnum en : ConfigItemTypeEnum.values()) {
+			for(Entry<String, String> el : client.getConfigurationItems(en).getItems().entrySet()) {
+				props.put(el.getKey(), Pair.of(new Date().getTime(), el.getValue()));
+			}
+		}
 	}
 
-	private void refreshEdsStrategy() {
-		String strategy = client.getEDSStrategy();
-		props.put(PROPS_NAME_EDS_STRATEGY, Pair.of(new Date().getTime(), strategy));
-	}
-
-	private void refreshAuditEnabled() {
-		boolean audit = client.isAuditEnabled();
-		props.put(PROPS_NAME_AUDIT_ENABLED, Pair.of(new Date().getTime(), audit));
-	}
-
-	private void runningConfiguration() {
-		props.forEach((id, pair) -> log.info("[GTW-CONFIG] key: {} | value: {}", id, pair.getValue()));
+	private void refreshAuditEnable() {
+		Boolean previous = props.get(PROPS_NAME_AUDIT_ENABLED)!=null ? (Boolean)props.get(PROPS_NAME_AUDIT_ENABLED).getValue() : null;
+		Boolean prop = (Boolean)client.getProps(VALIDATOR, PROPS_NAME_AUDIT_ENABLED,previous);
+		props.put(PROPS_NAME_AUDIT_ENABLED, Pair.of(new Date().getTime(), prop));
 	}
 
 	@Override
 	public Boolean isAuditEnable() {
-		Pair<Long, Object> pair = props.getOrDefault(
-			PROPS_NAME_AUDIT_ENABLED,
-			Pair.of(0L, null)
-		);
-		if (new Date().getTime() - pair.getKey() >= DELTA_MS) {
-			synchronized(PROPS_NAME_AUDIT_ENABLED) {
-				refreshAuditEnabled();
-				verifyAuditEnabled(pair);
+		if (new Date().getTime() - lastUpdate >= DELTA_MS) {
+			synchronized(ConfigSRV.class) {
+				if (new Date().getTime() - lastUpdate >= DELTA_MS) {
+					refreshAuditEnable();	
+				}
 			}
 		}
-		return (Boolean) props.get(PROPS_NAME_AUDIT_ENABLED).getValue();
+		return (Boolean)props.get(PROPS_NAME_AUDIT_ENABLED).getValue();
 	}
+
+	private void refreshEdsStrategy() {
+		String previous = props.get(PROPS_NAME_EDS_STRATEGY)!=null ? (String)props.get(PROPS_NAME_EDS_STRATEGY).getValue() : null;
+		String prop = (String)client.getProps(GENERIC, PROPS_NAME_EDS_STRATEGY,previous);
+		props.put(PROPS_NAME_EDS_STRATEGY, Pair.of(new Date().getTime(), prop));
+	}
+
 
 	@Override
 	public String getEdsStrategy() {
-		Pair<Long, Object> pair = props.getOrDefault(
-			PROPS_NAME_EDS_STRATEGY,
-			Pair.of(0L, null)
-		);
+		Pair<Long, Object> pair = props.getOrDefault(PROPS_NAME_EDS_STRATEGY,Pair.of(0L, null));
 		if (new Date().getTime() - pair.getKey() >= DELTA_MS) {
 			synchronized(PROPS_NAME_EDS_STRATEGY) {
 				refreshEdsStrategy();
@@ -84,35 +86,32 @@ public class ConfigSRV implements IConfigSRV {
 		return (String) props.get(PROPS_NAME_EDS_STRATEGY).getValue();
 	}
 
-	@Override
-	public boolean isNoEds() {
-		String out = getEdsStrategy();
-		return !StringUtility.isNullOrEmpty(out) && EdsStrategyEnum.NO_EDS.name().equalsIgnoreCase(out);
-	}
-
-	private void verifyAuditEnabled(Pair<Long, Object> pair) {
-		Boolean previous = (Boolean) pair.getValue();
-		Boolean current = (Boolean) props.get(PROPS_NAME_AUDIT_ENABLED).getValue();
-		if(!previous.equals(current)) {
-			log.info(
-				"[GTW-CONFIG][UPDATE] key: {} | value: {} (previous: {})",
-				PROPS_NAME_AUDIT_ENABLED,
-				current,
-				previous
-			);
-		}
-	}
 
 	private void verifyEdsStrategy(Pair<Long, Object> pair) {
 		String previous = (String) pair.getValue();
 		String current = (String) props.get(PROPS_NAME_EDS_STRATEGY).getValue();
 		if(!previous.equals(current)) {
-			log.info(
-				"[GTW-CONFIG][UPDATE] key: {} | value: {} (previous: {})",
-				PROPS_NAME_EDS_STRATEGY,
-				current,
-				previous
-			);
+			log.info("[GTW-CONFIG][UPDATE] key: {} | value: {} (previous: {})",PROPS_NAME_EDS_STRATEGY,current,previous);
 		}
+	}
+
+	private void refreshControlLogPersistenceEnable() {
+		Boolean previous = props.get(PROPS_NAME_CONTROL_LOG_ENABLED)!=null ? (Boolean)props.get(PROPS_NAME_CONTROL_LOG_ENABLED).getValue() : null;
+		Boolean controlLogEnabled = (Boolean)client.getProps(GENERIC, PROPS_NAME_CONTROL_LOG_ENABLED,previous);
+		props.put(PROPS_NAME_CONTROL_LOG_ENABLED, Pair.of(new Date().getTime(), controlLogEnabled));
+
+	}
+
+
+	@Override
+	public Boolean isControlLogPersistenceEnable() {
+		if (new Date().getTime() - lastUpdate >= DELTA_MS) {
+			synchronized(ConfigSRV.class) {
+				if (new Date().getTime() - lastUpdate >= DELTA_MS) {
+					refreshControlLogPersistenceEnable();	
+				}
+			}
+		}
+		return (Boolean)props.get(PROPS_NAME_CONTROL_LOG_ENABLED).getValue();
 	}
 }

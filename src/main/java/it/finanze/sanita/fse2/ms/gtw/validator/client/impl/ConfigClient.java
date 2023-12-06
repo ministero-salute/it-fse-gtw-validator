@@ -11,25 +11,28 @@
  */
 package it.finanze.sanita.fse2.ms.gtw.validator.client.impl;
 
-import it.finanze.sanita.fse2.ms.gtw.validator.client.IConfigClient;
-import it.finanze.sanita.fse2.ms.gtw.validator.client.routes.ConfigClientRoutes;
-import it.finanze.sanita.fse2.ms.gtw.validator.config.Constants;
-import it.finanze.sanita.fse2.ms.gtw.validator.dto.response.WhoIsResponseDTO;
-import it.finanze.sanita.fse2.ms.gtw.validator.enums.EdsStrategyEnum;
-import it.finanze.sanita.fse2.ms.gtw.validator.exceptions.BusinessException;
-import it.finanze.sanita.fse2.ms.gtw.validator.exceptions.ServerResponseException;
-import it.finanze.sanita.fse2.ms.gtw.validator.utility.ProfileUtility;
-import lombok.extern.slf4j.Slf4j;
+import static it.finanze.sanita.fse2.ms.gtw.validator.client.routes.base.ClientRoutes.Config.PROPS_NAME_EDS_STRATEGY;
+import static it.finanze.sanita.fse2.ms.gtw.validator.enums.ConfigItemTypeEnum.GENERIC;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponentsBuilder;
 
-import static it.finanze.sanita.fse2.ms.gtw.validator.client.routes.base.ClientRoutes.Config.PROPS_NAME_AUDIT_ENABLED;
-import static it.finanze.sanita.fse2.ms.gtw.validator.client.routes.base.ClientRoutes.Config.PROPS_NAME_EDS_STRATEGY;
-import static it.finanze.sanita.fse2.ms.gtw.validator.enums.ConfigItemTypeEnum.GENERIC;
+import it.finanze.sanita.fse2.ms.gtw.validator.client.IConfigClient;
+import it.finanze.sanita.fse2.ms.gtw.validator.client.routes.ConfigClientRoutes;
+import it.finanze.sanita.fse2.ms.gtw.validator.config.Constants;
+import it.finanze.sanita.fse2.ms.gtw.validator.dto.ConfigItemDTO;
+import it.finanze.sanita.fse2.ms.gtw.validator.dto.response.WhoIsResponseDTO;
+import it.finanze.sanita.fse2.ms.gtw.validator.enums.ConfigItemTypeEnum;
+import it.finanze.sanita.fse2.ms.gtw.validator.enums.EdsStrategyEnum;
+import it.finanze.sanita.fse2.ms.gtw.validator.exceptions.BusinessException;
+import it.finanze.sanita.fse2.ms.gtw.validator.exceptions.ServerResponseException;
+import it.finanze.sanita.fse2.ms.gtw.validator.utility.ProfileUtility;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Implementation of gtw-config Client.
@@ -47,6 +50,12 @@ public class ConfigClient implements IConfigClient {
     @Autowired
     private ProfileUtility profiles;
 
+    @Override
+	public ConfigItemDTO getConfigurationItems(ConfigItemTypeEnum type) {
+		UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(routes.base() + "/config-items").queryParam("type", type); 
+		return client.getForObject(builder.toUriString(), ConfigItemDTO.class);
+	}
+    
     @Override
     public String getGatewayName() {
         String gatewayName;
@@ -111,19 +120,40 @@ public class ConfigClient implements IConfigClient {
         return out.name();
     }
 
-    @Override
-    public Boolean isAuditEnabled() {
-        boolean out = false;
+    
+	@Override
+	public Object getProps(ConfigItemTypeEnum type, String props, Object previous) {
+	    Object out = previous;
 
-        String endpoint = routes.getConfigItem(GENERIC, PROPS_NAME_AUDIT_ENABLED);
-        log.debug("{} - Executing request: {}", routes.identifier(), endpoint);
+	    String endpoint = routes.getConfigItem(type, props);
 
-        if(isReachable()){
-            ResponseEntity<String> response = client.getForEntity(endpoint, String.class);
-            out = Boolean.parseBoolean(response.getBody());
-        }
+	    if (isReachable()) {
+	        Object response = client.getForObject(endpoint, Object.class);
+	        out = convertResponse(response, previous);
+	    }
 
-        return out;
-    }
+	    return out;
+	}
+
+	@SuppressWarnings("unchecked")
+	private <T> T convertResponse(Object response, Object previous) {
+	    try {
+	        Class<T> targetType = (Class<T>) previous.getClass();
+
+	        if (targetType == Integer.class) {
+	            return (T) Integer.valueOf(response.toString());
+	        } else if (targetType == Boolean.class) {
+	            return (T) Boolean.valueOf(response.toString());
+	        } else if (targetType == String.class) {
+	            return (T) response.toString();
+	        } else {
+	            return (T) response;
+	        }
+	    } catch (Exception e) {
+	        return null;
+	    }
+	}
+
+	
 
 }

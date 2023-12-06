@@ -62,7 +62,7 @@ public class LoggerHelper {
 	 * Implements structured logs, at all logging levels
 	 */
 	public void trace(String workflowInstanceId, String message, OperationLogEnum operation, ResultLogEnum result, Date startDateOperation) {
-		if(!configSRV.isNoEds()){
+		if(configSRV.isControlLogPersistenceEnable()) {
 			LogDTO logDTO = LogDTO.builder().
 					message(message).
 					operation(operation.getCode()).
@@ -79,13 +79,13 @@ public class LoggerHelper {
 
 			if (Boolean.TRUE.equals(kafkaLogEnable)) {
 				kafkaLog.trace(logMessage);
-			}
+			}			
 		}
 
 	}
 
 	public void debug(String workflowInstanceId, String message, OperationLogEnum operation, ResultLogEnum result, Date startDateOperation) {
-		if(!configSRV.isNoEds()){
+		if(configSRV.isControlLogPersistenceEnable()) {
 			LogDTO logDTO = LogDTO.builder().
 					message(message).
 					operation(operation.getCode()).
@@ -107,7 +107,7 @@ public class LoggerHelper {
 	} 
 
 	public void info(String workflowInstanceId, String message, OperationLogEnum operation, ResultLogEnum result, Date startDateOperation) {
-		if(!configSRV.isNoEds()){
+		if(configSRV.isControlLogPersistenceEnable()) {
 			LogDTO logDTO = LogDTO.builder().
 					message(message).
 					operation(operation.getCode()).
@@ -127,10 +127,11 @@ public class LoggerHelper {
 			}
 		}
 
+
 	} 
 
 	public void warn(String workflowInstanceId, String message, OperationLogEnum operation, ResultLogEnum result, Date startDateOperation, WarnLogEnum warning) {
-		if(!configSRV.isNoEds()){
+		if(configSRV.isControlLogPersistenceEnable()) {
 			LogDTO logDTO = LogDTO.builder().
 					message(message).
 					operation(operation.getCode()).
@@ -149,13 +150,13 @@ public class LoggerHelper {
 			if (Boolean.TRUE.equals(kafkaLogEnable)) {
 				kafkaLog.warn(logMessage);
 			}
-
 		}
+
 
 	} 
 
 	public void error(String workflowInstanceId, String message, OperationLogEnum operation, ResultLogEnum result, Date startDateOperation, ErrorLogEnum error) {
-		if(!configSRV.isNoEds()){
+		if(configSRV.isControlLogPersistenceEnable()) {
 			LogDTO logDTO = LogDTO.builder().
 					message(message).
 					operation(operation.getCode()).
