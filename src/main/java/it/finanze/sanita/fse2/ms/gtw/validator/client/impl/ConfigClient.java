@@ -17,7 +17,6 @@ import it.finanze.sanita.fse2.ms.gtw.validator.config.Constants;
 import it.finanze.sanita.fse2.ms.gtw.validator.dto.ConfigItemDTO;
 import it.finanze.sanita.fse2.ms.gtw.validator.dto.response.WhoIsResponseDTO;
 import it.finanze.sanita.fse2.ms.gtw.validator.enums.ConfigItemTypeEnum;
-import it.finanze.sanita.fse2.ms.gtw.validator.enums.EdsStrategyEnum;
 import it.finanze.sanita.fse2.ms.gtw.validator.exceptions.BusinessException;
 import it.finanze.sanita.fse2.ms.gtw.validator.exceptions.ServerResponseException;
 import it.finanze.sanita.fse2.ms.gtw.validator.utility.ProfileUtility;
@@ -28,9 +27,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestTemplate;
-
-import static it.finanze.sanita.fse2.ms.gtw.validator.client.routes.base.ClientRoutes.Config.PROPS_NAME_EDS_STRATEGY;
-import static it.finanze.sanita.fse2.ms.gtw.validator.enums.ConfigItemTypeEnum.GENERIC;
 
 /**
  * Implementation of gtw-config Client.
@@ -101,56 +97,16 @@ public class ConfigClient implements IConfigClient {
         }
         return out;
     }
-    
-    @Override
-    public String getEDSStrategy() {
-        EdsStrategyEnum out = EdsStrategyEnum.NO_EDS_WITH_LOG;
-
-        String endpoint = routes.getConfigItem(GENERIC, PROPS_NAME_EDS_STRATEGY);
-        log.debug("{} - Executing request: {}", routes.identifier(), endpoint);
-
-        if(isReachable()){
-            ResponseEntity<String> response = client.getForEntity(endpoint, String.class);
-            out = EdsStrategyEnum.valueOf(response.getBody());
-        }
-
-        return out.name();
-    }
 
     
 	@Override
-	public Object getProps(ConfigItemTypeEnum type, String props, Object previous) {
-	    Object out = previous;
-
+	public String getProps(ConfigItemTypeEnum type, String props, String previous) {
+	    String out = previous;
 	    String endpoint = routes.getConfigItem(type, props);
-
-	    if (isReachable()) {
-	        Object response = client.getForObject(endpoint, Object.class);
-	        out = convertResponse(response, previous);
-	    }
-
+	    if (isReachable()) out = client.getForObject(endpoint, String.class);
+        if(out == null || !out.equals(previous)) {
+            log.info("[GTW-CFG] Property {} is set as {} (previously: {})", props, out, previous);
+        }
 	    return out;
 	}
-
-	@SuppressWarnings("unchecked")
-	private <T> T convertResponse(Object response, Object previous) {
-	    try {
-	        Class<T> targetType = (Class<T>) previous.getClass();
-
-	        if (targetType == Integer.class) {
-	            return (T) Integer.valueOf(response.toString());
-	        } else if (targetType == Boolean.class) {
-	            return (T) Boolean.valueOf(response.toString());
-	        } else if (targetType == String.class) {
-	            return (T) response.toString();
-	        } else {
-	            return (T) response;
-	        }
-	    } catch (Exception e) {
-	        return null;
-	    }
-	}
-
-	
-
 }
