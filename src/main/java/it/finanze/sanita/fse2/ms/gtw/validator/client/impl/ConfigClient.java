@@ -11,17 +11,6 @@
  */
 package it.finanze.sanita.fse2.ms.gtw.validator.client.impl;
 
-import static it.finanze.sanita.fse2.ms.gtw.validator.client.routes.base.ClientRoutes.Config.PROPS_NAME_EDS_STRATEGY;
-import static it.finanze.sanita.fse2.ms.gtw.validator.enums.ConfigItemTypeEnum.GENERIC;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Component;
-import org.springframework.web.client.HttpStatusCodeException;
-import org.springframework.web.client.ResourceAccessException;
-import org.springframework.web.client.RestTemplate;
-import org.springframework.web.util.UriComponentsBuilder;
-
 import it.finanze.sanita.fse2.ms.gtw.validator.client.IConfigClient;
 import it.finanze.sanita.fse2.ms.gtw.validator.client.routes.ConfigClientRoutes;
 import it.finanze.sanita.fse2.ms.gtw.validator.config.Constants;
@@ -33,6 +22,15 @@ import it.finanze.sanita.fse2.ms.gtw.validator.exceptions.BusinessException;
 import it.finanze.sanita.fse2.ms.gtw.validator.exceptions.ServerResponseException;
 import it.finanze.sanita.fse2.ms.gtw.validator.utility.ProfileUtility;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Component;
+import org.springframework.web.client.HttpStatusCodeException;
+import org.springframework.web.client.ResourceAccessException;
+import org.springframework.web.client.RestTemplate;
+
+import static it.finanze.sanita.fse2.ms.gtw.validator.client.routes.base.ClientRoutes.Config.PROPS_NAME_EDS_STRATEGY;
+import static it.finanze.sanita.fse2.ms.gtw.validator.enums.ConfigItemTypeEnum.GENERIC;
 
 /**
  * Implementation of gtw-config Client.
@@ -52,8 +50,7 @@ public class ConfigClient implements IConfigClient {
 
     @Override
 	public ConfigItemDTO getConfigurationItems(ConfigItemTypeEnum type) {
-		UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(routes.base() + "/config-items").queryParam("type", type); 
-		return client.getForObject(builder.toUriString(), ConfigItemDTO.class);
+		return client.getForObject(routes.getConfigItems(type), ConfigItemDTO.class);
 	}
     
     @Override

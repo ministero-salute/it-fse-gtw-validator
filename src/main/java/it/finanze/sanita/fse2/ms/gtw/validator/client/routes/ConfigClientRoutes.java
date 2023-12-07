@@ -59,4 +59,12 @@ public final class ConfigClientRoutes {
             .toUriString();
     }
 
+    public String getConfigItems(ConfigItemTypeEnum type) {
+        return base()
+            .pathSegment(API_VERSION, API_CONFIG_ITEMS)
+            .queryParam(QP_TYPE, type.name())
+            .build()
+            .toUriString();
+    }
+
 }
