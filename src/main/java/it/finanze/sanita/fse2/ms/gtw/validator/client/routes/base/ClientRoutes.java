@@ -34,10 +34,7 @@ public final class ClientRoutes {
         public static final String QP_PROPS = "props";
         // VALUES
         public static final String PROPS_NAME_AUDIT_ENABLED = "audit-enabled";
-        public static final String PROPS_NAME_EDS_STRATEGY = "eds-strategy";
         public static final String PROPS_NAME_CONTROL_LOG_ENABLED = "control-log-persistence-enabled";
-
-
     }
 
 }

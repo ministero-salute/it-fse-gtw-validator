@@ -15,7 +15,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static it.finanze.sanita.fse2.ms.gtw.validator.client.routes.base.ClientRoutes.Config.*;
+import static it.finanze.sanita.fse2.ms.gtw.validator.client.routes.base.ClientRoutes.Config.PROPS_NAME_AUDIT_ENABLED;
+import static it.finanze.sanita.fse2.ms.gtw.validator.client.routes.base.ClientRoutes.Config.PROPS_NAME_CONTROL_LOG_ENABLED;
 import static it.finanze.sanita.fse2.ms.gtw.validator.dto.ConfigItemDTO.ConfigDataItemDTO;
 import static it.finanze.sanita.fse2.ms.gtw.validator.enums.ConfigItemTypeEnum.GENERIC;
 import static it.finanze.sanita.fse2.ms.gtw.validator.enums.ConfigItemTypeEnum.VALIDATOR;
@@ -49,6 +50,7 @@ public class ConfigSRV implements IConfigSRV {
 				});
 			}
 		}
+		integrity();
 	}
 
 	@Override
@@ -86,4 +88,16 @@ public class ConfigSRV implements IConfigSRV {
 		String prop = client.getProps(type, name, previous);
 		props.put(name, Pair.of(new Date().getTime(), prop));
 	}
+
+	private void integrity() {
+		String err = "Missing props {} from validator";
+		String[] out = new String[]{
+			PROPS_NAME_CONTROL_LOG_ENABLED,
+			PROPS_NAME_AUDIT_ENABLED
+		};
+		for (String prop : out) {
+			if(!props.containsKey(prop)) throw new IllegalStateException(err.replace("{}", prop));
+		}
+	}
+
 }
