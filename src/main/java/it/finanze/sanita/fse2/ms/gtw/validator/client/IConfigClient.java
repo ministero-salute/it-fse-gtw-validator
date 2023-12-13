@@ -23,6 +23,6 @@ public interface IConfigClient {
 	
 	String getGatewayName();
 
-	String getProps(ConfigItemTypeEnum type, String props, String previous);
+	String getProps(String props, String previous, ConfigItemTypeEnum ms);
 
 }

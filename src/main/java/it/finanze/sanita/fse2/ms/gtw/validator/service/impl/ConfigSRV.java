@@ -18,7 +18,6 @@ import java.util.Map;
 import static it.finanze.sanita.fse2.ms.gtw.validator.client.routes.base.ClientRoutes.Config.PROPS_NAME_AUDIT_ENABLED;
 import static it.finanze.sanita.fse2.ms.gtw.validator.client.routes.base.ClientRoutes.Config.PROPS_NAME_CONTROL_LOG_ENABLED;
 import static it.finanze.sanita.fse2.ms.gtw.validator.dto.ConfigItemDTO.ConfigDataItemDTO;
-import static it.finanze.sanita.fse2.ms.gtw.validator.enums.ConfigItemTypeEnum.GENERIC;
 import static it.finanze.sanita.fse2.ms.gtw.validator.enums.ConfigItemTypeEnum.VALIDATOR;
 
 
@@ -39,7 +38,7 @@ public class ConfigSRV implements IConfigSRV {
 
 	@PostConstruct
 	public void postConstruct() {
-		for(ConfigItemTypeEnum en : ConfigItemTypeEnum.values()) {
+		for(ConfigItemTypeEnum en : ConfigItemTypeEnum.priority()) {
 			log.info("[GTW-CFG] Retrieving {} properties ...", en.name());
 			ConfigItemDTO items = client.getConfigurationItems(en);
 			List<ConfigDataItemDTO> opts = items.getConfigurationItems();
@@ -48,6 +47,7 @@ public class ConfigSRV implements IConfigSRV {
 					log.info("[GTW-CFG] Property {} is set as {}", key, value);
 					props.put(key, Pair.of(new Date().getTime(), value));
 				});
+				if(opt.getItems().isEmpty()) log.info("[GTW-CFG] No props were found");
 			}
 		}
 		integrity();
@@ -59,7 +59,7 @@ public class ConfigSRV implements IConfigSRV {
 		if (new Date().getTime() - lastUpdate >= DELTA_MS) {
 			synchronized(ConfigSRV.class) {
 				if (new Date().getTime() - lastUpdate >= DELTA_MS) {
-					refresh(VALIDATOR, PROPS_NAME_AUDIT_ENABLED);
+					refresh(PROPS_NAME_AUDIT_ENABLED);
 				}
 			}
 		}
@@ -74,7 +74,7 @@ public class ConfigSRV implements IConfigSRV {
 		if (new Date().getTime() - lastUpdate >= DELTA_MS) {
 			synchronized(ConfigSRV.class) {
 				if (new Date().getTime() - lastUpdate >= DELTA_MS) {
-					refresh(GENERIC, PROPS_NAME_CONTROL_LOG_ENABLED);
+					refresh(PROPS_NAME_CONTROL_LOG_ENABLED);
 				}
 			}
 		}
@@ -83,9 +83,9 @@ public class ConfigSRV implements IConfigSRV {
 		);
 	}
 
-	private void refresh(ConfigItemTypeEnum type, String name) {
+	private void refresh(String name) {
 		String previous = props.getOrDefault(name, Pair.of(0L, null)).getValue();
-		String prop = client.getProps(type, name, previous);
+		String prop = client.getProps(name, previous, VALIDATOR);
 		props.put(name, Pair.of(new Date().getTime(), prop));
 	}
 
