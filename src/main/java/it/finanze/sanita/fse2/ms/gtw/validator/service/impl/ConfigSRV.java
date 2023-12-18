@@ -4,6 +4,7 @@ import it.finanze.sanita.fse2.ms.gtw.validator.client.IConfigClient;
 import it.finanze.sanita.fse2.ms.gtw.validator.dto.ConfigItemDTO;
 import it.finanze.sanita.fse2.ms.gtw.validator.enums.ConfigItemTypeEnum;
 import it.finanze.sanita.fse2.ms.gtw.validator.service.IConfigSRV;
+import it.finanze.sanita.fse2.ms.gtw.validator.utility.ProfileUtility;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +20,7 @@ import static it.finanze.sanita.fse2.ms.gtw.validator.client.routes.base.ClientR
 import static it.finanze.sanita.fse2.ms.gtw.validator.client.routes.base.ClientRoutes.Config.PROPS_NAME_CONTROL_LOG_ENABLED;
 import static it.finanze.sanita.fse2.ms.gtw.validator.dto.ConfigItemDTO.ConfigDataItemDTO;
 import static it.finanze.sanita.fse2.ms.gtw.validator.enums.ConfigItemTypeEnum.VALIDATOR;
+import static it.finanze.sanita.fse2.ms.gtw.validator.enums.ConfigItemTypeEnum.priority;
 
 
 @Service
@@ -32,13 +34,24 @@ public class ConfigSRV implements IConfigSRV {
 	@Autowired
 	private IConfigClient client;
 
+	@Autowired
+	private ProfileUtility profiles;
+
 	public ConfigSRV() {
 		this.props = new HashMap<>();
 	}
 
 	@PostConstruct
 	public void postConstruct() {
-		for(ConfigItemTypeEnum en : ConfigItemTypeEnum.priority()) {
+		if(!profiles.isTestProfile()) {
+			init();
+		} else {
+			log.info("Skipping gtw-config initialization due to test profile");
+		}
+	}
+
+	private void init(){
+		for(ConfigItemTypeEnum en : priority()) {
 			log.info("[GTW-CFG] Retrieving {} properties ...", en.name());
 			ConfigItemDTO items = client.getConfigurationItems(en);
 			List<ConfigDataItemDTO> opts = items.getConfigurationItems();

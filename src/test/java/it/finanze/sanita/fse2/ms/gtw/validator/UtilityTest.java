@@ -14,15 +14,18 @@ package it.finanze.sanita.fse2.ms.gtw.validator;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import it.finanze.sanita.fse2.ms.gtw.validator.service.impl.ConfigSRV;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ActiveProfiles;
 
 import it.finanze.sanita.fse2.ms.gtw.validator.config.Constants;
@@ -37,9 +40,14 @@ import it.finanze.sanita.fse2.ms.gtw.validator.utility.CodeSystemUtility;
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class UtilityTest {
 
+	@MockBean
+	private ConfigSRV config;
+
 	@Test
 	@DisplayName("Code System Utility Test")
 	void codeSystemUtilityTest() {
+		when(config.isAuditEnable()).thenReturn(true);
+
     	List<DictionaryETY> dictList = new ArrayList<DictionaryETY>(); 
     	DictionaryETY ety = new DictionaryETY(); 
     	DictionaryETY etySecond = new DictionaryETY(); 

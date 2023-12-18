@@ -13,6 +13,7 @@ package it.finanze.sanita.fse2.ms.gtw.validator;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.io.File;
@@ -25,6 +26,7 @@ import java.util.List;
 import java.util.Map;
 
 import it.finanze.sanita.fse2.ms.gtw.validator.base.AbstractTest;
+import it.finanze.sanita.fse2.ms.gtw.validator.service.impl.ConfigSRV;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -32,6 +34,7 @@ import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -73,10 +76,14 @@ class SchemaTest extends AbstractTest {
 
 	@Autowired
 	MongoTemplate mongo;
+
+	@MockBean
+	private ConfigSRV config;
 	
 
     @BeforeEach
     void setup() {
+		when(config.isAuditEnable()).thenReturn(true);
 		deleteSchema();
 		clearConfigurationItems();
 	}

@@ -22,11 +22,13 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import it.finanze.sanita.fse2.ms.gtw.validator.service.impl.ConfigSRV;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.test.context.ActiveProfiles;
@@ -69,8 +71,12 @@ class RepositoryTest extends AbstractTest {
     @SpyBean
     private MongoTemplate mongo;
 
+    @MockBean
+    private ConfigSRV config;
+
     @BeforeAll
     void setup() {
+        when(config.isAuditEnable()).thenReturn(true);
         clearConfigurationItems();
         insertSchema();
         insertSchematron(); 

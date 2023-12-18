@@ -21,6 +21,7 @@ import it.finanze.sanita.fse2.ms.gtw.validator.dto.request.ValidationRequestDTO;
 import it.finanze.sanita.fse2.ms.gtw.validator.enums.CDASeverityViolationEnum;
 import it.finanze.sanita.fse2.ms.gtw.validator.enums.CDAValidationStatusEnum;
 import it.finanze.sanita.fse2.ms.gtw.validator.exceptions.NoRecordFoundException;
+import it.finanze.sanita.fse2.ms.gtw.validator.service.impl.ConfigSRV;
 import it.finanze.sanita.fse2.ms.gtw.validator.service.impl.ValidationSRV;
 import org.apache.commons.lang3.tuple.Pair;
 import org.junit.jupiter.api.BeforeEach;
@@ -60,11 +61,15 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 class ValidationControllerTest extends AbstractTest {
 
+	@MockBean
+	private ConfigSRV config;
+
     @BeforeEach
     void setup() {
         clearConfigurationItems();
         insertSchematron();
         insertSchema();
+		when(config.isAuditEnable()).thenReturn(true);
     }
     
     @Autowired

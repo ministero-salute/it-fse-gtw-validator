@@ -31,6 +31,7 @@ import it.finanze.sanita.fse2.ms.gtw.validator.repository.mongo.IDictionaryRepo;
 import it.finanze.sanita.fse2.ms.gtw.validator.repository.mongo.IEngineRepo;
 import it.finanze.sanita.fse2.ms.gtw.validator.repository.mongo.impl.SchematronRepo;
 import it.finanze.sanita.fse2.ms.gtw.validator.service.facade.IValidationFacadeSRV;
+import it.finanze.sanita.fse2.ms.gtw.validator.service.impl.ConfigSRV;
 import it.finanze.sanita.fse2.ms.gtw.validator.service.impl.TerminologySRV;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.tuple.Pair;
@@ -79,11 +80,15 @@ class ValidationTest extends AbstractTest {
 	private SchematronRepo schematronRepo;
 	
 	@Mock
-	private ISchematronResource aResSCH; 
+	private ISchematronResource aResSCH;
+
+	@MockBean
+	private ConfigSRV config;
 	
 	
 	@BeforeEach
 	void setup() {
+		when(config.isAuditEnable()).thenReturn(true);
 		clearConfigurationItems();
 		insertSchema();
 		insertSchematron();

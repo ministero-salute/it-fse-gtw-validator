@@ -20,9 +20,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.atLeastOnce;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -32,6 +30,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import it.finanze.sanita.fse2.ms.gtw.validator.service.impl.ConfigSRV;
 import org.bson.types.ObjectId;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -83,9 +82,13 @@ class TerminologyValidationTest {
     @MockBean
     private LoggerHelper logger;
 
+    @MockBean
+    private ConfigSRV config;
+
     @Test
     @DisplayName("Test the Terminology Validation")
     void validationTest() {
+        when(config.isAuditEnable()).thenReturn(true);
 
         final Map<String, List<String>> redisTerminology = generateRandomTerminology(10, 100);
         final Map<String, List<String>> mongoTerminology = generateRandomTerminology(10, 100);
@@ -106,6 +109,7 @@ class TerminologyValidationTest {
     @Test
     @DisplayName("Terminology Validation Exception Test")
     void validationExceptionTest() {
+        when(config.isAuditEnable()).thenReturn(true);
 
         final Map<String, List<String>> redisTerminology = generateRandomTerminology(10, 100);
         final Map<String, List<String>> mongoTerminology = generateRandomTerminology(10, 100);
@@ -130,10 +134,12 @@ class TerminologyValidationTest {
     @DirtiesContext
     class CodeSystemIndependent {
 
+
         @BeforeEach
         void setup() {
             given(propsCFG.isFindSpecificErrorVocabulary()).willReturn(false);
             given(propsCFG.isFindSystemAndCodesIndependence()).willReturn(true);
+            when(config.isAuditEnable()).thenReturn(true);
             mongoTemplate.dropCollection(TerminologyETY.class);
         }
 
