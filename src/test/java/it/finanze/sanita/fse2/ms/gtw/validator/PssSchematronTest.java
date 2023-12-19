@@ -13,6 +13,7 @@ package it.finanze.sanita.fse2.ms.gtw.validator;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.when;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -21,10 +22,12 @@ import java.util.Map.Entry;
 
 import it.finanze.sanita.fse2.ms.gtw.validator.base.AbstractTest;
 import it.finanze.sanita.fse2.ms.gtw.validator.base.SchematronPath;
+import it.finanze.sanita.fse2.ms.gtw.validator.service.impl.ConfigSRV;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ActiveProfiles;
 
 import com.helger.commons.io.resource.IReadableResource;
@@ -46,19 +49,14 @@ import lombok.extern.slf4j.Slf4j;
 @ActiveProfiles(Constants.Profile.TEST)
 class PssSchematronTest extends AbstractTest {
 
-	@Autowired
-	ISchematronRepo schematronRepo;
+	@MockBean
+	private ConfigSRV config;
 
-	@Autowired
-	IDictionaryRepo dictionaryRepo;
-
-	@Autowired
-	IValidationSRV validationSRV;
-
-	 
 	@Test
 	@DisplayName("CDA OK")
 	void cdaOK() throws Exception {
+		when(config.isAuditEnable()).thenReturn(true);
+
 		log.info("Analysing CDA OK with PSS Schematron");
 		byte[] schematron = FileUtility.getFileFromInternalResources("Files" + File.separator + "schematronPSS" + File.separator + "schV3" + File.separator +"schematron_PSS_v2.7.sch");
 		

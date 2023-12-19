@@ -13,6 +13,7 @@ package it.finanze.sanita.fse2.ms.gtw.validator;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.when;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -21,10 +22,12 @@ import java.util.Map.Entry;
 
 import it.finanze.sanita.fse2.ms.gtw.validator.base.AbstractTest;
 import it.finanze.sanita.fse2.ms.gtw.validator.base.SchematronPath;
+import it.finanze.sanita.fse2.ms.gtw.validator.service.impl.ConfigSRV;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ActiveProfiles;
 
 import com.helger.commons.io.resource.IReadableResource;
@@ -46,19 +49,14 @@ import lombok.extern.slf4j.Slf4j;
 @ActiveProfiles(Constants.Profile.TEST)
 class VPSSchematronTest extends AbstractTest {
 
-	@Autowired
-	ISchematronRepo schematronRepo;
-	
-	@Autowired
-	IDictionaryRepo dictionaryRepo;
-
-	@Autowired
-	IValidationSRV validationSRV;
-	  
+	@MockBean
+	private ConfigSRV config;
 	 
 	@Test
 	@DisplayName("CDA OK")
 	void cdaOK() throws Exception {
+		when(config.isAuditEnable()).thenReturn(true);
+
 		byte[] schematron = FileUtility.getFileFromInternalResources("Files" + File.separator + "schematronVPS" + File.separator + "schV3" + File.separator +"schematron_VPS_v 2.7.sch");
 
 		try (ByteArrayInputStream bytes = new ByteArrayInputStream(schematron)) {
@@ -79,6 +77,8 @@ class VPSSchematronTest extends AbstractTest {
 	@Test
 	@DisplayName("CDA ERROR")
 	void cdaError() throws Exception {
+		when(config.isAuditEnable()).thenReturn(true);
+
 		byte[] schematron = FileUtility.getFileFromInternalResources("Files" + File.separator + "schematronVPS" + File.separator + "schV3" + File.separator +"schematron_VPS_v 2.7.sch");
 		
 		try (ByteArrayInputStream bytes = new ByteArrayInputStream(schematron)) {

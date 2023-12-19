@@ -56,6 +56,17 @@ public class LoggerHelper {
 	 * Implements structured logs, at all logging levels
 	 */
 	public void trace(String workflowInstanceId, String message, OperationLogEnum operation, ResultLogEnum result, Date startDateOperation) {
+		if(configSRV.isControlLogPersistenceEnable()) {
+			LogDTO logDTO = LogDTO.builder().
+					message(message).
+					operation(operation.getCode()).
+					op_result(result.getCode()).
+					op_timestamp_start(dateFormat.format(startDateOperation)).
+					op_timestamp_end(dateFormat.format(new Date())).
+					gateway_name(getGatewayName()).
+					microservice_name(msName).
+					workflow_instance_id(workflowInstanceId).
+					build();
 
 		LogDTO logDTO = LogDTO.builder().
 				message(message).
@@ -68,26 +79,24 @@ public class LoggerHelper {
 				workflow_instance_id(workflowInstanceId).
 				build();
 
-		final String logMessage = asJsonDTO(logDTO);
-		log.trace(logMessage);
-
-		if (Boolean.TRUE.equals(kafkaLogEnable)) {
-			kafkaLog.trace(logMessage);
+			if (Boolean.TRUE.equals(kafkaLogEnable)) {
+				kafkaLog.trace(logMessage);
+			}			
 		}
 	}
 
 	public void debug(String workflowInstanceId, String message, OperationLogEnum operation, ResultLogEnum result, Date startDateOperation) {
-		
-		LogDTO logDTO = LogDTO.builder().
-				message(message).
-				operation(operation.getCode()).
-				op_result(result.getCode()).
-				op_timestamp_start(dateFormat.format(startDateOperation)).
-				op_timestamp_end(dateFormat.format(new Date())).
-				gateway_name(getGatewayName()).
-				microservice_name(msName).
-				workflow_instance_id(workflowInstanceId).
-				build();
+		if(configSRV.isControlLogPersistenceEnable()) {
+			LogDTO logDTO = LogDTO.builder().
+					message(message).
+					operation(operation.getCode()).
+					op_result(result.getCode()).
+					op_timestamp_start(dateFormat.format(startDateOperation)).
+					op_timestamp_end(dateFormat.format(new Date())).
+					gateway_name(getGatewayName()).
+					microservice_name(msName).
+					workflow_instance_id(workflowInstanceId).
+					build();
 
 		final String logMessage = asJsonDTO(logDTO);
 		log.debug(logMessage);
@@ -97,6 +106,17 @@ public class LoggerHelper {
 	} 
 	 
 	public void info(String workflowInstanceId, String message, OperationLogEnum operation, ResultLogEnum result, Date startDateOperation) {
+		if(configSRV.isControlLogPersistenceEnable()) {
+			LogDTO logDTO = LogDTO.builder().
+					message(message).
+					operation(operation.getCode()).
+					op_result(result.getCode()).
+					op_timestamp_start(dateFormat.format(startDateOperation)).
+					op_timestamp_end(dateFormat.format(new Date())).
+					gateway_name(getGatewayName()).
+					microservice_name(msName).
+					workflow_instance_id(workflowInstanceId).
+					build();
 
 		LogDTO logDTO = LogDTO.builder().
 				message(message).
@@ -115,33 +135,49 @@ public class LoggerHelper {
 			kafkaLog.info(logMessage);
 			log.info("After send kafka message");
 		}
+
+
 	} 
 	
 	public void warn(String workflowInstanceId, String message, OperationLogEnum operation, ResultLogEnum result, Date startDateOperation, WarnLogEnum warning) {
-		
-		LogDTO logDTO = LogDTO.builder().
-				message(message).
-				operation(operation.getCode()).
-				op_result(result.getCode()).
-				op_timestamp_start(dateFormat.format(startDateOperation)).
-				op_timestamp_end(dateFormat.format(new Date())).
-				op_warning(warning.getCode()).
-				op_warning_description(warning.getDescription()).
-				gateway_name(getGatewayName()).
-				microservice_name(msName).
-				workflow_instance_id(workflowInstanceId).
-				build();
+		if(configSRV.isControlLogPersistenceEnable()) {
+			LogDTO logDTO = LogDTO.builder().
+					message(message).
+					operation(operation.getCode()).
+					op_result(result.getCode()).
+					op_timestamp_start(dateFormat.format(startDateOperation)).
+					op_timestamp_end(dateFormat.format(new Date())).
+					op_warning(warning.getCode()).
+					op_warning_description(warning.getDescription()).
+					gateway_name(getGatewayName()).
+					microservice_name(msName).
+					workflow_instance_id(workflowInstanceId).
+					build();
 
-		final String logMessage = asJsonDTO(logDTO);
-		log.warn(logMessage);
-		if (Boolean.TRUE.equals(kafkaLogEnable)) {
-			kafkaLog.warn(logMessage);
+			final String logMessage = asJsonDTO(logDTO);
+			log.warn(logMessage);
+			if (Boolean.TRUE.equals(kafkaLogEnable)) {
+				kafkaLog.warn(logMessage);
+			}
 		}
- 
+
+
 	} 
 	
 	public void error(String workflowInstanceId, String message, OperationLogEnum operation, ResultLogEnum result, Date startDateOperation, ErrorLogEnum error) {
-		
+		if(configSRV.isControlLogPersistenceEnable()) {
+			LogDTO logDTO = LogDTO.builder().
+					message(message).
+					operation(operation.getCode()).
+					op_result(result.getCode()).
+					op_timestamp_start(dateFormat.format(startDateOperation)).
+					op_timestamp_end(dateFormat.format(new Date())).
+					op_error(error.getCode()).
+					op_error_description(error.getDescription()).
+					gateway_name(getGatewayName()).
+					microservice_name(msName).
+					workflow_instance_id(workflowInstanceId).
+					build();
 
 		LogDTO logDTO = LogDTO.builder().
 				message(message).

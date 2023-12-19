@@ -12,11 +12,13 @@
 package it.finanze.sanita.fse2.ms.gtw.validator.audit.exclusions;
 
 import it.finanze.sanita.fse2.ms.gtw.validator.config.audit.exclusions.SwaggerExclusion;
+import it.finanze.sanita.fse2.ms.gtw.validator.service.impl.ConfigSRV;
 import org.junit.jupiter.api.Test;
 import org.springdoc.core.SpringDocConfigProperties;
 import org.springdoc.core.SwaggerUiConfigProperties;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.util.Arrays;
@@ -25,6 +27,7 @@ import java.util.List;
 import static it.finanze.sanita.fse2.ms.gtw.validator.config.Constants.Profile.TEST;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.when;
 
 @SpringBootTest
 @ActiveProfiles(TEST)
@@ -40,8 +43,13 @@ class SwaggerExclusionTest {
     @Autowired
     private SwaggerExclusion exclusion;
 
+    @MockBean
+    private ConfigSRV config;
+
     @Test
     void verify() {
+        when(config.isAuditEnable()).thenReturn(true);
+
         for (String path : getSwaggerPath()) {
             assertTrue(exclusion.verify(path, null));
         }

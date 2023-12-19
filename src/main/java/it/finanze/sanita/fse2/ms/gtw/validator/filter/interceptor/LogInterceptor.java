@@ -16,28 +16,31 @@ import java.util.Date;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import it.finanze.sanita.fse2.ms.gtw.validator.service.impl.ConfigSRV;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
 @Component
-@ConditionalOnProperty("ms.validator.audit.enabled")
 public class LogInterceptor implements HandlerInterceptor{
+
+    @Autowired
+    private ConfigSRV config;
 	
 	@Override
-    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) { 
-        request.setAttribute("START_TIME", new Date());  
+    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
+        if (config.isAuditEnable()) request.setAttribute("START_TIME", new Date());
         return true;
     }
 
     @Override
-    public void postHandle(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Object o, ModelAndView modelAndView) throws Exception {
+    public void postHandle(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Object o, ModelAndView modelAndView) {
     	 //Questo metodo è lasciato intenzionalmente vuoto
     }
 
     @Override
-    public void afterCompletion(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Object o, Exception e) throws Exception {
+    public void afterCompletion(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Object o, Exception e) {
     	//Questo metodo è lasciato intenzionalmente vuoto
     }
 }

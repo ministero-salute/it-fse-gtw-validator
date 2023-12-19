@@ -11,35 +11,31 @@
  */
 package it.finanze.sanita.fse2.ms.gtw.validator;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import com.helger.commons.io.resource.IReadableResource;
+import com.helger.commons.io.resource.inmemory.ReadableResourceInputStream;
+import com.helger.schematron.xslt.SchematronResourceSCH;
+import it.finanze.sanita.fse2.ms.gtw.validator.base.AbstractTest;
+import it.finanze.sanita.fse2.ms.gtw.validator.base.SchematronPath;
+import it.finanze.sanita.fse2.ms.gtw.validator.cda.CDAHelper;
+import it.finanze.sanita.fse2.ms.gtw.validator.config.Constants;
+import it.finanze.sanita.fse2.ms.gtw.validator.dto.SchematronValidationResultDTO;
+import it.finanze.sanita.fse2.ms.gtw.validator.service.impl.ConfigSRV;
+import it.finanze.sanita.fse2.ms.gtw.validator.utility.FileUtility;
+import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.ActiveProfiles;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import it.finanze.sanita.fse2.ms.gtw.validator.base.AbstractTest;
-import it.finanze.sanita.fse2.ms.gtw.validator.base.SchematronPath;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ActiveProfiles;
-
-import com.helger.commons.io.resource.IReadableResource;
-import com.helger.commons.io.resource.inmemory.ReadableResourceInputStream;
-import com.helger.schematron.xslt.SchematronResourceSCH;
-
-import it.finanze.sanita.fse2.ms.gtw.validator.cda.CDAHelper;
-import it.finanze.sanita.fse2.ms.gtw.validator.config.Constants;
-import it.finanze.sanita.fse2.ms.gtw.validator.dto.SchematronValidationResultDTO;
-import it.finanze.sanita.fse2.ms.gtw.validator.repository.mongo.IDictionaryRepo;
-import it.finanze.sanita.fse2.ms.gtw.validator.repository.mongo.ISchematronRepo;
-import it.finanze.sanita.fse2.ms.gtw.validator.service.IValidationSRV;
-import it.finanze.sanita.fse2.ms.gtw.validator.utility.FileUtility;
-import lombok.extern.slf4j.Slf4j;
-
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.when;
 
 
 @Slf4j
@@ -47,19 +43,14 @@ import lombok.extern.slf4j.Slf4j;
 @ActiveProfiles(Constants.Profile.TEST)
 class RSASchematronTest extends AbstractTest {
 
-	@Autowired
-	ISchematronRepo schematronRepo;
-	
-	@Autowired
-	IDictionaryRepo dictionaryRepo;
+	@MockBean
+	private ConfigSRV config;
 
-	@Autowired
-	IValidationSRV validationSRV;
-	
-	 
 	@Test
 	@DisplayName("CDA OK")
 	void cdaOK() throws Exception {
+		when(config.isAuditEnable()).thenReturn(true);
+
 		byte[] schematron = FileUtility.getFileFromInternalResources("Files" + File.separator + "schematronRSA" + File.separator + "schV3" + File.separator +"schematron_RSA_v7.3.sch");
 		
 		try (ByteArrayInputStream bytes = new ByteArrayInputStream(schematron)) {
@@ -79,6 +70,8 @@ class RSASchematronTest extends AbstractTest {
 	@Test
 	@DisplayName("CDA ERROR")
 	void cdaError() throws Exception {
+		when(config.isAuditEnable()).thenReturn(true);
+
 		byte[] schematron = FileUtility.getFileFromInternalResources("Files" + File.separator + "schematronRSA" + File.separator + "schV3" + File.separator +"schematron_RSA_v7.3.sch");
 
 		try (ByteArrayInputStream bytes = new ByteArrayInputStream(schematron)) {
