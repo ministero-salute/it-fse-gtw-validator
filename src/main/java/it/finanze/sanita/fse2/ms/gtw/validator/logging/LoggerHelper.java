@@ -11,18 +11,7 @@
  */
 package it.finanze.sanita.fse2.ms.gtw.validator.logging;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
-
 import com.fasterxml.jackson.core.JsonProcessingException;
-
 import it.finanze.sanita.fse2.ms.gtw.validator.client.IConfigClient;
 import it.finanze.sanita.fse2.ms.gtw.validator.dto.LogDTO;
 import it.finanze.sanita.fse2.ms.gtw.validator.enums.ErrorLogEnum;
@@ -32,6 +21,15 @@ import it.finanze.sanita.fse2.ms.gtw.validator.enums.WarnLogEnum;
 import it.finanze.sanita.fse2.ms.gtw.validator.service.IConfigSRV;
 import it.finanze.sanita.fse2.ms.gtw.validator.utility.StringUtility;
 import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
+
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 @Service
 @Slf4j
@@ -75,13 +73,11 @@ public class LoggerHelper {
 					build();
 
 			final String logMessage = asJsonDTO(logDTO);
-			log.trace(logMessage);
 
 			if (Boolean.TRUE.equals(kafkaLogEnable)) {
 				kafkaLog.trace(logMessage);
 			}			
 		}
-
 	}
 
 	public void debug(String workflowInstanceId, String message, OperationLogEnum operation, ResultLogEnum result, Date startDateOperation) {
@@ -103,7 +99,6 @@ public class LoggerHelper {
 				kafkaLog.debug(logMessage);
 			}
 		}
-
 	} 
 
 	public void info(String workflowInstanceId, String message, OperationLogEnum operation, ResultLogEnum result, Date startDateOperation) {
@@ -119,6 +114,7 @@ public class LoggerHelper {
 					workflow_instance_id(workflowInstanceId).
 					build();
 
+
 			final String logMessage = asJsonDTO(logDTO);
 			log.info(logMessage);
 			if (Boolean.TRUE.equals(kafkaLogEnable)) {
@@ -126,7 +122,6 @@ public class LoggerHelper {
 				log.info("After send kafka message");
 			}
 		}
-
 
 	} 
 
@@ -170,13 +165,13 @@ public class LoggerHelper {
 					workflow_instance_id(workflowInstanceId).
 					build();
 
+
 			final String logMessage = asJsonDTO(logDTO);
 			log.error(logMessage);
 			if (Boolean.TRUE.equals(kafkaLogEnable)) {
 				kafkaLog.error(logMessage);
 			}
 		}
-
 	}
 
 	/**
