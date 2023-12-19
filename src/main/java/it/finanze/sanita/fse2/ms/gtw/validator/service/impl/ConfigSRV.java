@@ -70,7 +70,7 @@ public class ConfigSRV implements IConfigSRV {
 	public Boolean isAuditEnable() {
 		long lastUpdate = props.get(PROPS_NAME_AUDIT_ENABLED).getKey();
 		if (new Date().getTime() - lastUpdate >= DELTA_MS) {
-			synchronized(ConfigSRV.class) {
+			synchronized(Locks.AUDIT_ENABLED) {
 				if (new Date().getTime() - lastUpdate >= DELTA_MS) {
 					refresh(PROPS_NAME_AUDIT_ENABLED);
 				}
@@ -85,7 +85,7 @@ public class ConfigSRV implements IConfigSRV {
 	public Boolean isControlLogPersistenceEnable() {
 		long lastUpdate = props.get(PROPS_NAME_CONTROL_LOG_ENABLED).getKey();
 		if (new Date().getTime() - lastUpdate >= DELTA_MS) {
-			synchronized(ConfigSRV.class) {
+			synchronized(Locks.CONTROL_LOG_ENABLED) {
 				if (new Date().getTime() - lastUpdate >= DELTA_MS) {
 					refresh(PROPS_NAME_CONTROL_LOG_ENABLED);
 				}
@@ -111,6 +111,12 @@ public class ConfigSRV implements IConfigSRV {
 		for (String prop : out) {
 			if(!props.containsKey(prop)) throw new IllegalStateException(err.replace("{}", prop));
 		}
+	}
+
+	private static final class Locks {
+		public static final Object CONTROL_LOG_ENABLED = new Object();
+		public static final Object AUDIT_ENABLED = new Object();
+
 	}
 
 }
