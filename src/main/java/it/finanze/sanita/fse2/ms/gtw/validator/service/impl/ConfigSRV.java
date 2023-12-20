@@ -27,8 +27,6 @@ import static it.finanze.sanita.fse2.ms.gtw.validator.enums.ConfigItemTypeEnum.p
 @Slf4j
 public class ConfigSRV implements IConfigSRV {
 
-	private static final long DELTA_MS = 300_000L;
-
 	private final Map<String, Pair<Long, String>> props;
 
 	@Autowired
@@ -69,9 +67,9 @@ public class ConfigSRV implements IConfigSRV {
 	@Override
 	public Boolean isAuditEnable() {
 		long lastUpdate = props.get(PROPS_NAME_AUDIT_ENABLED).getKey();
-		if (new Date().getTime() - lastUpdate >= DELTA_MS) {
+		if (new Date().getTime() - lastUpdate >= getRefreshRate()) {
 			synchronized(Locks.AUDIT_ENABLED) {
-				if (new Date().getTime() - lastUpdate >= DELTA_MS) {
+				if (new Date().getTime() - lastUpdate >= getRefreshRate()) {
 					refresh(PROPS_NAME_AUDIT_ENABLED);
 				}
 			}
@@ -84,9 +82,9 @@ public class ConfigSRV implements IConfigSRV {
 	@Override
 	public Boolean isControlLogPersistenceEnable() {
 		long lastUpdate = props.get(PROPS_NAME_CONTROL_LOG_ENABLED).getKey();
-		if (new Date().getTime() - lastUpdate >= DELTA_MS) {
+		if (new Date().getTime() - lastUpdate >= getRefreshRate()) {
 			synchronized(Locks.CONTROL_LOG_ENABLED) {
-				if (new Date().getTime() - lastUpdate >= DELTA_MS) {
+				if (new Date().getTime() - lastUpdate >= getRefreshRate()) {
 					refresh(PROPS_NAME_CONTROL_LOG_ENABLED);
 				}
 			}
@@ -94,6 +92,11 @@ public class ConfigSRV implements IConfigSRV {
 		return Boolean.parseBoolean(
 			props.get(PROPS_NAME_CONTROL_LOG_ENABLED).getValue()
 		);
+	}
+
+	@Override
+	public long getRefreshRate() {
+		return 300_000L;
 	}
 
 	private void refresh(String name) {
