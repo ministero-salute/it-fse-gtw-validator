@@ -22,7 +22,8 @@ public enum CodeSystemChangeEnum {
 	STATO_CLINICO_PROBLEMA("observation > code[code='33999-4']", "2.16.840.1.113883.2.9.77.22.11.7"), //ArtDecor
 	CAPACITA_MOTORIA("observation > code[code='75246-9']", "2.16.840.1.113883.2.9.77.22.11.15"), //ArtDecor
 	FUMO("observation > code[code='72166-2']", "1.3.6.1.4.1.12009.10.1.1356"), //AnswerListOID
-	USO_DI_DROGHE("observation > code[code='74204-9']", "1.3.6.1.4.1.12009.10.1.1694"); //AnswerListOID
+	USO_DI_DROGHE("observation > code[code='74204-9']", "1.3.6.1.4.1.12009.10.1.1694"), //AnswerListOID
+	MARTIAL_STATUS("observation > code[code='45404-1']", "1.3.6.1.4.1.12009.10.1.3342"); //AnswerListOID
 	
 	private String selector;
 	private String codeSystem;
