@@ -11,7 +11,6 @@
  */
 package it.finanze.sanita.fse2.ms.gtw.validator.controller.handler;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,7 +19,6 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
-import brave.Tracer;
 import it.finanze.sanita.fse2.ms.gtw.validator.dto.response.LogTraceInfoDTO;
 import it.finanze.sanita.fse2.ms.gtw.validator.dto.response.ResponseDTO;
 import it.finanze.sanita.fse2.ms.gtw.validator.exceptions.NoRecordFoundException;
@@ -33,11 +31,11 @@ import it.finanze.sanita.fse2.ms.gtw.validator.exceptions.ServerResponseExceptio
 public class ControllerExceptionHandler extends ResponseEntityExceptionHandler {
 
 	
-	/**
-	 * Tracker log.
-	 */
-	@Autowired
-	private Tracer tracer;
+//	/**
+//	 * Tracker log.
+//	 */
+//	@Autowired
+//	private Tracer tracer;
    
 
 	/**
@@ -72,8 +70,9 @@ public class ControllerExceptionHandler extends ResponseEntityExceptionHandler {
 	
 	private LogTraceInfoDTO getLogTraceInfo() {
 		return new LogTraceInfoDTO(
-				tracer.currentSpan().context().spanIdString(), 
-				tracer.currentSpan().context().traceIdString());
+				"","");
+//				tracer.currentSpan().context().spanIdString(), 
+//				tracer.currentSpan().context().traceIdString());
 	}
 	
 	@ExceptionHandler(value = {ServerResponseException.class})
