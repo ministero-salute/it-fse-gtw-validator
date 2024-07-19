@@ -53,7 +53,9 @@ public class AuditManager {
                 try {
                     entity = filter.get().apply(uri, req, body);
                     // Save
-                    repository.save(entity);
+                    if(entity!=null){
+                        repository.save(entity);
+                    } 
                 } catch (Exception e) {
                     log.error("Unable to save audit entity due to: {}", e.getMessage());
                 }
