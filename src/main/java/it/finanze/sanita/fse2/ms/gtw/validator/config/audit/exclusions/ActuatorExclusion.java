@@ -11,18 +11,23 @@
  */
 package it.finanze.sanita.fse2.ms.gtw.validator.config.audit.exclusions;
 
-import it.finanze.sanita.fse2.ms.gtw.validator.config.audit.AuditExclusion;
+import java.net.URLDecoder;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
+
+import javax.servlet.http.HttpServletRequest;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.actuate.autoconfigure.endpoint.web.WebEndpointProperties;
 import org.springframework.stereotype.Component;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import javax.servlet.http.HttpServletRequest;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
+import it.finanze.sanita.fse2.ms.gtw.validator.config.audit.AuditExclusion;
+import lombok.extern.slf4j.Slf4j;
 
 @Component
+@Slf4j
 public class ActuatorExclusion implements AuditExclusion {
 
     @Autowired
@@ -50,7 +55,14 @@ public class ActuatorExclusion implements AuditExclusion {
                 // If it wasn't overwritten, it will return null therefore we are using the default mapping value
                 String mapper = mapping.getOrDefault(endpoint, endpoint);
                 // Get actuator path
-                String path = UriComponentsBuilder.newInstance().pathSegment(base, mapper).toUriString();
+                String path = "";
+                try{
+                    path = URLDecoder.decode(UriComponentsBuilder.newInstance().pathSegment(base, mapper).toUriString(),"UTF-8");
+                    if (uri.startsWith(path)) skip = true;
+                } catch(Exception ex){
+                    log.error("Error while decode path segment", ex);
+                }
+                // String path = URLDecoder.decode(UriComponentsBuilder.newInstance().pathSegment(base, mapper).toUriString(),"UTF-8");
                 // If path match, exit loop
                 if (uri.startsWith(path)) skip = true;
             }
