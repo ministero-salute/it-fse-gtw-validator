@@ -36,12 +36,17 @@ public class AnyNonTermsReqFilter implements AuditFilter {
             ContentCachingRequestWrapper wrapper = (ContentCachingRequestWrapper) req;
             content = new String(wrapper.getContentAsByteArray(), UTF_8);
         }
-        AuditETY entity = new AuditETY();
-        entity.setServizio(uri);
-        entity.setStart_time((Date) req.getAttribute("START_TIME"));
-        entity.setEnd_time(new Date());
-        entity.setRequest(StringUtility.fromJSON(content, Object.class));
-        entity.setResponse(body);
+
+        AuditETY entity = null;
+        if (!content.contains("<!--CDA_BENCHMARK_TEST-->")) {
+            entity = new AuditETY();
+            entity.setServizio(uri);
+            entity.setStart_time((Date) req.getAttribute("START_TIME"));
+            entity.setEnd_time(new Date());
+            entity.setRequest(StringUtility.fromJSON(content, Object.class));
+            entity.setResponse(body);
+        }
+
         return entity;
     }
 }
