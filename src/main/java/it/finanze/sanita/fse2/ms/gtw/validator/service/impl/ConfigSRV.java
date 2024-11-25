@@ -2,12 +2,14 @@ package it.finanze.sanita.fse2.ms.gtw.validator.service.impl;
 
 import it.finanze.sanita.fse2.ms.gtw.validator.client.IConfigClient;
 import it.finanze.sanita.fse2.ms.gtw.validator.dto.ConfigItemDTO;
+import it.finanze.sanita.fse2.ms.gtw.validator.dto.ConfigItemDTO.ConfigDataItemDTO;
 import it.finanze.sanita.fse2.ms.gtw.validator.enums.ConfigItemTypeEnum;
 import it.finanze.sanita.fse2.ms.gtw.validator.service.IConfigSRV;
 import it.finanze.sanita.fse2.ms.gtw.validator.utility.ProfileUtility;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
@@ -34,6 +36,9 @@ public class ConfigSRV implements IConfigSRV {
 
 	@Autowired
 	private ProfileUtility profiles;
+
+    @Value("${ms.config.refresh-rate}")
+	private Long refreshRate;
 
 	public ConfigSRV() {
 		this.props = new HashMap<>();
@@ -96,7 +101,7 @@ public class ConfigSRV implements IConfigSRV {
 
 	@Override
 	public long getRefreshRate() {
-		return 300_000L;
+        return this.refreshRate;
 	}
 
 	private void refresh(String name) {
