@@ -12,7 +12,7 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>2.7.3</version>
+		<version>2.7.18</version>
 		<relativePath /> <!-- lookup parent from repository -->
 	</parent>
 
@@ -34,6 +34,7 @@
 			src/main/java/it/finanze/sanita/fse2/ms/gtw/validator/xmlresolver/Input.java,
 			src/main/java/it/finanze/sanita/fse2/ms/gtw/validator/logging/**/*.*
 		</sonar.exclusions>
+		<logback.version>1.2.13</logback.version>
 	</properties>
 
 	<dependencies>
@@ -42,6 +43,12 @@
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
+			<exclusions>
+				<exclusion>
+					<groupId>org.yaml</groupId>
+					<artifactId>snakeyaml</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.httpcomponents</groupId>
@@ -74,6 +81,12 @@
 			<groupId>org.springdoc</groupId>
 			<artifactId>springdoc-openapi-ui</artifactId>
 			<version>1.6.11</version>
+			<exclusions>
+				<exclusion>
+					<groupId>org.yaml</groupId>
+					<artifactId>snakeyaml</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 
 		<!-- LOGBACK JSON -->
@@ -100,6 +113,7 @@
 		<dependency>
 			<groupId>org.springframework.kafka</groupId>
 			<artifactId>spring-kafka</artifactId>
+			<version>2.9.11</version>
 		</dependency>
  
 		<!-- TEST -->
@@ -167,7 +181,6 @@
 				<type>pom</type>
 				<scope>import</scope>
 			</dependency>
-
 			<dependency>
 				<groupId>ant-contrib</groupId>
 				<artifactId>ant-contrib</artifactId>
@@ -177,6 +190,12 @@
 				<groupId>ant</groupId>
 				<artifactId>ant</artifactId>
 				<version>1.7.0</version>
+			</dependency>
+			<dependency>
+				<groupId>org.xerial.snappy</groupId>
+				<artifactId>snappy-java</artifactId>
+				<version>1.1.10.4</version>
+				<scope>runtime</scope>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
