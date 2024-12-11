@@ -157,7 +157,7 @@ public class KafkaAppender<E> extends KafkaAppenderConfig<E> {
     	try {
     		log.debug("Create producer log");
     		for(Entry<String, Object> prod : producerConfig.entrySet()) {
-    			log.debug("KEY : " + prod.getKey() + " VALUE:" + prod.getValue());
+    			log.info("KEY : " + prod.getKey() + " VALUE:" + prod.getValue());
     		}
     		out = new KafkaProducer<>(new HashMap<>(producerConfig));
     	} catch(Exception ex) {
