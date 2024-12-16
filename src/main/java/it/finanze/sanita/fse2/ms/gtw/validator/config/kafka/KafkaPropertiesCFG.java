@@ -9,7 +9,7 @@
  * 
  * You should have received a copy of the GNU Affero General Public License along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
-package it.finanze.sanita.fse2.ms.gtw.validator.config;
+package it.finanze.sanita.fse2.ms.gtw.validator.config.kafka;
 
 import java.io.Serializable;
 import java.util.Properties;
@@ -18,6 +18,7 @@ import org.apache.kafka.clients.admin.AdminClient;
 import org.apache.kafka.clients.admin.AdminClientConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -78,6 +79,7 @@ public class KafkaPropertiesCFG implements Serializable {
 	private ProfileUtility profileUtility;
 
 	@Bean
+	@ConditionalOnProperty(name = "sasl.mechanism", havingValue = "OAUTHBEARER", matchIfMissing = false)
 	public AdminClient client() {
 		Properties configProperties = new Properties();
     	configProperties.put(AdminClientConfig.BOOTSTRAP_SERVERS_CONFIG, producerBootstrapServers);
