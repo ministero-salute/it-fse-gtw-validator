@@ -11,7 +11,7 @@
  */
 package it.finanze.sanita.fse2.ms.gtw.validator.controller;
 
-import javax.validation.ValidationException;
+import jakarta.validation.ValidationException;
 
 import it.finanze.sanita.fse2.ms.gtw.validator.utility.StringUtility;
 

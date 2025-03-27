@@ -13,7 +13,7 @@ package it.finanze.sanita.fse2.ms.gtw.validator;
 
 import com.helger.commons.io.resource.IReadableResource;
 import com.helger.commons.io.resource.inmemory.ReadableResourceInputStream;
-import com.helger.schematron.xslt.SchematronResourceSCH;
+import com.helger.schematron.sch.SchematronResourceSCH;
 import it.finanze.sanita.fse2.ms.gtw.validator.base.AbstractTest;
 import it.finanze.sanita.fse2.ms.gtw.validator.base.SchematronPath;
 import it.finanze.sanita.fse2.ms.gtw.validator.cda.CDAHelper;

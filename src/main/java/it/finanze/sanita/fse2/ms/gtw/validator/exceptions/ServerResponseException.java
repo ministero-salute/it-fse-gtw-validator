@@ -11,7 +11,7 @@
  */
 package it.finanze.sanita.fse2.ms.gtw.validator.exceptions;
 
-import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -35,7 +35,7 @@ public class ServerResponseException extends RuntimeException {
 	
 	private String message;
 	
-	private HttpStatus status;
+	private HttpStatusCode status;
 	
 	private int statusCode;
 	

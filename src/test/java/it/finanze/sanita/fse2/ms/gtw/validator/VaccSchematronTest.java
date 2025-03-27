@@ -32,7 +32,7 @@ import org.springframework.test.context.ActiveProfiles;
 
 import com.helger.commons.io.resource.IReadableResource;
 import com.helger.commons.io.resource.inmemory.ReadableResourceInputStream;
-import com.helger.schematron.xslt.SchematronResourceSCH;
+import com.helger.schematron.sch.SchematronResourceSCH;
 
 import it.finanze.sanita.fse2.ms.gtw.validator.cda.CDAHelper;
 import it.finanze.sanita.fse2.ms.gtw.validator.config.Constants;
