@@ -17,7 +17,7 @@ import it.finanze.sanita.fse2.ms.gtw.validator.utility.StringUtility;
 import org.springframework.stereotype.Component;
 import org.springframework.web.util.ContentCachingRequestWrapper;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import java.util.Date;
 
 import static java.nio.charset.StandardCharsets.UTF_8;

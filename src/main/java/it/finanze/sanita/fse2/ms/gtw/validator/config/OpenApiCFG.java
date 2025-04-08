@@ -13,7 +13,7 @@ package it.finanze.sanita.fse2.ms.gtw.validator.config;
 
 import java.util.regex.Pattern;
 
-import org.springdoc.core.customizers.OpenApiCustomiser;
+import org.springdoc.core.customizers.OpenApiCustomizer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -50,12 +50,12 @@ public class OpenApiCFG {
   }
 
   @Bean
-	public OpenApiCustomiser openApiCustomiser() {
+	public OpenApiCustomizer openApiCustomiser() {
 		return openApi -> openApi.getComponents().getSchemas().values().forEach( s -> s.setAdditionalProperties(false));
 	}
 	
 	@Bean
-	public OpenApiCustomiser customerGlobalHeaderOpenApiCustomiser() {
+	public OpenApiCustomizer customerGlobalHeaderOpenApiCustomiser() {
 		return openApi -> {
 			for (final Server server : openApi.getServers()) {
                 final Pattern pattern = Pattern.compile("^https://.*");

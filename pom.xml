@@ -12,14 +12,15 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>2.7.18</version>
+		<version>3.4.3</version>
 		<relativePath /> <!-- lookup parent from repository -->
 	</parent>
 
 	<properties>
 		<!-- Application -->
 		<java.version>21</java.version>
-		<spring-cloud.version>2021.0.1</spring-cloud.version>
+		<spring-boot.version>3.4.3</spring-boot.version>
+		<spring-cloud.version>2024.0.0</spring-cloud.version>
 		<start-class>it.finanze.sanita.fse2.ms.gtw.validator.ValidatorApplication</start-class>
 		<!-- Build -->
 		<config.infra>${project.basedir}/infrastructure</config.infra>
@@ -34,7 +35,7 @@
 			src/main/java/it/finanze/sanita/fse2/ms/gtw/validator/xmlresolver/Input.java,
 			src/main/java/it/finanze/sanita/fse2/ms/gtw/validator/logging/**/*.*
 		</sonar.exclusions>
-		<logback.version>1.2.13</logback.version>
+		<logback.version>1.5.16</logback.version>
 	</properties>
 
 	<dependencies>
@@ -50,9 +51,17 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
+
 		<dependency>
-			<groupId>org.apache.httpcomponents</groupId>
-			<artifactId>httpclient</artifactId>
+			<groupId>org.apache.httpcomponents.client5</groupId>
+			<artifactId>httpclient5</artifactId>
+			<version>5.4.2</version>
+			<exclusions>
+        		<exclusion>
+        	    	<groupId>commons-logging</groupId>
+        	    	<artifactId>commons-logging</artifactId>
+        		</exclusion>
+    		</exclusions>
 		</dependency>
 
 		<!-- RESILIENCE -->
@@ -77,10 +86,11 @@
 		</dependency>
 
 		<!-- OPENAPI-UI -->
+		<!-- https://mvnrepository.com/artifact/org.springdoc/springdoc-openapi-starter-webmvc-ui -->
 		<dependency>
 			<groupId>org.springdoc</groupId>
-			<artifactId>springdoc-openapi-ui</artifactId>
-			<version>1.6.11</version>
+			<artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+    		<version>2.8.5</version>
 			<exclusions>
 				<exclusion>
 					<groupId>org.yaml</groupId>
@@ -113,7 +123,13 @@
 		<dependency>
 			<groupId>org.springframework.kafka</groupId>
 			<artifactId>spring-kafka</artifactId>
-			<version>2.9.11</version>
+			<version>3.3.3</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.kafka</groupId>
+			<artifactId>spring-kafka-test</artifactId>
+			<version>3.3.3</version>
+			<scope>test</scope>
 		</dependency>
  
 		<!-- TEST -->
@@ -153,8 +169,8 @@
 
 		<!-- TRACING -->
 		<dependency>
-			<groupId>org.springframework.cloud</groupId>
-			<artifactId>spring-cloud-starter-sleuth</artifactId>
+    		<groupId>io.micrometer</groupId>
+    		<artifactId>micrometer-tracing-bridge-brave</artifactId>
 		</dependency>
 
 		<!-- JSOUP -->
@@ -166,9 +182,9 @@
 
 		<!-- SCHEMATRON -->
 		<dependency>
-			<groupId>com.helger</groupId>
-			<artifactId>ph-schematron</artifactId>
-			<version>5.6.5</version>
+		    <groupId>com.helger.schematron</groupId>
+		    <artifactId>ph-schematron-xslt</artifactId>
+		    <version>8.0.6</version>
 		</dependency>
 		
 		<!-- https://mvnrepository.com/artifact/com.microsoft.azure/msal4j -->
@@ -190,6 +206,25 @@
             <artifactId>janino</artifactId>
             <version>3.1.7</version>
         </dependency>
+
+		<dependency>
+		    <groupId>org.springframework.boot</groupId>
+		    <artifactId>spring-boot-starter-validation</artifactId>
+		</dependency>
+
+		<!-- JAXB for XML mapping -->
+		<dependency>
+		    <groupId>jakarta.xml.bind</groupId>
+		    <artifactId>jakarta.xml.bind-api</artifactId>
+		    <version>4.0.2</version>
+		</dependency>
+		<dependency>
+		    <groupId>org.glassfish.jaxb</groupId>
+		    <artifactId>jaxb-runtime</artifactId>
+		    <version>4.0.2</version>
+		</dependency>
+		
+		
 	</dependencies>
 
 	<dependencyManagement>

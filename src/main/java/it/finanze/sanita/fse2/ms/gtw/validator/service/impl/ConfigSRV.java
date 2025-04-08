@@ -2,7 +2,6 @@ package it.finanze.sanita.fse2.ms.gtw.validator.service.impl;
 
 import it.finanze.sanita.fse2.ms.gtw.validator.client.IConfigClient;
 import it.finanze.sanita.fse2.ms.gtw.validator.dto.ConfigItemDTO;
-import it.finanze.sanita.fse2.ms.gtw.validator.dto.ConfigItemDTO.ConfigDataItemDTO;
 import it.finanze.sanita.fse2.ms.gtw.validator.enums.ConfigItemTypeEnum;
 import it.finanze.sanita.fse2.ms.gtw.validator.service.IConfigSRV;
 import it.finanze.sanita.fse2.ms.gtw.validator.utility.ProfileUtility;
@@ -12,7 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.PostConstruct;
+import jakarta.annotation.PostConstruct;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;

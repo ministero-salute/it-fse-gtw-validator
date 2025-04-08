@@ -12,6 +12,8 @@
 package it.finanze.sanita.fse2.ms.gtw.validator.cda;
 
 import com.helger.schematron.ISchematronResource;
+import com.helger.schematron.svrl.SVRLFailedAssert;
+import com.helger.schematron.svrl.SVRLSuccessfulReport;
 import com.helger.schematron.svrl.jaxb.FailedAssert;
 import com.helger.schematron.svrl.jaxb.SchematronOutputType;
 import com.helger.schematron.svrl.jaxb.SuccessfulReport;
@@ -120,12 +122,12 @@ public class CDAHelper {
 			for (Object object : asserts) {
 				if (object instanceof FailedAssert) {
 					validXML = false;
-					FailedAssert failedAssert = (FailedAssert) object;
-					SchematronFailedAssertionDTO failedAssertion = SchematronFailedAssertionDTO.builder().location(failedAssert.getLocation()).test(failedAssert.getTest()).text(failedAssert.getText().getContent().toString()).build();
+					SVRLFailedAssert  failedAssert = (SVRLFailedAssert) object;
+					SchematronFailedAssertionDTO failedAssertion = SchematronFailedAssertionDTO.builder().location(failedAssert.getLocation()).test(failedAssert.getTest()).text(failedAssert.getText().toString()).build();
 					assertFailed.add(failedAssertion);
 				} else if(object instanceof SuccessfulReport) {
-					SuccessfulReport warningAssert = (SuccessfulReport) object;
-					SchematronFailedAssertionDTO warningAssertion = SchematronFailedAssertionDTO.builder().location(warningAssert.getLocation()).test(warningAssert.getTest()).text(warningAssert.getText().getContent().toString()).build();
+					SVRLSuccessfulReport warningAssert = (SVRLSuccessfulReport) object;
+					SchematronFailedAssertionDTO warningAssertion = SchematronFailedAssertionDTO.builder().location(warningAssert.getLocation()).test(warningAssert.getTest()).text(warningAssert.getText().toString()).build();
 					assertWarning.add(warningAssertion);
 				}
 			}
