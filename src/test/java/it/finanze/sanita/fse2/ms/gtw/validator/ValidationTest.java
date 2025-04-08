@@ -45,6 +45,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
+import org.springframework.test.context.bean.override.mockito.MockitoSpyBean;
 
 import java.io.File;
 import java.nio.charset.StandardCharsets;
@@ -67,22 +69,22 @@ class ValidationTest extends AbstractTest {
 	@Autowired
 	IValidationFacadeSRV service;
 	
-	@SpyBean
+	@MockitoSpyBean
 	TerminologySRV terminologySRV; 
 	
-	@SpyBean
+	@MockitoSpyBean
 	private IDictionaryRepo codeSystemRepo; 
 	
-	@SpyBean
+	@MockitoSpyBean
 	private IEngineRepo engines;
 	
-	@MockBean
+	@MockitoBean
 	private SchematronRepo schematronRepo;
 	
 	@Mock
 	private ISchematronResource aResSCH;
 
-	@MockBean
+	@MockitoBean
 	private ConfigSRV config;
 	
 	

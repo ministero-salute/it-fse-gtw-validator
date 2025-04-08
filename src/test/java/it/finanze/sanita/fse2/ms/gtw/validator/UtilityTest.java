@@ -27,6 +27,7 @@ import org.junit.jupiter.api.TestInstance;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 import it.finanze.sanita.fse2.ms.gtw.validator.config.Constants;
 import it.finanze.sanita.fse2.ms.gtw.validator.dto.CodeDTO;
@@ -40,7 +41,7 @@ import it.finanze.sanita.fse2.ms.gtw.validator.utility.CodeSystemUtility;
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class UtilityTest {
 
-	@MockBean
+	@MockitoBean
 	private ConfigSRV config;
 
 	@Test

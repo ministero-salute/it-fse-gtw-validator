@@ -29,6 +29,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 import com.helger.commons.io.resource.IReadableResource;
 import com.helger.commons.io.resource.inmemory.ReadableResourceInputStream;
@@ -48,7 +49,7 @@ import lombok.extern.slf4j.Slf4j;
 @ActiveProfiles(Constants.Profile.TEST)
 class VaccSchematronTest extends AbstractTest {
 
-	@MockBean
+	@MockitoBean
 	private ConfigSRV config;
 	
 	@Test

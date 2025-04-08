@@ -22,16 +22,16 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import it.finanze.sanita.fse2.ms.gtw.validator.service.impl.ConfigSRV;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
+import org.springframework.test.context.bean.override.mockito.MockitoSpyBean;
 
 import com.mongodb.MongoException;
 
@@ -43,6 +43,7 @@ import it.finanze.sanita.fse2.ms.gtw.validator.repository.entity.SchematronETY;
 import it.finanze.sanita.fse2.ms.gtw.validator.repository.mongo.ISchemaRepo;
 import it.finanze.sanita.fse2.ms.gtw.validator.repository.mongo.ISchematronRepo;
 import it.finanze.sanita.fse2.ms.gtw.validator.repository.mongo.impl.TerminologyRepo;
+import it.finanze.sanita.fse2.ms.gtw.validator.service.impl.ConfigSRV;
 
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -62,16 +63,16 @@ class RepositoryTest extends AbstractTest {
     @Autowired
     private ISchemaRepo repository; 
     
-    @SpyBean
+    @MockitoSpyBean
     private ISchematronRepo schematronRepository; 
 
     @Autowired
     private TerminologyRepo terminologyRepo;
     
-    @SpyBean
+    @MockitoSpyBean
     private MongoTemplate mongo;
 
-    @MockBean
+    @MockitoBean
     private ConfigSRV config;
 
     @BeforeAll

@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
-import brave.Tracer;
+import io.micrometer.tracing.Tracer;
 import it.finanze.sanita.fse2.ms.gtw.validator.dto.response.LogTraceInfoDTO;
 import it.finanze.sanita.fse2.ms.gtw.validator.dto.response.ResponseDTO;
 import it.finanze.sanita.fse2.ms.gtw.validator.exceptions.NoRecordFoundException;
@@ -32,12 +32,20 @@ import it.finanze.sanita.fse2.ms.gtw.validator.exceptions.ServerResponseExceptio
 @ControllerAdvice
 public class ControllerExceptionHandler extends ResponseEntityExceptionHandler {
 
-	
-	/**
-	 * Tracker log.
-	 */
+
 	@Autowired
 	private Tracer tracer;
+
+
+	protected LogTraceInfoDTO getLogTraceInfo() {
+		LogTraceInfoDTO out = new LogTraceInfoDTO(null, null);
+		if (tracer.currentSpan() != null) {
+			out = new LogTraceInfoDTO(
+					tracer.currentSpan().context().spanId(), 
+					tracer.currentSpan().context().traceId());
+		}
+		return out;
+	}
    
 
 	/**
@@ -68,12 +76,6 @@ public class ControllerExceptionHandler extends ResponseEntityExceptionHandler {
 	private ResponseEntity<ResponseDTO> handleException(final Exception ex, final HttpStatus status) {
 		final ResponseDTO out = new ResponseDTO(getLogTraceInfo(), status.value(), ex.getMessage());
         return new ResponseEntity<>(out, new HttpHeaders(), status);
-	}
-	
-	private LogTraceInfoDTO getLogTraceInfo() {
-		return new LogTraceInfoDTO(
-				tracer.currentSpan().context().spanIdString(), 
-				tracer.currentSpan().context().traceIdString());
 	}
 	
 	@ExceptionHandler(value = {ServerResponseException.class})

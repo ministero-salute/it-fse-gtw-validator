@@ -34,6 +34,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -61,7 +62,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 class ValidationControllerTest extends AbstractTest {
 
-	@MockBean
+	@MockitoBean
 	private ConfigSRV config;
 
     @BeforeEach
@@ -75,7 +76,7 @@ class ValidationControllerTest extends AbstractTest {
     @Autowired
     private MockMvc mvc;
     
-    @MockBean
+    @MockitoBean
     private ValidationSRV service;
     
     @Test

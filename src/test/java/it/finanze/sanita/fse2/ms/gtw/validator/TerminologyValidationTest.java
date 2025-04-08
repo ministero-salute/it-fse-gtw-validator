@@ -20,7 +20,10 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.atLeastOnce;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -30,7 +33,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import it.finanze.sanita.fse2.ms.gtw.validator.service.impl.ConfigSRV;
 import org.bson.types.ObjectId;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -45,6 +47,7 @@ import org.springframework.context.annotation.Description;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 import it.finanze.sanita.fse2.ms.gtw.validator.config.Constants;
 import it.finanze.sanita.fse2.ms.gtw.validator.config.properties.PropertiesCFG;
@@ -55,6 +58,7 @@ import it.finanze.sanita.fse2.ms.gtw.validator.repository.entity.TerminologyETY;
 import it.finanze.sanita.fse2.ms.gtw.validator.repository.mongo.IDictionaryRepo;
 import it.finanze.sanita.fse2.ms.gtw.validator.repository.mongo.ITerminologyRepo;
 import it.finanze.sanita.fse2.ms.gtw.validator.service.IValidationSRV;
+import it.finanze.sanita.fse2.ms.gtw.validator.service.impl.ConfigSRV;
 import lombok.extern.slf4j.Slf4j;
 
 
@@ -67,7 +71,7 @@ class TerminologyValidationTest {
     @Autowired
     private ITerminologyRepo vocabulariesMongoRepo;
     
-    @MockBean
+    @MockitoBean
     private PropertiesCFG propsCFG;
     
     @Autowired
@@ -76,13 +80,13 @@ class TerminologyValidationTest {
     @Autowired
     private IValidationSRV service;
 
-    @MockBean
+    @MockitoBean
     private IDictionaryRepo repository;
 
-    @MockBean
+    @MockitoBean
     private LoggerHelper logger;
 
-    @MockBean
+    @MockitoBean
     private ConfigSRV config;
 
     @Test

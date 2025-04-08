@@ -17,6 +17,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.*;
@@ -40,16 +41,16 @@ public class ConfigClientTest{
     @Autowired
     private IConfigClient config;
 
-    @MockBean
+    @MockitoBean
     private ConfigSRV service;
 
-    @MockBean
+    @MockitoBean
     private RestTemplate client;
 
     @Autowired
     private ConfigClientRoutes routes;
 
-    @MockBean
+    @MockitoBean
     private ProfileUtility profiles;
 
     private static final List<Pair<String, String>> DEFAULT_PROPS = Arrays.asList(

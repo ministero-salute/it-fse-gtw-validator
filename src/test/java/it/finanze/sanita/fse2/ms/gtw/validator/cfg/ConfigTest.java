@@ -1,18 +1,5 @@
 package it.finanze.sanita.fse2.ms.gtw.validator.cfg;
 
-import it.finanze.sanita.fse2.ms.gtw.validator.adapter.CustomResponseBodyAdviceAdapter;
-import it.finanze.sanita.fse2.ms.gtw.validator.config.WebCFG;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.tuple.Pair;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.test.context.ActiveProfiles;
-
-import java.util.Arrays;
-import java.util.List;
-
 import static it.finanze.sanita.fse2.ms.gtw.validator.client.routes.base.ClientRoutes.Config.PROPS_NAME_AUDIT_ENABLED;
 import static it.finanze.sanita.fse2.ms.gtw.validator.client.routes.base.ClientRoutes.Config.PROPS_NAME_CONTROL_LOG_ENABLED;
 import static it.finanze.sanita.fse2.ms.gtw.validator.config.Constants.Profile.TEST;
@@ -21,6 +8,20 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.TestInstance.Lifecycle.PER_CLASS;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 
+import java.util.Arrays;
+import java.util.List;
+
+import org.apache.commons.lang3.tuple.Pair;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
+
+import it.finanze.sanita.fse2.ms.gtw.validator.adapter.CustomResponseBodyAdviceAdapter;
+import it.finanze.sanita.fse2.ms.gtw.validator.config.WebCFG;
+import lombok.extern.slf4j.Slf4j;
+
 @Slf4j
 @SpringBootTest(webEnvironment = RANDOM_PORT)
 @ActiveProfiles(TEST)
@@ -28,9 +29,9 @@ import static org.springframework.boot.test.context.SpringBootTest.WebEnvironmen
 public class ConfigTest extends AbstractConfig {
 
     // Exclude from running by mocking
-    @MockBean
+    @MockitoBean
     private WebCFG web;
-    @MockBean
+    @MockitoBean
     private CustomResponseBodyAdviceAdapter adapter;
 
     private static final List<Pair<String, String>> DEFAULT_PROPS = Arrays.asList(

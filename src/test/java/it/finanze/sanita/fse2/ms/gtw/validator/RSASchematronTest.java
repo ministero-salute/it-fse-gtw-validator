@@ -27,6 +27,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -43,7 +44,7 @@ import static org.mockito.Mockito.when;
 @ActiveProfiles(Constants.Profile.TEST)
 class RSASchematronTest extends AbstractTest {
 
-	@MockBean
+	@MockitoBean
 	private ConfigSRV config;
 
 	@Test

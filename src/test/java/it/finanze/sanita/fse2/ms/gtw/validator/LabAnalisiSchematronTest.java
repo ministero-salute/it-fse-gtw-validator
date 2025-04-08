@@ -20,26 +20,22 @@ import java.io.File;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import it.finanze.sanita.fse2.ms.gtw.validator.base.AbstractTest;
-import it.finanze.sanita.fse2.ms.gtw.validator.base.SchematronPath;
-import it.finanze.sanita.fse2.ms.gtw.validator.service.impl.ConfigSRV;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 import com.helger.commons.io.resource.IReadableResource;
 import com.helger.commons.io.resource.inmemory.ReadableResourceInputStream;
 import com.helger.schematron.sch.SchematronResourceSCH;
 
+import it.finanze.sanita.fse2.ms.gtw.validator.base.AbstractTest;
+import it.finanze.sanita.fse2.ms.gtw.validator.base.SchematronPath;
 import it.finanze.sanita.fse2.ms.gtw.validator.cda.CDAHelper;
 import it.finanze.sanita.fse2.ms.gtw.validator.config.Constants;
 import it.finanze.sanita.fse2.ms.gtw.validator.dto.SchematronValidationResultDTO;
-import it.finanze.sanita.fse2.ms.gtw.validator.repository.mongo.IDictionaryRepo;
-import it.finanze.sanita.fse2.ms.gtw.validator.repository.mongo.ISchematronRepo;
-import it.finanze.sanita.fse2.ms.gtw.validator.service.IValidationSRV;
+import it.finanze.sanita.fse2.ms.gtw.validator.service.impl.ConfigSRV;
 import it.finanze.sanita.fse2.ms.gtw.validator.utility.FileUtility;
 import lombok.extern.slf4j.Slf4j;
 
@@ -48,7 +44,7 @@ import lombok.extern.slf4j.Slf4j;
 @ActiveProfiles(Constants.Profile.TEST)
 class LabAnalisiSchematronTest extends AbstractTest {
 
-	@MockBean
+	@MockitoBean
 	private ConfigSRV config;
  
 	@Test

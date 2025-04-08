@@ -11,22 +11,27 @@
  */
 package it.finanze.sanita.fse2.ms.gtw.validator.audit.exclusions;
 
-import it.finanze.sanita.fse2.ms.gtw.validator.config.audit.exclusions.ActuatorExclusion;
-import it.finanze.sanita.fse2.ms.gtw.validator.service.impl.ConfigSRV;
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.actuate.autoconfigure.endpoint.web.WebEndpointProperties;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.web.util.UriComponentsBuilder;
-
-import java.util.*;
-
 import static it.finanze.sanita.fse2.ms.gtw.validator.config.Constants.Profile.TEST;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.when;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.actuate.autoconfigure.endpoint.web.WebEndpointProperties;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
+import org.springframework.web.util.UriComponentsBuilder;
+
+import it.finanze.sanita.fse2.ms.gtw.validator.config.audit.exclusions.ActuatorExclusion;
+import it.finanze.sanita.fse2.ms.gtw.validator.service.impl.ConfigSRV;
 
 @SpringBootTest
 @ActiveProfiles(TEST)
@@ -39,7 +44,7 @@ class ActuatorExclusionTest {
     @Autowired
     private ActuatorExclusion exclusion;
 
-    @MockBean
+    @MockitoBean
     private ConfigSRV config;
 
     @Test
