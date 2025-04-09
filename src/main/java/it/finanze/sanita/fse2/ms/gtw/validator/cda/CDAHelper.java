@@ -122,12 +122,12 @@ public class CDAHelper {
 			for (Object object : asserts) {
 				if (object instanceof FailedAssert) {
 					validXML = false;
-					SVRLFailedAssert  failedAssert = (SVRLFailedAssert) object;
-					SchematronFailedAssertionDTO failedAssertion = SchematronFailedAssertionDTO.builder().location(failedAssert.getLocation()).test(failedAssert.getTest()).text(failedAssert.getText().toString()).build();
+					FailedAssert failedAssert = (FailedAssert) object;
+					SchematronFailedAssertionDTO failedAssertion = SchematronFailedAssertionDTO.builder().location(failedAssert.getLocation()).test(failedAssert.getTest()).text(failedAssert.getText().getContent().toString()).build();
 					assertFailed.add(failedAssertion);
 				} else if(object instanceof SuccessfulReport) {
-					SVRLSuccessfulReport warningAssert = (SVRLSuccessfulReport) object;
-					SchematronFailedAssertionDTO warningAssertion = SchematronFailedAssertionDTO.builder().location(warningAssert.getLocation()).test(warningAssert.getTest()).text(warningAssert.getText().toString()).build();
+					SuccessfulReport warningAssert = (SuccessfulReport) object;
+					SchematronFailedAssertionDTO warningAssertion = SchematronFailedAssertionDTO.builder().location(warningAssert.getLocation()).test(warningAssert.getTest()).text(warningAssert.getText().getContent().toString()).build();
 					assertWarning.add(warningAssertion);
 				}
 			}

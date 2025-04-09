@@ -11,9 +11,25 @@
  */
 package it.finanze.sanita.fse2.ms.gtw.validator;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.when;
+
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.util.Map;
+import java.util.Map.Entry;
+
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
+
 import com.helger.commons.io.resource.IReadableResource;
 import com.helger.commons.io.resource.inmemory.ReadableResourceInputStream;
-import com.helger.schematron.sch.SchematronResourceSCH;
+import com.helger.schematron.xslt.SchematronResourceSCH;
+
 import it.finanze.sanita.fse2.ms.gtw.validator.base.AbstractTest;
 import it.finanze.sanita.fse2.ms.gtw.validator.base.SchematronPath;
 import it.finanze.sanita.fse2.ms.gtw.validator.cda.CDAHelper;
@@ -22,21 +38,6 @@ import it.finanze.sanita.fse2.ms.gtw.validator.dto.SchematronValidationResultDTO
 import it.finanze.sanita.fse2.ms.gtw.validator.service.impl.ConfigSRV;
 import it.finanze.sanita.fse2.ms.gtw.validator.utility.FileUtility;
 import lombok.extern.slf4j.Slf4j;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.bean.override.mockito.MockitoBean;
-
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.util.Map;
-import java.util.Map.Entry;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.when;
 
 
 @Slf4j

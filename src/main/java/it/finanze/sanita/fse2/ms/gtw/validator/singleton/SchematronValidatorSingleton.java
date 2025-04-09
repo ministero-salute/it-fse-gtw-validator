@@ -11,19 +11,21 @@
  */
 package it.finanze.sanita.fse2.ms.gtw.validator.singleton;
 
+import java.io.ByteArrayInputStream;
+import java.util.Date;
+import java.util.concurrent.ConcurrentHashMap;
+
+import org.springframework.util.CollectionUtils;
+
 import com.helger.commons.io.resource.IReadableResource;
 import com.helger.commons.io.resource.inmemory.ReadableResourceInputStream;
 import com.helger.schematron.ISchematronResource;
-import com.helger.schematron.sch.SchematronResourceSCH;
+import com.helger.schematron.xslt.SchematronResourceSCH;
+
 import it.finanze.sanita.fse2.ms.gtw.validator.exceptions.BusinessException;
 import it.finanze.sanita.fse2.ms.gtw.validator.repository.entity.SchematronETY;
 import it.finanze.sanita.fse2.ms.gtw.validator.utility.StringUtility;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.util.CollectionUtils;
-
-import java.io.ByteArrayInputStream;
-import java.util.Date;
-import java.util.concurrent.ConcurrentHashMap;
 
 @Slf4j
 public final class SchematronValidatorSingleton {

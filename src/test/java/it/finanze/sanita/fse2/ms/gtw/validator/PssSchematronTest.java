@@ -28,7 +28,7 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 import com.helger.commons.io.resource.IReadableResource;
 import com.helger.commons.io.resource.inmemory.ReadableResourceInputStream;
-import com.helger.schematron.sch.SchematronResourceSCH;
+import com.helger.schematron.xslt.SchematronResourceSCH;
 
 import it.finanze.sanita.fse2.ms.gtw.validator.base.AbstractTest;
 import it.finanze.sanita.fse2.ms.gtw.validator.base.SchematronPath;
