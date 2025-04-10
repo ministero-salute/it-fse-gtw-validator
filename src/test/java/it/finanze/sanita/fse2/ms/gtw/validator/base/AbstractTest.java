@@ -35,13 +35,13 @@ import java.util.Objects;
 
 @Slf4j
 public abstract class AbstractTest {
-    
+
     @Autowired
     protected ServletWebServerApplicationContext context;
     @Autowired
-	private MongoTemplate mongo;
-	@Autowired
-	protected ProfileUtility profiles;
+    private MongoTemplate mongo;
+    @Autowired
+    protected ProfileUtility profiles;
 
     protected void clearConfigurationItems() {
         mongo.dropCollection(SchemaETY.class);
@@ -59,40 +59,44 @@ public abstract class AbstractTest {
 
     private void insertConfigurationItems(final String item) {
 
-		try {
-			final File folder = context.getResource("classpath:Files/" + item).getFile();
-			final File[] lists = folder.listFiles();
-			Objects.requireNonNull(lists);
-			for (File file : lists) {
-				final String schemaJson = new String(Files.readAllBytes(Paths.get(file.getCanonicalPath())), StandardCharsets.UTF_8);
-				final Document schema = Document.parse(schemaJson);
-				schema.put("deleted", false); 
-				String targetCollection = item;
-				if (profiles.isTestProfile()) {
-					targetCollection = Constants.Profile.TEST_PREFIX + item;
-				}
-				mongo.insert(schema, targetCollection);
-			}
-		} catch (Exception e) {
-			log.error(ExceptionUtils.getStackTrace(e));
-			throw new BusinessException(e);
-		}
-	}
-    
-	protected Map<String, byte[]> getSchematronFiles(final String path) {
-    	Map<String, byte[]> map = new HashMap<>();
-		File directory = new File(path);
-		String[] actualFiles = directory.list();
-		if (actualFiles != null) {
-			for (String filename : actualFiles) {
-				File file = new File(path + File.separator + filename);
-				try {
-					map.put(filename, Files.readAllBytes(file.toPath()));
-				} catch (IOException e) {
-					throw new RuntimeException(e);
-				}
-			}
-		}
-		return map;
-	}
+        try {
+            final File folder = context.getResource("classpath:Files/" + item).getFile();
+            final File[] lists = folder.listFiles();
+            Objects.requireNonNull(lists);
+            for (File file : lists) {
+                final String schemaJson = new String(Files.readAllBytes(Paths.get(file.getCanonicalPath())),
+                        StandardCharsets.UTF_8);
+                final Document schema = Document.parse(schemaJson);
+                schema.put("deleted", false);
+                String targetCollection = item;
+                if (profiles.isTestProfile()) {
+                    targetCollection = Constants.Profile.TEST_PREFIX + item;
+                }
+                mongo.insert(schema, targetCollection);
+            }
+        } catch (Exception e) {
+            log.error(ExceptionUtils.getStackTrace(e));
+            throw new BusinessException(e);
+        }
+    }
+
+    protected Map<String, byte[]> getSchematronFiles(final String path) {
+        Map<String, byte[]> map = new HashMap<>();
+        log.info("Searching in: {}", path);
+
+        File directory = new File(path);
+        String[] actualFiles = directory.list();
+
+        if (actualFiles != null) {
+            for (String filename : actualFiles) {
+                File file = new File(path + File.separator + filename);
+                try {
+                    map.put(filename, Files.readAllBytes(file.toPath()));
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        }
+        return map;
+    }
 }

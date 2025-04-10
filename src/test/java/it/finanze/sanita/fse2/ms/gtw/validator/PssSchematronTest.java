@@ -13,6 +13,7 @@ package it.finanze.sanita.fse2.ms.gtw.validator;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assumptions.assumeFalse;
 import static org.mockito.Mockito.when;
 
 import java.io.ByteArrayInputStream;
@@ -25,6 +26,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
+import org.springframework.util.CollectionUtils;
 
 import com.helger.commons.io.resource.IReadableResource;
 import com.helger.commons.io.resource.inmemory.ReadableResourceInputStream;
@@ -39,36 +41,38 @@ import it.finanze.sanita.fse2.ms.gtw.validator.service.impl.ConfigSRV;
 import it.finanze.sanita.fse2.ms.gtw.validator.utility.FileUtility;
 import lombok.extern.slf4j.Slf4j;
 
-
 @Slf4j
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles(Constants.Profile.TEST)
 class PssSchematronTest extends AbstractTest {
 
-	@MockitoBean
-	private ConfigSRV config;
+    @MockitoBean
+    private ConfigSRV config;
 
-	@Test
-	@DisplayName("CDA OK")
-	void cdaOK() throws Exception {
-		when(config.isAuditEnable()).thenReturn(true);
+    @Test
+    @DisplayName("CDA OK")
+    void cdaOK() throws Exception {
+        when(config.isAuditEnable()).thenReturn(true);
+        final String folder = "Files" + File.separator + "schematronPSS" + File.separator + "schV3" + File.separator;
+        final String filename = "schematron_PSS_v2.7.sch";
 
-		log.info("Analysing CDA OK with PSS Schematron");
-		byte[] schematron = FileUtility.getFileFromInternalResources("Files" + File.separator + "schematronPSS" + File.separator + "schV3" + File.separator +"schematron_PSS_v2.7.sch");
-		
-		try (ByteArrayInputStream bytes = new ByteArrayInputStream(schematron)) {
-			IReadableResource readableResource = new ReadableResourceInputStream("schematron_PSS_v2.7.sch", bytes);
-			SchematronResourceSCH schematronResource = new SchematronResourceSCH(readableResource);
-			Map<String,byte[]> cdasOK = getSchematronFiles(SchematronPath.PSS.OK());
-			for(Entry<String, byte[]> cdaOK : cdasOK.entrySet()) {
-				log.info("File analyzed :" + cdaOK.getKey());
-				SchematronValidationResultDTO resultDTO = CDAHelper.validateXMLViaSchematronFull(schematronResource, cdaOK.getValue());
-				assertEquals(0, resultDTO.getFailedAssertions().size());
-				assertTrue(resultDTO.getValidSchematron(), "Schematron should be valid");
-				assertTrue(resultDTO.getValidXML(), "XML should be valid");
-			}
-		}
+        byte[] content = FileUtility.getFileFromInternalResources(folder + filename);
 
-	}
+        try (ByteArrayInputStream bytes = new ByteArrayInputStream(content)) {
+            IReadableResource resource = new ReadableResourceInputStream("schematron_PSS_v2.7.sch", bytes);
+            SchematronResourceSCH sch = new SchematronResourceSCH(resource);
+            Map<String, byte[]> cdas = getSchematronFiles(SchematronPath.PSS.OK());
+
+            assumeFalse(CollectionUtils.isEmpty(cdas.values()));
+            for (Entry<String, byte[]> cda : cdas.entrySet()) {
+                SchematronValidationResultDTO result = CDAHelper.validateXMLViaSchematronFull(sch, cda.getValue());
+
+                assertEquals(0, result.getFailedAssertions().size());
+                assertTrue(result.getValidSchematron(), "Schematron should be valid");
+                assertTrue(result.getValidXML(), "XML should be valid");
+            }
+        }
+
+    }
 
 }

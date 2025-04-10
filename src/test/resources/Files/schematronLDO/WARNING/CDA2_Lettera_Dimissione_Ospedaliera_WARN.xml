@@ -1,0 +1,185 @@
+<ClinicalDocument xmlns="urn:hl7-org:v3" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<realmCode code="IT"/>
+	<typeId extension="POCD_MT000040UV02" root="2.16.840.1.113883.1.3"/>
+	<templateId extension="1.2" root="2.16.840.1.113883.2.9.10.1.5"/>
+	<id root="2.16.840.1.113883.9.2.180914" 	extension="914.300.1.1.20240919134617" 	assigningAuthorityName="Azienda Ospedaliero Universitaria Mater Domini"/>
+	<code code="34105-7"	codeSystem="2.16.840.1.113883.6.1"	codeSystemName="LOINC"	displayName="Lettera di dimissione ospedaliera"/>
+	<effectiveTime value="20240919134617+0200"/>
+	<confidentialityCode code="V"	codeSystem="2.16.840.1.113883.5.25"	codeSystemName="HL7 Confidentiality"/>
+	<languageCode code="it-IT"/>
+	<setId root="2.16.840.1.113883.2.9.4.3.6"	extension="914.300.1.1.20240919134617"	assigningAuthorityName="Azienda Ospedaliero Universitaria Mater Domini"/>
+	<versionNumber value="1"/>
+	<!-- ASSISTITO -->
+	<recordTarget>
+		<patientRole>
+			<id root="2.16.840.1.113883.2.9.4.3.2"	extension="GTWGWY82B42G920M"	assigningAuthorityName="Ministero della Salute"/>
+			<addr use="H">
+				<country>100</country>
+				<state>180</state>
+				<city>MELITO DI PORTO SALVO</city>
+				<censusTract>080050</censusTract>
+				<postalCode>89063</postalCode>
+				<streetAddressLine>VIA ROMA, 1</streetAddressLine>
+			</addr>
+			<addr use="HP">
+				<country>100</country>
+				<state>180</state>
+				<city>MELITO DI PORTO SALVO</city>
+				<censusTract>080050</censusTract>
+				<postalCode>89063</postalCode>
+				<streetAddressLine>VIA ROMA, 1</streetAddressLine>
+			</addr>
+			<telecom use="HP" value="tel:3271112345"></telecom>
+			<patient>
+				<name>
+					<family>MALARA</family>
+					<given>FRANCESCO</given>
+				</name>
+				<administrativeGenderCode code="M" codeSystem="2.16.840.1.113883.5.1" codeSystemName="HL7 AdministrativeGender" displayName="MASCHIO"/>
+				<birthTime value="19620325"/>
+				<birthplace>
+					<place>
+						<addr>
+							<city>"MELITO DI PORTO SALVO"</city>
+							<censusTract>"080050"</censusTract>
+						</addr>
+					</place>
+				</birthplace>
+			</patient>
+		</patientRole>
+	</recordTarget>
+	<!-- AUTORE DELLA LETTERA DI DIMISSIONE -->
+	<author>
+		<time value="20240919134617"/>
+		<assignedAuthor classCode="ASSIGNED">
+			<id root="2.16.840.1.113883.2.9.4.3.2" extension="PROVAX00X00X000Y" assigningAuthorityName="MEF"/>
+			<telecom use="HP" value="mailto://A.Alberti@almaviva.it"></telecom>
+			<telecom use="HP" value="tel:3271234567"></telecom>
+			<telecom use="HP" value="mailto://A.Alberti@almaviva.it"></telecom>
+			<assignedPerson>
+			<name>
+				<prefix>DOTT</prefix>
+				<given>ALBERTI</given>
+				<family>ANTONIO</family>
+			</name>
+			</assignedPerson>
+		 </assignedAuthor>
+	</author>
+	<!-- TRASCRITTORE DELLA LETTERA DI DIMISSIONE -->
+	<dataEnterer typeCode="ENT"> 
+		<time value="20220325120000+0100"/> 
+		<assignedEntity> 
+			<id root="2.16.840.1.113883.2.9.4.3.2" extension="PROVAX00X00X000Y" assigningAuthorityName="MEF"/> 
+			<assignedPerson> 
+				<name> 
+					<family>Prova</family> 
+					<given>Filippo</given> 
+				</name> 
+			</assignedPerson> 
+		</assignedEntity> 
+	</dataEnterer>
+	<!-- CUSTODE DEL DOCUMENTO DELLA LETTERA DI DIMISSIONE -->
+	<custodian>
+		<assignedCustodian>
+			<representedCustodianOrganization>
+				<id root="2.16.840.1.113883.2.9.4.1.1" extension="180914"/>
+				<name>Azienda Ospedaliero Universitaria Mater Domini</name>
+			</representedCustodianOrganization>
+		</assignedCustodian>
+	</custodian>
+	<!-- FIRMATARIO DELLA LETTERA DI DIMISSIONE -->
+	<legalAuthenticator> 
+		<time value="20220325110000+0100"/> 
+			<signatureCode code="S"/> 
+			<assignedEntity>
+				<id root="2.16.840.1.113883.2.9.4.3.2" extension="PROVAX00X00X000Y" assigningAuthorityName="MEF"/> 
+				<addr> 
+					<country>100</country>
+					<state>120</state>
+					<county>RM</county> 
+					<city>Roma</city> 
+					<censusTract>058091</censusTract> 
+					<postalCode>00164</postalCode> 
+					<streetAddressLine>Via Corvetto 3</streetAddressLine>
+				</addr> 
+				<telecom use="HP" value="mailto:prova.provax@example.com"/> 
+				<telecom use="WP" value="tel:3340000000"/> 
+				<assignedPerson> 
+					<name>  
+						<family>Prova</family> 
+						<given>Federico</given>
+						<prefix>Dttr.</prefix>
+					</name> 
+				</assignedPerson> 
+			</assignedEntity> 
+	</legalAuthenticator> 
+	<!-- DATI DEL RICOVERO OSPEDALIERO -->
+	<componentOf>
+		<encompassingEncounter>
+			<id root="2.16.840.1.113883.2.9.2.18091400.202413704.4.6"	extension="202413704"	assigningAuthorityName="Azienda Ospedaliero Universitaria Mater Domini"	displayable="true"/>
+			<effectiveTime>
+				<low value="20240919134200+0200"/>
+				<high value="20240919134600+0200"/>
+			</effectiveTime>
+			<location>
+				<healthCareFacility>
+					<id root="2.16.840.1.113883.2.9.4.1.6" extension="180914.00.09"/>
+					<location>
+						<name>CHIRURGIA GENERALE                                              </name>
+					</location>
+			<serviceProviderOrganization>
+					<id root="2.16.840.1.113883.2.9.4.1.2" extension="18091400" assigningAuthorityName="Ministero della Salute"/>
+						<name>Azienda Ospedaliero Universitaria Mater Domini</name>
+					<asOrganizationPartOf>
+						<id root="2.16.840.1.113883.2.9.4.1.1" extension="203" assigningAuthorityName="Ministero della Salute"/>
+					</asOrganizationPartOf>
+			</serviceProviderOrganization>
+				</healthCareFacility>
+			</location>
+		</encompassingEncounter>
+	</componentOf>
+	<!-- BODY SEZIONI LDO -->
+	<component>
+		<structuredBody moodCode="EVN" classCode="DOCBODY">
+	<!-- SEZIONE:"Motivo_del_ricovero" -->
+			<component  typeCode="COMP">
+				<section ID="Motivo_Ricovero" >
+					<code code="46241-6" codeSystem="2.16.840.1.113883.6.1"  codeSystemName="LOINC" displayName="Diagnosi di Accettazione"/>
+				<title>Motivo del Ricovero</title>
+				<text>
+					<paragraph>
+						<caption>Motivo Ricovero</caption>
+							<content>ernia inguinale DX</content>
+					</paragraph>
+				</text>
+				</section>
+			</component>
+	<!-- SEZIONE:"Valutazione_e_decorso_clinico" -->
+			<component  typeCode="COMP">
+				<section ID="Decorso_ospedaliero" >
+					<code code="8648-8" codeSystem="2.16.840.1.113883.6.1"  codeSystemName="LOINC" displayName="Decorso_ospedaliero"/>
+				<title>Decorso ospedaliero</title>
+				<text>
+					<paragraph>
+						<caption>Valutazione e decorso clinico</caption>
+							<content>Ottimo</content>
+					</paragraph>
+				</text>
+				</section>
+			</component>
+	<!-- SEZIONE:"Condizione_del_paziente_e_diagnosi_di_dimissione" -->
+			<component  typeCode="COMP">
+				<section ID="Condizioni_paziente_diagnosi_dimissione" >
+					<code code="11535-2" codeSystem="2.16.840.1.113883.6.1"  codeSystemName="LOINC" displayName="Diagnosi di Dimissione"/>
+				<title>Condizioni del paziente e diagnosi alla dimissione</title>
+				<text>
+					<paragraph>
+						<caption>Valutazione alla Dimissione</caption>
+							<content>Ottime</content>
+					</paragraph>
+				</text>
+				</section>
+			</component>
+		</structuredBody>
+	</component>
+</ClinicalDocument>

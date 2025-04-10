@@ -12,7 +12,8 @@
 package it.finanze.sanita.fse2.ms.gtw.validator;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assumptions.assumeFalse;
 import static org.mockito.Mockito.when;
 
 import java.io.ByteArrayInputStream;
@@ -25,6 +26,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
+import org.springframework.util.CollectionUtils;
 
 import com.helger.commons.io.resource.IReadableResource;
 import com.helger.commons.io.resource.inmemory.ReadableResourceInputStream;
@@ -44,48 +46,55 @@ import lombok.extern.slf4j.Slf4j;
 @ActiveProfiles(Constants.Profile.TEST)
 class LabAnalisiSchematronTest extends AbstractTest {
 
-	@MockitoBean
-	private ConfigSRV config;
- 
-	@Test
-	@DisplayName("CDA OK")
-	void cdaOK() throws Exception {
-		when(config.isAuditEnable()).thenReturn(true);
+    @MockitoBean
+    private ConfigSRV config;
 
-		byte[] schematron = FileUtility.getFileFromInternalResources("Files" + File.separator + "schematronFSE" + File.separator + "schV3" + File.separator +"schematronFSEv17.sch");
-		
-		try (ByteArrayInputStream bytes = new ByteArrayInputStream(schematron)) {
-			IReadableResource readableResource = new ReadableResourceInputStream("schematronFSEv17.sch", bytes);
-			SchematronResourceSCH schematronResource = new SchematronResourceSCH(readableResource);
-			Map<String,byte[]> cdasOK = getSchematronFiles(SchematronPath.FSE.OK());
-			for(Entry<String, byte[]> cdaOK : cdasOK.entrySet()) {
-				log.debug("File analyzed :" + cdaOK.getKey());
-				SchematronValidationResultDTO resultDTO = CDAHelper.validateXMLViaSchematronFull(schematronResource, cdaOK.getValue());
-				assertEquals(0, resultDTO.getFailedAssertions().size());
-				assertEquals(true, resultDTO.getValidSchematron());
-				assertEquals(true, resultDTO.getValidXML());
-			}
-		}
-	}
- 
-	@Test
-	@DisplayName("CDA ERROR")
-	void cdaError() throws Exception {
-		when(config.isAuditEnable()).thenReturn(true);
+    @Test
+    @DisplayName("CDA OK")
+    void cdaOK() throws Exception {
+        when(config.isAuditEnable()).thenReturn(true);
+        final String folder = "Files" + File.separator + "schematronFSE" + File.separator + "schV3" + File.separator;
+        final String filename = "schematronFSEv17.sch";
 
-		byte[] schematron = FileUtility.getFileFromInternalResources("Files" + File.separator + "schematronFSE" + File.separator + "schV3" + File.separator +"schematronFSEv17.sch");
-		try (ByteArrayInputStream bytes = new ByteArrayInputStream(schematron)) {
-			IReadableResource readableResource = new ReadableResourceInputStream("schematronFSEv17.sch", bytes);
-			SchematronResourceSCH schematronResource = new SchematronResourceSCH(readableResource);
-			
-			Map<String,byte[]> cdasKO = getSchematronFiles(SchematronPath.FSE.ERROR());
-			for(Entry<String, byte[]> cdaKO : cdasKO.entrySet()) {
-				
-				SchematronValidationResultDTO resultDTO = CDAHelper.validateXMLViaSchematronFull(schematronResource, cdaKO.getValue());
-				boolean result = resultDTO.getFailedAssertions().size()>0;
-				assertTrue(result);
-			}
-		}
-	}
-	 
+        byte[] content = FileUtility.getFileFromInternalResources(folder + filename);
+
+        try (ByteArrayInputStream bytes = new ByteArrayInputStream(content)) {
+            IReadableResource resource = new ReadableResourceInputStream("schematronFSEv17.sch", bytes);
+            SchematronResourceSCH sch = new SchematronResourceSCH(resource);
+            Map<String, byte[]> cdas = getSchematronFiles(SchematronPath.FSE.OK());
+
+            assumeFalse(CollectionUtils.isEmpty(cdas.values()));
+            for (Entry<String, byte[]> cdaOK : cdas.entrySet()) {
+                SchematronValidationResultDTO result = CDAHelper.validateXMLViaSchematronFull(sch, cdaOK.getValue());
+                assertEquals(0, result.getFailedAssertions().size());
+                assertEquals(true, result.getValidSchematron());
+                assertEquals(true, result.getValidXML());
+            }
+        }
+    }
+
+    @Test
+    @DisplayName("CDA ERROR")
+    void cdaError() throws Exception {
+        when(config.isAuditEnable()).thenReturn(true);
+        final String folder = "Files" + File.separator + "schematronFSE" + File.separator + "schV3" + File.separator;
+        final String filename = "schematronFSEv17.sch";
+
+        byte[] content = FileUtility.getFileFromInternalResources(folder + filename);
+
+        try (ByteArrayInputStream bytes = new ByteArrayInputStream(content)) {
+            IReadableResource resource = new ReadableResourceInputStream("schematronFSEv17.sch", bytes);
+            SchematronResourceSCH sch = new SchematronResourceSCH(resource);
+
+            Map<String, byte[]> cdas = getSchematronFiles(SchematronPath.FSE.KO());
+
+            assumeFalse(CollectionUtils.isEmpty(cdas.values()));
+            for (Entry<String, byte[]> cda : cdas.entrySet()) {
+
+                SchematronValidationResultDTO result = CDAHelper.validateXMLViaSchematronFull(sch, cda.getValue());
+                assertFalse(result.getValidXML());
+            }
+        }
+    }
+
 }
