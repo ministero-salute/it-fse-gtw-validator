@@ -11,6 +11,37 @@
  */
 package it.finanze.sanita.fse2.ms.gtw.validator;
 
+import static it.finanze.sanita.fse2.ms.gtw.validator.base.MockRequests.validate;
+import static it.finanze.sanita.fse2.ms.gtw.validator.config.Constants.Profile.TEST;
+import static it.finanze.sanita.fse2.ms.gtw.validator.utility.FileUtility.getFileFromInternalResources;
+import static org.junit.jupiter.api.TestInstance.Lifecycle.PER_CLASS;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.when;
+import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+import java.io.File;
+import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.commons.lang3.tuple.Pair;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.MediaType;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+
 import it.finanze.sanita.fse2.ms.gtw.validator.base.AbstractTest;
 import it.finanze.sanita.fse2.ms.gtw.validator.cda.ValidationResult;
 import it.finanze.sanita.fse2.ms.gtw.validator.dto.CDAValidationDTO;
@@ -23,38 +54,6 @@ import it.finanze.sanita.fse2.ms.gtw.validator.enums.CDAValidationStatusEnum;
 import it.finanze.sanita.fse2.ms.gtw.validator.exceptions.NoRecordFoundException;
 import it.finanze.sanita.fse2.ms.gtw.validator.service.impl.ConfigSRV;
 import it.finanze.sanita.fse2.ms.gtw.validator.service.impl.ValidationSRV;
-import org.apache.commons.lang3.tuple.Pair;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.http.MediaType;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.bean.override.mockito.MockitoBean;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-
-import java.io.File;
-import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import static it.finanze.sanita.fse2.ms.gtw.validator.base.MockRequests.validate;
-import static it.finanze.sanita.fse2.ms.gtw.validator.config.Constants.Profile.TEST;
-import static it.finanze.sanita.fse2.ms.gtw.validator.utility.FileUtility.getFileFromInternalResources;
-import static org.junit.jupiter.api.TestInstance.Lifecycle.PER_CLASS;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.when;
-import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
 
 @SpringBootTest(webEnvironment = RANDOM_PORT)
 @TestInstance(PER_CLASS)
@@ -62,134 +61,132 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 class ValidationControllerTest extends AbstractTest {
 
-	@MockitoBean
-	private ConfigSRV config;
+    @MockitoBean
+    private ConfigSRV config;
 
     @BeforeEach
     void setup() {
         clearConfigurationItems();
         insertSchematron();
         insertSchema();
-		when(config.isAuditEnable()).thenReturn(true);
+        when(config.isAuditEnable()).thenReturn(true);
     }
-    
+
     @Autowired
     private MockMvc mvc;
-    
+
     @MockitoBean
     private ValidationSRV service;
-    
+
     @Test
     @DisplayName("Validation Controller - Test Success")
     void validationTest() throws Exception {
-    	
-		final String cda = new String(getFileFromInternalResources("Files" + File.separator + "schematronLDO"
-				+ File.separator + "OK" + File.separator + "CDA2_Lettera_Dimissione_Ospedaliera_v2.2.xml"), StandardCharsets.UTF_8);
-		
-    	CDAValidationDTO validation = new CDAValidationDTO(CDAValidationStatusEnum.VALID); 
-    	ValidationRequestDTO req = new ValidationRequestDTO();
-    	VocabularyResultDTO vocabularyResultDto = new VocabularyResultDTO(); 
-    	vocabularyResultDto.setValid(true); 
-    	req.setCda(cda);
-    	req.setWorkflowInstanceId("wid");
-    	SchematronValidationResultDTO schematronValidationResult = new SchematronValidationResultDTO(true, true, null, null); 
 
-    	
-    	when(service.validateSyntactic(anyString(), anyString()))
-    		.thenReturn(validation); 
-    	
-    	when(service.validateSemantic(anyString(), any(ExtractedInfoDTO.class)))
-    		.thenReturn(schematronValidationResult); 
-    	
-    	when(service.validateVocabularies(anyString(),anyString()))
-			.thenReturn(vocabularyResultDto);
+        final String cda = new String(getFileFromInternalResources("Files" + File.separator + "schematronLDO"
+                + File.separator + "OK" + File.separator + "CDA2_Lettera_Dimissione_Ospedaliera_v2.2.xml"),
+                StandardCharsets.UTF_8);
 
-		when(service.getStructureObjectID(anyString())).thenReturn(Pair.of("test", "test"));
+        CDAValidationDTO validation = new CDAValidationDTO(CDAValidationStatusEnum.VALID);
+        ValidationRequestDTO req = new ValidationRequestDTO();
+        VocabularyResultDTO vocabularyResultDto = new VocabularyResultDTO();
+        vocabularyResultDto.setValid(true);
+        req.setCda(cda);
+        req.setWorkflowInstanceId("wid");
+        SchematronValidationResultDTO schematronValidationResult = new SchematronValidationResultDTO(true, true, null,
+                null);
 
-	    mvc.perform(validate(req)).andExpect(status().is2xxSuccessful());
-    	
-    } 
-    
+        when(service.validateSyntactic(anyString(), anyString()))
+                .thenReturn(validation);
+
+        when(service.validateSemantic(anyString(), any(ExtractedInfoDTO.class)))
+                .thenReturn(schematronValidationResult);
+
+        when(service.validateVocabularies(anyString(), anyString()))
+                .thenReturn(vocabularyResultDto);
+
+        when(service.getStructureObjectID(anyString())).thenReturn(Pair.of("test", "test"));
+
+        mvc.perform(validate(req)).andExpect(status().is2xxSuccessful());
+
+    }
+
     @Test
     @DisplayName("Validation Controller - Invalid Syntactic Validation")
     void validationInvalidSyntacticTest() throws Exception {
-    	
-		final String cda = new String(getFileFromInternalResources("Files" + File.separator + "schematronLDO"
-				+ File.separator + "OK" + File.separator + "CDA2_Lettera_Dimissione_Ospedaliera_v2.2.xml"), StandardCharsets.UTF_8);
-		
-    	CDAValidationDTO validation = new CDAValidationDTO(CDAValidationStatusEnum.NOT_VALID); 
-    	Map<CDASeverityViolationEnum, List<String>> violations = new HashMap<>();
-    	ValidationResult vl = new ValidationResult(); 
-    	vl.addWarning("testWarning"); 
-    	violations.put(CDASeverityViolationEnum.WARN, vl.getWarnings()); 
-    	validation.setViolations(violations); 
-    	
-    	ValidationRequestDTO req = new ValidationRequestDTO();
-    	VocabularyResultDTO vocabularyResultDto = new VocabularyResultDTO(); 
-    	vocabularyResultDto.setValid(true); 
-    	req.setCda(cda);
-    	SchematronValidationResultDTO schematronValidationResult = new SchematronValidationResultDTO(true, true, null, null); 
 
-    	
-    	when(service.validateSyntactic(anyString(), anyString()))
-    		.thenReturn(validation); 
-    	
-    	when(service.validateSemantic(anyString(), any(ExtractedInfoDTO.class)))
-    		.thenReturn(schematronValidationResult); 
-    	
-    	when(service.validateVocabularies(anyString(),anyString()))
-			.thenReturn(vocabularyResultDto); 
+        final String cda = new String(getFileFromInternalResources("Files" + File.separator + "schematronLDO"
+                + File.separator + "OK" + File.separator + "CDA2_Lettera_Dimissione_Ospedaliera_v2.2.xml"),
+                StandardCharsets.UTF_8);
 
-	    mvc.perform(validate(req)).andExpect(status().is2xxSuccessful());
-    } 
-    
-    
+        CDAValidationDTO validation = new CDAValidationDTO(CDAValidationStatusEnum.NOT_VALID);
+        Map<CDASeverityViolationEnum, List<String>> violations = new HashMap<>();
+        ValidationResult vl = new ValidationResult();
+        vl.addWarning("testWarning");
+        violations.put(CDASeverityViolationEnum.WARN, vl.getWarnings());
+        validation.setViolations(violations);
+
+        ValidationRequestDTO req = new ValidationRequestDTO();
+        VocabularyResultDTO vocabularyResultDto = new VocabularyResultDTO();
+        vocabularyResultDto.setValid(true);
+        req.setCda(cda);
+        SchematronValidationResultDTO schematronValidationResult = new SchematronValidationResultDTO(true, true, null,
+                null);
+
+        when(service.validateSyntactic(anyString(), anyString()))
+                .thenReturn(validation);
+
+        when(service.validateSemantic(anyString(), any(ExtractedInfoDTO.class)))
+                .thenReturn(schematronValidationResult);
+
+        when(service.validateVocabularies(anyString(), anyString()))
+                .thenReturn(vocabularyResultDto);
+
+        mvc.perform(validate(req)).andExpect(status().is2xxSuccessful());
+    }
+
     @Test
     @DisplayName("Validation Controller - Invalid Semantic Validation")
     void validationInvalidSemanticTest() throws Exception {
-    	
-		final String cda = new String(getFileFromInternalResources("Files" + File.separator + "schematronLDO"
-				+ File.separator + "OK" + File.separator + "CDA2_Lettera_Dimissione_Ospedaliera_v2.2.xml"), StandardCharsets.UTF_8);
-		
-    	CDAValidationDTO validation = new CDAValidationDTO(CDAValidationStatusEnum.NOT_VALID); 
-    	Map<CDASeverityViolationEnum, List<String>> violations = new HashMap<>();
-    	ValidationResult vl = new ValidationResult(); 
-    	vl.addWarning("testWarning"); 
-    	violations.put(CDASeverityViolationEnum.WARN, vl.getWarnings()); 
-    	validation.setViolations(violations); 
-    	
-    	ValidationRequestDTO req = new ValidationRequestDTO();
-    	VocabularyResultDTO vocabularyResultDto = new VocabularyResultDTO(); 
-    	vocabularyResultDto.setValid(true); 
-    	req.setCda(cda);
-    	new SchematronValidationResultDTO(true, true, null, null); 
 
-    	
-    	when(service.validateSyntactic(anyString(), anyString()))
-    		.thenReturn(validation); 
-    	
-    	when(service.validateSemantic(anyString(), any(ExtractedInfoDTO.class)))
-    		.thenThrow(new NoRecordFoundException("Error")); 
-    	
-    	when(service.validateVocabularies(anyString(),anyString()))
-			.thenReturn(vocabularyResultDto);
-	    
-	    mvc.perform(validate(req)).andExpect(status().is2xxSuccessful());
+        final String cda = new String(getFileFromInternalResources("Files" + File.separator + "schematronLDO"
+                + File.separator + "OK" + File.separator + "CDA2_Lettera_Dimissione_Ospedaliera_v2.2.xml"),
+                StandardCharsets.UTF_8);
+
+        CDAValidationDTO validation = new CDAValidationDTO(CDAValidationStatusEnum.NOT_VALID);
+        Map<CDASeverityViolationEnum, List<String>> violations = new HashMap<>();
+        ValidationResult vl = new ValidationResult();
+        vl.addWarning("testWarning");
+        violations.put(CDASeverityViolationEnum.WARN, vl.getWarnings());
+        validation.setViolations(violations);
+
+        ValidationRequestDTO req = new ValidationRequestDTO();
+        VocabularyResultDTO vocabularyResultDto = new VocabularyResultDTO();
+        vocabularyResultDto.setValid(true);
+        req.setCda(cda);
+        new SchematronValidationResultDTO(true, true, null, null);
+
+        when(service.validateSyntactic(anyString(), anyString()))
+                .thenReturn(validation);
+
+        when(service.validateSemantic(anyString(), any(ExtractedInfoDTO.class)))
+                .thenThrow(new NoRecordFoundException("Error"));
+
+        when(service.validateVocabularies(anyString(), anyString()))
+                .thenReturn(vocabularyResultDto);
+
+        mvc.perform(validate(req)).andExpect(status().is2xxSuccessful());
     }
-    
+
     @Test
     @DisplayName("Inspect Singletons Test")
     void getSingletonsTest() throws Exception {
-    	
-    	MockHttpServletRequestBuilder builder =
-	            MockMvcRequestBuilders.get("http://localhost:8012/v1/singletons"); 
-	    
-	    mvc.perform(builder
-	            .contentType(MediaType.APPLICATION_JSON_VALUE))
-	            .andExpect(status().is2xxSuccessful());     	
-    	
-    } 
 
-    
+        MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.get("http://localhost:8012/v1/singletons");
+
+        mvc.perform(builder
+                .contentType(MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(status().is2xxSuccessful());
+
+    }
 
 }

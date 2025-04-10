@@ -27,7 +27,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
@@ -45,7 +44,6 @@ import it.finanze.sanita.fse2.ms.gtw.validator.repository.mongo.ISchematronRepo;
 import it.finanze.sanita.fse2.ms.gtw.validator.repository.mongo.impl.TerminologyRepo;
 import it.finanze.sanita.fse2.ms.gtw.validator.service.impl.ConfigSRV;
 
-
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles(Constants.Profile.TEST)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -61,14 +59,14 @@ class RepositoryTest extends AbstractTest {
     public static final int TEST_FILES_SIZE = 10;
 
     @Autowired
-    private ISchemaRepo repository; 
-    
+    private ISchemaRepo repository;
+
     @MockitoSpyBean
-    private ISchematronRepo schematronRepository; 
+    private ISchematronRepo schematronRepository;
 
     @Autowired
     private TerminologyRepo terminologyRepo;
-    
+
     @MockitoSpyBean
     private MongoTemplate mongo;
 
@@ -80,7 +78,7 @@ class RepositoryTest extends AbstractTest {
         when(config.isAuditEnable()).thenReturn(true);
         clearConfigurationItems();
         insertSchema();
-        insertSchematron(); 
+        insertSchematron();
     }
 
     @Test
@@ -94,24 +92,23 @@ class RepositoryTest extends AbstractTest {
         // Exceptions
         when(mongo).thenThrow(new MongoException("Test"));
         assertThrows(BusinessException.class, () -> repository.findFatherXsd(TEST_TYPE_ID_EXTENSION));
-    } 
-    
+    }
+
     @Test
     void findFatherXsdDeletedElement() {
-    	SchemaETY ety = new SchemaETY(); 
-    	ety.setId(TEST_ID_DELETED);
-    	ety.setNameSchema(TEST_NAME_SCHEMA_DELETED); 
-    	ety.setRootSchema(true); 
-    	ety.setTypeIdExtension(TEST_TYPE_ID_EXTENSION_DELETED); 
-    	ety.setDeleted(true); 
-    	
-    	mongo.insert(ety, Constants.Profile.TEST_PREFIX + "schema");
-    	
-    	
+        SchemaETY ety = new SchemaETY();
+        ety.setId(TEST_ID_DELETED);
+        ety.setNameSchema(TEST_NAME_SCHEMA_DELETED);
+        ety.setRootSchema(true);
+        ety.setTypeIdExtension(TEST_TYPE_ID_EXTENSION_DELETED);
+        ety.setDeleted(true);
+
+        mongo.insert(ety, Constants.Profile.TEST_PREFIX + "schema");
+
         SchemaETY res = repository.findFatherXsd(TEST_TYPE_ID_EXTENSION_DELETED);
 
-        assertNull(res); 
-    }  
+        assertNull(res);
+    }
 
     @Test
     void findChildrenXsdTest() {
@@ -149,61 +146,60 @@ class RepositoryTest extends AbstractTest {
         assertEquals(TEST_TYPE_ID_EXTENSION, res.get(0).getTypeIdExtension());
         // Exceptions
         when(mongo).thenThrow(new MongoException("Test"));
-        assertThrows(BusinessException.class, () -> repository.findByVersion(TEST_TYPE_ID_EXTENSION)); 
-        
+        assertThrows(BusinessException.class, () -> repository.findByVersion(TEST_TYPE_ID_EXTENSION));
+
     }
-    
+
     @Test
     void findByExtensionAndLastUpdateTest() {
-    	List<SchemaETY> ety = repository.findByExtensionAndLastUpdateDate("1.3", new Date()); 
-    	
-    	assertEquals(ArrayList.class, ety.getClass()); 
-    } 
-    
+        List<SchemaETY> ety = repository.findByExtensionAndLastUpdateDate("1.3", new Date());
+
+        assertEquals(ArrayList.class, ety.getClass());
+    }
+
     @Test
     void findBySystemAndVersionTest() {
-    	SchematronETY ety = schematronRepository.findGreaterOne("2.16.840.1.113883.2.9.10.1.11.1.2", null, "0.0");
-    
-    	assertEquals(SchematronETY.class, ety.getClass());   	
-    	assertEquals(String.class, ety.getId().getClass()); 
-    	
-    	assertEquals("2.16.840.1.113883.2.9.10.1.11.1.2", ety.getTemplateIdRoot());
-    	
-    } 
-    
+        SchematronETY ety = schematronRepository.findGreaterOne("2.16.840.1.113883.2.9.10.1.11.1.2", null, "0.0");
+
+        assertEquals(SchematronETY.class, ety.getClass());
+        assertEquals(String.class, ety.getId().getClass());
+
+        assertEquals("2.16.840.1.113883.2.9.10.1.11.1.2", ety.getTemplateIdRoot());
+
+    }
+
     @Test
     void findBySystemAndVersionDeletedTest() {
-    	SchematronETY ety = new SchematronETY(); 
-    	ety.setNameSchematron(TEST_NAME_SCHEMATRON_DELETED); 
-    	ety.setTemplateIdRoot(TEST_TEMPLATE_ID_ROOT_DELETED); 
-    	ety.setVersion(TEST_TYPE_ID_EXTENSION_DELETED); 
-    	ety.setDeleted(true); 
-    	
-    	mongo.insert(ety, Constants.Profile.TEST_PREFIX + "schematron");
-    	
-    	
-    	SchematronETY res = schematronRepository.findGreaterOne(TEST_TEMPLATE_ID_ROOT_DELETED, TEST_TYPE_ID_EXTENSION_DELETED, null);
-    	
-    	assertNull(res); 
-    	
-    }
-    
-    @Test
-    void existsBySystemAndCodeTest() {         
-         assertFalse(terminologyRepo.existBySystemAndCode("2.16.840.1.113883.2.9.10.1.11.1.2", "0.0")); 
-         
-         when(mongo).thenThrow(new MongoException("Test")); 
-         
-         assertThrows(BusinessException.class, 
-        		 () -> terminologyRepo.existBySystemAndCode("2.16.840.1.113883.2.9.10.1.11.1.2", "0.0")); 
-         
-         assertThrows(BusinessException.class, 
-        		 () -> terminologyRepo.allCodesExists("test", null)); 
-         
-         assertThrows(BusinessException.class, 
-        		 () -> terminologyRepo.findAllCodesExists("test", null)); 
-         
+        SchematronETY ety = new SchematronETY();
+        ety.setNameSchematron(TEST_NAME_SCHEMATRON_DELETED);
+        ety.setTemplateIdRoot(TEST_TEMPLATE_ID_ROOT_DELETED);
+        ety.setVersion(TEST_TYPE_ID_EXTENSION_DELETED);
+        ety.setDeleted(true);
 
-     }   
+        mongo.insert(ety, Constants.Profile.TEST_PREFIX + "schematron");
+
+        SchematronETY res = schematronRepository.findGreaterOne(TEST_TEMPLATE_ID_ROOT_DELETED,
+                TEST_TYPE_ID_EXTENSION_DELETED, null);
+
+        assertNull(res);
+
+    }
+
+    @Test
+    void existsBySystemAndCodeTest() {
+        assertFalse(terminologyRepo.existBySystemAndCode("2.16.840.1.113883.2.9.10.1.11.1.2", "0.0"));
+
+        when(mongo).thenThrow(new MongoException("Test"));
+
+        assertThrows(BusinessException.class,
+                () -> terminologyRepo.existBySystemAndCode("2.16.840.1.113883.2.9.10.1.11.1.2", "0.0"));
+
+        assertThrows(BusinessException.class,
+                () -> terminologyRepo.allCodesExists("test", null));
+
+        assertThrows(BusinessException.class,
+                () -> terminologyRepo.findAllCodesExists("test", null));
+
+    }
 
 }

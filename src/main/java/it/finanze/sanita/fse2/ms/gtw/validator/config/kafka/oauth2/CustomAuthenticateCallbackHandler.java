@@ -3,11 +3,9 @@
 
 package it.finanze.sanita.fse2.ms.gtw.validator.config.kafka.oauth2;
 
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.util.Arrays;
@@ -34,34 +32,33 @@ import com.microsoft.aad.msal4j.IAuthenticationResult;
 import com.microsoft.aad.msal4j.IClientCredential;
 
 import it.finanze.sanita.fse2.ms.gtw.validator.exceptions.BusinessException;
-import it.finanze.sanita.fse2.ms.gtw.validator.utility.FileUtility;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class CustomAuthenticateCallbackHandler implements AuthenticateCallbackHandler {
 
     private String tenantId;
-	
+
     private String appId;
-	
+
     private String pfxPathName;
-    
+
     private String pwd;
-	
+
     private ConfidentialClientApplication aadClient;
     private ClientCredentialParameters aadParameters;
 
     @Override
     public void configure(Map<String, ?> configs, String mechanism, List<AppConfigurationEntry> jaasConfigEntries) {
         String bootstrapServer = Arrays.asList(configs.get(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG)).get(0).toString();
-       
+
         bootstrapServer = bootstrapServer.replaceAll("\\[|\\]", "");
         URI uri = URI.create("https://" + bootstrapServer);
         String sbUri = uri.getScheme() + "://" + uri.getHost();
-        this.aadParameters =
-                ClientCredentialParameters.builder(Collections.singleton(sbUri + "/.default"))
+        this.aadParameters = ClientCredentialParameters.builder(Collections.singleton(sbUri + "/.default"))
                 .build();
-        this.tenantId = "https://login.microsoftonline.com/"+ Arrays.asList(configs.get("kafka.oauth.tenantId")).get(0).toString();
+        this.tenantId = "https://login.microsoftonline.com/"
+                + Arrays.asList(configs.get("kafka.oauth.tenantId")).get(0).toString();
         this.appId = Arrays.asList(configs.get("kafka.oauth.appId")).get(0).toString();
         this.pfxPathName = Arrays.asList(configs.get("kafka.oauth.pfxPathName")).get(0).toString();
         this.pwd = Arrays.asList(configs.get("kafka.oauth.pwd")).get(0).toString();
@@ -69,7 +66,7 @@ public class CustomAuthenticateCallbackHandler implements AuthenticateCallbackHa
     }
 
     public void handle(Callback[] callbacks) throws IOException, UnsupportedCallbackException {
-        for (Callback callback: callbacks) {
+        for (Callback callback : callbacks) {
             if (callback instanceof OAuthBearerTokenCallback) {
                 try {
                     OAuthBearerToken token = getOAuthBearerToken();
@@ -84,17 +81,18 @@ public class CustomAuthenticateCallbackHandler implements AuthenticateCallbackHa
         }
     }
 
-    private OAuthBearerToken getOAuthBearerToken() throws MalformedURLException, InterruptedException, ExecutionException, TimeoutException {
+    private OAuthBearerToken getOAuthBearerToken()
+            throws MalformedURLException, InterruptedException, ExecutionException, TimeoutException {
         if (this.aadClient == null) {
-            synchronized(this) {
+            synchronized (this) {
                 if (this.aadClient == null) {
-                	IClientCredential credential = null;
-            	    try (FileInputStream certificato = new FileInputStream(new File(pfxPathName))) {
-                		credential = ClientCredentialFactory.createFromCertificate(certificato, this.pwd);	
-                	} catch(Exception ex) {
-                		log.error("Error while try to crate credential from certificate");
-                		throw new BusinessException(ex);
-                	}
+                    IClientCredential credential = null;
+                    try (FileInputStream certificato = new FileInputStream(new File(pfxPathName))) {
+                        credential = ClientCredentialFactory.createFromCertificate(certificato, this.pwd);
+                    } catch (Exception ex) {
+                        log.error("Error while try to crate credential from certificate");
+                        throw new BusinessException(ex);
+                    }
                     this.aadClient = ConfidentialClientApplication.builder(this.appId, credential)
                             .authority(this.tenantId)
                             .build();

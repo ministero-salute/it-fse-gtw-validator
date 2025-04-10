@@ -11,6 +11,24 @@
  */
 package it.finanze.sanita.fse2.ms.gtw.validator;
 
+import static it.finanze.sanita.fse2.ms.gtw.validator.utility.FileUtility.getFileFromInternalResources;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.when;
+
+import java.nio.charset.StandardCharsets;
+import java.util.Date;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
+import org.xml.sax.SAXException;
+import org.xml.sax.SAXParseException;
+import org.xml.sax.helpers.LocatorImpl;
+
 import it.finanze.sanita.fse2.ms.gtw.validator.base.AbstractTest;
 import it.finanze.sanita.fse2.ms.gtw.validator.cda.ValidationResult;
 import it.finanze.sanita.fse2.ms.gtw.validator.config.Constants;
@@ -20,24 +38,6 @@ import it.finanze.sanita.fse2.ms.gtw.validator.repository.mongo.ISchemaRepo;
 import it.finanze.sanita.fse2.ms.gtw.validator.service.ISchemaSRV;
 import it.finanze.sanita.fse2.ms.gtw.validator.service.impl.ConfigSRV;
 import it.finanze.sanita.fse2.ms.gtw.validator.singleton.SchemaValidatorSingleton;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.bean.override.mockito.MockitoBean;
-import org.xml.sax.SAXException;
-import org.xml.sax.SAXParseException;
-import org.xml.sax.helpers.LocatorImpl;
-
-import java.nio.charset.StandardCharsets;
-import java.util.Date;
-
-import static it.finanze.sanita.fse2.ms.gtw.validator.utility.FileUtility.getFileFromInternalResources;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.when;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles(Constants.Profile.TEST)
@@ -45,7 +45,7 @@ class SchemaSRVTest extends AbstractTest {
 
     @Autowired
     private ISchemaSRV service;
-    
+
     @Autowired
     private ISchemaRepo repository;
 
@@ -63,8 +63,7 @@ class SchemaSRVTest extends AbstractTest {
         when(config.isAuditEnable()).thenReturn(true);
 
         final String cda = new String(getFileFromInternalResources(
-            "Files/cda_ok/Esempio CDA_002.xml"
-        ), StandardCharsets.UTF_8);
+                "Files/cda_ok/Esempio CDA_002.xml"), StandardCharsets.UTF_8);
         String version = "1.3";
 
         SchemaETY schema = repository.findFatherXsd(version);
@@ -88,7 +87,6 @@ class SchemaSRVTest extends AbstractTest {
         assertEquals(1, res.getWarningsCount());
         assertEquals(1, res.getFatalsCount());
         assertEquals(1, res.getErrorsCount());
-
 
         res.clear();
 

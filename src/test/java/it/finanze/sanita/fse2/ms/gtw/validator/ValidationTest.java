@@ -11,8 +11,38 @@
  */
 package it.finanze.sanita.fse2.ms.gtw.validator;
 
+import static it.finanze.sanita.fse2.ms.gtw.validator.utility.FileUtility.getFileFromInternalResources;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.nullable;
+import static org.mockito.Mockito.when;
+
+import java.io.File;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+import org.apache.commons.lang3.tuple.Pair;
+import org.bson.types.Binary;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
+import org.mockito.Mock;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
+import org.springframework.test.context.bean.override.mockito.MockitoSpyBean;
+
 import com.helger.schematron.ISchematronResource;
 import com.mongodb.MongoException;
+
 import it.finanze.sanita.fse2.ms.gtw.validator.base.AbstractTest;
 import it.finanze.sanita.fse2.ms.gtw.validator.cda.CDAHelper;
 import it.finanze.sanita.fse2.ms.gtw.validator.config.Constants;
@@ -34,31 +64,6 @@ import it.finanze.sanita.fse2.ms.gtw.validator.service.facade.IValidationFacadeS
 import it.finanze.sanita.fse2.ms.gtw.validator.service.impl.ConfigSRV;
 import it.finanze.sanita.fse2.ms.gtw.validator.service.impl.TerminologySRV;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.tuple.Pair;
-import org.bson.types.Binary;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
-import org.mockito.Mock;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.boot.test.mock.mockito.SpyBean;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.bean.override.mockito.MockitoBean;
-import org.springframework.test.context.bean.override.mockito.MockitoSpyBean;
-
-import java.io.File;
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
-import static it.finanze.sanita.fse2.ms.gtw.validator.utility.FileUtility.getFileFromInternalResources;
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.nullable;
-import static org.mockito.Mockito.when;
 
 @Slf4j
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -66,222 +71,228 @@ import static org.mockito.Mockito.when;
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class ValidationTest extends AbstractTest {
 
-	@Autowired
-	IValidationFacadeSRV service;
-	
-	@MockitoSpyBean
-	TerminologySRV terminologySRV; 
-	
-	@MockitoSpyBean
-	private IDictionaryRepo codeSystemRepo; 
-	
-	@MockitoSpyBean
-	private IEngineRepo engines;
-	
-	@MockitoBean
-	private SchematronRepo schematronRepo;
-	
-	@Mock
-	private ISchematronResource aResSCH;
+    @Autowired
+    IValidationFacadeSRV service;
 
-	@MockitoBean
-	private ConfigSRV config;
-	
-	
-	@BeforeEach
-	void setup() {
-		when(config.isAuditEnable()).thenReturn(true);
-		clearConfigurationItems();
-		insertSchema();
-		insertSchematron();
-	}
+    @MockitoSpyBean
+    TerminologySRV terminologySRV;
 
-	@Test
-	void shouldReturnValidWhenCDAIsValid() {
+    @MockitoSpyBean
+    private IDictionaryRepo codeSystemRepo;
 
-		final String cda = new String(getFileFromInternalResources("Files" + File.separator + "cda.xml"), StandardCharsets.UTF_8);
-		String version = "1.3";
-		
-		log.info("Testing with version {}", version);
-		CDAValidationDTO firstResult = service.validateSyntactic(cda, version);
-		assertEquals(CDAValidationStatusEnum.VALID, firstResult.getStatus(), "The validation should have been completed correctly");
-		
-		CDAValidationDTO secondResult = service.validateSyntactic(cda, version);
-		assertEquals(firstResult.getStatus(), secondResult.getStatus(), "Repeating validation should have not changed the result");
+    @MockitoSpyBean
+    private IEngineRepo engines;
 
-		
-		log.info("Testing with version {}", version);
-		
-		CDAValidationDTO out = service.validateSyntactic(cda, "2.0.0");
-		assertNotNull(out.getMessage()); 
-	}
+    @MockitoBean
+    private SchematronRepo schematronRepo;
 
-	@Test
-	void shouldReturnNotValidWhenCDAIsInvalid() {
+    @Mock
+    private ISchematronResource aResSCH;
 
-		final String cda = "<realmCode code=\"1\"/>";
-		String version = "1.3";
-		
-		log.info("Testing with version {}", version);
-		CDAValidationDTO firstResult = service.validateSyntactic(cda, version);
-		assertEquals(CDAValidationStatusEnum.NOT_VALID, firstResult.getStatus(), "The validation should have been completed correctly and result as Invalid");
-		assertNull(firstResult.getMessage());
-	
-		CDAValidationDTO secondResult = service.validateSyntactic(cda, version);
-		assertEquals(CDAValidationStatusEnum.NOT_VALID, secondResult.getStatus(), "The validation should have been completed correctly and result as Invalid");
-		assertNull(firstResult.getMessage());
-	}
+    @MockitoBean
+    private ConfigSRV config;
 
-	@Test
-	void shouldThrowBusinessExceptionWhenSchemaisNull() {
+    @BeforeEach
+    void setup() {
+        when(config.isAuditEnable()).thenReturn(true);
+        clearConfigurationItems();
+        insertSchema();
+        insertSchematron();
+    }
 
-		final String cda = new String(getFileFromInternalResources("Files" + File.separator + "cda.xml"), StandardCharsets.UTF_8);
-		final String version = "3.0.0";
-		
-		CDAValidationDTO res = service.validateSyntactic(cda, version);
-		assertEquals(String.format("Schema with version %s not found on database.", version), res.getMessage());
-	}
- 
+    @Test
+    void shouldReturnValidWhenCDAIsValid() {
 
-	@Test
-	void shouldReturnWhenCDAVocabularyIsInvalid() {
-		final String cda = new String(getFileFromInternalResources(
-			"Files/cda_ok/Esempio_CDA_003.xml"
-		), StandardCharsets.UTF_8);
+        final String cda = new String(getFileFromInternalResources("Files" + File.separator + "cda.xml"),
+                StandardCharsets.UTF_8);
+        String version = "1.3";
 
-		VocabularyResultDTO res = service.validateVocabularies(cda, "wid");
-		assertFalse(res.getValid(), "The vocabulary validation should be falsy");
+        log.info("Testing with version {}", version);
+        CDAValidationDTO firstResult = service.validateSyntactic(cda, version);
+        assertEquals(CDAValidationStatusEnum.VALID, firstResult.getStatus(),
+                "The validation should have been completed correctly");
 
-		res = service.validateVocabularies("", "");
-		assertFalse(res.getValid(), "Repeating vocabulary validation should be falsy");
-	}
-	
-	@Test
-	void validateSemanticValidSchematronTest() {
-		final String cda = new String(getFileFromInternalResources("Files" + File.separator + "schematronLDO"
-				+ File.separator + "OK" + File.separator + "CDA2_Lettera_Dimissione_Ospedaliera_v2.2.xml"), StandardCharsets.UTF_8); 
-		
-		ExtractedInfoDTO infoDTO = CDAHelper.extractInfo(cda, null);
-		
-		SchematronETY ety = new SchematronETY(); 
-		ety.setId("TEST_ID"); 
-		ety.setNameSchematron("schematronFSE_LDO_V3.5.sch");
-		ety.setContentSchematron(new Binary("SGVsbG8gV29ybGQh".getBytes())); 
-		ety.setTemplateIdRoot("2.16.840.1.113883.2.9.10.1.5");
-		ety.setVersion("1.0"); 
-		
-		when(schematronRepo.findByRootAndSystem(anyString(), nullable(String.class))).thenReturn(ety);
-		when(aResSCH.isValidSchematron()).thenReturn(true); 
-		
-		assertDoesNotThrow(() -> service.validateSemantic(cda, infoDTO));
-		
-	}
-	@Test
-	void validateSemanticInvalidSchematronTest() {
+        CDAValidationDTO secondResult = service.validateSyntactic(cda, version);
+        assertEquals(firstResult.getStatus(), secondResult.getStatus(),
+                "Repeating validation should have not changed the result");
 
-		final String cda = new String(getFileFromInternalResources("Files" + File.separator + "cda.xml"), StandardCharsets.UTF_8);
-		
-		SchematronETY ety = new SchematronETY(); 
-		ety.setId("TEST_ID"); 
-		ety.setNameSchematron("TEST_NAME");
-		ety.setContentSchematron(new Binary("Hello World!".getBytes())); 
-		ety.setTemplateIdRoot("TEST_ROOT");
-		ety.setVersion("1.2"); 
-		
-		ExtractedInfoDTO infoDTO = CDAHelper.extractInfo(cda, null);
-		
-		when(schematronRepo.findByRootAndSystem(anyString(), nullable(String.class))).thenReturn(ety);
-		
-		assertDoesNotThrow(() -> service.validateSemantic(cda, infoDTO));
-		
-		// Now Singleton is valorized  
-		assertDoesNotThrow(() -> service.validateSemantic(cda, infoDTO));
-		
-	} 
-	
-	@Test
-	void noSchematronFoundSemanticExceptionTest() {
+        log.info("Testing with version {}", version);
 
-		final String cda = new String(getFileFromInternalResources("Files" + File.separator + "cda.xml"), StandardCharsets.UTF_8);
-		String version = "1.3";
-		
-		ExtractedInfoDTO infoDTO = CDAHelper.extractInfo(cda, null);
-		
-		log.info("Testing with version {}", version);
-		
-		SchematronValidationResultDTO res = service.validateSemantic(cda, infoDTO);
-		assertEquals("Schematron with template id root 2.16.840.1.113883.2.9.2.80.3.1.10.4 not found on database.", res.getMessage());
-		assertEquals(false, res.getValidSchematron());
-	} 
-	
-	@Test
-	void validationTest() {
+        CDAValidationDTO out = service.validateSyntactic(cda, "2.0.0");
+        assertNotNull(out.getMessage());
+    }
+
+    @Test
+    void shouldReturnNotValidWhenCDAIsInvalid() {
+
+        final String cda = "<realmCode code=\"1\"/>";
+        String version = "1.3";
+
+        log.info("Testing with version {}", version);
+        CDAValidationDTO firstResult = service.validateSyntactic(cda, version);
+        assertEquals(CDAValidationStatusEnum.NOT_VALID, firstResult.getStatus(),
+                "The validation should have been completed correctly and result as Invalid");
+        assertNull(firstResult.getMessage());
+
+        CDAValidationDTO secondResult = service.validateSyntactic(cda, version);
+        assertEquals(CDAValidationStatusEnum.NOT_VALID, secondResult.getStatus(),
+                "The validation should have been completed correctly and result as Invalid");
+        assertNull(firstResult.getMessage());
+    }
+
+    @Test
+    void shouldThrowBusinessExceptionWhenSchemaisNull() {
+
+        final String cda = new String(getFileFromInternalResources("Files" + File.separator + "cda.xml"),
+                StandardCharsets.UTF_8);
+        final String version = "3.0.0";
+
+        CDAValidationDTO res = service.validateSyntactic(cda, version);
+        assertEquals(String.format("Schema with version %s not found on database.", version), res.getMessage());
+    }
+
+    @Test
+    void shouldReturnWhenCDAVocabularyIsInvalid() {
         final String cda = new String(getFileFromInternalResources(
-                "Files/cda_ok/Esempio CDA_002.xml"
-            ), StandardCharsets.UTF_8);
+                "Files/cda_ok/Esempio_CDA_003.xml"), StandardCharsets.UTF_8);
 
-            DictionaryETY ety = new DictionaryETY(); 
-            ety.setSystem("2.16.840.1.113883.6.1");
-            ety.setVersion("1.3");
-            ety.setReleaseDate(new Date()); 
-            
-            List<DictionaryETY> dictionaries = new ArrayList<>();
-            dictionaries.add(ety);
+        VocabularyResultDTO res = service.validateVocabularies(cda, "wid");
+        assertFalse(res.getValid(), "The vocabulary validation should be falsy");
 
-            when(codeSystemRepo.getCodeSystems()).thenReturn(dictionaries);
-            
-            assertDoesNotThrow(() -> service.validateVocabularies(cda, "wid"));
-            assertDoesNotThrow(() -> CDAHelper.extractTerminology(cda)); 
-            
-            // --------- Test - Throws Exception --------- 
-            assertThrows(Exception.class, () -> service.validateVocabularies(null, "wid"));
-            
-            // --------- Test - Validation SRV ---------
-			EngineMap map = new EngineMap();
-			map.setOid("TEST-OID");
-			map.setRoot("2.16.840.1.113883.6.1");
-			map.setVersion("0.1");
-            EngineETY engine = new EngineETY();
-            engine.setRoots(map);
-            
-            when(engines.getLatestEngine()).thenReturn(engine);
-            assertDoesNotThrow(() -> service.getStructureObjectID("2.16.840.1.113883.6.1"));
+        res = service.validateVocabularies("", "");
+        assertFalse(res.getValid(), "Repeating vocabulary validation should be falsy");
+    }
 
-            when(engines.getLatestEngine()).thenThrow(new BusinessException("Error"));
-            assertThrows(BusinessException.class, () -> service.getStructureObjectID("2.16.840.1.113883.6.1"));
-	}
+    @Test
+    void validateSemanticValidSchematronTest() {
+        final String cda = new String(getFileFromInternalResources("Files" + File.separator + "schematronLDO"
+                + File.separator + "OK" + File.separator + "CDA2_Lettera_Dimissione_Ospedaliera_v2.2.xml"),
+                StandardCharsets.UTF_8);
 
-	@Test
-	void engineRetrievalTest() {
-		// Engine mock
-		EngineMap map = new EngineMap();
-		map.setRoot("2.16.840.1.113883.6.2"); // <= Erroneous
-		EngineETY engine = new EngineETY();
-		engine.setRoots(map);
-		// Mock knowledge
-		when(engines.getLatestEngine()).thenReturn(null);
-		// Execute
-		assertThrows(NoRecordFoundException.class, () -> service.getStructureObjectID("2.16.840.1.113883.6.1"));
-		// Mock knowledge
-		when(engines.getLatestEngine()).thenReturn(engine);
-		// Execute
-		assertThrows(NoRecordFoundException.class, () -> service.getStructureObjectID("2.16.840.1.113883.6.1"));
-		// Reset
-		engine.setId("engine-id");
-		map.setOid("map-id");
-		map.setRoot("2.16.840.1.113883.6.1");
-		// Mock knowledge
-		when(engines.getLatestEngine()).thenReturn(engine);
-		// Execute
-		assertDoesNotThrow(() -> {
-			Pair<String, String> id = service.getStructureObjectID("2.16.840.1.113883.6.1");
-			assertEquals(id.getKey(), engine.getId());
-			assertEquals(id.getValue(), map.getOid());
-		});
-		// Mock knowledge
-		when(engines.getLatestEngine()).thenThrow(new MongoException("Test error"));
-		// Execute
-		assertThrows(BusinessException.class, () -> service.getStructureObjectID("2.16.840.1.113883.6.1"));
-	}
+        ExtractedInfoDTO infoDTO = CDAHelper.extractInfo(cda, null);
+
+        SchematronETY ety = new SchematronETY();
+        ety.setId("TEST_ID");
+        ety.setNameSchematron("schematronFSE_LDO_V3.5.sch");
+        ety.setContentSchematron(new Binary("SGVsbG8gV29ybGQh".getBytes()));
+        ety.setTemplateIdRoot("2.16.840.1.113883.2.9.10.1.5");
+        ety.setVersion("1.0");
+
+        when(schematronRepo.findByRootAndSystem(anyString(), nullable(String.class))).thenReturn(ety);
+        when(aResSCH.isValidSchematron()).thenReturn(true);
+
+        assertDoesNotThrow(() -> service.validateSemantic(cda, infoDTO));
+
+    }
+
+    @Test
+    void validateSemanticInvalidSchematronTest() {
+
+        final String cda = new String(getFileFromInternalResources("Files" + File.separator + "cda.xml"),
+                StandardCharsets.UTF_8);
+
+        SchematronETY ety = new SchematronETY();
+        ety.setId("TEST_ID");
+        ety.setNameSchematron("TEST_NAME");
+        ety.setContentSchematron(new Binary("Hello World!".getBytes()));
+        ety.setTemplateIdRoot("TEST_ROOT");
+        ety.setVersion("1.2");
+
+        ExtractedInfoDTO infoDTO = CDAHelper.extractInfo(cda, null);
+
+        when(schematronRepo.findByRootAndSystem(anyString(), nullable(String.class))).thenReturn(ety);
+
+        assertDoesNotThrow(() -> service.validateSemantic(cda, infoDTO));
+
+        // Now Singleton is valorized
+        assertDoesNotThrow(() -> service.validateSemantic(cda, infoDTO));
+
+    }
+
+    @Test
+    void noSchematronFoundSemanticExceptionTest() {
+
+        final String cda = new String(getFileFromInternalResources("Files" + File.separator + "cda.xml"),
+                StandardCharsets.UTF_8);
+        String version = "1.3";
+
+        ExtractedInfoDTO infoDTO = CDAHelper.extractInfo(cda, null);
+
+        log.info("Testing with version {}", version);
+
+        SchematronValidationResultDTO res = service.validateSemantic(cda, infoDTO);
+        assertEquals("Schematron with template id root 2.16.840.1.113883.2.9.2.80.3.1.10.4 not found on database.",
+                res.getMessage());
+        assertEquals(false, res.getValidSchematron());
+    }
+
+    @Test
+    void validationTest() {
+        final String cda = new String(getFileFromInternalResources(
+                "Files/cda_ok/Esempio CDA_002.xml"), StandardCharsets.UTF_8);
+
+        DictionaryETY ety = new DictionaryETY();
+        ety.setSystem("2.16.840.1.113883.6.1");
+        ety.setVersion("1.3");
+        ety.setReleaseDate(new Date());
+
+        List<DictionaryETY> dictionaries = new ArrayList<>();
+        dictionaries.add(ety);
+
+        when(codeSystemRepo.getCodeSystems()).thenReturn(dictionaries);
+
+        assertDoesNotThrow(() -> service.validateVocabularies(cda, "wid"));
+        assertDoesNotThrow(() -> CDAHelper.extractTerminology(cda));
+
+        // --------- Test - Throws Exception ---------
+        assertThrows(Exception.class, () -> service.validateVocabularies(null, "wid"));
+
+        // --------- Test - Validation SRV ---------
+        EngineMap map = new EngineMap();
+        map.setOid("TEST-OID");
+        map.setRoot("2.16.840.1.113883.6.1");
+        map.setVersion("0.1");
+        EngineETY engine = new EngineETY();
+        engine.setRoots(map);
+
+        when(engines.getLatestEngine()).thenReturn(engine);
+        assertDoesNotThrow(() -> service.getStructureObjectID("2.16.840.1.113883.6.1"));
+
+        when(engines.getLatestEngine()).thenThrow(new BusinessException("Error"));
+        assertThrows(BusinessException.class, () -> service.getStructureObjectID("2.16.840.1.113883.6.1"));
+    }
+
+    @Test
+    void engineRetrievalTest() {
+        // Engine mock
+        EngineMap map = new EngineMap();
+        map.setRoot("2.16.840.1.113883.6.2"); // <= Erroneous
+        EngineETY engine = new EngineETY();
+        engine.setRoots(map);
+        // Mock knowledge
+        when(engines.getLatestEngine()).thenReturn(null);
+        // Execute
+        assertThrows(NoRecordFoundException.class, () -> service.getStructureObjectID("2.16.840.1.113883.6.1"));
+        // Mock knowledge
+        when(engines.getLatestEngine()).thenReturn(engine);
+        // Execute
+        assertThrows(NoRecordFoundException.class, () -> service.getStructureObjectID("2.16.840.1.113883.6.1"));
+        // Reset
+        engine.setId("engine-id");
+        map.setOid("map-id");
+        map.setRoot("2.16.840.1.113883.6.1");
+        // Mock knowledge
+        when(engines.getLatestEngine()).thenReturn(engine);
+        // Execute
+        assertDoesNotThrow(() -> {
+            Pair<String, String> id = service.getStructureObjectID("2.16.840.1.113883.6.1");
+            assertEquals(id.getKey(), engine.getId());
+            assertEquals(id.getValue(), map.getOid());
+        });
+        // Mock knowledge
+        when(engines.getLatestEngine()).thenThrow(new MongoException("Test error"));
+        // Execute
+        assertThrows(BusinessException.class, () -> service.getStructureObjectID("2.16.840.1.113883.6.1"));
+    }
 
 }

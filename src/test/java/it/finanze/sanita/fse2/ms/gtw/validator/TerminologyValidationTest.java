@@ -42,7 +42,6 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Description;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.test.annotation.DirtiesContext;
@@ -61,22 +60,20 @@ import it.finanze.sanita.fse2.ms.gtw.validator.service.IValidationSRV;
 import it.finanze.sanita.fse2.ms.gtw.validator.service.impl.ConfigSRV;
 import lombok.extern.slf4j.Slf4j;
 
-
 @Slf4j
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles(Constants.Profile.TEST)
 class TerminologyValidationTest {
 
-
     @Autowired
     private ITerminologyRepo vocabulariesMongoRepo;
-    
+
     @MockitoBean
     private PropertiesCFG propsCFG;
-    
+
     @Autowired
     private MongoTemplate mongoTemplate;
-    
+
     @Autowired
     private IValidationSRV service;
 
@@ -105,11 +102,12 @@ class TerminologyValidationTest {
         terminology.putAll(redisTerminology);
         terminology.putAll(mongoTerminology);
 
-        // VocabularyResultDTO existing = vocabulariesSRV.vocabulariesExists(terminology);
+        // VocabularyResultDTO existing =
+        // vocabulariesSRV.vocabulariesExists(terminology);
 
         // assertTrue(existing.getValid());
-    } 
-    
+    }
+
     @Test
     @DisplayName("Terminology Validation Exception Test")
     void validationExceptionTest() {
@@ -117,7 +115,7 @@ class TerminologyValidationTest {
 
         final Map<String, List<String>> redisTerminology = generateRandomTerminology(10, 100);
         final Map<String, List<String>> mongoTerminology = generateRandomTerminology(10, 100);
- 
+
         // All keys should exist in Mongo
         insertTerminologyOnMongo(redisTerminology);
         insertTerminologyOnMongo(mongoTerminology);
@@ -126,18 +124,17 @@ class TerminologyValidationTest {
         terminology.putAll(redisTerminology);
         terminology.putAll(mongoTerminology);
 
+        // doThrow(new BusinessException("Test Error",
+        // null)).when(propsCFG).isRedisEnabled();
 
-        // doThrow(new BusinessException("Test Error", null)).when(propsCFG).isRedisEnabled(); 
-        
-        // assertThrows(Exception.class, () -> vocabulariesSRV.vocabulariesExists(terminology)); 
-        
+        // assertThrows(Exception.class, () ->
+        // vocabulariesSRV.vocabulariesExists(terminology));
+
     }
 
-    
     @Nested
     @DirtiesContext
     class CodeSystemIndependent {
-
 
         @BeforeEach
         void setup() {
@@ -149,7 +146,7 @@ class TerminologyValidationTest {
 
         @ParameterizedTest
         @Description("Returns success if nothing found")
-        @CsvSource({ "10, 100"})
+        @CsvSource({ "10, 100" })
         void findBySystemAndNotCodesSuccessTest(int numSystems, int numCodesEachSystem) {
             final Map<String, List<String>> terminology = generateRandomTerminology(numSystems, numCodesEachSystem);
             insertTerminologyOnMongo(terminology);
@@ -159,7 +156,7 @@ class TerminologyValidationTest {
 
         @ParameterizedTest
         @Description("Returns false if system found and no codes found associated")
-        @CsvSource({ "10, 100"})
+        @CsvSource({ "10, 100" })
         void findBySystemAndNotCodesNotFoundTest(int numSystems, int numCodesEachSystem) {
             final Map<String, List<String>> terminology = generateRandomTerminology(numSystems, numCodesEachSystem);
             Map<String, List<String>> terminology2 = new HashMap<>();
@@ -180,7 +177,7 @@ class TerminologyValidationTest {
 
         @ParameterizedTest
         @Description("Returns success if nothing found")
-        @CsvSource({ "1, 5"})
+        @CsvSource({ "1, 5" })
         void findBySpecialSystemAndNotCodesSuccessTest(int numSystems, int numCodesEachSystem) {
             final Map<String, List<String>> terminology = generateRandomTerminology(numSystems, numCodesEachSystem);
             List<String> codes = new ArrayList<>();
@@ -194,7 +191,7 @@ class TerminologyValidationTest {
             terminology.put("4.5.4.6.999", codes);
             terminology.put("4.5.4.6.9999", codes);
             terminology.put("999.999.4.6.9999", codes);
-            terminology.put("998.997.4.6.996", codes);  // not special char but will pass again
+            terminology.put("998.997.4.6.996", codes); // not special char but will pass again
             insertTerminologyOnMongo(terminology);
             // VocabularyResultDTO res = vocabulariesSRV.vocabulariesExists(terminology);
             // assertEquals(true, res.getValid());
@@ -214,7 +211,7 @@ class TerminologyValidationTest {
         }
         return exists;
     }
- 
+
     void insertTerminologyOnMongo(Map<String, List<String>> terminology) {
 
         List<TerminologyETY> vocabularies = new ArrayList<>();
@@ -224,7 +221,7 @@ class TerminologyValidationTest {
                 TerminologyETY vocabularyETY = new TerminologyETY();
                 vocabularyETY.setCode(code);
                 vocabularyETY.setSystem(system);
-                vocabularyETY.setDeleted(false); 
+                vocabularyETY.setDeleted(false);
                 vocabularies.add(vocabularyETY);
             }
         }
@@ -245,53 +242,47 @@ class TerminologyValidationTest {
         }
         return terminology;
     }
-    
+
     @Test
     void checkInvalidCSLog() {
         // Mock repository to retrieve dictionaries
         doReturn(getDictionaries()).when(repository).getCodeSystems();
         // Run test
         VocabularyResultDTO res = service.validateVocabularies(
-            getCDA(),
-            "TEST_WIF"
-        );
+                getCDA(),
+                "TEST_WIF");
         // Check it has been called with the right arguments
         verify(logger, atLeastOnce()).warn(
-            eq("TEST_WIF"),
-            eq(getExpectedMsgFromFile()),
-            eq(TERMINOLOGY_VALIDATION),
-            eq(WARN),
-            any(Date.class),
-            eq(INVALID_CODE)
-        );
+                eq("TEST_WIF"),
+                eq(getExpectedMsgFromFile()),
+                eq(TERMINOLOGY_VALIDATION),
+                eq(WARN),
+                any(Date.class),
+                eq(INVALID_CODE));
         // Verify validation didn't pass
         assertFalse(res.getValid());
     }
 
     private String getCDA() {
         return new String(
-            getFileFromInternalResources("Files/inconsistency_log_test/lab_inconsistency_cs.xml"),
-            UTF_8
-        );
+                getFileFromInternalResources("Files/inconsistency_log_test/lab_inconsistency_cs.xml"),
+                UTF_8);
     }
 
     private List<DictionaryETY> getDictionaries() {
         return Collections.singletonList(
-            new DictionaryETY(
-                new ObjectId().toHexString(),
-                "2.16.840.1.113883.6.1",
-                "1.0",
-                new Date(),
-                new Date(),
-                false
-            )
-        );
+                new DictionaryETY(
+                        new ObjectId().toHexString(),
+                        "2.16.840.1.113883.6.1",
+                        "1.0",
+                        new Date(),
+                        new Date(),
+                        false));
     }
 
     private String getExpectedMsgFromFile() {
         return new String(
-            getFileFromInternalResources("Files/inconsistency_log_test/expected_log.txt"),
-            UTF_8
-        );
+                getFileFromInternalResources("Files/inconsistency_log_test/expected_log.txt"),
+                UTF_8);
     }
 }
