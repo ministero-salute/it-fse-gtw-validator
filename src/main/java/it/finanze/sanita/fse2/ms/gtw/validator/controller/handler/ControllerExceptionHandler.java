@@ -11,6 +11,8 @@
  */
 package it.finanze.sanita.fse2.ms.gtw.validator.controller.handler;
 
+import static it.finanze.sanita.fse2.ms.gtw.validator.config.Constants.Properties.MS_NAME;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -20,7 +22,8 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
-import io.micrometer.tracing.Tracer;
+import io.opentelemetry.api.trace.SpanBuilder;
+import io.opentelemetry.api.trace.Tracer;
 import it.finanze.sanita.fse2.ms.gtw.validator.dto.response.LogTraceInfoDTO;
 import it.finanze.sanita.fse2.ms.gtw.validator.dto.response.ResponseDTO;
 import it.finanze.sanita.fse2.ms.gtw.validator.exceptions.NoRecordFoundException;
@@ -39,10 +42,12 @@ public class ControllerExceptionHandler extends ResponseEntityExceptionHandler {
 
 	protected LogTraceInfoDTO getLogTraceInfo() {
 		LogTraceInfoDTO out = new LogTraceInfoDTO(null, null);
-		if (tracer.currentSpan() != null) {
+		SpanBuilder spanbuilder = tracer.spanBuilder(MS_NAME);
+		
+		if (spanbuilder != null) {
 			out = new LogTraceInfoDTO(
-					tracer.currentSpan().context().spanId(), 
-					tracer.currentSpan().context().traceId());
+					spanbuilder.startSpan().getSpanContext().getSpanId(), 
+					spanbuilder.startSpan().getSpanContext().getTraceId());
 		}
 		return out;
 	}
