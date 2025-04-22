@@ -8,7 +8,13 @@ ARG RUNTIME=./runtime
 ENV AB_JOLOKIA_OFF=true
 ENV WORKBENCH_MAX_METASPACE_SIZE=1024
 
-ENV JAVA_OPTIONS="-XX:TieredStopAtLevel=1 -noverify -Xms512m -Xmx1024m -Djdk.instrument.traceUsage"
+ENV JAVA_OPTIONS="-XX:TieredStopAtLevel=1 \
+ -noverify \
+ -Xms512m \
+ -Xmx1024m \
+ -Djdk.instrument.traceUsage \
+ -XX:+EnableDynamicAgentLoading \
+ -verbose:class"
 
 COPY ${JAR_FILE} /deployments/
 COPY ${RUNTIME} /deployments/
