@@ -28,6 +28,8 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RestController;
 
+import io.opentelemetry.api.trace.Span;
+import io.opentelemetry.api.trace.SpanContext;
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -51,6 +53,12 @@ public class ValidationCTL extends AbstractCTL implements IValidationCTL {
 	
 	@Override
 	public ValidationResponseDTO validation(ValidationRequestDTO requestBody, HttpServletRequest request) {
+
+        Span span = Span.current();
+        SpanContext ctx = span.getSpanContext();
+
+        log.info("Received Request - traceId: {}, spanId: {}, isValid: {}, isRemote: {}",
+            ctx.getTraceId(), ctx.getSpanId(), ctx.isValid(), ctx.isRemote());
 
 		//recupera object id e mettilo nella risposta
 		List<String> messages = new ArrayList<>();
