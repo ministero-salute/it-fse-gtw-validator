@@ -33,6 +33,7 @@ import io.opentelemetry.api.trace.SpanContext;
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Enumeration;
 import java.util.List;
 import java.util.Map.Entry;
 
@@ -59,6 +60,14 @@ public class ValidationCTL extends AbstractCTL implements IValidationCTL {
 
         log.info("Received Request - traceId: {}, spanId: {}, isValid: {}, isRemote: {}",
             ctx.getTraceId(), ctx.getSpanId(), ctx.isValid(), ctx.isRemote());
+
+        Enumeration<String> headerNames = request.getHeaderNames();
+        while (headerNames.hasMoreElements()) {
+            String name = headerNames.nextElement();
+            String value = request.getHeader(name);
+            log.info("Header: {} = {}", name, value);
+        }
+
 
 		//recupera object id e mettilo nella risposta
 		List<String> messages = new ArrayList<>();
