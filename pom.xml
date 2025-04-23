@@ -191,11 +191,10 @@
 	</dependency>
 	
 	<!-- OpenTelemetry - Micrometer -->
-
-		<dependency>
-		  <groupId>io.micrometer</groupId>
-		  <artifactId>micrometer-tracing-bridge-otel</artifactId>
-		</dependency>
+	    <dependency>
+	      <groupId>io.opentelemetry.instrumentation</groupId>
+	      <artifactId>opentelemetry-spring-boot-starter</artifactId>
+	    </dependency>
 	</dependencies>
 
 	<dependencyManagement>
