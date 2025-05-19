@@ -25,7 +25,7 @@ public final class ConfigClientRoutes {
     private String host;
 
     public UriComponentsBuilder base() {
-        return UriComponentsBuilder.fromHttpUrl(host);
+        return UriComponentsBuilder.fromUriString(host);
     }
 
     public String identifier() {
