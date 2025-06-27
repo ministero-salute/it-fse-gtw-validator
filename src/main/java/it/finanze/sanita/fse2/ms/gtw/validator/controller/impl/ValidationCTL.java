@@ -54,21 +54,6 @@ public class ValidationCTL extends AbstractCTL implements IValidationCTL {
 	
 	@Override
 	public ValidationResponseDTO validation(ValidationRequestDTO requestBody, HttpServletRequest request) {
-
-        Span span = Span.current();
-        SpanContext ctx = span.getSpanContext();
-
-        log.info("Received Request - traceId: {}, spanId: {}, isValid: {}, isRemote: {}",
-            ctx.getTraceId(), ctx.getSpanId(), ctx.isValid(), ctx.isRemote());
-
-        Enumeration<String> headerNames = request.getHeaderNames();
-        while (headerNames.hasMoreElements()) {
-            String name = headerNames.nextElement();
-            String value = request.getHeader(name);
-            log.info("Header: {} = {}", name, value);
-        }
-
-
 		//recupera object id e mettilo nella risposta
 		List<String> messages = new ArrayList<>();
 		Validation.notNull(requestBody.getCda());
