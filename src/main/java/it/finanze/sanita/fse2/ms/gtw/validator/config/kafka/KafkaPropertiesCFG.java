@@ -74,6 +74,9 @@ public class KafkaPropertiesCFG implements Serializable {
 	 */
 	@Value("${kafka.properties.ssl.truststore.password}")
 	private transient char[] trustorePassword;
+	
+	@Value("${kafka.properties.sasl.client.callback.handler.class:#{null}}")
+	private String callbackHandlerClass;
 	 
 	@Autowired
 	private ProfileUtility profileUtility;
