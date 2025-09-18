@@ -15,6 +15,7 @@ package it.finanze.sanita.fse2.ms.gtw.validator.config.mongo;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -39,26 +40,17 @@ import com.mongodb.client.MongoClients;
 @Configuration
 public class MongoDatabaseCFG {
 
-
-    final List<Converter<?, ?>> conversions = new ArrayList<>();
-
-    @Bean
-    public MongoDatabaseFactory mongoDatabaseFactory(final MongoPropertiesCFG mongoPropertiesCFG){
-        ConnectionString connectionString = new ConnectionString(mongoPropertiesCFG.getUri());
-        MongoClientSettings mongoClientSettings = MongoClientSettings.builder()
-            .applyConnectionString(connectionString)
-            .build();
-        return new SimpleMongoClientDatabaseFactory(MongoClients.create(mongoClientSettings), mongoPropertiesCFG.getSchemaName());
-    }
+	@Autowired
+	private MongoDatabaseFactory factory;
 
     @Bean
     @Primary
-    public MongoTemplate mongoTemplate(final MongoDatabaseFactory factory, final ApplicationContext appContext) {
+    public MongoTemplate mongoTemplate(final ApplicationContext appContext) {
         final MongoMappingContext mongoMappingContext = new MongoMappingContext();
         mongoMappingContext.setApplicationContext(appContext);
         MappingMongoConverter converter = new MappingMongoConverter(new DefaultDbRefResolver(factory), mongoMappingContext);
-
         converter.setTypeMapper(new DefaultMongoTypeMapper(null));
         return new MongoTemplate(factory, converter);
     }
+ 
 }
