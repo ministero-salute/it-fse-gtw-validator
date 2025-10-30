@@ -27,7 +27,9 @@ public enum SchematronPath {
     RSA(Paths.get(BASE_PATH.getPath().toString(), "schematronRSA")),
     SIN_VAC(Paths.get(BASE_PATH.getPath().toString(), "schematronSinVACC")),
     VPS(Paths.get(BASE_PATH.getPath().toString(), "schematronVPS")),
-    VAC(Paths.get(BASE_PATH.getPath().toString(), "schematronVACC"));
+    VAC(Paths.get(BASE_PATH.getPath().toString(), "schematronVACC")),
+    PRF(Paths.get(BASE_PATH.getPath().toString(), "schematronPrF"));
+    
 
     private final Path path;
 
