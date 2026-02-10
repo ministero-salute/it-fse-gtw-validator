@@ -43,7 +43,7 @@ public class AnyNonTermsReqFilter implements AuditFilter {
             entity.setServizio(uri);
             entity.setStart_time((Date) req.getAttribute("START_TIME"));
             entity.setEnd_time(new Date());
-            entity.setRequest(StringUtility.fromJSON(content, Object.class));
+            entity.setRequest(StringUtility.fromJSONJackson(content, Object.class));
             entity.setResponse(body);
         }
 

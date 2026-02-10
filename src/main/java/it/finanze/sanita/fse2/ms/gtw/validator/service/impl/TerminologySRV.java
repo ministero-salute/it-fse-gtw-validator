@@ -11,7 +11,6 @@
  */
 package it.finanze.sanita.fse2.ms.gtw.validator.service.impl;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -20,6 +19,9 @@ import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import it.finanze.sanita.fse2.ms.gtw.validator.dto.CodeDTO;
 import it.finanze.sanita.fse2.ms.gtw.validator.dto.CodeSystemSnapshotDTO;
@@ -178,43 +180,61 @@ public class TerminologySRV implements ITerminologySRV {
 		logger.error(workflowInstanceId,String.format("Invalid CodeSystemVersions found during the validation: [%s]", versions.stream().collect(Collectors.joining(", "))), OperationLogEnum.TERMINOLOGY_VALIDATION, ResultLogEnum.KO, startOperation, ErrorLogEnum.INVALID_VERSION);
 	}
 
+//	private void sendLogForInvalidCodes(List<CodeDTO> codes, Date startOperation, final String workflowInstanceId) {
+//		if (codes.isEmpty()) return;
+//		List<String> versions = logGroupedBySystem(codes);
+//		logger.warn(workflowInstanceId,String.format("Invalid Codes found during the validation: [%s]", versions.stream().collect(Collectors.joining(", "))), OperationLogEnum.TERMINOLOGY_VALIDATION, ResultLogEnum.WARN, startOperation, WarnLogEnum.INVALID_CODE);
+//	}
+	
 	private void sendLogForInvalidCodes(List<CodeDTO> codes, Date startOperation, final String workflowInstanceId) {
-		if (codes.isEmpty()) return;
-		List<String> versions = logGroupedBySystem(codes);
-		
-		logger.warn(workflowInstanceId,String.format("Invalid Codes found during the validation: [%s]", versions.stream().collect(Collectors.joining(", "))), OperationLogEnum.TERMINOLOGY_VALIDATION, ResultLogEnum.WARN, startOperation, WarnLogEnum.INVALID_CODE);
+	    if (codes.isEmpty()) return;
+	    
+	    // Serializza correttamente come JSON valido
+	    String invalidCodesJson;
+	    try {
+	        ObjectMapper mapper = new ObjectMapper();
+	        List<Map<String, Object>> versions = createValidJsonStructure(codes);
+	        invalidCodesJson = mapper.writeValueAsString(versions);
+	    } catch (JsonProcessingException e) {
+	        log.error(workflowInstanceId, "Error serializing invalid codes to JSON", e);
+	        return;
+	    }
+	    
+	    // Mantieni il formato esatto del messaggio per la regex
+	    logger.warn(
+	        workflowInstanceId,
+	        String.format("Invalid Codes found during the validation: %s", invalidCodesJson),
+	        OperationLogEnum.TERMINOLOGY_VALIDATION,
+	        ResultLogEnum.WARN,
+	        startOperation,
+	        WarnLogEnum.INVALID_CODE
+	    );
 	}
 
-	private List<String> logGroupedBySystem(List<CodeDTO> codes) {
-		Map<String, String> systems = new HashMap<>();
-		Map<String, String> versions = new HashMap<>();
-		List<String> logs = new ArrayList<>();
-		codes.forEach(dto -> {
-			systems.putIfAbsent(dto.getCodeSystem(), dto.getCodeSystemName());
-			versions.putIfAbsent(dto.getCodeSystem(), dto.getVersion());
-		});
-		for (Map.Entry<String, String> entry : systems.entrySet()) {
-			List<String> innerCodes = new ArrayList<>();
-			innerCodes.addAll(codes.stream()
-			.filter(dto -> dto.getCodeSystem().equals(entry.getKey()))
-			.map(CodeDTO::toString)
-			.collect(Collectors.toList()));
-
-			String code = entry.getKey();
-			String displayName = entry.getValue();
-			String version = versions.get(code);
-			String inner = innerCodes.stream().collect(Collectors.joining(", "));
-			String log = "";
-			if (version != null) {
-			    log = String.format("{\"code\":\"%s\",\"display-name\":\"%s\",\"version\":\"%s\",\"codes\":\"[%s]\"}", code, displayName, version, inner);
-			} else {
-			    log = String.format("{\"code\":\"%s\",\"display-name\":\"%s\",\"codes\":\"[%s]\"}", code, displayName, inner);
-			}
-			
-			logs.add(log);
-		} 
-		
-		return logs;
+	private List<Map<String, Object>> createValidJsonStructure(List<CodeDTO> codes) {
+	    return codes.stream()
+	        .collect(Collectors.groupingBy(CodeDTO::getCodeSystem))
+	        .entrySet().stream()
+	        .map(entry -> {
+	            Map<String, Object> item = new HashMap<>();
+	            item.put("code", entry.getKey());
+	            item.put("display-name", entry.getValue().get(0).getDisplayName());
+	            item.put("version", entry.getValue().get(0).getVersion());
+	            
+	            // IMPORTANTE: codes deve essere un array, NON una stringa
+	            List<Map<String, String>> codesArray = entry.getValue().stream()
+	                .map(code -> {
+	                    Map<String, String> codeMap = new HashMap<>();
+	                    codeMap.put("code", code.getCode());
+	                    return codeMap;
+	                })
+	                .collect(Collectors.toList());
+	            
+	            item.put("codes", codesArray); // Array JSON, non stringa!
+	            
+	            return item;
+	        })
+	        .collect(Collectors.toList());
 	}
 
 	private void throwExceptionForEmptyDatabase(List<DictionaryETY> codeSystems) {

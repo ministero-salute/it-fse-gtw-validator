@@ -11,12 +11,22 @@
  */
 package it.finanze.sanita.fse2.ms.gtw.validator.utility;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 import java.nio.file.Paths;
+import java.text.SimpleDateFormat;
+import java.util.TimeZone;
 import java.util.UUID;
 
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.databind.exc.UnrecognizedPropertyException;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+
+import it.finanze.sanita.fse2.ms.gtw.validator.dto.response.ErrorResponseDTO;
+import it.finanze.sanita.fse2.ms.gtw.validator.exceptions.BusinessException;
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 public final class StringUtility {
 
 	/**
@@ -51,26 +61,40 @@ public final class StringUtility {
 	}
 	
 	/**
-	 * Transformation from Json to Object.
-	 * 
-	 * @param <T>	Generic type of return
-	 * @param json	json
-	 * @param cls	Object class to return
-	 * @return		object
-	 */
-	public static <T> T fromJSON(final String json, final Class<T> cls) throws JsonProcessingException {
-		return new ObjectMapper().readValue(json, cls);
-	}
-
-	/**
 	 * Transformation from Object to Json.
 	 * 
 	 * @param obj	object to transform
 	 * @return		json
 	 */
+	public static String toJSONJackson(final Object obj) {
+		String out = "";
+		try {
+			final ObjectMapper objectMapper = new ObjectMapper(); 
+			objectMapper.registerModule(new JavaTimeModule());
+			objectMapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
+			objectMapper.setDateFormat(new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ"));
+			objectMapper.setTimeZone(TimeZone.getDefault());
+			objectMapper.setSerializationInclusion(Include.NON_NULL);
+			out = objectMapper.writeValueAsString(obj);
+		} catch(final Exception ex) {
+			log.error("Error while running to json jackson");
+			throw new BusinessException(ex);
+		}
+		return out; 
+	}
 
-	public static String toJSON(final Object obj) throws JsonProcessingException {
-		return new ObjectMapper().writeValueAsString(obj);
+	public static <T> T fromJSONJackson(final String json, final Class<T> clazz) {
+
+		T out = null;
+
+		try {
+			final ObjectMapper mapper = new ObjectMapper();
+			out = mapper.readValue(json, clazz);
+		} catch (final Exception e) {
+			throw new BusinessException(e);
+		}
+
+		return out;
 	}
  
 }
