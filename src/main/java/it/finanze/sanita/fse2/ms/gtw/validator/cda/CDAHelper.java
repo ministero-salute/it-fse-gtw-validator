@@ -110,11 +110,15 @@ public class CDAHelper {
         try {
             org.jsoup.nodes.Document docT = Jsoup.parse(cda);
 
-            // Schematron = root
-            String templateIdSchematron = docT.select("templateid").get(0).attr("root");
-            // Schemaversion = extension
+            List<String> templateIdRoots = docT.select("templateid")
+                    .stream()
+                    .map(el -> el.attr("root"))
+                    .filter(root -> root != null && !root.isEmpty())
+                    .collect(Collectors.toList());
+
             String schemaVersion = docT.select("typeid").get(0).attr("extension");
-            out = new ExtractedInfoDTO(templateIdSchematron, schemaVersion, SystemTypeEnum.of(system));
+
+            out = new ExtractedInfoDTO(templateIdRoots, schemaVersion, SystemTypeEnum.of(system));
         } catch (Exception ex) {
             log.error("Error while extracting info for schematron ", ex);
             throw new BusinessException("Error while extracting info for schematron ", ex);

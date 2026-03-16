@@ -16,6 +16,7 @@ import static it.finanze.sanita.fse2.ms.gtw.validator.config.Constants.Profile.T
 import static it.finanze.sanita.fse2.ms.gtw.validator.utility.FileUtility.getFileFromInternalResources;
 import static org.junit.jupiter.api.TestInstance.Lifecycle.PER_CLASS;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
@@ -104,7 +105,7 @@ class ValidationControllerTest extends AbstractTest {
         when(service.validateVocabularies(anyString(), anyString()))
                 .thenReturn(vocabularyResultDto);
 
-        when(service.getStructureObjectID(anyString())).thenReturn(Pair.of("test", "test"));
+        when(service.getStructureObjectID(anyList())).thenReturn(Pair.of("test", "test"));
 
         mvc.perform(validate(req)).andExpect(status().is2xxSuccessful());
 

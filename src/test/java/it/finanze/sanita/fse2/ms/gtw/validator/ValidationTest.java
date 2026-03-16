@@ -221,8 +221,7 @@ class ValidationTest extends AbstractTest {
         log.info("Testing with version {}", version);
 
         SchematronValidationResultDTO res = service.validateSemantic(cda, infoDTO);
-        assertEquals("Schematron with template id root 2.16.840.1.113883.2.9.2.80.3.1.10.4 not found on database.",
-                res.getMessage());
+        assertEquals("Schematron with template id roots [2.16.840.1.113883.2.9.2.80.3.1.10.4] not found on database.", res.getMessage());
         assertEquals(false, res.getValidSchematron());
     }
 
@@ -256,10 +255,10 @@ class ValidationTest extends AbstractTest {
         engine.setRoots(map);
 
         when(engines.getLatestEngine()).thenReturn(engine);
-        assertDoesNotThrow(() -> service.getStructureObjectID("2.16.840.1.113883.6.1"));
+        assertDoesNotThrow(() -> service.getStructureObjectID(List.of("2.16.840.1.113883.6.1")));
 
         when(engines.getLatestEngine()).thenThrow(new BusinessException("Error"));
-        assertThrows(BusinessException.class, () -> service.getStructureObjectID("2.16.840.1.113883.6.1"));
+        assertThrows(BusinessException.class, () -> service.getStructureObjectID(List.of("2.16.840.1.113883.6.1")));
     }
 
     @Test
@@ -272,11 +271,11 @@ class ValidationTest extends AbstractTest {
         // Mock knowledge
         when(engines.getLatestEngine()).thenReturn(null);
         // Execute
-        assertThrows(NoRecordFoundException.class, () -> service.getStructureObjectID("2.16.840.1.113883.6.1"));
+        assertThrows(NoRecordFoundException.class, () -> service.getStructureObjectID(List.of("2.16.840.1.113883.6.1")));
         // Mock knowledge
         when(engines.getLatestEngine()).thenReturn(engine);
         // Execute
-        assertThrows(NoRecordFoundException.class, () -> service.getStructureObjectID("2.16.840.1.113883.6.1"));
+        assertThrows(NoRecordFoundException.class, () -> service.getStructureObjectID(List.of("2.16.840.1.113883.6.1")));
         // Reset
         engine.setId("engine-id");
         map.setOid("map-id");
@@ -285,14 +284,14 @@ class ValidationTest extends AbstractTest {
         when(engines.getLatestEngine()).thenReturn(engine);
         // Execute
         assertDoesNotThrow(() -> {
-            Pair<String, String> id = service.getStructureObjectID("2.16.840.1.113883.6.1");
+            Pair<String, String> id = service.getStructureObjectID(List.of("2.16.840.1.113883.6.1"));
             assertEquals(id.getKey(), engine.getId());
             assertEquals(id.getValue(), map.getOid());
         });
         // Mock knowledge
         when(engines.getLatestEngine()).thenThrow(new MongoException("Test error"));
         // Execute
-        assertThrows(BusinessException.class, () -> service.getStructureObjectID("2.16.840.1.113883.6.1"));
+        assertThrows(BusinessException.class, () -> service.getStructureObjectID(List.of("2.16.840.1.113883.6.1")));
     }
 
 }

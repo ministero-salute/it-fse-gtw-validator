@@ -9,18 +9,23 @@ import org.springframework.context.annotation.Configuration;
 import io.opentelemetry.api.GlobalOpenTelemetry;
 import io.opentelemetry.api.trace.Tracer;
 import io.opentelemetry.sdk.autoconfigure.AutoConfiguredOpenTelemetrySdk;
+import it.finanze.sanita.fse2.ms.gtw.validator.utility.ProfileUtility;
 import jakarta.annotation.PostConstruct;
-
 
 @Configuration
 public class OpenTelemetryConfig {
+	
+	@Autowired
+	private ProfileUtility profiles;
 
 	@Autowired
 	private AutoConfiguredOpenTelemetrySdk autoConfiguredOpenTelemetrySdk;
 
 	@PostConstruct
 	public void init() {
-		GlobalOpenTelemetry.set(autoConfiguredOpenTelemetrySdk.getOpenTelemetrySdk());
+		if(!profiles.isTestProfile()) {
+			GlobalOpenTelemetry.set(autoConfiguredOpenTelemetrySdk.getOpenTelemetrySdk());	
+		}
 	}
 
 	@Bean

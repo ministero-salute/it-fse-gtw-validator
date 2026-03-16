@@ -11,10 +11,24 @@
  */
 package it.finanze.sanita.fse2.ms.gtw.validator.service.impl;
 
+import java.util.List;
+import java.util.Optional;
+
+import javax.xml.validation.Validator;
+
+import org.apache.commons.lang3.tuple.Pair;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import com.helger.schematron.ISchematronResource;
+
 import it.finanze.sanita.fse2.ms.gtw.validator.cda.CDAHelper;
 import it.finanze.sanita.fse2.ms.gtw.validator.cda.ValidationResult;
-import it.finanze.sanita.fse2.ms.gtw.validator.dto.*;
+import it.finanze.sanita.fse2.ms.gtw.validator.dto.CDAValidationDTO;
+import it.finanze.sanita.fse2.ms.gtw.validator.dto.ExtractedInfoDTO;
+import it.finanze.sanita.fse2.ms.gtw.validator.dto.SchematronValidationResultDTO;
+import it.finanze.sanita.fse2.ms.gtw.validator.dto.TerminologyExtractionDTO;
+import it.finanze.sanita.fse2.ms.gtw.validator.dto.VocabularyResultDTO;
 import it.finanze.sanita.fse2.ms.gtw.validator.enums.CDAValidationStatusEnum;
 import it.finanze.sanita.fse2.ms.gtw.validator.exceptions.BusinessException;
 import it.finanze.sanita.fse2.ms.gtw.validator.exceptions.NoRecordFoundException;
@@ -32,13 +46,6 @@ import it.finanze.sanita.fse2.ms.gtw.validator.singleton.SchemaValidatorSingleto
 import it.finanze.sanita.fse2.ms.gtw.validator.singleton.SchematronValidatorSingleton;
 import it.finanze.sanita.fse2.ms.gtw.validator.utility.CodeSystemUtility;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.tuple.Pair;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import javax.xml.validation.Validator;
-import java.util.Date;
-import java.util.Optional;
 
 @Slf4j
 @Service
@@ -113,68 +120,82 @@ public class ValidationSRV implements IValidationSRV {
     	return out;
     }
  
-	@Override
-	public SchematronValidationResultDTO validateSemantic(final String cdaToValidate,final ExtractedInfoDTO info) {
-		SchematronValidationResultDTO output = new SchematronValidationResultDTO(false, false, null, null);
-		String id = SchematronValidatorSingleton.identifier(info.getTemplateIdSchematron(), info.getSystem().value());
-		try {
-			ISchematronResource schematronResource = null;
-			
-			if(SchematronValidatorSingleton.getMapInstance()!=null && !SchematronValidatorSingleton.getMapInstance().isEmpty()) {
-				SchematronValidatorSingleton ss = SchematronValidatorSingleton.getMapInstance().get(id);
-				if(ss!=null) {
-					SchematronETY majorVersion = schematronRepo.findGreaterOne(ss.getTemplateIdRoot(), ss.getSystem(), ss.getVersion());
-					if(majorVersion!=null) {
-						ss = SchematronValidatorSingleton.getInstance(true, majorVersion);
-					}
-					schematronResource = ss.getSchematronResource();
-				}
-			}
-			
-			if(schematronResource==null) {
-				SchematronETY schematronETY = schematronRepo.findByRootAndSystem(info.getTemplateIdSchematron(), info.getSystem().value());
-				if (schematronETY == null) {
-					throw new NoRecordFoundException(String.format("Schematron with template id root %s not found on database.", id));
-				}
-				SchematronValidatorSingleton schematron = SchematronValidatorSingleton.getInstance(false,schematronETY);
-				schematronResource = schematron.getSchematronResource();
-			}
-			
-			output = CDAHelper.validateXMLViaSchematronFull(schematronResource, cdaToValidate.getBytes());
-		} catch(NoRecordFoundException nEx) {
-			output.setMessage(nEx.getMessage());
-    	} catch(Exception ex) {
-    		log.error("Error while executing validation on sch schematron", ex);
-    		output.setMessage("Error while executing validation on sch schematron");
-    	}
-		return output;
-	}
+
+    @Override
+    public SchematronValidationResultDTO validateSemantic(final String cdaToValidate, final ExtractedInfoDTO info) {
+        SchematronValidationResultDTO output = new SchematronValidationResultDTO(false, false, null, null);
+        
+        try {
+            ISchematronResource schematronResource = null;
+
+            for (String templateIdRoot : info.getTemplateIdSchematron()) {
+                String id = SchematronValidatorSingleton.identifier(templateIdRoot, info.getSystem().value());
+
+                // Cerca nella mappa singleton
+                if (SchematronValidatorSingleton.getMapInstance() != null && !SchematronValidatorSingleton.getMapInstance().isEmpty()) {
+                    SchematronValidatorSingleton ss = SchematronValidatorSingleton.getMapInstance().get(id);
+                    if (ss != null) {
+                        SchematronETY majorVersion = schematronRepo.findGreaterOne(ss.getTemplateIdRoot(), ss.getSystem(), ss.getVersion());
+                        if (majorVersion != null) {
+                            ss = SchematronValidatorSingleton.getInstance(true, majorVersion);
+                        }
+                        schematronResource = ss.getSchematronResource();
+                        break;  
+                    }
+                }
+
+                // Cerca nel DB
+                SchematronETY schematronETY = schematronRepo.findByRootAndSystem(templateIdRoot, info.getSystem().value());
+                if (schematronETY != null) {
+                    SchematronValidatorSingleton schematron = SchematronValidatorSingleton.getInstance(false, schematronETY);
+                    schematronResource = schematron.getSchematronResource();
+                    break; 
+                }
+            }
+
+            if (schematronResource == null) {
+                throw new NoRecordFoundException(
+                    String.format("Schematron with template id roots %s not found on database.", info.getTemplateIdSchematron())
+                );
+            }
+
+            output = CDAHelper.validateXMLViaSchematronFull(schematronResource, cdaToValidate.getBytes());
+
+        } catch (NoRecordFoundException nEx) {
+            output.setMessage(nEx.getMessage());
+        } catch (Exception ex) {
+            log.error("Error while executing validation on sch schematron", ex);
+            output.setMessage("Error while executing validation on sch schematron");
+        }
+
+        return output;
+    }
 	
-	@Override
-	public Pair<String, String> getStructureObjectID(final String templateId){
 
-		Pair<String, String> p;
-		EngineETY latest;
+    @Override
+    public Pair<String, String> getStructureObjectID(final List<String> templateIds) {
 
-		try{
-			 latest = engines.getLatestEngine();
-		} catch(Exception ex){
-			throw new BusinessException("Impossibile recuperare la structure-map nell'engine associato", ex);
-		}
+        EngineETY latest;
 
-		if(latest == null) throw new NoRecordFoundException("Nessun engine disponibile");
+        try {
+            latest = engines.getLatestEngine();
+        } catch (Exception ex) {
+            throw new BusinessException("Impossibile recuperare la structure-map nell'engine associato", ex);
+        }
 
-		Optional<EngineMap> map = latest.getRoots().stream().filter(r -> r.getRoot().contains(templateId)).findFirst();
+        if (latest == null) throw new NoRecordFoundException("Nessun engine disponibile");
 
-		if(!map.isPresent()) {
-			throw new NoRecordFoundException(
-				String.format("Nessuna mappa con id %s è stata trovata nell'engine %s", templateId, latest.getId())
-			);
-		}
+        Optional<EngineMap> map = latest.getRoots().stream()
+                .filter(r -> templateIds.stream().anyMatch(id -> r.getRoot().contains(id)))
+                .findFirst();
 
-		p = Pair.of(latest.getId(), map.get().getOid());
+        if (!map.isPresent()) {
+            throw new NoRecordFoundException(
+                String.format("Nessuna mappa con ids %s è stata trovata nell'engine %s", templateIds, latest.getId())
+            );
+        }
 
-		return p;
-	}
+        return Pair.of(latest.getId(), map.get().getOid());
+    }
      
 }
