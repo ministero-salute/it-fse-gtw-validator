@@ -35,6 +35,7 @@ public class BlockingDeliveryStrategy extends ContextAwareBase implements Delive
             else if (timeout == 0) future.get();
             return true;
         } catch (InterruptedException e) { 
+            Thread.currentThread().interrupt();
         	return false; 
         } catch (BufferExhaustedException | ExecutionException | CancellationException | TimeoutException e) {
             failureCallback.onFailedDelivery(event, e);
