@@ -24,6 +24,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RestController;
 
 import it.finanze.sanita.fse2.ms.gtw.validator.cda.CDAHelper;
+import it.finanze.sanita.fse2.ms.gtw.validator.client.IFhirMappingClient;
 import it.finanze.sanita.fse2.ms.gtw.validator.controller.IValidationCTL;
 import it.finanze.sanita.fse2.ms.gtw.validator.controller.Validation;
 import it.finanze.sanita.fse2.ms.gtw.validator.dto.CDAValidationDTO;
@@ -32,12 +33,16 @@ import it.finanze.sanita.fse2.ms.gtw.validator.dto.SchematronFailedAssertionDTO;
 import it.finanze.sanita.fse2.ms.gtw.validator.dto.SchematronValidationResultDTO;
 import it.finanze.sanita.fse2.ms.gtw.validator.dto.ValidationInfoDTO;
 import it.finanze.sanita.fse2.ms.gtw.validator.dto.VocabularyResultDTO;
+import it.finanze.sanita.fse2.ms.gtw.validator.dto.client.FhirResourceDTO;
+import it.finanze.sanita.fse2.ms.gtw.validator.dto.client.FhirValidationResponseDTO;
+import it.finanze.sanita.fse2.ms.gtw.validator.dto.client.TransformResDTO;
 import it.finanze.sanita.fse2.ms.gtw.validator.dto.request.ValidationRequestDTO;
 import it.finanze.sanita.fse2.ms.gtw.validator.dto.response.ValidationResponseDTO;
 import it.finanze.sanita.fse2.ms.gtw.validator.enums.CDASeverityViolationEnum;
 import it.finanze.sanita.fse2.ms.gtw.validator.enums.CDAValidationStatusEnum;
 import it.finanze.sanita.fse2.ms.gtw.validator.enums.RawValidationEnum;
 import it.finanze.sanita.fse2.ms.gtw.validator.enums.SystemTypeEnum;
+import it.finanze.sanita.fse2.ms.gtw.validator.exceptions.BusinessException;
 import it.finanze.sanita.fse2.ms.gtw.validator.service.facade.IValidationFacadeSRV;
 import it.finanze.sanita.fse2.ms.gtw.validator.utility.StringUtility;
 import jakarta.servlet.http.HttpServletRequest;
@@ -53,10 +58,13 @@ public class ValidationCTL extends AbstractCTL implements IValidationCTL {
 	
 	@Autowired
 	private IValidationFacadeSRV validationSRV;
- 
+
+	@Autowired
+	private IFhirMappingClient fhirMappingClient;
+	
 	
 	@Override
-	public ValidationResponseDTO validation(ValidationRequestDTO requestBody, HttpServletRequest request) {
+	public ValidationResponseDTO validation(ValidationRequestDTO requestBody, HttpServletRequest request, List<String> validations) {
 		//recupera object id e mettilo nella risposta
 		List<String> messages = new ArrayList<>();
 		Validation.notNull(requestBody.getCda());
@@ -120,6 +128,10 @@ public class ValidationCTL extends AbstractCTL implements IValidationCTL {
 		Pair<String, String> p = Pair.of("", "");
 		if(Arrays.asList(OK, SEMANTIC_WARNING).contains(outcome)) {
 			p = validationSRV.getStructureObjectID(infoDTO.getTemplateIdSchematron());
+
+			if(validations != null && !validations.isEmpty()) {
+				outcome = executeFhirValidations(requestBody.getCda(), p, validations, messages, outcome);
+			}
 		}
 
 		ValidationInfoDTO out = ValidationInfoDTO.builder()
@@ -131,6 +143,56 @@ public class ValidationCTL extends AbstractCTL implements IValidationCTL {
 
 		return new ValidationResponseDTO(getLogTraceInfo(), out);
 	}
-	 
+
+	/**
+	 * Esegue le validazioni aggiuntive invocando il fhir-mapping-engine.
+	 * Se almeno una validazione non è valida l'esito è l'errore associato alla prima validazione
+	 * (in ordine di esecuzione) non valida. I messaggi sono sempre popolati con le issues (severity e message).
+	 *
+	 * @param cda				cda da validare
+	 * @param engineAndObject	coppia engineId e objectId (structure-map)
+	 * @param validations		validazioni da eseguire
+	 * @param messages			messaggi da popolare
+	 * @param currentOutcome	esito corrente
+	 * @return					esito aggiornato
+	 */
+	private RawValidationEnum executeFhirValidations(String cda, Pair<String, String> engineAndObject,
+			List<String> validations, List<String> messages, RawValidationEnum currentOutcome) {
+
+		TransformResDTO res = fhirMappingClient.callConvertCdaInBundle(
+				new FhirResourceDTO(cda, engineAndObject.getValue(), engineAndObject.getKey()), validations);
+
+		if(res == null) {
+			throw new BusinessException("Risposta nulla dal fhir-mapping-engine durante l'esecuzione delle validazioni");
+		}
+		if(!StringUtility.isNullOrEmpty(res.getErrorMessage())) {
+			throw new BusinessException("Errore dal fhir-mapping-engine durante l'esecuzione delle validazioni: " + res.getErrorMessage());
+		}
+		FhirValidationResponseDTO validationResponse = res.getValidationResponse();
+		if(validationResponse == null || validationResponse.getResults() == null) {
+			throw new BusinessException("Esiti delle validazioni assenti nella risposta del fhir-mapping-engine");
+		}
+
+		RawValidationEnum outcome = currentOutcome;
+		boolean errorAssigned = false;
+
+		for(FhirValidationResponseDTO.ValidationResultDTO result : validationResponse.getResults()) {
+			if(!result.isValid() && !errorAssigned) {
+				RawValidationEnum error = RawValidationEnum.fromValidationType(result.getType());
+				if(error == null) {
+					throw new BusinessException("Tipo di validazione non gestito: " + result.getType());
+				}
+				outcome = error;
+				errorAssigned = true;
+			}
+			if(result.getIssues() != null) {
+				for(FhirValidationResponseDTO.ValidationIssueDTO issue : result.getIssues()) {
+					messages.add(issue.getSeverity() + ": " + issue.getMessage());
+				}
+			}
+		}
+
+		return outcome;
+	}
 	
 }

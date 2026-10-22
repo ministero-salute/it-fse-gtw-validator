@@ -37,4 +37,17 @@ public final class ClientRoutes {
         public static final String PROPS_NAME_CONTROL_LOG_ENABLED = "control-log-persistence-enabled";
     }
 
+    @NoArgsConstructor(access = PRIVATE)
+    public static final class FhirMapping {
+        // COMMON
+        public static final String IDENTIFIER_MS = "fhir-mapping-engine";
+        public static final String IDENTIFIER = "[FHIR-MAPPING]";
+        // ENDPOINT
+        public static final String API_VERSION = "v1";
+        public static final String API_DOCUMENTS = "documents";
+        public static final String API_TRANSFORM = "transform";
+        // QP
+        public static final String QP_VALIDATIONS = "validations";
+    }
+
 }

@@ -11,7 +11,10 @@
  */
 package it.finanze.sanita.fse2.ms.gtw.validator.controller;
 
+import java.util.List;
+
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -22,6 +25,7 @@ import it.finanze.sanita.fse2.ms.gtw.validator.dto.response.ValidationResponseDT
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import jakarta.servlet.http.HttpServletRequest;
 
@@ -41,7 +45,9 @@ public interface IValidationCTL {
 	@ApiResponses(value = { @ApiResponse(responseCode = "200", description = "Validazione eseguita", content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE)),
 							@ApiResponse(responseCode = "400", description = "Bad Request", content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE)),
 							@ApiResponse(responseCode = "500", description = "Internal Server Error", content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE)) })
-	ValidationResponseDTO validation(@RequestBody ValidationRequestDTO requestBody, HttpServletRequest request);
+	ValidationResponseDTO validation(@RequestBody ValidationRequestDTO requestBody, HttpServletRequest request,
+			@Parameter(description = "Lista opzionale di validazioni aggiuntive da eseguire tramite fhir-mapping-engine (NORMATIVE_R4, TRAVERSABILITY, RESOURCE_PRUNING)", required = false)
+			@RequestParam(name = "validations", required = false) List<String> validations);
 
 	
 }
