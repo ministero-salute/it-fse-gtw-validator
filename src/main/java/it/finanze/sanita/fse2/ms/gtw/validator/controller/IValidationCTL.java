@@ -46,8 +46,10 @@ public interface IValidationCTL {
 							@ApiResponse(responseCode = "400", description = "Bad Request", content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE)),
 							@ApiResponse(responseCode = "500", description = "Internal Server Error", content = @Content(mediaType = MediaType.APPLICATION_PROBLEM_JSON_VALUE)) })
 	ValidationResponseDTO validation(@RequestBody ValidationRequestDTO requestBody, HttpServletRequest request,
-			@Parameter(description = "Lista opzionale di validazioni aggiuntive da eseguire tramite fhir-mapping-engine (NORMATIVE_R4, TRAVERSABILITY, RESOURCE_PRUNING)", required = false)
-			@RequestParam(name = "validations", required = false) List<String> validations);
+			@Parameter(description = "Lista opzionale di validazioni aggiuntive da eseguire tramite fhir-mapping-engine (NORMATIVE_R4, TRAVERSABILITY)", required = false)
+			@RequestParam(name = "validations", required = false) List<String> validations,
+			@Parameter(description = "Se true attiva la logica di pruning sul fhir-mapping-engine", required = false)
+			@RequestParam(name = "includeRemovalReport", defaultValue = "false") boolean includeRemovalReport);
 
 	
 }

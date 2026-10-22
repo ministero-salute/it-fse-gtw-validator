@@ -48,6 +48,7 @@ public final class ClientRoutes {
         public static final String API_TRANSFORM = "transform";
         // QP
         public static final String QP_VALIDATIONS = "validations";
+        public static final String QP_INCLUDE_REMOVAL_REPORT = "includeRemovalReport";
     }
 
 }

@@ -31,9 +31,9 @@ public class FhirMappingClient implements IFhirMappingClient {
 	private RestTemplate client;
 
 	@Override
-	public TransformResDTO callConvertCdaInBundle(final FhirResourceDTO resource, final List<String> validations) {
-		log.debug("Fhir Mapping Client - Calling Fhir Mapping to execute validations {}", validations);
-		final String endpoint = routes.transform(validations);
+	public TransformResDTO callConvertCdaInBundle(final FhirResourceDTO resource, final List<String> validations, final boolean includeRemovalReport) {
+		log.debug("Fhir Mapping Client - Calling Fhir Mapping to execute validations {} (includeRemovalReport: {})", validations, includeRemovalReport);
+		final String endpoint = routes.transform(validations, includeRemovalReport);
 
 		HttpHeaders headers = new HttpHeaders();
 		headers.setContentType(MediaType.APPLICATION_JSON);

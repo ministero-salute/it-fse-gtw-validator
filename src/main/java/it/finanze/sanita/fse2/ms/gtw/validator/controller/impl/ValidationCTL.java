@@ -64,7 +64,7 @@ public class ValidationCTL extends AbstractCTL implements IValidationCTL {
 	
 	
 	@Override
-	public ValidationResponseDTO validation(ValidationRequestDTO requestBody, HttpServletRequest request, List<String> validations) {
+	public ValidationResponseDTO validation(ValidationRequestDTO requestBody, HttpServletRequest request, List<String> validations, boolean includeRemovalReport) {
 		//recupera object id e mettilo nella risposta
 		List<String> messages = new ArrayList<>();
 		Validation.notNull(requestBody.getCda());
@@ -129,8 +129,9 @@ public class ValidationCTL extends AbstractCTL implements IValidationCTL {
 		if(Arrays.asList(OK, SEMANTIC_WARNING).contains(outcome)) {
 			p = validationSRV.getStructureObjectID(infoDTO.getTemplateIdSchematron());
 
-			if(validations != null && !validations.isEmpty()) {
-				outcome = executeFhirValidations(requestBody.getCda(), p, validations, messages, outcome);
+			boolean hasValidations = validations != null && !validations.isEmpty();
+			if(hasValidations || includeRemovalReport) {
+				outcome = executeFhirValidations(requestBody.getCda(), p, validations, includeRemovalReport, messages, outcome);
 			}
 		}
 
@@ -149,24 +150,29 @@ public class ValidationCTL extends AbstractCTL implements IValidationCTL {
 	 * Se almeno una validazione non è valida l'esito è l'errore associato alla prima validazione
 	 * (in ordine di esecuzione) non valida. I messaggi sono sempre popolati con le issues (severity e message).
 	 *
-	 * @param cda				cda da validare
-	 * @param engineAndObject	coppia engineId e objectId (structure-map)
-	 * @param validations		validazioni da eseguire
-	 * @param messages			messaggi da popolare
-	 * @param currentOutcome	esito corrente
-	 * @return					esito aggiornato
+	 * @param cda					cda da validare
+	 * @param engineAndObject		coppia engineId e objectId (structure-map)
+	 * @param validations			validazioni da eseguire (può essere vuota)
+	 * @param includeRemovalReport	true per attivare la logica di pruning sul fhir-mapping-engine
+	 * @param messages				messaggi da popolare
+	 * @param currentOutcome		esito corrente
+	 * @return						esito aggiornato
 	 */
 	private RawValidationEnum executeFhirValidations(String cda, Pair<String, String> engineAndObject,
-			List<String> validations, List<String> messages, RawValidationEnum currentOutcome) {
+			List<String> validations, boolean includeRemovalReport, List<String> messages, RawValidationEnum currentOutcome) {
 
 		TransformResDTO res = fhirMappingClient.callConvertCdaInBundle(
-				new FhirResourceDTO(cda, engineAndObject.getValue(), engineAndObject.getKey()), validations);
+				new FhirResourceDTO(cda, engineAndObject.getValue(), engineAndObject.getKey()), validations, includeRemovalReport);
 
 		if(res == null) {
 			throw new BusinessException("Risposta nulla dal fhir-mapping-engine durante l'esecuzione delle validazioni");
 		}
 		if(!StringUtility.isNullOrEmpty(res.getErrorMessage())) {
 			throw new BusinessException("Errore dal fhir-mapping-engine durante l'esecuzione delle validazioni: " + res.getErrorMessage());
+		}
+		if(validations == null || validations.isEmpty()) {
+			// Nessuna validazione richiesta: la sola attivazione del pruning non produce esiti da valutare
+			return currentOutcome;
 		}
 		FhirValidationResponseDTO validationResponse = res.getValidationResponse();
 		if(validationResponse == null || validationResponse.getResults() == null) {

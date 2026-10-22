@@ -26,10 +26,13 @@ public final class FhirMappingClientRoutes {
         return IDENTIFIER_MS;
     }
 
-    public String transform(List<String> validations) {
+    public String transform(List<String> validations, boolean includeRemovalReport) {
         UriComponentsBuilder builder = base().pathSegment(API_VERSION, API_DOCUMENTS, API_TRANSFORM);
         if (validations != null && !validations.isEmpty()) {
             builder.queryParam(QP_VALIDATIONS, validations);
+        }
+        if (includeRemovalReport) {
+            builder.queryParam(QP_INCLUDE_REMOVAL_REPORT, true);
         }
         return builder.build().toUriString();
     }

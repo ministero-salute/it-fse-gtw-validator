@@ -12,11 +12,12 @@ public interface IFhirMappingClient {
 
 	/**
 	 * Calls convertCDAToBundle executing the given validations on the generated bundle.
-	 * 
-	 * @param resource		cda with engine and structure-map identifiers
-	 * @param validations	validations to be executed
-	 * @return				transformation result including validation outcomes
+	 *
+	 * @param resource				cda with engine and structure-map identifiers
+	 * @param validations			validations to be executed
+	 * @param includeRemovalReport	true to activate the pruning logic (includeRemovalReport query param)
+	 * @return						transformation result including validation outcomes
 	 */
-	TransformResDTO callConvertCdaInBundle(FhirResourceDTO resource, List<String> validations);
+	TransformResDTO callConvertCdaInBundle(FhirResourceDTO resource, List<String> validations, boolean includeRemovalReport);
 
 }
