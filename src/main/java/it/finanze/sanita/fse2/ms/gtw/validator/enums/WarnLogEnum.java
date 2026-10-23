@@ -18,7 +18,9 @@ public enum WarnLogEnum {
 	GENERIC_WARN("WARNING", "Generic warning"),
 	INVALID_CODE("WARNING", "Invalid codes"),
 	UNKNOWN("WARNING", "Code Unknown"),
-	ALLOWED("WARNING", "Code Allowed");
+	ALLOWED("WARNING", "Code Allowed"),
+	FHIR_VALIDATION("WARNING", "FHIR validation warnings"),
+	FHIR_NORMALIZATION("WARNING", "FHIR normalization warnings");
 
 	@Getter
 	private String code;

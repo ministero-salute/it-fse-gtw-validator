@@ -17,7 +17,9 @@ public enum ErrorLogEnum {
 
 	GENERIC_WARNING("ERROR", "Generic error"),
 	BLOCKLIST_ERROR("ERROR", "Blocklist error"),
-	INVALID_VERSION("ERROR", "Invalid version");
+	INVALID_VERSION("ERROR", "Invalid version"),
+	FHIR_VALIDATION("ERROR", "FHIR validation errors"),
+	FHIR_NORMALIZATION("ERROR", "FHIR normalization errors");
 
 	@Getter
 	private String code;

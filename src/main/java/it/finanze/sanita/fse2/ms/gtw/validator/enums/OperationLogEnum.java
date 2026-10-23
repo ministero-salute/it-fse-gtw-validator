@@ -15,7 +15,11 @@ import lombok.Getter;
 
 public enum OperationLogEnum {
 
-	TERMINOLOGY_VALIDATION("VAL-TERMINOLOGY-CDA2", "Validazione terminology CDA2");
+	TERMINOLOGY_VALIDATION("VAL-TERMINOLOGY-CDA2", "Validazione terminology CDA2"),
+	FHIR_VALIDATION("VAL-FHIR", "FHIR validation"),
+	NORMATIVE_R4_VALIDATION("VAL-NORMATIVE-R4-FHIR", "FHIR normative R4 validation"),
+	TRAVERSABILITY_VALIDATION("VAL-TRAVERSABILITY-FHIR", "FHIR traversability validation"),
+	FHIR_NORMALIZATION("NORMALIZATION-FHIR", "FHIR normalization");
 
 	@Getter
 	private String code;

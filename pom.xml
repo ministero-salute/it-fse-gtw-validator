@@ -6,7 +6,7 @@
 	<groupId>it.finanze.sanita.fse2</groupId>
 	<artifactId>gtw-validator-ms</artifactId>
 	<name>gtw-validator-ms</name>
-	<version>3.0.0-AVICENNA</version>
+	<version>3.1.0</version>
 	<description>Gateway Validator FSE</description>
 
 	<parent>

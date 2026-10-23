@@ -33,7 +33,6 @@ public class FhirMappingClient implements IFhirMappingClient {
 
 	@Override
 	public TransformResDTO callConvertCdaInBundle(final FhirResourceDTO resource, final List<String> validations, final boolean includeRemovalReport) {
-		log.debug("Calling FHIR mapping engine (validations: {}, includeRemovalReport: {})", validations, includeRemovalReport);
 		final URI uri = routes.transform(validations, includeRemovalReport);
 
 		HttpHeaders headers = new HttpHeaders();
