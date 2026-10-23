@@ -1,7 +1,10 @@
 package it.finanze.sanita.fse2.ms.gtw.validator.dto.client;
 
+import java.util.List;
+
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
+import it.finanze.sanita.fse2.ms.gtw.validator.dto.client.FhirValidationResponseDTO.ValidationIssueDTO;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -15,6 +18,8 @@ import lombok.NoArgsConstructor;
 public class TransformResDTO {
 
 	private String errorMessage;
+
+	private List<ValidationIssueDTO> normalizationIssues;
 
 	private FhirValidationResponseDTO validationResponse;
 

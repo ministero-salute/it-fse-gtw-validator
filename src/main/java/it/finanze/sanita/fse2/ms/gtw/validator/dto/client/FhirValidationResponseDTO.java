@@ -30,8 +30,7 @@ public class FhirValidationResponseDTO {
 		private List<ValidationIssueDTO> issues;
 
 		/**
-		 * Calcolato dalle issues (stessa regola del fhir-mapping-engine): il risultato è non valido
-		 * se almeno una issue ha severity ERROR o FATAL.
+		 * Matches the mapping engine: only ERROR or FATAL issues invalidate a result.
 		 */
 		public boolean isValid() {
 			if (issues == null) {

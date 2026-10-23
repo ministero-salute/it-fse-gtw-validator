@@ -2,6 +2,7 @@ package it.finanze.sanita.fse2.ms.gtw.validator.client.routes;
 
 import static it.finanze.sanita.fse2.ms.gtw.validator.client.routes.base.ClientRoutes.FhirMapping.*;
 
+import java.net.URI;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -26,7 +27,7 @@ public final class FhirMappingClientRoutes {
         return IDENTIFIER_MS;
     }
 
-    public String transform(List<String> validations, boolean includeRemovalReport) {
+    public URI transform(List<String> validations, boolean includeRemovalReport) {
         UriComponentsBuilder builder = base().pathSegment(API_VERSION, API_DOCUMENTS, API_TRANSFORM);
         if (validations != null && !validations.isEmpty()) {
             builder.queryParam(QP_VALIDATIONS, validations);
@@ -34,7 +35,7 @@ public final class FhirMappingClientRoutes {
         if (includeRemovalReport) {
             builder.queryParam(QP_INCLUDE_REMOVAL_REPORT, true);
         }
-        return builder.build().toUriString();
+        return builder.build().toUri();
     }
 
 }

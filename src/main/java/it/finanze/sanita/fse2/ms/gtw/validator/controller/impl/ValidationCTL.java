@@ -21,6 +21,7 @@ import java.util.Map.Entry;
 
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.RestController;
 
 import it.finanze.sanita.fse2.ms.gtw.validator.cda.CDAHelper;
@@ -35,6 +36,7 @@ import it.finanze.sanita.fse2.ms.gtw.validator.dto.ValidationInfoDTO;
 import it.finanze.sanita.fse2.ms.gtw.validator.dto.VocabularyResultDTO;
 import it.finanze.sanita.fse2.ms.gtw.validator.dto.client.FhirResourceDTO;
 import it.finanze.sanita.fse2.ms.gtw.validator.dto.client.FhirValidationResponseDTO;
+import it.finanze.sanita.fse2.ms.gtw.validator.dto.client.FhirValidationResponseDTO.ValidationIssueDTO;
 import it.finanze.sanita.fse2.ms.gtw.validator.dto.client.TransformResDTO;
 import it.finanze.sanita.fse2.ms.gtw.validator.dto.request.ValidationRequestDTO;
 import it.finanze.sanita.fse2.ms.gtw.validator.dto.response.ValidationResponseDTO;
@@ -49,156 +51,185 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 
 /**
- *	Validation controller.
+ * Validation controller.
  */
 @Slf4j
 @RestController
 public class ValidationCTL extends AbstractCTL implements IValidationCTL {
-	
-	
-	@Autowired
-	private IValidationFacadeSRV validationSRV;
 
-	@Autowired
-	private IFhirMappingClient fhirMappingClient;
-	
-	
-	@Override
-	public ValidationResponseDTO validation(ValidationRequestDTO requestBody, HttpServletRequest request, List<String> validations, boolean includeRemovalReport) {
-		//recupera object id e mettilo nella risposta
-		List<String> messages = new ArrayList<>();
-		Validation.notNull(requestBody.getCda());
-		
-		RawValidationEnum outcome = RawValidationEnum.OK;
+    @Autowired
+    private IValidationFacadeSRV validationSRV;
 
-		ExtractedInfoDTO infoDTO = CDAHelper.extractInfo(requestBody.getCda(), request.getHeader(SYSTEM_TYPE_HEADER));
+    @Autowired
+    private IFhirMappingClient fhirMappingClient;
 
-		CDAValidationDTO validationResult = validationSRV.validateSyntactic(requestBody.getCda(), infoDTO.getTypeIdExtension());
-		if(CDAValidationStatusEnum.NOT_VALID.equals(validationResult.getStatus())) {
-			if(StringUtility.isNullOrEmpty(validationResult.getMessage())){
-				for(Entry<CDASeverityViolationEnum, List<String>> violations : validationResult.getViolations().entrySet()) {
-					String severity = violations.getKey().toString();
-					for(String violation : violations.getValue()) {
-						messages.add(severity + ": " + violation);
-					}
-				}
-			} else {
-				messages.add(validationResult.getMessage());
-			}
-			outcome = RawValidationEnum.SYNTAX_ERROR;
-		}	
+    @Override
+    public ValidationResponseDTO validation(ValidationRequestDTO requestBody, HttpServletRequest request,
+            List<String> validations, boolean includeRemovalReport) {
+        List<String> messages = new ArrayList<>();
+        Validation.notNull(requestBody.getCda());
 
-		if(RawValidationEnum.OK.equals(outcome)) {
-			SchematronValidationResultDTO semanticValidation = validationSRV.validateSemantic(requestBody.getCda(),infoDTO);
-			if(StringUtility.isNullOrEmpty(semanticValidation.getMessage())){
-				if(Boolean.FALSE.equals(semanticValidation.getValidSchematron())) {
-					messages.add("Invalid schematron");
-					outcome = RawValidationEnum.SEMANTIC_ERROR;
-				} else if(semanticValidation.getFailedAssertions()!= null && !semanticValidation.getFailedAssertions().isEmpty()) {
-					for(SchematronFailedAssertionDTO violation : semanticValidation.getFailedAssertions()) {
-						messages.add(violation.getText());
-					}
-					outcome = RawValidationEnum.SEMANTIC_WARNING;
-					if(Boolean.FALSE.equals(semanticValidation.getValidXML())){
-						outcome = RawValidationEnum.SEMANTIC_ERROR;
-					}
-				}
-			} else {
-				messages.add(semanticValidation.getMessage());
-				outcome = RawValidationEnum.SEMANTIC_ERROR;
-			}
+        RawValidationEnum outcome = RawValidationEnum.OK;
 
-			if(infoDTO.getSystem() != SystemTypeEnum.TS) {
-				if(RawValidationEnum.OK.equals(outcome) || RawValidationEnum.SEMANTIC_WARNING.equals(outcome)) {
-					VocabularyResultDTO result =  validationSRV.validateVocabularies(requestBody.getCda(), requestBody.getWorkflowInstanceId());
-					if(Boolean.TRUE.equals(result.getValid())) {
-						log.debug("Validation completed successfully!");
-					} else {
-						outcome = RawValidationEnum.VOCABULARY_ERROR;
-						messages = new ArrayList<>();
-						messages.add(result.getMessage());
-					}
-				}
-			} else {
-				log.debug("Skipping vocabulary validation because system set as TS");
-				log.debug("Validation completed successfully!");
-			}
-		}
+        ExtractedInfoDTO infoDTO = CDAHelper.extractInfo(requestBody.getCda(), request.getHeader(SYSTEM_TYPE_HEADER));
 
-		Pair<String, String> p = Pair.of("", "");
-		if(Arrays.asList(OK, SEMANTIC_WARNING).contains(outcome)) {
-			p = validationSRV.getStructureObjectID(infoDTO.getTemplateIdSchematron());
+        CDAValidationDTO validationResult = validationSRV.validateSyntactic(requestBody.getCda(),
+                infoDTO.getTypeIdExtension());
+        if (CDAValidationStatusEnum.NOT_VALID.equals(validationResult.getStatus())) {
+            if (StringUtility.isNullOrEmpty(validationResult.getMessage())) {
+                for (Entry<CDASeverityViolationEnum, List<String>> violations : validationResult.getViolations()
+                        .entrySet()) {
+                    String severity = violations.getKey().toString();
+                    for (String violation : violations.getValue()) {
+                        messages.add(severity + ": " + violation);
+                    }
+                }
+            } else {
+                messages.add(validationResult.getMessage());
+            }
+            outcome = RawValidationEnum.SYNTAX_ERROR;
+        }
 
-			boolean hasValidations = validations != null && !validations.isEmpty();
-			if(hasValidations || includeRemovalReport) {
-				outcome = executeFhirValidations(requestBody.getCda(), p, validations, includeRemovalReport, messages, outcome);
-			}
-		}
+        if (RawValidationEnum.OK.equals(outcome)) {
+            SchematronValidationResultDTO semanticValidation = validationSRV.validateSemantic(requestBody.getCda(),
+                    infoDTO);
+            if (StringUtility.isNullOrEmpty(semanticValidation.getMessage())) {
+                if (Boolean.FALSE.equals(semanticValidation.getValidSchematron())) {
+                    messages.add("Invalid schematron");
+                    outcome = RawValidationEnum.SEMANTIC_ERROR;
+                } else if (semanticValidation.getFailedAssertions() != null
+                        && !semanticValidation.getFailedAssertions().isEmpty()) {
+                    for (SchematronFailedAssertionDTO violation : semanticValidation.getFailedAssertions()) {
+                        messages.add(violation.getText());
+                    }
+                    outcome = RawValidationEnum.SEMANTIC_WARNING;
+                    if (Boolean.FALSE.equals(semanticValidation.getValidXML())) {
+                        outcome = RawValidationEnum.SEMANTIC_ERROR;
+                    }
+                }
+            } else {
+                messages.add(semanticValidation.getMessage());
+                outcome = RawValidationEnum.SEMANTIC_ERROR;
+            }
 
-		ValidationInfoDTO out = ValidationInfoDTO.builder()
-			.result(outcome)
-			.message(messages)
-			.engineID(p.getKey())
-			.transformID(p.getValue()).
-			build();
+            if (infoDTO.getSystem() != SystemTypeEnum.TS) {
+                if (RawValidationEnum.OK.equals(outcome) || RawValidationEnum.SEMANTIC_WARNING.equals(outcome)) {
+                    VocabularyResultDTO result = validationSRV.validateVocabularies(requestBody.getCda(),
+                            requestBody.getWorkflowInstanceId());
+                    if (!Boolean.TRUE.equals(result.getValid())) {
+                        outcome = RawValidationEnum.VOCABULARY_ERROR;
+                        messages = new ArrayList<>();
+                        messages.add(result.getMessage());
+                    }
+                }
+            } else {
+                log.debug("Skipping vocabulary validation for the TS system");
+            }
+        }
 
-		return new ValidationResponseDTO(getLogTraceInfo(), out);
-	}
+        Pair<String, String> p = Pair.of("", "");
+        if (Arrays.asList(OK, SEMANTIC_WARNING).contains(outcome)) {
+            p = validationSRV.getStructureObjectID(infoDTO.getTemplateIdSchematron());
 
-	/**
-	 * Esegue le validazioni aggiuntive invocando il fhir-mapping-engine.
-	 * Se almeno una validazione non è valida l'esito è l'errore associato alla prima validazione
-	 * (in ordine di esecuzione) non valida. I messaggi sono sempre popolati con le issues (severity e message).
-	 *
-	 * @param cda					cda da validare
-	 * @param engineAndObject		coppia engineId e objectId (structure-map)
-	 * @param validations			validazioni da eseguire (può essere vuota)
-	 * @param includeRemovalReport	true per attivare la logica di pruning sul fhir-mapping-engine
-	 * @param messages				messaggi da popolare
-	 * @param currentOutcome		esito corrente
-	 * @return						esito aggiornato
-	 */
-	private RawValidationEnum executeFhirValidations(String cda, Pair<String, String> engineAndObject,
-			List<String> validations, boolean includeRemovalReport, List<String> messages, RawValidationEnum currentOutcome) {
+            boolean hasValidations = validations != null && !validations.isEmpty();
+            if (hasValidations || includeRemovalReport) {
+                outcome = executeFhirValidations(requestBody.getCda(), p, validations, includeRemovalReport, messages,
+                        outcome);
+            }
+        }
 
-		TransformResDTO res = fhirMappingClient.callConvertCdaInBundle(
-				new FhirResourceDTO(cda, engineAndObject.getValue(), engineAndObject.getKey()), validations, includeRemovalReport);
+        ValidationInfoDTO out = ValidationInfoDTO.builder()
+                .result(outcome)
+                .message(messages)
+                .engineID(p.getKey())
+                .transformID(p.getValue()).build();
 
-		if(res == null) {
-			throw new BusinessException("Risposta nulla dal fhir-mapping-engine durante l'esecuzione delle validazioni");
-		}
-		if(!StringUtility.isNullOrEmpty(res.getErrorMessage())) {
-			throw new BusinessException("Errore dal fhir-mapping-engine durante l'esecuzione delle validazioni: " + res.getErrorMessage());
-		}
-		if(validations == null || validations.isEmpty()) {
-			// Nessuna validazione richiesta: la sola attivazione del pruning non produce esiti da valutare
-			return currentOutcome;
-		}
-		FhirValidationResponseDTO validationResponse = res.getValidationResponse();
-		if(validationResponse == null || validationResponse.getResults() == null) {
-			throw new BusinessException("Esiti delle validazioni assenti nella risposta del fhir-mapping-engine");
-		}
+        return new ValidationResponseDTO(getLogTraceInfo(), out);
+    }
 
-		RawValidationEnum outcome = currentOutcome;
-		boolean errorAssigned = false;
+    /**
+     * Collects normalization and validation diagnostics from the mapping engine.
+     * Validation errors take precedence over normalization warnings; otherwise,
+     * the previous outcome is preserved when no normalization issues are reported.
+     *
+     * @param engineAndObject engine ID and structure-map object ID
+     * @param validations optional validation types; normalization does not require them
+     * @param messages accumulates diagnostics without discarding earlier findings
+     */
+    private RawValidationEnum executeFhirValidations(String cda, Pair<String, String> engineAndObject,
+            List<String> validations, boolean includeRemovalReport, List<String> messages,
+            RawValidationEnum currentOutcome) {
 
-		for(FhirValidationResponseDTO.ValidationResultDTO result : validationResponse.getResults()) {
-			if(!result.isValid() && !errorAssigned) {
-				RawValidationEnum error = RawValidationEnum.fromValidationType(result.getType());
-				if(error == null) {
-					throw new BusinessException("Tipo di validazione non gestito: " + result.getType());
-				}
-				outcome = error;
-				errorAssigned = true;
-			}
-			if(result.getIssues() != null) {
-				for(FhirValidationResponseDTO.ValidationIssueDTO issue : result.getIssues()) {
-					messages.add(issue.getSeverity() + ": " + issue.getMessage());
-				}
-			}
-		}
+        TransformResDTO res = fhirMappingClient.callConvertCdaInBundle(
+                new FhirResourceDTO(cda, engineAndObject.getValue(), engineAndObject.getKey()), validations,
+                includeRemovalReport);
 
-		return outcome;
-	}
-	
+        if (res == null) {
+            log.error("FHIR mapping engine returned an empty response");
+            throw new BusinessException(
+                    "FHIR mapping engine returned an empty response");
+        }
+        if (!StringUtility.isNullOrEmpty(res.getErrorMessage())) {
+            log.error("FHIR mapping engine reported a transformation failure");
+            throw new BusinessException(
+                    "FHIR mapping engine reported a transformation failure: " + res.getErrorMessage());
+        }
+
+        RawValidationEnum outcome = currentOutcome;
+
+        // Normalization issues also apply to removal-report-only calls.
+        if (!CollectionUtils.isEmpty(res.getNormalizationIssues())) {
+            logIssueSummary("normalization", res.getNormalizationIssues());
+            outcome = RawValidationEnum.PRUNING_WARNING;
+            for (ValidationIssueDTO issue : res.getNormalizationIssues()) {
+                messages.add(issue.getSeverity() + ": " + issue.getMessage());
+            }
+        }
+
+        if (!CollectionUtils.isEmpty(validations)) {
+
+            FhirValidationResponseDTO validationResponse = res.getValidationResponse();
+            if (validationResponse == null || validationResponse.getResults() == null) {
+                log.error("FHIR mapping engine response is missing the requested validation results");
+                throw new BusinessException("FHIR mapping engine response is missing the requested validation results");
+            }
+
+            if (validationResponse.getResults().stream().anyMatch(r -> !r.isValid())) {
+                outcome = RawValidationEnum.FHIR_VALIDATION_ERROR;
+            }
+
+            for (FhirValidationResponseDTO.ValidationResultDTO result : validationResponse.getResults()) {
+                logIssueSummary(result.getType(), result.getIssues());
+                if (!CollectionUtils.isEmpty(result.getIssues())) {
+                    for (ValidationIssueDTO issue : result.getIssues()) {
+                        messages.add(issue.getSeverity() + ": " + issue.getMessage());
+                    }
+                }
+            }
+
+        }
+
+        return outcome;
+    }
+
+    private void logIssueSummary(String stage, List<ValidationIssueDTO> issues) {
+        long errors = issues == null ? 0 : issues.stream()
+                .filter(issue -> "ERROR".equalsIgnoreCase(issue.getSeverity())
+                        || "FATAL".equalsIgnoreCase(issue.getSeverity()))
+                .count();
+        long warnings = issues == null ? 0 : issues.stream()
+                .filter(issue -> "WARNING".equalsIgnoreCase(issue.getSeverity()))
+                .count();
+        int total = issues == null ? 0 : issues.size();
+
+        // Diagnostics may contain clinical data; log counts rather than their contents.
+        if (errors > 0) {
+            log.error("FHIR {} reported {} issues (errors: {}, warnings: {})", stage, total, errors, warnings);
+        } else if (warnings > 0) {
+            log.warn("FHIR {} reported {} issues (errors: {}, warnings: {})", stage, total, errors, warnings);
+        } else {
+            log.debug("FHIR {} completed with {} issues and no errors or warnings", stage, total);
+        }
+    }
+
 }

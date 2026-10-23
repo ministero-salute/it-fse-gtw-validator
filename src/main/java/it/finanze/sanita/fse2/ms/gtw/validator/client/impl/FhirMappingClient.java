@@ -1,5 +1,6 @@
 package it.finanze.sanita.fse2.ms.gtw.validator.client.impl;
 
+import java.net.URI;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,17 +33,18 @@ public class FhirMappingClient implements IFhirMappingClient {
 
 	@Override
 	public TransformResDTO callConvertCdaInBundle(final FhirResourceDTO resource, final List<String> validations, final boolean includeRemovalReport) {
-		log.debug("Fhir Mapping Client - Calling Fhir Mapping to execute validations {} (includeRemovalReport: {})", validations, includeRemovalReport);
-		final String endpoint = routes.transform(validations, includeRemovalReport);
+		log.debug("Calling FHIR mapping engine (validations: {}, includeRemovalReport: {})", validations, includeRemovalReport);
+		final URI uri = routes.transform(validations, includeRemovalReport);
 
 		HttpHeaders headers = new HttpHeaders();
 		headers.setContentType(MediaType.APPLICATION_JSON);
 		HttpEntity<FhirResourceDTO> entity = new HttpEntity<>(resource, headers);
 
 		try {
-			return client.postForObject(endpoint, entity, TransformResDTO.class);
+			return client.postForObject(uri, entity, TransformResDTO.class);
 		} catch (HttpStatusCodeException clientException) {
-			String msg = "Errore durante l'invocazione dell' API /v1/documents/transform. Il sistema ha restituito un " + clientException.getStatusCode();
+			log.error("FHIR mapping engine request failed with HTTP status {}", clientException.getStatusCode());
+			String msg = "FHIR mapping engine request to /v1/documents/transform failed with HTTP status " + clientException.getStatusCode();
 			throw new ServerResponseException(routes.microservice(), "/v1/documents/transform", msg, clientException.getStatusCode(), clientException.getStatusCode().value(), clientException.getLocalizedMessage());
 		}
 	}

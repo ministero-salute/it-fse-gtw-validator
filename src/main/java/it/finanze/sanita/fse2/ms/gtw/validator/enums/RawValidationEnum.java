@@ -22,8 +22,8 @@ public enum RawValidationEnum {
 	SEMANTIC_ERROR("03", "Errore semantico"),
 	SCHEMATRON_NOT_FOUND("04", "Schematron not found"),
 	SEMANTIC_WARNING("05", "Warning semantico"),
-	NORMATIVE_R4_ERROR("06", "Errore di validazione normativa R4"),
-	TRAVERSABILITY_ERROR("07", "Errore di validazione traversabilità");
+    PRUNING_WARNING("06", "Alcune risorse sono state rimosse"),
+    FHIR_VALIDATION_ERROR("07", "Errore validazione FHIR");
 
 	private String code;
 	private String description;
@@ -32,26 +32,5 @@ public enum RawValidationEnum {
 		code = inCode;
 		description = inDescription;
 	}
-
-	/**
-	 * Restituisce l'errore associato al tipo di validazione eseguita dal fhir-mapping-engine.
-	 *
-	 * @param validationType	tipo di validazione (NORMATIVE_R4, TRAVERSABILITY)
-	 * @return					errore associato, null se il tipo non è riconosciuto
-	 */
-	public static RawValidationEnum fromValidationType(final String validationType) {
-		if (validationType == null) {
-			return null;
-		}
-		switch (validationType.toUpperCase()) {
-		case "NORMATIVE_R4":
-			return NORMATIVE_R4_ERROR;
-		case "TRAVERSABILITY":
-			return TRAVERSABILITY_ERROR;
-		default:
-			return null;
-		}
-	}
-
 
 }
