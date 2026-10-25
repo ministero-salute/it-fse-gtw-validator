@@ -18,4 +18,10 @@ public class FhirResourceDTO {
 
 	private String engineId;
 
+	private DocumentReferenceDTO documentReferenceDTO;
+
+	public FhirResourceDTO(String cda, String objectId, String engineId) {
+		this(cda, objectId, engineId, null);
+	}
+
 }
