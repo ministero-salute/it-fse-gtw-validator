@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class FhirValidationResponseDTO {
+public class FhirValidationDTO {
 
 	private List<ValidationResultDTO> results;
 

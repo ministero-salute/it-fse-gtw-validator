@@ -37,8 +37,8 @@ import it.finanze.sanita.fse2.ms.gtw.validator.dto.SchematronValidationResultDTO
 import it.finanze.sanita.fse2.ms.gtw.validator.dto.ValidationInfoDTO;
 import it.finanze.sanita.fse2.ms.gtw.validator.dto.VocabularyResultDTO;
 import it.finanze.sanita.fse2.ms.gtw.validator.dto.client.FhirResourceDTO;
-import it.finanze.sanita.fse2.ms.gtw.validator.dto.client.FhirValidationResponseDTO;
-import it.finanze.sanita.fse2.ms.gtw.validator.dto.client.FhirValidationResponseDTO.ValidationIssueDTO;
+import it.finanze.sanita.fse2.ms.gtw.validator.dto.client.FhirValidationDTO;
+import it.finanze.sanita.fse2.ms.gtw.validator.dto.client.FhirValidationDTO.ValidationIssueDTO;
 import it.finanze.sanita.fse2.ms.gtw.validator.dto.client.TransformResDTO;
 import it.finanze.sanita.fse2.ms.gtw.validator.dto.request.ValidationRequestDTO;
 import it.finanze.sanita.fse2.ms.gtw.validator.dto.response.ValidationResponseDTO;
@@ -201,7 +201,7 @@ public class ValidationCTL extends AbstractCTL implements IValidationCTL {
         }
 
         if (!CollectionUtils.isEmpty(validations)) {
-            FhirValidationResponseDTO validationResponse = res.getValidationResponse();
+            FhirValidationDTO validationResponse = res.getValidationResponse();
             if (validationResponse == null || validationResponse.getResults() == null) {
                 log.error("FHIR mapping engine response is missing the requested validation results");
                 throw new BusinessException("FHIR mapping engine response is missing the requested validation results");
@@ -211,7 +211,7 @@ public class ValidationCTL extends AbstractCTL implements IValidationCTL {
                 outcome = RawValidationEnum.FHIR_VALIDATION_ERROR;
             }
 
-            for (FhirValidationResponseDTO.ValidationResultDTO result : validationResponse.getResults()) {
+            for (FhirValidationDTO.ValidationResultDTO result : validationResponse.getResults()) {
                 logIssueSummary(workflowInstanceId, result.getType(), result.getIssues(),
                         validationOperation(result.getType()), startOperation);
 

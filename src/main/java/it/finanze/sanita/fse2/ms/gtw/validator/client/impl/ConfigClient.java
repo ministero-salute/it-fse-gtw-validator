@@ -81,7 +81,7 @@ public class ConfigClient implements IConfigClient {
             }
         } catch (HttpStatusCodeException clientException) {
             String msg = "Errore durante l'invocazione dell' API /config/whois. Il sistema ha restituito un " + clientException.getStatusCode();
-            throw new ServerResponseException("config", "/config/whois", msg, clientException.getStatusCode(), clientException.getRawStatusCode(), clientException.getLocalizedMessage());
+            throw new ServerResponseException("config", "/config/whois", msg, clientException.getStatusCode(), clientException.getStatusCode().value(), clientException.getLocalizedMessage());
         } catch (Exception e) {
             log.error("Error encountered while retrieving Gateway name", e);
             throw e;
