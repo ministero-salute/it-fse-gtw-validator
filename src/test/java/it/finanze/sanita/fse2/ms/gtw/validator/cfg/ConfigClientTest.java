@@ -27,18 +27,18 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.web.client.RestTemplate;
 
+import it.finanze.sanita.fse2.ms.gtw.validator.base.AbstractTest;
 import it.finanze.sanita.fse2.ms.gtw.validator.client.IConfigClient;
 import it.finanze.sanita.fse2.ms.gtw.validator.client.routes.ConfigClientRoutes;
 import it.finanze.sanita.fse2.ms.gtw.validator.dto.ConfigItemDTO;
 import it.finanze.sanita.fse2.ms.gtw.validator.enums.ConfigItemTypeEnum;
 import it.finanze.sanita.fse2.ms.gtw.validator.service.impl.ConfigSRV;
-import it.finanze.sanita.fse2.ms.gtw.validator.utility.ProfileUtility;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @SpringBootTest(webEnvironment = RANDOM_PORT)
 @ActiveProfiles(TEST)
-public class ConfigClientTest {
+public class ConfigClientTest extends AbstractTest {
 
     private static final ConfigItemTypeEnum specific = VALIDATOR;
 
@@ -53,9 +53,6 @@ public class ConfigClientTest {
 
     @Autowired
     private ConfigClientRoutes routes;
-
-    @MockitoBean
-    private ProfileUtility profiles;
 
     private static final List<Pair<String, String>> DEFAULT_PROPS = Arrays.asList(
             Pair.of(PROPS_NAME_AUDIT_ENABLED, "false"),
