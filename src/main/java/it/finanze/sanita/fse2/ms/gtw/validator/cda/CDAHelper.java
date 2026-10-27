@@ -12,6 +12,7 @@
 package it.finanze.sanita.fse2.ms.gtw.validator.cda;
 
 import static org.apache.commons.lang3.StringUtils.isEmpty;
+import static it.finanze.sanita.fse2.ms.gtw.validator.utility.CodeSystemUtility.parseCda;
 
 import java.io.ByteArrayInputStream;
 import java.util.ArrayList;
@@ -23,7 +24,7 @@ import java.util.stream.Collectors;
 
 import javax.xml.transform.stream.StreamSource;
 
-import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
@@ -45,11 +46,10 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class CDAHelper {
 
-    private CDAHelper() {
-    }
+    private CDAHelper() {}
 
     public static Map<String, List<String>> extractTerminology(String cda) {
-        org.jsoup.nodes.Document docT = Jsoup.parse(cda);
+        Document docT = parseCda(cda);
         Elements terms = docT.select("[codeSystem]");
 
         Map<String, List<String>> terminology = new HashMap<>();
@@ -74,8 +74,7 @@ public class CDAHelper {
 
     private static List<CodeDTO> extractAllCodes(String cda) {
         String codeSystemKey = "[" + Constants.App.CODE_SYSTEM_KEY + "]";
-        return Jsoup
-                .parse(cda)
+        return parseCda(cda)
                 .select(codeSystemKey)
                 .stream()
                 .map(element -> getCode(element))
@@ -108,7 +107,7 @@ public class CDAHelper {
     public static ExtractedInfoDTO extractInfo(final String cda, String system) {
         ExtractedInfoDTO out = null;
         try {
-            org.jsoup.nodes.Document docT = Jsoup.parse(cda);
+            Document docT = parseCda(cda);
 
             List<String> templateIdRoots = docT.select("templateid")
                     .stream()

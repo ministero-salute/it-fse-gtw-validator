@@ -21,7 +21,9 @@ public enum RawValidationEnum {
 	VOCABULARY_ERROR("02", "Errore dovuto alle terminologie utilizzate"),
 	SEMANTIC_ERROR("03", "Errore semantico"),
 	SCHEMATRON_NOT_FOUND("04", "Schematron not found"),
-	SEMANTIC_WARNING("05", "Warning semantico");
+	SEMANTIC_WARNING("05", "Warning semantico"),
+    PRUNING_WARNING("06", "Alcune risorse sono state rimosse"),
+    FHIR_VALIDATION_ERROR("07", "Errore validazione FHIR");
 
 	private String code;
 	private String description;
@@ -30,6 +32,5 @@ public enum RawValidationEnum {
 		code = inCode;
 		description = inDescription;
 	}
-
 
 }

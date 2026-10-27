@@ -21,6 +21,8 @@ import java.util.stream.Collectors;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
+import org.jsoup.parser.Parser;
+import org.jsoup.parser.Tag;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
@@ -112,11 +114,18 @@ public class CodeSystemUtility {
 
 
     public static String sanitizeCda(String cda) {
-    	Document document = Jsoup.parse(cda);
+		Document document = parseCda(cda);
     	CodeSystemChangeEnum.getAll().forEach(change -> changeCodeSystem(document, change));		
     	return document.toString();
 	}
 	
+    public static Document parseCda(String cda) {
+        Parser parser = Parser.htmlParser();
+        // Retain the self-closing tag behavior of older jsoup versions.
+        parser.tagSet().onNewTag(tag -> tag.set(Tag.SelfClose));
+        return Jsoup.parse(cda, "", parser);
+    }
+
     private static void changeCodeSystem(Document document, CodeSystemChangeEnum change) {
     	List<Elements> values = getValues(document, change.getSelector());
     	values.forEach(value -> value.attr(App.CODE_SYSTEM_KEY, change.getCodeSystem()));
