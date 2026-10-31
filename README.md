@@ -56,6 +56,34 @@ This makes validation more representative of publication, but **does not guarant
 the same outcome with real metadata**. Publication still validates the Bundle
 enriched with the actual metadata, whose values can affect the final result.
 
+## Isolation tests
+
+Run the offline suite with Java 21 and Maven:
+
+```sh
+MAVEN_OPTS=-Xmx768m mvn -PISOLATION clean test
+```
+
+JUnit `@Tag("ISOLATION")` tests are excluded from normal Maven test runs. The
+`ISOLATION` Maven profile selects only these tests; Spring-based tests separately
+activate the `ISOLATION` Spring profile and load only their explicit components,
+not the application. MongoDB, remote clients, and structured logging are mocked;
+no database, Kafka broker, mapping engine, or config service is required.
+
+The suite exercises real controllers, services, repository query construction,
+XML schema validation (including malformed XML and DOCTYPE rejection), terminology
+rules, config caching/refresh, and dependency failures. Additional tests cover
+real schema/Schematron singleton compilation and refresh, semantic assertions and
+reports, HTTP serialization/routing against an in-memory mock server, audit
+capture/exclusions, error responses, structured logging and Kafka delivery
+strategies, health checks, OAuth input failures, and configuration behavior.
+JaCoCo HTML/XML reports are generated under `target/site/jacoco/` during `test`.
+
+External infrastructure
+boundaries remain mocked; these tests do not establish live MongoDB/Kafka/Azure
+connectivity. Existing integration tests are unchanged and may still require external
+services when run without this profile.
+
 ## Related repositories
 
 - [it-fse-support](https://github.com/ministero-salute/it-fse-support) — FSE 2.0 support and documentation.
