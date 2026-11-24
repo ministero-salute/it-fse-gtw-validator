@@ -1,8 +1,14 @@
 package it.finanze.sanita.fse2.ms.gtw.validator.isolation;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import java.util.Date;
 import java.util.List;
@@ -15,6 +21,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.aggregation.AggregationResults;
@@ -23,12 +30,20 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
-import org.mockito.ArgumentCaptor;
 
 import it.finanze.sanita.fse2.ms.gtw.validator.exceptions.BusinessException;
-import it.finanze.sanita.fse2.ms.gtw.validator.repository.entity.*;
+import it.finanze.sanita.fse2.ms.gtw.validator.repository.entity.AuditETY;
+import it.finanze.sanita.fse2.ms.gtw.validator.repository.entity.DictionaryETY;
+import it.finanze.sanita.fse2.ms.gtw.validator.repository.entity.SchemaETY;
+import it.finanze.sanita.fse2.ms.gtw.validator.repository.entity.SchematronETY;
+import it.finanze.sanita.fse2.ms.gtw.validator.repository.entity.TerminologyETY;
 import it.finanze.sanita.fse2.ms.gtw.validator.repository.entity.engine.EngineETY;
-import it.finanze.sanita.fse2.ms.gtw.validator.repository.mongo.impl.*;
+import it.finanze.sanita.fse2.ms.gtw.validator.repository.mongo.impl.AuditRepo;
+import it.finanze.sanita.fse2.ms.gtw.validator.repository.mongo.impl.DictionaryRepo;
+import it.finanze.sanita.fse2.ms.gtw.validator.repository.mongo.impl.EngineRepo;
+import it.finanze.sanita.fse2.ms.gtw.validator.repository.mongo.impl.SchemaRepo;
+import it.finanze.sanita.fse2.ms.gtw.validator.repository.mongo.impl.SchematronRepo;
+import it.finanze.sanita.fse2.ms.gtw.validator.repository.mongo.impl.TerminologyRepo;
 
 @Tag("ISOLATION")
 @ActiveProfiles("ISOLATION")
@@ -171,7 +186,6 @@ class RepositoriesIsolationTest {
     }
 
     @Test
-    @SuppressWarnings("unchecked")
     void retrievesLatestAvailableEngineAndWrapsFailure() {
         EngineETY entity = new EngineETY();
         when(mongo.aggregate(any(TypedAggregation.class), eq(EngineETY.class)))

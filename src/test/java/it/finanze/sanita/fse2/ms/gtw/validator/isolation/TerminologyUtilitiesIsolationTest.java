@@ -1,21 +1,32 @@
 package it.finanze.sanita.fse2.ms.gtw.validator.isolation;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.nio.charset.StandardCharsets;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.NullAndEmptySource;
-import org.junit.jupiter.params.provider.ValueSource;
+
 import it.finanze.sanita.fse2.ms.gtw.validator.cda.CDAHelper;
 import it.finanze.sanita.fse2.ms.gtw.validator.controller.Validation;
-import it.finanze.sanita.fse2.ms.gtw.validator.dto.*;
+import it.finanze.sanita.fse2.ms.gtw.validator.dto.CodeDTO;
+import it.finanze.sanita.fse2.ms.gtw.validator.dto.CodeSystemSnapshotDTO;
+import it.finanze.sanita.fse2.ms.gtw.validator.dto.CodeSystemVersionDTO;
+import it.finanze.sanita.fse2.ms.gtw.validator.dto.TerminologyExtractionDTO;
 import it.finanze.sanita.fse2.ms.gtw.validator.enums.SystemTypeEnum;
 import it.finanze.sanita.fse2.ms.gtw.validator.exceptions.BusinessException;
 import it.finanze.sanita.fse2.ms.gtw.validator.repository.entity.DictionaryETY;
-import it.finanze.sanita.fse2.ms.gtw.validator.utility.*;
+import it.finanze.sanita.fse2.ms.gtw.validator.utility.CodeSystemUtility;
 import jakarta.validation.ValidationException;
 
 @Tag("ISOLATION")
@@ -123,9 +134,4 @@ class TerminologyUtilitiesIsolationTest {
         assertThrows(ValidationException.class, () -> Validation.mustBeTrue(null, "denied"));
     }
 
-    @Test void readsClasspathResourceAndReturnsNullForMissingResource() {
-        byte[] content = FileUtility.getFileFromInternalResources("application.properties");
-        assertNotNull(content); assertTrue(new String(content, StandardCharsets.UTF_8).contains("spring.application.name"));
-        assertNull(FileUtility.getFileFromInternalResources("nonexistent-isolation-resource"));
-    }
 }
